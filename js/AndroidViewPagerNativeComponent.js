@@ -108,5 +108,5 @@ type NativeProps = $ReadOnly<{|
 type ViewPagerNativeType = Class<NativeComponent<NativeProps>>;
 
 module.exports = ((requireNativeComponent(
-  'AndroidViewPager',
+  'RNCViewPager',
 ): any): ViewPagerNativeType);

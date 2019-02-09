@@ -18,10 +18,8 @@ const {
   TouchableWithoutFeedback,
   TouchableOpacity,
   View,
-  ViewPagerAndroid,
 } = ReactNative;
-
-import type {ViewPagerScrollState} from 'ViewPagerAndroid';
+import ViewPagerAndroid from '@react-native-community/viewpager';
 
 const PAGES = 5;
 const BGCOLOR = ['#fdc08e', '#fff6b9', '#99d1b7', '#dde5fe', '#f79273'];
@@ -93,7 +91,7 @@ class ProgressBar extends React.Component {
   }
 }
 
-class ViewPagerAndroidExample extends React.Component {
+export default class ViewPagerAndroidExample extends React.Component {
   state = {
     page: 0,
     animationsAreEnabled: true,
@@ -112,8 +110,8 @@ class ViewPagerAndroidExample extends React.Component {
     this.setState({progress: e.nativeEvent});
   };
 
-  onPageScrollStateChanged = (state: ViewPagerScrollState) => {
-    this.setState({scrollState: state});
+  onPageScrollStateChanged = e => {
+    this.setState({scrollState: e.nativeEvent.pageScrollState});
   };
 
   move = delta => {
@@ -288,16 +286,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
-exports.title = '<ViewPagerAndroid>';
-exports.description =
-  'Container that allows to flip left and right between child views.';
-
-exports.examples = [
-  {
-    title: 'Basic pager',
-    render(): React.Element<typeof ViewPagerAndroidExample> {
-      return <ViewPagerAndroidExample />;
-    },
-  },
-];

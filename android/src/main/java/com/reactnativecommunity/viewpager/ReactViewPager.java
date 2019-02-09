@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package com.facebook.react.views.viewpager;
+package com.reactnativecommunity.viewpager;
 
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;

@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package com.facebook.react.views.viewpager;
+package com.reactnativecommunity.viewpager;
 
 import java.util.Map;
 
@@ -14,7 +14,6 @@ import android.view.View;
 import com.facebook.infer.annotation.Assertions;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.common.MapBuilder;
-import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
@@ -23,15 +22,14 @@ import com.facebook.react.uimanager.annotations.ReactProp;
 import javax.annotation.Nullable;
 
 /**
- * Instance of {@link ViewManager} that provides native {@link ViewPager} view.
+ * Instance of {@link com.facebook.react.uimanager.ViewManager} that provides native {@link android.support.v4.view.ViewPager} view.
  */
-@ReactModule(name = ReactViewPagerManager.REACT_CLASS)
 public class ReactViewPagerManager extends ViewGroupManager<ReactViewPager> {
 
-  public static final String REACT_CLASS = "AndroidViewPager";
+  private static final String REACT_CLASS = "RNCViewPager";
 
-  public static final int COMMAND_SET_PAGE = 1;
-  public static final int COMMAND_SET_PAGE_WITHOUT_ANIMATION = 2;
+  private static final int COMMAND_SET_PAGE = 1;
+  private static final int COMMAND_SET_PAGE_WITHOUT_ANIMATION = 2;
 
   @Override
   public String getName() {

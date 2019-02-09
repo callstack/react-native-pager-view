@@ -16,7 +16,7 @@ const UIManager = require('UIManager');
 
 const dismissKeyboard = require('dismissKeyboard');
 
-const NativeAndroidViewPager = require('AndroidViewPagerNativeComponent');
+const NativeAndroidViewPager = require('./AndroidViewPagerNativeComponent');
 
 import type {SyntheticEvent} from 'CoreEventTypes';
 import type {ViewStyleProp} from 'StyleSheet';
