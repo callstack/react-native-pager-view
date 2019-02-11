@@ -1,0 +1,6 @@
+rootProject.name = 'ViewPagerExample'
+
+include ':react-native-viewpager'
+project(':react-native-viewpager').projectDir = new File(rootProject.projectDir, '../../android')
+
+include ':app'
