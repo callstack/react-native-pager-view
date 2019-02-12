@@ -1,5 +1,7 @@
 # react-native-viewpager
 
+[![CircleCI branch](https://img.shields.io/circleci/project/github/react-native-community/react-native-viewpager/master.svg)](https://circleci.com/gh/react-native-community/react-native-viewpager/tree/master)
+
 At the moment, this module only works for Android. Under the hood is using the native Android 
 [ViewPager](https://developer.android.com/reference/android/support/v4/view/ViewPager).
 
