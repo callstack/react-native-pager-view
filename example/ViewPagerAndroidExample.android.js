@@ -92,24 +92,25 @@ class ProgressBar extends React.Component {
 }
 
 export default class ViewPagerAndroidExample extends React.Component {
-  state = {
-    page: 0,
-    animationsAreEnabled: true,
-    scrollEnabled: true,
-    progress: {
-      position: 0,
-      offset: 0,
-    },
-    pages: []
-  };
+  constructor(props) {
+    super(props);
 
-  componentDidMount() {
     const pages = [];
     for (let i = 0; i < PAGES; i++) {
       pages.push(this.createPage(i));
     }
-    this.setState({ pages });
-  }
+    
+    this.state = {
+      page: 0,
+      animationsAreEnabled: true,
+      scrollEnabled: true,
+      progress: {
+        position: 0,
+        offset: 0,
+      },
+      pages
+    };
+  };
 
   onPageSelected = e => {
     this.setState({page: e.nativeEvent.position});
@@ -144,26 +145,27 @@ export default class ViewPagerAndroidExample extends React.Component {
 
   createPage(key) {
     return {
-            key: key,
-            style: {
-              backgroundColor: BGCOLOR[key % BGCOLOR.length],
-              alignItems: 'center',
-              padding: 20,
-            }, 
-            imgSource: { uri: IMAGE_URIS[key % BGCOLOR.length] }
+      key: key,
+      style: {
+        backgroundColor: BGCOLOR[key % BGCOLOR.length],
+        alignItems: 'center',
+        padding: 20,
+      }, 
+      imgSource: { uri: IMAGE_URIS[key % BGCOLOR.length] }
     }
   };
   
-
   renderPage(page) {
-    return (<View key={page.key} style={page.style} collapsable={false}>
-      <Image
-        style={styles.image}
-        source={page.imgSource}
-      />
-      <LikeCount />
-    </View>)
-  }
+    return (
+      <View key={page.key} style={page.style} collapsable={false}>
+        <Image
+          style={styles.image}
+          source={page.imgSource}
+        />
+        <LikeCount />
+      </View>
+    );
+  };
 
   render() {
     const {page, pages, animationsAreEnabled} = this.state;
@@ -180,7 +182,7 @@ export default class ViewPagerAndroidExample extends React.Component {
           ref={viewPager => {
             this.viewPager = viewPager;
           }}>
-          {pages.map( page => this.renderPage(page))}
+          { pages.map( page => this.renderPage(page)) }
         </ViewPagerAndroid>
         <View style={styles.buttons}>
           <Button
@@ -192,7 +194,7 @@ export default class ViewPagerAndroidExample extends React.Component {
               this.setState({scrollEnabled: !this.state.scrollEnabled})
             }
           />
-           <Button
+          <Button
             enabled={true}
             text="Add new page"
             onPress={this.addPage}
@@ -285,10 +287,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     flex: 1,
     margin: 8,
-    padding: 8,
   },
   likeContainer: {
     flexDirection: 'row',
+    height: 45,
   },
   likesText: {
     flex: 1,
