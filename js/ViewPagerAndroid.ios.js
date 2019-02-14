@@ -9,4 +9,5 @@
 
 'use strict';
 
-module.exports = require('UnimplementedView');
+const UnimplementedView = require('react-native/Libraries/Components/UnimplementedViews/UnimplementedView');
+module.exports = UnimplementedView;

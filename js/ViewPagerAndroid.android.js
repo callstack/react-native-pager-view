@@ -10,16 +10,16 @@
 
 'use strict';
 
-const React = require('React');
-const ReactNative = require('ReactNative');
-const UIManager = require('UIManager');
+const React = require('react');
+const ReactNative = require('react-native');
+const {UIManager} = ReactNative;
 
-const dismissKeyboard = require('dismissKeyboard');
+const dismissKeyboard = require('react-native/Libraries/Utilities/dismissKeyboard');
+
+import type {SyntheticEvent} from 'react-native/Libraries/Types/CoreEventTypes';
+import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet';
 
 const NativeAndroidViewPager = require('./AndroidViewPagerNativeComponent');
-
-import type {SyntheticEvent} from 'CoreEventTypes';
-import type {ViewStyleProp} from 'StyleSheet';
 
 const VIEWPAGER_REF = 'viewPager';
 

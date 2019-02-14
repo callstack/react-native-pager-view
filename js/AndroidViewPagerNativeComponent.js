@@ -10,12 +10,12 @@
 
 'use strict';
 
-const requireNativeComponent = require('requireNativeComponent');
+const {requireNativeComponent} = require('react-native');
 
-import type {SyntheticEvent} from 'CoreEventTypes';
-import type {NativeComponent} from 'ReactNative';
-import type {Node} from 'React';
-import type {ViewStyleProp} from 'StyleSheet';
+import type {NativeComponent} from 'react-native/Libraries/Renderer/shims/ReactNative';
+import type {SyntheticEvent} from 'react-native/Libraries/Types/CoreEventTypes';
+import type {Node} from 'react';
+import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet';
 
 type PageScrollState = 'idle' | 'dragging' | 'settling';
 
