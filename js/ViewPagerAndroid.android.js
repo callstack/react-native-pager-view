@@ -23,6 +23,14 @@ const NativeAndroidViewPager = require('./AndroidViewPagerNativeComponent');
 
 const VIEWPAGER_REF = 'viewPager';
 
+function getViewManagerConfig(viewManagerName) {
+  if (!UIManager.getViewManagerConfig) {
+    // react-native <= 0.57
+    return UIManager[viewManagerName];
+  }
+  return UIManager.getViewManagerConfig(viewManagerName);
+}
+
 type PageScrollState = 'idle' | 'dragging' | 'settling';
 
 type PageScrollEvent = SyntheticEvent<
@@ -241,7 +249,7 @@ class ViewPagerAndroid extends React.Component<Props> {
   setPage = (selectedPage: number) => {
     UIManager.dispatchViewManagerCommand(
       ReactNative.findNodeHandle(this),
-      UIManager.getViewManagerConfig('AndroidViewPager').Commands.setPage,
+      getViewManagerConfig('AndroidViewPager').Commands.setPage,
       [selectedPage],
     );
   };
@@ -253,7 +261,7 @@ class ViewPagerAndroid extends React.Component<Props> {
   setPageWithoutAnimation = (selectedPage: number) => {
     UIManager.dispatchViewManagerCommand(
       ReactNative.findNodeHandle(this),
-      UIManager.getViewManagerConfig('AndroidViewPager').Commands
+      getViewManagerConfig('AndroidViewPager').Commands
         .setPageWithoutAnimation,
       [selectedPage],
     );
