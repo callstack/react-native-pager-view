@@ -16,7 +16,7 @@ const {UIManager} = ReactNative;
 
 const dismissKeyboard = require('react-native/Libraries/Utilities/dismissKeyboard');
 
-import type {SyntheticEvent} from 'react-native/Libraries/types/CoreEventTypes';
+import type {SyntheticEvent} from 'react-native/Libraries/Types/CoreEventTypes';
 import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet';
 
 const NativeAndroidViewPager = require('./AndroidViewPagerNativeComponent');

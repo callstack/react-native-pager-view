@@ -13,7 +13,7 @@
 const {requireNativeComponent} = require('react-native');
 
 import type {NativeComponent} from 'react-native/Libraries/Renderer/shims/ReactNative';
-import type {SyntheticEvent} from 'react-native/Libraries/types/CoreEventTypes';
+import type {SyntheticEvent} from 'react-native/Libraries/Types/CoreEventTypes';
 import type {Node} from 'react';
 import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet';
 
