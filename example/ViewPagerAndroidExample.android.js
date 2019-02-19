@@ -82,7 +82,7 @@ class ProgressBar extends React.Component {
     const fractionalPosition =
       this.props.progress.position + this.props.progress.offset;
     const progressBarSize =
-      (fractionalPosition / (PAGES - 1)) * this.props.size;
+      (fractionalPosition / (this.props.numberOfPages - 1)) * this.props.size;
     return (
       <View style={[styles.progressBarContainer, {width: this.props.size}]}>
         <View style={[styles.progressBar, {width: progressBarSize}]} />
@@ -92,14 +92,24 @@ class ProgressBar extends React.Component {
 }
 
 export default class ViewPagerAndroidExample extends React.Component {
-  state = {
-    page: 0,
-    animationsAreEnabled: true,
-    scrollEnabled: true,
-    progress: {
-      position: 0,
-      offset: 0,
-    },
+  constructor(props) {
+    super(props);
+
+    const pages = [];
+    for (let i = 0; i < PAGES; i++) {
+      pages.push(this.createPage(i));
+    }
+    
+    this.state = {
+      page: 0,
+      animationsAreEnabled: true,
+      scrollEnabled: true,
+      progress: {
+        position: 0,
+        offset: 0,
+      },
+      pages
+    };
   };
 
   onPageSelected = e => {
@@ -113,6 +123,10 @@ export default class ViewPagerAndroidExample extends React.Component {
   onPageScrollStateChanged = e => {
     this.setState({scrollState: e.nativeEvent.pageScrollState});
   };
+
+  addPage = e => {
+    this.setState(prevState => ({ pages: [...prevState.pages, this.createPage(prevState.pages.length)]}));
+  }
 
   move = delta => {
     const page = this.state.page + delta;
@@ -129,25 +143,32 @@ export default class ViewPagerAndroidExample extends React.Component {
     this.setState({page});
   };
 
-  render() {
-    const pages = [];
-    for (let i = 0; i < PAGES; i++) {
-      const pageStyle = {
-        backgroundColor: BGCOLOR[i % BGCOLOR.length],
+  createPage(key) {
+    return {
+      key: key,
+      style: {
+        backgroundColor: BGCOLOR[key % BGCOLOR.length],
         alignItems: 'center',
         padding: 20,
-      };
-      pages.push(
-        <View key={i} style={pageStyle} collapsable={false}>
-          <Image
-            style={styles.image}
-            source={{uri: IMAGE_URIS[i % BGCOLOR.length]}}
-          />
-          <LikeCount />
-        </View>,
-      );
+      }, 
+      imgSource: { uri: IMAGE_URIS[key % BGCOLOR.length] }
     }
-    const {page, animationsAreEnabled} = this.state;
+  };
+  
+  renderPage(page) {
+    return (
+      <View key={page.key} style={page.style} collapsable={false}>
+        <Image
+          style={styles.image}
+          source={page.imgSource}
+        />
+        <LikeCount />
+      </View>
+    );
+  };
+
+  render() {
+    const {page, pages, animationsAreEnabled} = this.state;
     return (
       <View style={styles.container}>
         <ViewPagerAndroid
@@ -161,7 +182,7 @@ export default class ViewPagerAndroidExample extends React.Component {
           ref={viewPager => {
             this.viewPager = viewPager;
           }}>
-          {pages}
+          { pages.map( page => this.renderPage(page)) }
         </ViewPagerAndroid>
         <View style={styles.buttons}>
           <Button
@@ -172,6 +193,11 @@ export default class ViewPagerAndroidExample extends React.Component {
             onPress={() =>
               this.setState({scrollEnabled: !this.state.scrollEnabled})
             }
+          />
+          <Button
+            enabled={true}
+            text="Add new page"
+            onPress={this.addPage}
           />
         </View>
         <View style={styles.buttons}>
@@ -200,18 +226,18 @@ export default class ViewPagerAndroidExample extends React.Component {
             onPress={() => this.move(-1)}
           />
           <Text style={styles.buttonText}>
-            Page {page + 1} / {PAGES}
+            Page {page + 1} / {pages.length}
           </Text>
-          <ProgressBar size={100} progress={this.state.progress} />
+          <ProgressBar numberOfPages={pages.length} size={100} progress={this.state.progress} />
           <Button
             text="Next"
-            enabled={page < PAGES - 1}
+            enabled={page < pages.length - 1}
             onPress={() => this.move(1)}
           />
           <Button
             text="Last"
-            enabled={page < PAGES - 1}
-            onPress={() => this.go(PAGES - 1)}
+            enabled={page < pages.length - 1}
+            onPress={() => this.go(pages.length - 1)}
           />
         </View>
       </View>
@@ -261,10 +287,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     flex: 1,
     margin: 8,
-    padding: 8,
   },
   likeContainer: {
     flexDirection: 'row',
+    height: 45,
   },
   likesText: {
     flex: 1,
