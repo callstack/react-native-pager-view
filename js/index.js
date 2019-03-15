@@ -1,3 +1,3 @@
 /* @flow */
 
-export {default} from './ViewPagerAndroid';
+module.exports = require('./ViewPagerAndroid');
