@@ -1,3 +1,5 @@
 /.circleci
 /example
 babel.config.js
+.idea
+android/build
