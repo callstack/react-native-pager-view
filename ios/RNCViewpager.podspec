@@ -1,24 +1,22 @@
+require 'json'
+  
+package = JSON.parse(File.read(File.join(__dir__, '..', 'package.json')))
 
 Pod::Spec.new do |s|
   s.name         = "RNCViewpager"
-  s.version      = "1.0.0"
-  s.summary      = "RNCViewpager"
-  s.description  = <<-DESC
-                  RNCViewpager
-                   DESC
-  s.homepage     = ""
-  s.license      = "MIT"
-  # s.license      = { :type => "MIT", :file => "FILE_LICENSE" }
-  s.author             = { "author" => "author@domain.cn" }
+  s.version      = package['version']
+  s.summary      = package['description']
+  s.license      = package['license']
+
+  s.authors      = package['author']
+  s.homepage     = package['homepage']
+
   s.platform     = :ios, "7.0"
   s.source       = { :git => "https://github.com/author/RNCViewpager.git", :tag => "master" }
   s.source_files  = "RNCViewpager/**/*.{h,m}"
   s.requires_arc = true
 
-
   s.dependency "React"
-  #s.dependency "others"
-
 end
 
   
