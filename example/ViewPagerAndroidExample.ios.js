@@ -15,7 +15,7 @@ export default class ViewPagerAndroidExample extends React.Component<{}> {
   renderPage() {
     return (
       <View style={styles.container}>
-        <Text>Render Page</Text>
+            <View style={{backgroundColor: "blue", width: "100%", height: "100%"}}></View>
       </View>
     );
   };
@@ -23,7 +23,15 @@ export default class ViewPagerAndroidExample extends React.Component<{}> {
   renderPage2() {
     return (
       <View style={styles.container}>
-        <Text>Render Page 2</Text>
+          <View style={{backgroundColor: "yellow", width: "100%", height: "100%"}}></View>
+      </View>
+    );
+  };
+
+  renderPage3() {
+    return (
+      <View style={styles.container}>
+          <View style={{backgroundColor: "black", width: "100%", height: "100%"}}></View>
       </View>
     );
   };
@@ -33,14 +41,13 @@ export default class ViewPagerAndroidExample extends React.Component<{}> {
       <ViewPagerAndroid style={{ flex:1, backgroundColor: "orange" }}>
       {this.renderPage()}
       {this.renderPage2()}
-      {this.renderPage2()}
+      {this.renderPage3()}
     </ViewPagerAndroid>);
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
