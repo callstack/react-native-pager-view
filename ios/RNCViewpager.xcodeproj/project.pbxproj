@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		183B5ECB228BEC260013B58C /* ReactNativePageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 183B5ECA228BEC260013B58C /* ReactNativePageView.m */; };
+		18A7DC7A228ADDB3006DE42B /* ReactViewPagerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A7DC79228ADDB3006DE42B /* ReactViewPagerManager.m */; };
+		18A7DC7D228AEC1A006DE42B /* ReactPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18A7DC7C228AEC1A006DE42B /* ReactPageViewController.m */; };
 		B3E7B58A1CC2AC0600A0062D /* RNCViewpager.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNCViewpager.m */; };
 /* End PBXBuildFile section */
 
@@ -24,6 +27,12 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libRNCViewpager.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNCViewpager.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		183B5EC9228BEC260013B58C /* ReactNativePageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactNativePageView.h; sourceTree = "<group>"; };
+		183B5ECA228BEC260013B58C /* ReactNativePageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactNativePageView.m; sourceTree = "<group>"; };
+		18A7DC78228ADDB3006DE42B /* ReactViewPagerManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactViewPagerManager.h; sourceTree = "<group>"; };
+		18A7DC79228ADDB3006DE42B /* ReactViewPagerManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactViewPagerManager.m; sourceTree = "<group>"; };
+		18A7DC7B228AEC1A006DE42B /* ReactPageViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactPageViewController.h; sourceTree = "<group>"; };
+		18A7DC7C228AEC1A006DE42B /* ReactPageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactPageViewController.m; sourceTree = "<group>"; };
 		B3E7B5881CC2AC0600A0062D /* RNCViewpager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNCViewpager.h; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* RNCViewpager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNCViewpager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -50,6 +59,12 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				183B5EC9228BEC260013B58C /* ReactNativePageView.h */,
+				183B5ECA228BEC260013B58C /* ReactNativePageView.m */,
+				18A7DC7B228AEC1A006DE42B /* ReactPageViewController.h */,
+				18A7DC7C228AEC1A006DE42B /* ReactPageViewController.m */,
+				18A7DC78228ADDB3006DE42B /* ReactViewPagerManager.h */,
+				18A7DC79228ADDB3006DE42B /* ReactViewPagerManager.m */,
 				B3E7B5881CC2AC0600A0062D /* RNCViewpager.h */,
 				B3E7B5891CC2AC0600A0062D /* RNCViewpager.m */,
 				134814211AA4EA7D00B7C361 /* Products */,
@@ -95,6 +110,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 58B511D21A9E6C8500147676;
@@ -112,7 +128,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18A7DC7A228ADDB3006DE42B /* ReactViewPagerManager.m in Sources */,
 				B3E7B58A1CC2AC0600A0062D /* RNCViewpager.m in Sources */,
+				183B5ECB228BEC260013B58C /* ReactNativePageView.m in Sources */,
+				18A7DC7D228AEC1A006DE42B /* ReactPageViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -204,7 +223,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
-				"$(inherited)",
+					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../../../React/**",
 					"$(SRCROOT)/../../react-native/React/**",

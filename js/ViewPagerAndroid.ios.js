@@ -5,9 +5,11 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @format
+ * @flow
  */
 
 'use strict';
 
-const UnimplementedView = require('react-native/Libraries/Components/UnimplementedViews/UnimplementedView');
-module.exports = UnimplementedView;
+import { requireNativeComponent } from 'react-native';
+
+module.exports = requireNativeComponent('RNCViewPager');
