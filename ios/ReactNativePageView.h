@@ -1,6 +1,8 @@
 
 #import <UIKit/UIKit.h>
 #import "ReactPageViewController.h"
+#import <React/RCTShadowView.h>
+#import <React/UIView+React.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -9,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, weak) id <UIPageViewControllerDelegate> delegate;
 @property (nullable, nonatomic, weak) id <UIPageViewControllerDataSource> dataSource;
 
-- (instancetype)initWithProtocols: (id <UIPageViewControllerDelegate>) delegate and:(id <UIPageViewControllerDataSource>) dataSource;
+@property (nonatomic, strong) NSMutableArray<UIViewController *> *childrenViewControllers;
 - (void)embed;
 @end
 

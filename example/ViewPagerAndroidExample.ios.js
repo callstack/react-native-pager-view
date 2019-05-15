@@ -20,10 +20,20 @@ export default class ViewPagerAndroidExample extends React.Component<{}> {
     );
   };
 
+  renderPage2() {
+    return (
+      <View style={styles.container}>
+        <Text>Render Page 2</Text>
+      </View>
+    );
+  };
+
   render() {
     return (
-      <ViewPagerAndroid style={{ flex:1 }}>
-
+      <ViewPagerAndroid style={{ flex:1, backgroundColor: "orange" }}>
+      {this.renderPage()}
+      {this.renderPage2()}
+      {this.renderPage2()}
     </ViewPagerAndroid>);
   }
 }
@@ -34,5 +44,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: "pink"
   }
 });

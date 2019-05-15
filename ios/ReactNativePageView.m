@@ -3,17 +3,17 @@
 #import "React/RCTLog.h"
 
 @implementation ReactNativePageView
-
-- (instancetype)initWithProtocols: (id <UIPageViewControllerDelegate>) delegate and:(id <UIPageViewControllerDataSource>) dataSource {
+- (instancetype)init
+{
     self = [super init];
     if (self) {
-        _delegate = delegate;
-        _dataSource = dataSource;
+        _childrenViewControllers = [[NSMutableArray alloc] init];
     }
     return self;
 }
 
 - (void)layoutSubviews {
+    [super layoutSubviews];
     if(_reactPageViewController){
         _reactPageViewController.view.frame = [self bounds];
     } else {
@@ -32,10 +32,34 @@
         _reactPageViewController = reactPageViewController;
         _reactPageViewController.delegate = _delegate;
         _reactPageViewController.dataSource = _dataSource;
+        [self renderChildrenViewControllers];
     } else {
         RCTLog(@"getParentViewController returns nil");
     }
 }
+
+- (void)renderChildrenViewControllers{
+        int index = 0;
+        [_childrenViewControllers removeAllObjects];
+        for (UIView* view in [self reactSubviews]) {
+            [view removeFromSuperview];
+            UIViewController *pageViewController = [self viewController:view];
+            if(index == 0) {
+                [_reactPageViewController setViewControllers:[NSArray arrayWithObjects: pageViewController, nil] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+
+            }
+            [_childrenViewControllers addObject: pageViewController];
+            index++;
+        }
+}
+
+- (UIViewController *)viewController:(UIView*)view {
+    UIViewController *childViewController = [[UIViewController alloc] init];
+    childViewController.view = view;
+    return childViewController;
+    
+}
+
 
 - (UIViewController *) getParentViewController {
     UIResponder *parentResponder = self;

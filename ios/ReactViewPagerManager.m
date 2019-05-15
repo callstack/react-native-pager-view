@@ -10,52 +10,56 @@
 RCT_EXPORT_MODULE(RNCViewPager)
 
 - (UIView *)view {
-    ReactNativePageView *reactNativePageView = [[ReactNativePageView alloc] init];
-    reactNativePageView.dataSource = self;
-    return reactNativePageView;
+    if(_reactNativePageView){
+        return _reactNativePageView;
+    }
+    _reactNativePageView = [[ReactNativePageView alloc] init];
+    _reactNativePageView.dataSource = self;
+    return _reactNativePageView;
 }
 
+#pragma mark - Datasource After
+
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController {
-    NSUInteger index = viewController.view.tag - 9999;
+        
+    NSMutableArray<UIViewController *> *childrenViewControllers = [_reactNativePageView childrenViewControllers];
+    NSUInteger index = [childrenViewControllers indexOfObject:viewController];
     
-    index++;
-    
-    if (index == 5) {
+    if (index == NSNotFound) {
         return nil;
     }
     
-    return [self viewControllerAtIndex:index];
+    index++;
+    if (index == [childrenViewControllers count]) {
+        return nil;
+    }
+    return [childrenViewControllers objectAtIndex:index];
+    
 }
 
+#pragma mark - Datasource Before
+
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController {
-    NSUInteger index = viewController.view.tag - 9999;
     
-    if (index == 0) {
+    NSMutableArray<UIViewController *> *childrenViewControllers = [_reactNativePageView childrenViewControllers];
+    NSUInteger index = [childrenViewControllers indexOfObject:viewController];
+    
+    if ((index == 0) || (index == NSNotFound)) {
         return nil;
     }
     
     index--;
     
-    return [self viewControllerAtIndex:index];
+    return [childrenViewControllers objectAtIndex:index];
     
 }
 
 - (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController {
-    return 5;
+    return [[_reactNativePageView childrenViewControllers] count];
 }
 
 - (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController {
     return 0;
-}
-
-- (UIViewController *)viewControllerAtIndex:(NSUInteger)index {
-    UIViewController *childViewController = [[UIViewController alloc] init];
-    childViewController.view.tag = 9999 + index;
-    NSArray<NSNumber *> *redColors = [NSMutableArray arrayWithObjects: @0.06, @0.19, @0.47, @0.71, @0.99, nil];
-    NSNumber *red = [redColors objectAtIndex:index];
-    childViewController.view.backgroundColor = [UIColor colorWithRed: red.floatValue green:0.5 blue:0.5 alpha:1];
-    return childViewController;
-    
 }
 
 @end
