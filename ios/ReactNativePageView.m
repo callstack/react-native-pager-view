@@ -44,7 +44,7 @@
         for (UIView* view in [self reactSubviews]) {
             [view removeFromSuperview];
             UIViewController *pageViewController = [self viewController:view];
-            if(index == 0) {
+            if(index == self.initialPage) {
                 [_reactPageViewController setViewControllers:[NSArray arrayWithObjects: pageViewController, nil] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
 
             }
