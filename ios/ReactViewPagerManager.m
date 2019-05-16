@@ -12,7 +12,11 @@
 RCT_EXPORT_MODULE(RNCViewPager)
 
 RCT_EXPORT_VIEW_PROPERTY(initialPage, NSInteger)
-RCT_EXPORT_VIEW_PROPERTY(scrollEnable, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(pageMargin, NSInteger)
+
+RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView){
+    view.scrollEnabled = [RCTConvert BOOL:json];
+}
 
 - (UIView *)view {
     if(_reactNativePageView){
@@ -40,6 +44,7 @@ RCT_EXPORT_VIEW_PROPERTY(scrollEnable, BOOL)
     if (index == [childrenViewControllers count]) {
         return nil;
     }
+
     return [childrenViewControllers objectAtIndex:index];
     
 }
