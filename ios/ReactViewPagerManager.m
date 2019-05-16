@@ -19,6 +19,11 @@ RCT_ENUM_CONVERTER(UIPageViewControllerTransitionStyle, (@{
                                                   @"curl": @(UIPageViewControllerTransitionStylePageCurl),
                                                   }), UIPageViewControllerTransitionStyleScroll, integerValue)
 
+RCT_ENUM_CONVERTER(UIPageViewControllerNavigationOrientation, (@{
+                                                           @"horizontal": @(UIPageViewControllerNavigationOrientationHorizontal),
+                                                           @"vertical": @(UIPageViewControllerNavigationOrientationVertical),
+                                                           }), UIPageViewControllerNavigationOrientationHorizontal, integerValue)
+
 RCT_CUSTOM_VIEW_PROPERTY(transitionStyle, UIPageViewControllerTransitionStyle, ReactNativePageView){
     NSString *type = [RCTConvert NSString:json];
     if([type isEqualToString:@"scroll"]){
@@ -29,6 +34,18 @@ RCT_CUSTOM_VIEW_PROPERTY(transitionStyle, UIPageViewControllerTransitionStyle, R
      view.transitionStyle = UIPageViewControllerTransitionStylePageCurl;
     }
 }
+
+RCT_CUSTOM_VIEW_PROPERTY(orientation, UIPageViewControllerNavigationOrientation, ReactNativePageView){
+    NSString *type = [RCTConvert NSString:json];
+    if([type isEqualToString:@"horizontal"]){
+        view.orientation = UIPageViewControllerNavigationOrientationHorizontal;
+    }
+    
+    if([type isEqualToString:@"vertical"]){
+        view.orientation = UIPageViewControllerNavigationOrientationVertical;
+    }
+}
+
 
 RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView){
     view.scrollEnabled = [RCTConvert BOOL:json];

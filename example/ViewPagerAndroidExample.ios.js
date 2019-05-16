@@ -73,6 +73,7 @@ export default class ViewPagerAndroidExample extends React.Component {
           style={styles.viewPager}
           initialPage={1}
           transitionStyle="curl"
+          orientation="vertical"
           pageMargin={50}>
           { pages.map( page => this.renderPage(page)) }
         </ViewPagerAndroid>

@@ -17,12 +17,14 @@ import React from "react";
 const NativeAndroidViewPager = require('./AndroidViewPagerNativeComponent');
 
 type TransitionStyle = 'scroll' | 'curl'
+type Orientation = 'horizontal' | 'vertical'
 
 type Props = $ReadOnly<{|
     /**
      * Index of initial page that should be selected. Use `setPage` method to
      * update the page, and `onPageSelected` to monitor page changes
      */
+    orientation?: ?Orientation,
     transitionStyle?: ?TransitionStyle,
     pageMargin?: ?number,
     scrollEnabled?: ?number,

@@ -11,6 +11,7 @@
         _scrollEnabled = YES;
         _pageMargin = 0;
         _transitionStyle = UIPageViewControllerTransitionStyleScroll;
+        _orientation = UIPageViewControllerNavigationOrientationHorizontal;
     }
     return self;
 }
@@ -27,8 +28,10 @@
 
 - (void)embed {
     if([self getParentViewController]){
-        NSDictionary *options = [NSMutableDictionary dictionaryWithObjectsAndKeys: [NSNumber numberWithInt:_pageMargin], UIPageViewControllerOptionInterPageSpacingKey, nil];
-        ReactPageViewController *reactPageViewController = [[ReactPageViewController alloc] initWithTransitionStyle: _transitionStyle navigationOrientation: UIPageViewControllerNavigationOrientationHorizontal options:options];
+        NSDictionary *options = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                 [NSNumber numberWithInt:_pageMargin], UIPageViewControllerOptionInterPageSpacingKey,nil];
+        
+        ReactPageViewController *reactPageViewController = [[ReactPageViewController alloc] initWithTransitionStyle: _transitionStyle navigationOrientation: _orientation options:options];
         UIViewController *parentViewController = [self getParentViewController];
         [parentViewController addChildViewController:reactPageViewController];
         [self addSubview:reactPageViewController.view];
