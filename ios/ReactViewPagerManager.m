@@ -7,7 +7,11 @@
 
 @implementation ReactViewPagerManager
 
+#pragma mark - RTC
+
 RCT_EXPORT_MODULE(RNCViewPager)
+
+RCT_EXPORT_VIEW_PROPERTY(initialPage, NSInteger)
 
 - (UIView *)view {
     if(_reactNativePageView){
@@ -17,6 +21,8 @@ RCT_EXPORT_MODULE(RNCViewPager)
     _reactNativePageView.dataSource = self;
     return _reactNativePageView;
 }
+
+
 
 #pragma mark - Datasource After
 
@@ -59,7 +65,7 @@ RCT_EXPORT_MODULE(RNCViewPager)
 }
 
 - (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController {
-    return 0;
+   return ((ReactNativePageView *)[self view]).initialPage;
 }
 
 @end

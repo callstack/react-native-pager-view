@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nullable, nonatomic, weak) id <UIPageViewControllerDataSource> dataSource;
 
 @property (nonatomic, strong) NSMutableArray<UIViewController *> *childrenViewControllers;
+@property (nonatomic) NSInteger initialPage;
+
 - (void)embed;
 @end
 
