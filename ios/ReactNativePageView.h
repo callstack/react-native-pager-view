@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSInteger initialPage;
 @property (nonatomic) NSInteger pageMargin;
 @property (nonatomic) BOOL scrollEnabled;
+@property (nonatomic) UIPageViewControllerTransitionStyle transitionStyle;
+
 - (void)embed;
 
 @end

@@ -65,7 +65,6 @@ export default class ViewPagerAndroidExample extends React.Component {
     );
   };
 
-  //     scrollEnabled={false}
   render() {
     const {page, pages, animationsAreEnabled} = this.state;
     return (
@@ -73,6 +72,7 @@ export default class ViewPagerAndroidExample extends React.Component {
         <ViewPagerAndroid
           style={styles.viewPager}
           initialPage={1}
+          transitionStyle="curl"
           pageMargin={50}>
           { pages.map( page => this.renderPage(page)) }
         </ViewPagerAndroid>
