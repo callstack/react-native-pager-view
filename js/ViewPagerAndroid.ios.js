@@ -21,6 +21,7 @@ type Props = $ReadOnly<{|
      * Index of initial page that should be selected. Use `setPage` method to
      * update the page, and `onPageSelected` to monitor page changes
      */
+    scrollEnabled?: ?number,
     initialPage?: ?number,
     style?: ?ViewStyleProp,
   |}>;

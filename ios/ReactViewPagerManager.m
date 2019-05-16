@@ -12,6 +12,7 @@
 RCT_EXPORT_MODULE(RNCViewPager)
 
 RCT_EXPORT_VIEW_PROPERTY(initialPage, NSInteger)
+RCT_EXPORT_VIEW_PROPERTY(scrollEnable, BOOL)
 
 - (UIView *)view {
     if(_reactNativePageView){

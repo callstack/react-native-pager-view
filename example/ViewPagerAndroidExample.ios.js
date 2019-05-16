@@ -71,7 +71,8 @@ export default class ViewPagerAndroidExample extends React.Component {
       <View style={styles.container}>
         <ViewPagerAndroid
           style={styles.viewPager}
-          initialPage={1}>
+          initialPage={1}
+          scrollEnable={false}>
           { pages.map( page => this.renderPage(page)) }
         </ViewPagerAndroid>
         </View>);

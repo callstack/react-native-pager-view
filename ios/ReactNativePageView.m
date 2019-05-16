@@ -14,6 +14,7 @@
 
 - (void)layoutSubviews {
     [super layoutSubviews];
+    _reactPageViewController.view.userInteractionEnabled = _scrollEnable;
     if(_reactPageViewController){
         _reactPageViewController.view.frame = [self bounds];
     } else {
