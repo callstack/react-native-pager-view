@@ -34,10 +34,7 @@ export default class ViewPagerAndroidExample extends React.Component {
       page: 0,
       animationsAreEnabled: true,
       scrollEnabled: true,
-      progress: {
-        position: 0,
-        offset: 0,
-      },
+      position: 0,
       pages
     };
   };
@@ -71,14 +68,19 @@ export default class ViewPagerAndroidExample extends React.Component {
       <View style={styles.container}>
         <ViewPagerAndroid
           style={styles.viewPager}
-          initialPage={1}
+          initialPage={0}
           transitionStyle="curl"
           orientation="vertical"
+          onPageScroll={this.onPageScroll}
           pageMargin={50}>
           { pages.map( page => this.renderPage(page)) }
         </ViewPagerAndroid>
         </View>);
   }
+
+  onPageScroll = e => {
+    this.setState({position: e.nativeEvent.position});
+  };
 }
 
 const styles = StyleSheet.create({

@@ -12,6 +12,7 @@ RCT_EXPORT_VIEW_PROPERTY(pageMargin, NSInteger)
 
 RCT_EXPORT_VIEW_PROPERTY(transitionStyle, UIPageViewControllerTransitionStyle)
 RCT_EXPORT_VIEW_PROPERTY(orientation, UIPageViewControllerNavigationOrientation)
+RCT_EXPORT_VIEW_PROPERTY(onPageScroll, RCTBubblingEventBlock)
 
 RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView){
     view.scrollEnabled = [RCTConvert BOOL:json];
@@ -23,11 +24,21 @@ RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView){
     }
     _reactNativePageView = [[ReactNativePageView alloc] init];
     _reactNativePageView.dataSource = self;
+    _reactNativePageView.delegate = self;
     return _reactNativePageView;
 }
 
+#pragma mark - Delegate
 
-
+- (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray<UIViewController *> *)pendingViewControllers {
+    if (pendingViewControllers.count == 1){
+        NSMutableArray<UIViewController *> *childrenViewControllers = [_reactNativePageView childrenViewControllers];
+        NSUInteger index = [childrenViewControllers indexOfObject: [pendingViewControllers objectAtIndex:0]];
+        _reactNativePageView.onPageScroll(@{@"position": [NSNumber numberWithLong:index]});
+    } else{
+        RCTLog(@"Only one screen support");
+    }
+}
 #pragma mark - Datasource After
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController {
@@ -38,8 +49,9 @@ RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView){
     if (index == NSNotFound) {
         return nil;
     }
-    
+
     index++;
+    
     if (index == [childrenViewControllers count]) {
         return nil;
     }
@@ -55,7 +67,11 @@ RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView){
     NSMutableArray<UIViewController *> *childrenViewControllers = [_reactNativePageView childrenViewControllers];
     NSUInteger index = [childrenViewControllers indexOfObject:viewController];
     
-    if ((index == 0) || (index == NSNotFound)) {
+    if (index == NSNotFound) {
+        return nil;
+    }
+    
+    if (index == 0) {
         return nil;
     }
     

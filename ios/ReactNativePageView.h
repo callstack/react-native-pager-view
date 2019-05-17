@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL scrollEnabled;
 @property (nonatomic) UIPageViewControllerTransitionStyle transitionStyle;
 @property (nonatomic) UIPageViewControllerNavigationOrientation orientation;
+@property (nonatomic, copy) RCTBubblingEventBlock onPageScroll;
 
 - (void)embed;
 
