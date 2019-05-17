@@ -32,11 +32,8 @@
                                  [NSNumber numberWithInt:_pageMargin], UIPageViewControllerOptionInterPageSpacingKey,nil];
         
         ReactPageViewController *reactPageViewController = [[ReactPageViewController alloc] initWithTransitionStyle: _transitionStyle navigationOrientation: _orientation options:options];
-        UIViewController *parentViewController = [self getParentViewController];
-        [parentViewController addChildViewController:reactPageViewController];
         [self addSubview:reactPageViewController.view];
         reactPageViewController.view.frame = [self bounds];
-        [reactPageViewController didMoveToParentViewController:parentViewController];
         _reactPageViewController = reactPageViewController;
         _reactPageViewController.delegate = _delegate;
         _reactPageViewController.dataSource = _dataSource;
