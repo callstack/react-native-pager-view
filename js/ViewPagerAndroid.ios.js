@@ -11,7 +11,6 @@
 'use strict';
 
 const VIEWPAGER_REF = 'viewPager';
-import { requireNativeComponent } from 'react-native';
 import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet';
 import React from "react";
 const NativeAndroidViewPager = require('./AndroidViewPagerNativeComponent');
@@ -96,5 +95,4 @@ class ViewPagerAndroid extends React.Component<Props> {
     }
   }
 
-// module.exports = requireNativeComponent('RNCViewPager');
 module.exports = ViewPagerAndroid;

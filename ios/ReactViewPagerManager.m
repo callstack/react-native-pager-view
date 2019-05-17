@@ -23,7 +23,7 @@ RCT_EXPORT_METHOD(goToNextPage) {
 }
 
 RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView){
-    view.scrollEnabled = [RCTConvert BOOL:json];
+    [view shouldScroll:[RCTConvert BOOL:json]];
 }
 
 - (UIView *)view {

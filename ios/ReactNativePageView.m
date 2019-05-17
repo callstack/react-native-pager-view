@@ -44,6 +44,13 @@
     }
 }
 
+- (void) shouldScroll:(BOOL) scrollEnabled {
+    _scrollEnabled = scrollEnabled;
+    if(_reactPageViewController.view){
+        _reactPageViewController.view.userInteractionEnabled = scrollEnabled;
+    }
+}
+
 - (void)renderChildrenViewControllers{
         int index = 0;
         [_childrenViewControllers removeAllObjects];

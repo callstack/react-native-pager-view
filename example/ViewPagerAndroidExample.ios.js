@@ -73,6 +73,7 @@ export default class ViewPagerAndroidExample extends React.Component {
           initialPage={0}
           transitionStyle="scroll"
           orientation="horizontal"
+          scrollEnabled={this.state.scrollEnabled}
           onPageScroll={this.onPageScroll}
           pageMargin={50}>
           { pages.map( page => this.renderPage(page)) }
@@ -80,6 +81,16 @@ export default class ViewPagerAndroidExample extends React.Component {
         <View style={styles.buttons}>
         <Button title="Previous" onPress={this.previous}/>
         <Button title="Next" onPress={this.next}/>
+        </View>
+        <View style={styles.buttons}>
+        <Button
+            title={
+              this.state.scrollEnabled ? 'Scroll Enabled' : 'Scroll Disabled'
+            }
+            onPress={() =>
+              this.setState({scrollEnabled: !this.state.scrollEnabled})
+            }
+          />
         </View>
         </View>);
   }
@@ -104,7 +115,7 @@ const styles = StyleSheet.create({
   },
   buttons: {
     flexDirection: 'row',
-    height: 30,
+    margin: 10,
     backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'space-between',
