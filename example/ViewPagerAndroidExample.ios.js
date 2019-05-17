@@ -7,8 +7,10 @@
  * @format
  */
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native' 
+import { View, Text, StyleSheet, Image, Button } from 'react-native' 
 import ViewPagerAndroid from '@react-native-community/viewpager';
+import { NativeModules } from 'react-native';
+
 
 const PAGES = 5;
 const BGCOLOR = ['#fdc08e', '#fff6b9', '#99d1b7', '#dde5fe', '#f79273'];
@@ -69,24 +71,43 @@ export default class ViewPagerAndroidExample extends React.Component {
         <ViewPagerAndroid
           style={styles.viewPager}
           initialPage={0}
-          transitionStyle="curl"
-          orientation="vertical"
+          transitionStyle="scroll"
+          orientation="horizontal"
           onPageScroll={this.onPageScroll}
           pageMargin={50}>
           { pages.map( page => this.renderPage(page)) }
         </ViewPagerAndroid>
+        <View style={styles.buttons}>
+        <Button title="Previous" onPress={this.previous}/>
+        <Button title="Next" onPress={this.next}/>
+        </View>
         </View>);
   }
 
   onPageScroll = e => {
     this.setState({position: e.nativeEvent.position});
   };
+
+  next = () => {
+    NativeModules.RNCViewPager.goToNextPage();
+  }
+
+  previous = () => {
+    NativeModules.RNCViewPager.goToPreviousPage();
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'black',
+  },
+  buttons: {
+    flexDirection: 'row',
+    height: 30,
+    backgroundColor: 'black',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   image: {
     width: 300,

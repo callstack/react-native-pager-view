@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) NSMutableArray<UIViewController *> *childrenViewControllers;
 @property (nonatomic) NSInteger initialPage;
+@property (nonatomic) NSInteger currentIndex;
 @property (nonatomic) NSInteger pageMargin;
 @property (nonatomic) BOOL scrollEnabled;
 @property (nonatomic) UIPageViewControllerTransitionStyle transitionStyle;
@@ -20,7 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) RCTBubblingEventBlock onPageScroll;
 
 - (void)embed;
-
+- (void) goToNextPage;
+- (void) goToPreviousPage;
 @end
 
 NS_ASSUME_NONNULL_END
