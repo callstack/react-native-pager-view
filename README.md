@@ -18,6 +18,52 @@ For now, this module only works for Android. Under the hood it is using the nati
 
 `react-native link @react-native-community/viewpager`
 
+### Manual installation
+
+#### iOS
+Not Supported.
+
+#### Android
+
+<details>
+<summary>Manually link the library on Android</summary>
+</br>
+Make the following changes:
+
+#### `android/settings.gradle`
+```groovy
+include ':@react-native-community_viewpager'
+project(':@react-native-community_viewpager').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/viewpager/android')
+```
+
+#### `android/app/build.gradle`
+```groovy
+dependencies {
+   ...
+   implementation project(':@react-native-community_viewpager')
+}
+```
+
+#### `android/app/src/main/.../MainApplication.java`
+On top, where imports are:
+
+```java
+import com.reactnativecommunity.viewpager.RNCViewPagerPackage;
+```
+
+Add the `RNCViewPagerPackage` class to your list of exported packages.
+
+```java
+@Override
+protected List<ReactPackage> getPackages() {
+  return Arrays.<ReactPackage>asList(
+    new MainReactPackage(),
+    new RNCViewPagerPackage()
+  );
+}
+```
+</details>
+
 ## Usage
 
 ```js
