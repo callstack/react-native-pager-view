@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) NSMutableArray<UIViewController *> *childrenViewControllers;
 @property (nonatomic) NSInteger initialPage;
-@property (nonatomic, readonly) NSInteger currentIndex;
+@property (nonatomic) NSInteger currentIndex;
 @property (nonatomic) NSInteger pageMargin;
 @property (nonatomic, readonly) BOOL scrollEnabled;
 @property (nonatomic) UIPageViewControllerTransitionStyle transitionStyle;
@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)embed;
 - (void) goToNextPage;
 - (void) goToPreviousPage;
+- (void) goToPage:(NSNumber*) index animated:(BOOL) animated;
 - (void) shouldScroll:(BOOL) scrollEnabled;
 @end
 

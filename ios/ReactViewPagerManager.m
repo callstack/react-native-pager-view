@@ -14,12 +14,9 @@ RCT_EXPORT_VIEW_PROPERTY(transitionStyle, UIPageViewControllerTransitionStyle)
 RCT_EXPORT_VIEW_PROPERTY(orientation, UIPageViewControllerNavigationOrientation)
 RCT_EXPORT_VIEW_PROPERTY(onPageScroll, RCTBubblingEventBlock)
 
-RCT_EXPORT_METHOD(goToPreviousPage) {
-    [_reactNativePageView goToPreviousPage];
-}
 
-RCT_EXPORT_METHOD(goToNextPage) {
-    [_reactNativePageView goToNextPage];
+RCT_EXPORT_METHOD(goToPage:(nonnull NSNumber*) index animated:(BOOL) animated) {
+    [_reactNativePageView goToPage:index animated:animated];
 }
 
 RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView){
@@ -63,7 +60,7 @@ RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView){
     if (index == [childrenViewControllers count]) {
         return nil;
     }
-
+    _reactNativePageView.currentIndex = index;
     return [childrenViewControllers objectAtIndex:index];
     
 }
@@ -84,7 +81,7 @@ RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView){
     }
     
     index--;
-    
+    _reactNativePageView.currentIndex = index;
     return [childrenViewControllers objectAtIndex:index];
     
 }

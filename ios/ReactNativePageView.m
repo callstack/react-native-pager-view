@@ -58,16 +58,16 @@
             [view removeFromSuperview];
             UIViewController *pageViewController = [self viewController:view];
             if(index == self.initialPage) {
-                [self setReactViewControllers:index with:pageViewController];
+                [self setReactViewControllers:index with:pageViewController direction: UIPageViewControllerNavigationDirectionForward animated:YES];
             }
             [_childrenViewControllers addObject: pageViewController];
             index++;
         }
 }
 
--(void) setReactViewControllers:(NSInteger) index with:(UIViewController *) pageViewController {
+-(void) setReactViewControllers:(NSInteger) index with:(UIViewController *) pageViewController direction:(UIPageViewControllerNavigationDirection) direction animated:(BOOL) animated{
     _currentIndex = index;
-    [_reactPageViewController setViewControllers:[NSArray arrayWithObjects: pageViewController, nil] direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
+    [_reactPageViewController setViewControllers:[NSArray arrayWithObjects: pageViewController, nil] direction:direction animated:animated completion:nil];
 }
 
 - (UIViewController *)viewController:(UIView*)view {
@@ -77,28 +77,23 @@
     
 }
 
+- (void) goToPage:(NSNumber*) index animated:(BOOL) animated {
+    if (_currentIndex >= 0 && index.integerValue < _childrenViewControllers.count) {
+        UIPageViewControllerNavigationDirection direction =
+        (index.integerValue > _currentIndex) ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
+        UIViewController* viewController = [_childrenViewControllers objectAtIndex:index.integerValue];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self setReactViewControllers:index.integerValue with:viewController direction:direction animated:animated];
+        });
+    }
+}
+
 -(void) goToNextPage {
-    if(!_reactPageViewController) { return; }
-    if(![_reactPageViewController.viewControllers objectAtIndex:0]) { return; }
-    
-    UIViewController *currentViewController = [_reactPageViewController.viewControllers objectAtIndex:0];
-    UIViewController *nextViewController = [_reactPageViewController.dataSource pageViewController:_reactPageViewController viewControllerAfterViewController:currentViewController];
-    if(!nextViewController) { return; }
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self setReactViewControllers:_currentIndex+1 with:nextViewController];
-    });
+//    [self setPage:[NSNumber numberWithInteger:(_currentIndex+1)]];
 }
 
 -(void) goToPreviousPage {
-    if(!_reactPageViewController) { return; }
-    if(![_reactPageViewController.viewControllers objectAtIndex:0]) { return; }
-    
-    UIViewController *currentViewController = [_reactPageViewController.viewControllers objectAtIndex:0];
-    UIViewController *previousViewController = [_reactPageViewController.dataSource pageViewController:_reactPageViewController viewControllerBeforeViewController:currentViewController];
-    if(!previousViewController) { return; }
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self setReactViewControllers:_currentIndex-1 with:previousViewController];
-    });
+//    [self setPage:[NSNumber numberWithInteger:(_currentIndex-1)]];
 }
 
 - (UIViewController *) getParentViewController {

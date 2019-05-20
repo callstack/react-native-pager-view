@@ -84,14 +84,14 @@ type Props = $ReadOnly<{|
 
 class ViewPagerAndroid extends React.Component<Props> {
            
-    goToNextPage = () => {
-      NativeModules.RNCViewPager.goToNextPage();
+    setPage = (selectedPage: number) => {
+      NativeModules.RNCViewPager.goToPage(selectedPage,true);
     };
-    
-    goToPreviousPage = () => {
-      NativeModules.RNCViewPager.goToPreviousPage();
+  
+    setPageWithoutAnimation = (selectedPage: number) => {
+      NativeModules.RNCViewPager.goToPage(selectedPage,false);
     };
-    
+
     render() {
       return (
         <NativeAndroidViewPager

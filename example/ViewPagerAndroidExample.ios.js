@@ -64,12 +64,12 @@ export default class ViewPagerAndroidExample extends React.Component {
         <Button
             enabled={true}
             text="Previous"
-            onPress={this.previous}
+            onPress={() => this.move(-1)}
           />
       <Button
             enabled={true}
             text="Next"
-            onPress={this.next}
+            onPress={() => this.move(+1)}
           />
         </View>
         <View style={styles.buttons}>
@@ -87,16 +87,24 @@ export default class ViewPagerAndroidExample extends React.Component {
   }
 
   onPageScroll = e => {
-    this.setState({position: e.nativeEvent.position});
+    this.setState({page: e.nativeEvent.position});
   };
 
-  next = () => {
-    this.viewPager.goToNextPage();
-  }
+  move = delta => {
+    const page = this.state.page + delta;
+    this.go(page);
+  };
 
-  previous = () => {
-    this.viewPager.goToPreviousPage();
-  }
+  go = page => {
+    if (this.state.animationsAreEnabled) {
+      this.viewPager.setPage(page);
+    } else {
+      this.viewPager.setPageWithoutAnimation(page);
+    }
+
+    this.setState({page});
+  };
+
 }
 
 const styles = StyleSheet.create({
