@@ -53,7 +53,7 @@ export default class ViewPagerAndroidExample extends React.Component {
           transitionStyle="scroll"
           orientation="horizontal"
           scrollEnabled={this.state.scrollEnabled}
-          onPageScroll={this.onPageScroll}
+          onPageSelected={this.onPageSelected}
           pageMargin={50}
           ref={viewPager => {
             this.viewPager = viewPager;
@@ -86,7 +86,7 @@ export default class ViewPagerAndroidExample extends React.Component {
         </View>);
   }
 
-  onPageScroll = e => {
+  onPageSelected = e => {
     this.setState({page: e.nativeEvent.position});
   };
 

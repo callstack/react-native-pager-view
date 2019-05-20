@@ -12,7 +12,7 @@ RCT_EXPORT_VIEW_PROPERTY(pageMargin, NSInteger)
 
 RCT_EXPORT_VIEW_PROPERTY(transitionStyle, UIPageViewControllerTransitionStyle)
 RCT_EXPORT_VIEW_PROPERTY(orientation, UIPageViewControllerNavigationOrientation)
-RCT_EXPORT_VIEW_PROPERTY(onPageScroll, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onPageSelected, RCTBubblingEventBlock)
 
 
 RCT_EXPORT_METHOD(goToPage:(nonnull NSNumber*) index animated:(BOOL) animated) {
@@ -39,11 +39,12 @@ RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView){
     if (pendingViewControllers.count == 1){
         NSMutableArray<UIViewController *> *childrenViewControllers = [_reactNativePageView childrenViewControllers];
         NSUInteger index = [childrenViewControllers indexOfObject: [pendingViewControllers objectAtIndex:0]];
-        _reactNativePageView.onPageScroll(@{@"position": [NSNumber numberWithLong:index]});
+        _reactNativePageView.onPageSelected(@{@"position": [NSNumber numberWithLong:index]});
     } else{
         RCTLog(@"Only one screen support");
     }
 }
+
 #pragma mark - Datasource After
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController {
@@ -60,7 +61,6 @@ RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView){
     if (index == [childrenViewControllers count]) {
         return nil;
     }
-    _reactNativePageView.currentIndex = index;
     return [childrenViewControllers objectAtIndex:index];
     
 }
@@ -81,7 +81,6 @@ RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView){
     }
     
     index--;
-    _reactNativePageView.currentIndex = index;
     return [childrenViewControllers objectAtIndex:index];
     
 }
