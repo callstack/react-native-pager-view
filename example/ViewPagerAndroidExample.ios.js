@@ -6,19 +6,12 @@
  * @flow
  * @format
  */
-import React from 'react';
-import { View, Text, StyleSheet, Image, Button } from 'react-native' 
-import ViewPagerAndroid from '@react-native-community/viewpager';
 
-const PAGES = 5;
-const BGCOLOR = ['#fdc08e', '#fff6b9', '#99d1b7', '#dde5fe', '#f79273'];
-const IMAGE_URIS = [
-  'https://apod.nasa.gov/apod/image/1410/20141008tleBaldridge001h990.jpg',
-  'https://apod.nasa.gov/apod/image/1409/volcanicpillar_vetter_960.jpg',
-  'https://apod.nasa.gov/apod/image/1409/m27_snyder_960.jpg',
-  'https://apod.nasa.gov/apod/image/1409/PupAmulti_rot0.jpg',
-  'https://apod.nasa.gov/apod/image/1510/lunareclipse_27Sep_beletskycrop4.jpg',
-];
+import React from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native' 
+import ViewPagerAndroid from '@react-native-community/viewpager';
+import {PAGES, BGCOLOR, IMAGE_URIS, createPage } from "./Common";
+import { Button } from "./src/component/Button";
 
 export default class ViewPagerAndroidExample extends React.Component {
 
@@ -27,7 +20,7 @@ export default class ViewPagerAndroidExample extends React.Component {
 
     const pages = [];
     for (let i = 0; i < PAGES; i++) {
-      pages.push(this.createPage(i));
+      pages.push(createPage(i));
     }
     
     this.state = {
@@ -39,18 +32,6 @@ export default class ViewPagerAndroidExample extends React.Component {
     };
   };
 
-  createPage(key) {
-    return {
-      key: key,
-      style: {
-        backgroundColor: BGCOLOR[key % BGCOLOR.length],
-        alignItems: 'center',
-        padding: 20,
-      }, 
-      imgSource: { uri: IMAGE_URIS[key % BGCOLOR.length] }
-    }
-  };
-  
   renderPage(page) {
     return (
       <View key={page.key} style={page.style} collapsable={false}>
@@ -80,12 +61,21 @@ export default class ViewPagerAndroidExample extends React.Component {
           { pages.map( page => this.renderPage(page)) }
         </ViewPagerAndroid>
         <View style={styles.buttons}>
-        <Button title="Previous" onPress={this.previous}/>
-        <Button title="Next" onPress={this.next}/>
+        <Button
+            enabled={true}
+            text="Previous"
+            onPress={this.previous}
+          />
+      <Button
+            enabled={true}
+            text="Next"
+            onPress={this.next}
+          />
         </View>
         <View style={styles.buttons}>
         <Button
-            title={
+            enabled={true}
+            text={
               this.state.scrollEnabled ? 'Scroll Enabled' : 'Scroll Disabled'
             }
             onPress={() =>
@@ -113,6 +103,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'black',
+    marginBottom: 20,
   },
   buttons: {
     flexDirection: 'row',
