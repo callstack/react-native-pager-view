@@ -11,8 +11,10 @@
 'use strict';
 
 const VIEWPAGER_REF = 'viewPager';
+const ReactNative = require('react-native');
 import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet';
 import React from "react";
+import { NativeModules } from 'react-native';
 const NativeAndroidViewPager = require('./AndroidViewPagerNativeComponent');
 
 type TransitionStyle = 'scroll' | 'curl'
@@ -81,9 +83,15 @@ type Props = $ReadOnly<{|
    */
 
 class ViewPagerAndroid extends React.Component<Props> {
+           
+    goToNextPage = () => {
+      NativeModules.RNCViewPager.goToNextPage();
+    };
     
-
-  
+    goToPreviousPage = () => {
+      NativeModules.RNCViewPager.goToPreviousPage();
+    };
+    
     render() {
       return (
         <NativeAndroidViewPager

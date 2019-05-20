@@ -67,7 +67,7 @@
 
 -(void) setReactViewControllers:(NSInteger) index with:(UIViewController *) pageViewController {
     _currentIndex = index;
-    [_reactPageViewController setViewControllers:[NSArray arrayWithObjects: pageViewController, nil] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+    [_reactPageViewController setViewControllers:[NSArray arrayWithObjects: pageViewController, nil] direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
 }
 
 - (UIViewController *)viewController:(UIView*)view {
@@ -87,7 +87,6 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         [self setReactViewControllers:_currentIndex+1 with:nextViewController];
     });
-
 }
 
 -(void) goToPreviousPage {

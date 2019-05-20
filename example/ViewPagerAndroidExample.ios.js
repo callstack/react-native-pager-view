@@ -9,8 +9,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, Button } from 'react-native' 
 import ViewPagerAndroid from '@react-native-community/viewpager';
-import { NativeModules } from 'react-native';
-
 
 const PAGES = 5;
 const BGCOLOR = ['#fdc08e', '#fff6b9', '#99d1b7', '#dde5fe', '#f79273'];
@@ -75,7 +73,10 @@ export default class ViewPagerAndroidExample extends React.Component {
           orientation="horizontal"
           scrollEnabled={this.state.scrollEnabled}
           onPageScroll={this.onPageScroll}
-          pageMargin={50}>
+          pageMargin={50}
+          ref={viewPager => {
+            this.viewPager = viewPager;
+          }}>
           { pages.map( page => this.renderPage(page)) }
         </ViewPagerAndroid>
         <View style={styles.buttons}>
@@ -100,11 +101,11 @@ export default class ViewPagerAndroidExample extends React.Component {
   };
 
   next = () => {
-    NativeModules.RNCViewPager.goToNextPage();
+    this.viewPager.goToNextPage();
   }
 
   previous = () => {
-    NativeModules.RNCViewPager.goToPreviousPage();
+    this.viewPager.goToPreviousPage();
   }
 }
 
