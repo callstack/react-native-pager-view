@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)embed;
 - (void) goToNextPage;
 - (void) goToPreviousPage;
-- (void) goToPage:(NSNumber*) index animated:(BOOL) animated;
+- (void) goTo:(NSNumber*) index animated:(BOOL) animated;
 - (void) shouldScroll:(BOOL) scrollEnabled;
 @end
 

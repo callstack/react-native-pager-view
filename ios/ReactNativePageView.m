@@ -77,7 +77,7 @@
     
 }
 
-- (void) goToPage:(NSNumber*) index animated:(BOOL) animated {
+- (void) goTo:(NSNumber*) index animated:(BOOL) animated {
     if (_currentIndex >= 0 && index.integerValue < _childrenViewControllers.count) {
         UIPageViewControllerNavigationDirection direction =
         (index.integerValue > _currentIndex) ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;

@@ -16,7 +16,15 @@ RCT_EXPORT_VIEW_PROPERTY(onPageSelected, RCTBubblingEventBlock)
 
 
 RCT_EXPORT_METHOD(goToPage:(nonnull NSNumber*) reactTag index:(nonnull NSNumber*) index animated:(BOOL) animated) {
-    [(ReactNativePageView*)[self view] goToPage:index animated:animated];
+    [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
+        ReactNativePageView *view = viewRegistry[reactTag];
+        if (!view || ![view isKindOfClass:[ReactNativePageView class]]) {
+            RCTLogError(@"Cannot find ReactNativePageView with tag #%@", reactTag);
+            return;
+        }
+        [view goTo:index animated:animated];
+    }];
+
 }
 
 RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView){

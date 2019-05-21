@@ -25,7 +25,6 @@ export default class ViewPagerAndroidExample extends React.Component {
     
     this.state = {
       page: 0,
-      page2:0,
       animationsAreEnabled: true,
       scrollEnabled: true,
       position: 0,
@@ -61,30 +60,51 @@ export default class ViewPagerAndroidExample extends React.Component {
           }}>
           { pages.map( page => this.renderPage(page)) }
         </ViewPagerAndroid>
-        <ViewPagerAndroid
-          style={styles.viewPager}
-          initialPage={0}
-          transitionStyle="scroll"
-          orientation="horizontal"
-          pageMargin={50}
-          onPageSelected={this.onPageSelected2}
-          ref={viewPager2 => {
-            this.viewPager2 = viewPager2;
-          }}>
-          { pages.map( page => this.renderPage(page)) }
-        </ViewPagerAndroid>
+        <View style={styles.buttons}>
+        <Button
+            enabled={true}
+            text="Previous"
+            onPress={() => this.move(-1)}
+          />
+      <Button
+            enabled={true}
+            text="Next"
+            onPress={() => this.move(+1)}
+          />
+        </View>
+        <View style={styles.buttons}>
+        <Button
+            enabled={true}
+            text={
+              this.state.scrollEnabled ? 'Scroll Enabled' : 'Scroll Disabled'
+            }
+            onPress={() =>
+              this.setState({scrollEnabled: !this.state.scrollEnabled})
+            }
+          />
+        </View>
         </View>);
   }
 
   onPageSelected = e => {
-    console.log(`page ${e.nativeEvent.position}`)
     this.setState({page: e.nativeEvent.position});
   };
-  
-  onPageSelected2 = e => {
-    console.log(`page2 ${e.nativeEvent.position}`)
-    this.setState({page2: e.nativeEvent.position});
+
+  move = delta => {
+    const page = this.state.page + delta;
+    this.go(page);
   };
+
+  go = page => {
+    if (this.state.animationsAreEnabled) {
+      this.viewPager.setPage(page);
+    } else {
+      this.viewPager.setPageWithoutAnimation(page);
+    }
+
+    this.setState({page});
+  };
+
 }
 
 const styles = StyleSheet.create({
