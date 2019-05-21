@@ -6,10 +6,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ReactNativePageView : UIView
+@interface ReactNativePageView : UIView<UIPageViewControllerDataSource, UIPageViewControllerDelegate>
 @property (strong, nonatomic, readonly) ReactPageViewController *reactPageViewController;
-@property (nullable, nonatomic, weak) id <UIPageViewControllerDelegate> delegate;
-@property (nullable, nonatomic, weak) id <UIPageViewControllerDataSource> dataSource;
 
 @property (nonatomic, strong) NSMutableArray<UIViewController *> *childrenViewControllers;
 @property (nonatomic) NSInteger initialPage;

@@ -6,8 +6,8 @@
 #import "ReactNativePageView.h"
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ReactViewPagerManager : RCTViewManager<UIPageViewControllerDataSource, UIPageViewControllerDelegate>
-@property (strong, nonatomic) ReactNativePageView *reactNativePageView;
+@interface ReactViewPagerManager : RCTViewManager
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -36,8 +36,8 @@
         [self addSubview:reactPageViewController.view];
         reactPageViewController.view.frame = [self bounds];
         _reactPageViewController = reactPageViewController;
-        _reactPageViewController.delegate = _delegate;
-        _reactPageViewController.dataSource = _dataSource;
+        _reactPageViewController.delegate = self;
+        _reactPageViewController.dataSource = self;
         [self renderChildrenViewControllers];
     } else {
         RCTLog(@"getParentViewController returns nil");
@@ -106,5 +106,64 @@
     }
     return nil;
 }
+
+#pragma mark - Delegate
+
+- (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray<UIViewController *> *)pendingViewControllers {
+    if (pendingViewControllers.count == 1){
+        NSMutableArray<UIViewController *> *childrenViewControllers = _childrenViewControllers;
+        NSUInteger index = [childrenViewControllers indexOfObject: [pendingViewControllers objectAtIndex:0]];
+        if (_onPageSelected) {
+            _onPageSelected(@{@"position": [NSNumber numberWithLong:index]});
+        }
+    } else{
+        RCTLog(@"Only one screen support");
+    }
+}
+
+#pragma mark - Datasource After
+
+- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController {
+    NSUInteger index = [_childrenViewControllers indexOfObject:viewController];
+    
+    if (index == NSNotFound) {
+        return nil;
+    }
+    
+    index++;
+    
+    if (index == [_childrenViewControllers count]) {
+        return nil;
+    }
+    return [_childrenViewControllers objectAtIndex:index];
+    
+}
+
+#pragma mark - Datasource Before
+
+- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController {
+    NSUInteger index = [_childrenViewControllers indexOfObject:viewController];
+    
+    if (index == NSNotFound) {
+        return nil;
+    }
+    
+    if (index == 0) {
+        return nil;
+    }
+    
+    index--;
+    return [_childrenViewControllers objectAtIndex:index];
+    
+}
+
+- (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController {
+    return [_childrenViewControllers count];
+}
+
+- (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController {
+    return _currentIndex;
+}
+
 
 @end
