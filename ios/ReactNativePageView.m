@@ -88,14 +88,6 @@
     }
 }
 
--(void) goToNextPage {
-//    [self setPage:[NSNumber numberWithInteger:(_currentIndex+1)]];
-}
-
--(void) goToPreviousPage {
-//    [self setPage:[NSNumber numberWithInteger:(_currentIndex-1)]];
-}
-
 - (UIViewController *) getParentViewController {
     UIResponder *parentResponder = self;
     while (parentResponder != nil) {

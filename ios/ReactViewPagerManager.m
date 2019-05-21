@@ -17,7 +17,7 @@ RCT_EXPORT_VIEW_PROPERTY(onPageSelected, RCTBubblingEventBlock)
 
 RCT_EXPORT_METHOD(goToPage:(nonnull NSNumber*) reactTag index:(nonnull NSNumber*) index animated:(BOOL) animated) {
     [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
-        ReactNativePageView *view = viewRegistry[reactTag];
+        ReactNativePageView *view = (ReactNativePageView*) viewRegistry[reactTag];
         if (!view || ![view isKindOfClass:[ReactNativePageView class]]) {
             RCTLogError(@"Cannot find ReactNativePageView with tag #%@", reactTag);
             return;
