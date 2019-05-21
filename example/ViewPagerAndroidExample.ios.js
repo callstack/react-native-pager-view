@@ -10,7 +10,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native' 
 import ViewPagerAndroid from '@react-native-community/viewpager';
-import {PAGES, BGCOLOR, IMAGE_URIS, createPage } from "./Common";
+import { PAGES, BGCOLOR, IMAGE_URIS, createPage } from "./Common";
 import { Button } from "./src/component/Button";
 
 export default class ViewPagerAndroidExample extends React.Component {

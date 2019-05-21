@@ -9,6 +9,7 @@ export const IMAGE_URIS = [
   'https://apod.nasa.gov/apod/image/1409/PupAmulti_rot0.jpg',
   'https://apod.nasa.gov/apod/image/1510/lunareclipse_27Sep_beletskycrop4.jpg',
 ];
+export const thumbsUp = '\uD83D\uDC4D';
 
 export const createPage = (key) => {
     return {

@@ -30,7 +30,7 @@
 - (void)embed {
     if([self getParentViewController]){
         NSDictionary *options = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                 [NSNumber numberWithInt:_pageMargin], UIPageViewControllerOptionInterPageSpacingKey,nil];
+                                 [NSNumber numberWithLong:_pageMargin], UIPageViewControllerOptionInterPageSpacingKey,nil];
         
         ReactPageViewController *reactPageViewController = [[ReactPageViewController alloc] initWithTransitionStyle: _transitionStyle navigationOrientation: _orientation options:options];
         [self addSubview:reactPageViewController.view];

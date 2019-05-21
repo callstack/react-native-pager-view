@@ -1,15 +1,14 @@
 // @flow
 
-const React = require('react');
-const ReactNative = require('react-native');
-const {
+import React from 'react';
+import {
   Image,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
   TouchableOpacity,
   View,
-} = ReactNative;
+} from 'react-native'
 import ViewPagerAndroid from '@react-native-community/viewpager';
 
 export class Button extends React.Component {

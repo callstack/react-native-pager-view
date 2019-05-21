@@ -1,16 +1,15 @@
 // @flow
 
-const React = require('react');
-const ReactNative = require('react-native');
-const {
-  Image,
+import React from 'react';
+import { Image,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
   TouchableOpacity,
-  View,
-} = ReactNative;
+  View } from 'react-native' 
+
 import ViewPagerAndroid from '@react-native-community/viewpager';
+import { thumbsUp } from './../../Common'
 
 type Props = $ReadOnly<{||}>;
 type State = {|likes: number|};
@@ -20,11 +19,10 @@ class LikeCount extends React.Component<Props, State> {
   };
 
   onClick = () => {
-    this.setState({likes: this.state.likes + 1});
+    this.setState(state => ({ likes: state.likes + 1}));
   };
 
   render() {
-    const thumbsUp = '\uD83D\uDC4D';
     return (
       <View style={styles.likeContainer}>
         <TouchableOpacity onPress={this.onClick} style={styles.likeButton}>

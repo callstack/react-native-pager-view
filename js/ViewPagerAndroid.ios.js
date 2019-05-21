@@ -11,13 +11,11 @@
 'use strict';
 
 const VIEWPAGER_REF = 'viewPager';
-const ReactNative = require('react-native');
-const {UIManager} = ReactNative;
 
+import ReactNative, {UIManager} from 'react-native'
 import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet';
 import React from "react";
-import { NativeModules } from 'react-native';
-const NativeAndroidViewPager = require('./AndroidViewPagerNativeComponent');
+import NativeAndroidViewPager from './AndroidViewPagerNativeComponent';
 
 type TransitionStyle = 'scroll' | 'curl'
 type Orientation = 'horizontal' | 'vertical'
