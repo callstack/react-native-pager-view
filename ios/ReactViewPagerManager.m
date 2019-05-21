@@ -15,7 +15,7 @@ RCT_EXPORT_VIEW_PROPERTY(orientation, UIPageViewControllerNavigationOrientation)
 RCT_EXPORT_VIEW_PROPERTY(onPageSelected, RCTBubblingEventBlock)
 
 
-RCT_EXPORT_METHOD(goToPage:(nonnull NSNumber*) index animated:(BOOL) animated) {
+RCT_EXPORT_METHOD(goToPage:(nonnull NSNumber*) reactTag index:(nonnull NSNumber*) index animated:(BOOL) animated) {
     [_reactNativePageView goToPage:index animated:animated];
 }
 

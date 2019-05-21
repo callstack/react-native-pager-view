@@ -12,6 +12,8 @@
 
 const VIEWPAGER_REF = 'viewPager';
 const ReactNative = require('react-native');
+const {UIManager} = ReactNative;
+
 import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet';
 import React from "react";
 import { NativeModules } from 'react-native';
@@ -82,14 +84,31 @@ type Props = $ReadOnly<{|
    * ```
    */
 
+function getViewManagerConfig(viewManagerName) {
+    if (!UIManager.getViewManagerConfig) {
+      // react-native <= 0.57
+      return UIManager[viewManagerName];
+    }
+    return UIManager.getViewManagerConfig(viewManagerName);
+  }
+
+  
 class ViewPagerAndroid extends React.Component<Props> {
            
     setPage = (selectedPage: number) => {
-      NativeModules.RNCViewPager.goToPage(selectedPage,true);
+      UIManager.dispatchViewManagerCommand(
+        ReactNative.findNodeHandle(this),
+        getViewManagerConfig('RNCViewPager').Commands.goToPage,
+        [selectedPage,true],
+      );
     };
   
     setPageWithoutAnimation = (selectedPage: number) => {
-      NativeModules.RNCViewPager.goToPage(selectedPage,false);
+      UIManager.dispatchViewManagerCommand(
+        ReactNative.findNodeHandle(this),
+        getViewManagerConfig('RNCViewPager').Commands.goToPage,
+        [selectedPage,false],
+      );
     };
 
     render() {
