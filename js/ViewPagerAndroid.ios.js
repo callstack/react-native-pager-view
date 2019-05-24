@@ -31,12 +31,12 @@ type Props = $ReadOnly<{|
      * Index of initial page that should be selected. Use `setPage` method to
      * update the page, and `onPageSelected` to monitor page changes
      */
-    onPageSelected?: ?(e: PageSelectedEvent) => void,
-    orientation?: ?Orientation,
-    transitionStyle?: ?TransitionStyle,
-    pageMargin?: ?number,
-    scrollEnabled?: ?number,
-    initialPage?: ?number,
+    onPageSelected?: (e: PageSelectedEvent) => void,
+    orientation?: Orientation,
+    transitionStyle?: TransitionStyle,
+    pageMargin?: number,
+    scrollEnabled?: boolean,
+    initialPage?: number,
     style?: ?ViewStyleProp,
   |}>;
   
@@ -83,14 +83,13 @@ type Props = $ReadOnly<{|
    */
 
 function getViewManagerConfig(viewManagerName) {
-    if (!UIManager.getViewManagerConfig) {
-      // react-native <= 0.57
-      return UIManager[viewManagerName];
-    }
-    return UIManager.getViewManagerConfig(viewManagerName);
+  if (!UIManager.getViewManagerConfig) {
+    // react-native <= 0.57
+    return UIManager[viewManagerName];
   }
+  return UIManager.getViewManagerConfig(viewManagerName);
+}
 
-  
 class ViewPagerAndroid extends React.Component<Props> {
            
     setPage = (selectedPage: number) => {
@@ -114,7 +113,6 @@ class ViewPagerAndroid extends React.Component<Props> {
         <NativeAndroidViewPager
           {...this.props}
           ref={VIEWPAGER_REF}
-          style={this.props.style}
         />
       );
     }
