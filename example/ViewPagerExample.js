@@ -16,6 +16,7 @@ import { Image,
   TouchableWithoutFeedback,
   TouchableOpacity,
   View, 
+  SafeAreaView,
   Platform } from 'react-native' 
 
 import ViewPagerAndroid from '@react-native-community/viewpager';
@@ -110,7 +111,7 @@ export default class ViewPagerAndroidExample extends React.Component {
       addPageButton =  <Button enabled={true} text="Add new page" onPress={this.addPage} />;
     }
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <ViewPagerAndroid
           style={styles.viewPager}
           initialPage={0}
@@ -176,7 +177,7 @@ export default class ViewPagerAndroidExample extends React.Component {
             onPress={() => this.go(pages.length - 1)}
           />
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }
