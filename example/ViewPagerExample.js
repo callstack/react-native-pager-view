@@ -25,7 +25,7 @@ import { Button } from "./src/component/Button";
 import { LikeCount } from "./src/component/LikeCount";
 import { ProgressBar } from "./src/component/ProgressBar";
 
-export default class ViewPagerAndroidExample extends React.Component {
+export default class ViewPagerExample extends React.Component {
   constructor(props) {
     super(props);
 
