@@ -9,10 +9,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import ViewPagerAndroid from '@react-native-community/viewpager';
 
 export class Button extends React.Component {
-    _handlePress = () => {
+    
+  _handlePress = () => {
       if (this.props.enabled && this.props.onPress) {
         this.props.onPress();
       }

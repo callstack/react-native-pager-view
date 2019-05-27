@@ -8,12 +8,12 @@ import { Image,
   TouchableOpacity,
   View } from 'react-native' 
 
-import ViewPagerAndroid from '@react-native-community/viewpager';
 import { thumbsUp } from './../../Common'
 
 type Props = $ReadOnly<{||}>;
 type State = {|likes: number|};
-class LikeCount extends React.Component<Props, State> {
+
+export class LikeCount extends React.Component<Props, State> {
   state = {
     likes: 7,
   };
@@ -35,9 +35,21 @@ class LikeCount extends React.Component<Props, State> {
 }
 
 const styles = StyleSheet.create({
-    likesText: {
+  likeContainer: {
+    flexDirection: 'row',
+    height: 45,
+  },
+  likesText: {
       flex: 1,
       fontSize: 18,
       alignSelf: 'center',
     },
-  });
+  likeButton: {
+    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+    borderColor: '#333333',
+    borderWidth: 1,
+    borderRadius: 5,
+    flex: 1,
+    margin: 8,
+  },
+});
