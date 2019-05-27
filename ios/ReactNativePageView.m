@@ -19,8 +19,10 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     if (_reactPageViewController) {
-        _reactPageViewController.view.frame = [self bounds];
         _reactPageViewController.view.userInteractionEnabled = _scrollEnabled;
+        
+        //Below line fix bug, where the view does not update after orientation changed.
+        [self goTo:[NSNumber numberWithInteger:_currentIndex] animated:NO];
     } else {
         [self embed];
     }
@@ -38,6 +40,7 @@
          initWithTransitionStyle:_transitionStyle
          navigationOrientation:_orientation
          options:options];
+        
         [self addSubview:reactPageViewController.view];
         reactPageViewController.view.frame = [self bounds];
         _reactPageViewController = reactPageViewController;
@@ -136,6 +139,7 @@ willTransitionToViewControllers:
         _childrenViewControllers;
         NSUInteger index = [childrenViewControllers
                             indexOfObject:[pendingViewControllers objectAtIndex:0]];
+        _currentIndex = index;
         if (_onPageSelected) {
             _onPageSelected(@{@"position" : [NSNumber numberWithLong:index]});
         }
