@@ -96,9 +96,6 @@
 }
 
 - (void)goTo:(NSNumber *)index animated:(BOOL)animated {
-    if (!_scrollEnabled) {
-        return;
-    }
     if (_currentIndex >= 0 &&
         index.integerValue < _childrenViewControllers.count) {
         
