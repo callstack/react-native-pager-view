@@ -41,12 +41,15 @@
          navigationOrientation:_orientation
          options:options];
         
-        [self addSubview:reactPageViewController.view];
-        reactPageViewController.view.frame = [self bounds];
         _reactPageViewController = reactPageViewController;
         _reactPageViewController.delegate = self;
         _reactPageViewController.dataSource = self;
         [self renderChildrenViewControllers];
+        _reactPageIndicatorView = [self createPageIndicator:self];
+        _reactPageIndicatorView.hidden = !_showPageIndicator;
+        [reactPageViewController.view addSubview:_reactPageIndicatorView];
+        [self addSubview:reactPageViewController.view];
+        reactPageViewController.view.frame = [self bounds];
     } else {
         RCTLog(@"getParentViewController returns nil");
     }
@@ -65,7 +68,7 @@
     for (UIView *view in [self reactSubviews]) {
         [view removeFromSuperview];
         UIViewController *pageViewController = [self createChildViewController:view];
-        if (index == self.initialPage) {
+        if (index == _initialPage) {
             [self
              setReactViewControllers:index
              with:pageViewController
@@ -99,6 +102,7 @@
     if (_currentIndex >= 0 &&
         index.integerValue < _childrenViewControllers.count) {
         
+        _reactPageIndicatorView.currentPage = index.integerValue;
         UIPageViewControllerNavigationDirection direction =
         (index.integerValue > _currentIndex)
         ? UIPageViewControllerNavigationDirectionForward
@@ -140,6 +144,7 @@ willTransitionToViewControllers:
         if (_onPageSelected) {
             _onPageSelected(@{@"position" : [NSNumber numberWithLong:index]});
         }
+        _reactPageIndicatorView.currentPage = index;
     } else {
         RCTLog(@"Only one screen support");
     }
@@ -183,14 +188,28 @@ willTransitionToViewControllers:
     return [_childrenViewControllers objectAtIndex:index];
 }
 
-- (NSInteger)presentationCountForPageViewController:
-(UIPageViewController *)pageViewController {
-    return [_childrenViewControllers count];
+#pragma mark - UIPageControl
+- (void)shouldShowPageIndicator:(BOOL)showPageIndicator {
+    _showPageIndicator = showPageIndicator;
+    if (_reactPageIndicatorView){
+        _reactPageIndicatorView.hidden = !showPageIndicator;
+    }
 }
 
-- (NSInteger)presentationIndexForPageViewController:
-(UIPageViewController *)pageViewController {
-    return _currentIndex;
+- (UIPageControl *)createPageIndicator:(UIView *)parentView {
+    CGPoint parentOrigin = parentView.frame.origin;
+    CGSize parentSize = parentView.frame.size;
+    UIPageControl *pageControl = [[UIPageControl alloc]
+                                  initWithFrame:(CGRectMake(parentOrigin.x,
+                                                            parentSize.height - 70,
+                                                            parentSize.width,
+                                                            70))];
+    pageControl.numberOfPages = _childrenViewControllers.count;
+    pageControl.currentPage = _initialPage;
+    pageControl.tintColor = UIColor.blackColor;
+    pageControl.pageIndicatorTintColor = UIColor.whiteColor;
+    pageControl.currentPageIndicatorTintColor = UIColor.blackColor;
+    return pageControl;
 }
 
 @end
