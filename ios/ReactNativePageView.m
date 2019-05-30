@@ -31,17 +31,17 @@
 
 -(void)shouldAddNewPage {
     if (self.reactSubviews.count != _childrenViewControllers.count && _childrenViewControllers.count > 0) {
-        [self addPage: self.reactSubviews.lastObject];
+        [self addPage];
     }
 }
 
-- (void)addPage:(UIView *)page {
+- (void)addPage {
     if ([self reactViewController]) {
         for (UIView *view in [self reactSubviews]) {
             [view removeFromSuperview];
         }
-        [page removeFromSuperview];
-        UIViewController *pageViewController = [self createChildViewController:page];
+        [self.reactSubviews.lastObject removeFromSuperview];
+        UIViewController *pageViewController = [self createChildViewController:self.reactSubviews.lastObject];
         [_childrenViewControllers addObject:pageViewController];
         _reactPageIndicatorView.numberOfPages = _childrenViewControllers.count;
     } else {
