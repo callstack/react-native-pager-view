@@ -92,8 +92,47 @@ function getViewManagerConfig(viewManagerName) {
 }
 
 class ViewPagerAndroid extends React.Component<Props> {
-           
-    setPage = (selectedPage: number) => {
+  
+  _childrenWithOverridenStyle = (): Array => {
+    // Override styles so that each page will fill the parent. Native component
+    // will handle positioning of elements, so it's not important to offset
+    // them correctly.
+    return React.Children.map(this.props.children, function(child) {
+      if (!child) {
+        return null;
+      }
+      const newProps = {
+        ...child.props,
+        style: [
+          child.props.style,
+          {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            width: undefined,
+            height: undefined,
+          },
+        ],
+        collapsable: false,
+      };
+      if (
+        child.type &&
+        child.type.displayName &&
+        child.type.displayName !== 'RCTView' &&
+        child.type.displayName !== 'View'
+      ) {
+        console.warn(
+          'Each ViewPager child must be a <View>. Was ' +
+            child.type.displayName,
+        );
+      }
+      return React.createElement(child.type, newProps);
+    });
+  };
+  
+  setPage = (selectedPage: number) => {
       UIManager.dispatchViewManagerCommand(
         ReactNative.findNodeHandle(this),
         getViewManagerConfig('RNCViewPager').Commands.goToPage,
@@ -114,6 +153,7 @@ class ViewPagerAndroid extends React.Component<Props> {
         <NativeAndroidViewPager
           {...this.props}
           ref={VIEWPAGER_REF}
+          children={this._childrenWithOverridenStyle()}
         />
       );
     }

@@ -19,6 +19,7 @@
 - (void)layoutSubviews {
     [super layoutSubviews];
     if (_reactPageViewController) {
+        [self shouldAddNewPage];
         _reactPageViewController.view.userInteractionEnabled = _scrollEnabled;
         
         //Below line fix bug, where the view does not update after orientation changed.
@@ -28,6 +29,27 @@
     }
 }
 
+-(void)shouldAddNewPage {
+    if (self.reactSubviews.count != _childrenViewControllers.count && _childrenViewControllers.count > 0) {
+        [self addPage: self.reactSubviews.lastObject];
+    }
+}
+
+- (void)addPage:(UIView *)page {
+    if ([self getParentViewController]) {
+        for (UIView *view in [self reactSubviews]) {
+            [view removeFromSuperview];
+        }
+        [page removeFromSuperview];
+        UIViewController *pageViewController = [self createChildViewController:page];
+        [_childrenViewControllers addObject:pageViewController];
+        _reactPageIndicatorView.numberOfPages = _childrenViewControllers.count;
+        [self goTo:[NSNumber numberWithInteger:_currentIndex] animated:NO];
+    } else {
+        RCTLog(@"getParentViewController returns nil");
+    }
+}
+    
 - (void)embed {
     if ([self getParentViewController]) {
         NSDictionary *options = [NSMutableDictionary
@@ -189,6 +211,7 @@ willTransitionToViewControllers:
 }
 
 #pragma mark - UIPageControl
+
 - (void)shouldShowPageIndicator:(BOOL)showPageIndicator {
     _showPageIndicator = showPageIndicator;
     if (_reactPageIndicatorView){

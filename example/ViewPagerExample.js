@@ -103,19 +103,13 @@ export default class ViewPagerExample extends React.Component {
 
   render() {
     const {page, pages, animationsAreEnabled} = this.state;
-    //This is not implemented on iOS
-    let addPageButton;
-    if (Platform.OS === 'ios') {
-      addPageButton = null
-    } else {
-      addPageButton =  <Button enabled={true} text="Add new page" onPress={this.addPage} />;
-    }
     return (
       <SafeAreaView style={styles.container}>
         <ViewPagerAndroid
           style={styles.viewPager}
           initialPage={0}
           scrollEnabled={this.state.scrollEnabled}
+          showPageIndicator={true}
           onPageScroll={this.onPageScroll}
           onPageSelected={this.onPageSelected}
           onPageScrollStateChanged={this.onPageScrollStateChanged}
@@ -135,7 +129,7 @@ export default class ViewPagerExample extends React.Component {
               this.setState({scrollEnabled: !this.state.scrollEnabled})
             }
           />
-          {addPageButton}
+          <Button enabled={true} text="Add new page" onPress={this.addPage} />
         </View>
         <View style={styles.buttons}>
           {animationsAreEnabled ? (
