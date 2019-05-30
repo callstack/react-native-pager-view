@@ -36,7 +36,7 @@
 }
 
 - (void)addPage:(UIView *)page {
-    if ([self getParentViewController]) {
+    if ([self reactViewController]) {
         for (UIView *view in [self reactSubviews]) {
             [view removeFromSuperview];
         }
@@ -44,7 +44,6 @@
         UIViewController *pageViewController = [self createChildViewController:page];
         [_childrenViewControllers addObject:pageViewController];
         _reactPageIndicatorView.numberOfPages = _childrenViewControllers.count;
-        [self goTo:[NSNumber numberWithInteger:_currentIndex] animated:NO];
     } else {
         RCTLog(@"getParentViewController returns nil");
     }
@@ -147,17 +146,6 @@
                                  animated:animated];
         });
     }
-}
-
-- (UIViewController *)getParentViewController {
-    UIResponder *parentResponder = self;
-    while (parentResponder != nil) {
-        parentResponder = parentResponder.nextResponder;
-        if ([parentResponder isKindOfClass:UIViewController.class]) {
-            return (UIViewController *)parentResponder;
-        }
-    }
-    return nil;
 }
 
 #pragma mark - Delegate
