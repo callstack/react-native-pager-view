@@ -139,12 +139,11 @@
         
         UIViewController *viewController =
         [_childrenViewControllers objectAtIndex:index.integerValue];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self setReactViewControllers:index.integerValue
+        [self setReactViewControllers:index.integerValue
                                      with:viewController
                                 direction:direction
                                  animated:animated];
-        });
+
     }
 }
 
