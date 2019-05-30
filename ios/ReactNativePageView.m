@@ -29,19 +29,23 @@
 }
 
 - (void)didUpdateReactSubviews {
-    [self shouldAddNewPage];
+    [self shouldAddNewPages];
 }
 
--(void)shouldAddNewPage {
-    if (self.reactSubviews.count != _childrenViewControllers.count && _childrenViewControllers.count > 0) {
-        [self addPage];
+-(void)shouldAddNewPages {
+    if (self.reactSubviews.count > _childrenViewControllers.count && _childrenViewControllers.count > 0) {
+        [self addPages];
     }
 }
 
-- (void)addPage {
+- (void)addPages {
     if ([self reactViewController]) {
-        UIViewController *pageViewController = [self createChildViewController:self.reactSubviews.lastObject];
-        [_childrenViewControllers addObject:pageViewController];
+        NSInteger diff = self.reactSubviews.count - _childrenViewControllers.count;
+        NSArray* newArray =  [self.reactSubviews subarrayWithRange:NSMakeRange(_childrenViewControllers.count, diff)];
+        for (UIView *newView in newArray) {
+            UIViewController *pageViewController = [self createChildViewController:newView];
+            [_childrenViewControllers addObject:pageViewController];
+        }
         _reactPageIndicatorView.numberOfPages = _childrenViewControllers.count;
     } else {
         RCTLog(@"getParentViewController returns nil");
