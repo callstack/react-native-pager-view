@@ -109,7 +109,6 @@ export default class ViewPagerExample extends React.Component {
           style={styles.viewPager}
           initialPage={0}
           scrollEnabled={this.state.scrollEnabled}
-          showPageIndicator={true}
           onPageScroll={this.onPageScroll}
           onPageSelected={this.onPageSelected}
           onPageScrollStateChanged={this.onPageScrollStateChanged}

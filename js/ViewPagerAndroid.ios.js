@@ -36,7 +36,6 @@ type Props = $ReadOnly<{|
     transitionStyle?: TransitionStyle,
     pageMargin?: number,
     scrollEnabled?: boolean,
-    showPageIndicator?: boolean,
     initialPage?: number,
     style?: ?ViewStyleProp,
   |}>;
