@@ -51,7 +51,7 @@
 }
     
 - (void)embed {
-    if ([self getParentViewController]) {
+    if ([self reactViewController]) {
         NSDictionary *options = [NSMutableDictionary
                                  dictionaryWithObjectsAndKeys:
                                  [NSNumber numberWithLong:_pageMargin],
@@ -69,9 +69,17 @@
         [self renderChildrenViewControllers];
         _reactPageIndicatorView = [self createPageIndicator:self];
         _reactPageIndicatorView.hidden = !_showPageIndicator;
+        
+        [[self reactViewController] addChildViewController:_reactPageViewController];
+        
         [reactPageViewController.view addSubview:_reactPageIndicatorView];
         [self addSubview:reactPageViewController.view];
-        reactPageViewController.view.frame = [self bounds];
+        _reactPageViewController.view.frame = [self bounds];
+        
+        [_reactPageViewController didMoveToParentViewController:[self reactViewController]];
+        
+        // Add the page view controller's gesture recognizers to the view controller's view so that the gestures are started more easily.
+        self.gestureRecognizers = _reactPageViewController.gestureRecognizers;
     } else {
         RCTLog(@"getParentViewController returns nil");
     }
