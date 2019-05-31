@@ -68,6 +68,13 @@
         _reactPageViewController = reactPageViewController;
         _reactPageViewController.delegate = self;
         _reactPageViewController.dataSource = self;
+
+        for (UIView *subview in _reactPageViewController.view.subviews) {
+            if([subview isKindOfClass:UIScrollView.class]){
+                ((UIScrollView *)subview).delegate = self;
+            }
+        }
+        
         [self renderChildrenViewControllers];
         _reactPageIndicatorView = [self createPageIndicator:self];
         _reactPageIndicatorView.hidden = !_showPageIndicator;
@@ -235,6 +242,16 @@ willTransitionToViewControllers:
     pageControl.pageIndicatorTintColor = UIColor.whiteColor;
     pageControl.currentPageIndicatorTintColor = UIColor.blackColor;
     return pageControl;
+}
+
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    CGPoint point = scrollView.contentOffset;
+    float percentComplete = fabs(point.x - self.frame.size.width)/self.frame.size.width;
+    BOOL direction = point.x - self.frame.size.width > 0;
+    NSLog(@"%f",percentComplete);
+    NSLog(direction ? @"forward" : @"reverse");
 }
 
 @end

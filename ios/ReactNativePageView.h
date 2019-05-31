@@ -5,7 +5,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ReactNativePageView: UIView <UIPageViewControllerDataSource, UIPageViewControllerDelegate>
+@interface ReactNativePageView: UIView <UIPageViewControllerDataSource, UIPageViewControllerDelegate,UIScrollViewDelegate>
 
 @property(strong, nonatomic, readonly) ReactPageViewController *reactPageViewController;
 @property(strong, nonatomic, readonly) UIPageControl *reactPageIndicatorView;
