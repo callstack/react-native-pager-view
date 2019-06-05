@@ -2,7 +2,9 @@
 #import "ReactNativePageView.h"
 #import "React/RCTLog.h"
 
-@implementation ReactNativePageView
+@implementation ReactNativePageView {
+    UIPageViewControllerNavigationDirection swipeDirection;
+}
 - (instancetype)init {
     self = [super init];
     if (self) {
@@ -175,14 +177,36 @@ willTransitionToViewControllers:
         _childrenViewControllers;
         NSUInteger index = [childrenViewControllers
                             indexOfObject:[pendingViewControllers objectAtIndex:0]];
-        _currentIndex = index;
-        if (_onPageSelected) {
-            _onPageSelected(@{@"position" : [NSNumber numberWithLong:index]});
-        }
-        _reactPageIndicatorView.currentPage = index;
+        swipeDirection = (index > _currentIndex)
+        ? UIPageViewControllerNavigationDirectionForward
+        : UIPageViewControllerNavigationDirectionReverse;
     } else {
         RCTLog(@"Only one screen support");
     }
+}
+
+- (void)pageViewController:(UIPageViewController *)pageViewController
+                            didFinishAnimating:(BOOL)finished
+                            previousViewControllers: (nonnull NSArray<UIViewController *> *)previousViewControllers
+                            transitionCompleted:(BOOL)completed {
+    if (completed){
+        NSUInteger index = [_childrenViewControllers indexOfObject:[previousViewControllers objectAtIndex:0]];
+        switch (swipeDirection) {
+            case UIPageViewControllerNavigationDirectionForward:
+                _currentIndex++;
+                break;
+            case UIPageViewControllerNavigationDirectionReverse:
+                _currentIndex--;
+                break;
+            default:
+                break;
+        }
+        if (_onPageSelected) {
+            _onPageSelected(@{@"position" : [NSNumber numberWithLong:_currentIndex]});
+        }
+        _reactPageIndicatorView.currentPage = index;
+    }
+    
 }
 
 #pragma mark - Datasource After
@@ -252,10 +276,10 @@ willTransitionToViewControllers:
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     CGPoint point = scrollView.contentOffset;
-    float percentComplete = fabs(point.x - self.frame.size.width)/self.frame.size.width;
-    BOOL direction = point.x - self.frame.size.width > 0;
-    NSLog(@"%f",percentComplete);
-    NSLog(direction ? @"forward" : @"reverse");
+    float percentComplete = (point.x - self.frame.size.width)/self.frame.size.width;
+    if (_onPageScroll) {
+        _onPageScroll(@{@"position": [NSNumber numberWithInteger:_currentIndex], @"offset": [NSNumber numberWithFloat:percentComplete]});
+    }
 }
 
 @end

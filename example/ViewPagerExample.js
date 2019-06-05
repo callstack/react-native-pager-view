@@ -155,10 +155,6 @@ export default class ViewPagerExample extends React.Component {
             enabled={page > 0}
             onPress={() => this.move(-1)}
           />
-          <Text style={styles.buttonText}>
-            Page {page + 1} / {pages.length}
-          </Text>
-          <ProgressBar numberOfPages={pages.length} size={100} progress={this.state.progress} />
           <Button
             text="Next"
             enabled={page < pages.length - 1}
@@ -170,6 +166,10 @@ export default class ViewPagerExample extends React.Component {
             onPress={() => this.go(pages.length - 1)}
           />
         </View>
+        <View style={styles.progress}>
+          <Text style={styles.buttonText}> Page {page + 1} / {pages.length} </Text>
+          <ProgressBar numberOfPages={pages.length} size={300} progress={this.state.progress} /> 
+        </View>
       </SafeAreaView>
     );
   }
@@ -178,9 +178,14 @@ export default class ViewPagerExample extends React.Component {
 const styles = StyleSheet.create({
   buttons: {
     flexDirection: 'row',
-    height: 30,
     backgroundColor: 'black',
     alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  progress: {
+    flexDirection: 'row',
+    height: 40,
+    backgroundColor: 'black',
     justifyContent: 'space-between',
   },
   buttonText: {

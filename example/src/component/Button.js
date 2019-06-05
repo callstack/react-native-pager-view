@@ -48,5 +48,6 @@ export class Button extends React.Component {
     },
     buttonText: {
       color: 'white',
+      margin: 10,
     },
 })
