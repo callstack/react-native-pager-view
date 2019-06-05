@@ -29,24 +29,28 @@
 }
 
 - (void)didUpdateReactSubviews {
-    [self shouldAddNewPages];
-}
-
--(void)shouldAddNewPages {
-    if (self.reactSubviews.count > _childrenViewControllers.count && _childrenViewControllers.count > 0) {
-        [self addPages];
+    if (_childrenViewControllers.count == 0){
+        return;
     }
+    [self addPages];
 }
 
 - (void)addPages {
     if ([self reactViewController]) {
-        NSInteger diff = self.reactSubviews.count - _childrenViewControllers.count;
-        NSArray* newArray =  [self.reactSubviews subarrayWithRange:NSMakeRange(_childrenViewControllers.count, diff)];
-        for (UIView *newView in newArray) {
-            UIViewController *pageViewController = [self createChildViewController:newView];
-            [_childrenViewControllers addObject:pageViewController];
+        NSMutableArray<UIViewController *> *tempChildrenViewControllers = [[NSMutableArray alloc] init];
+        for (UIView *view in self.reactSubviews) {
+            NSPredicate* predicate = [NSPredicate predicateWithFormat:@"view.reactTag == %@", view.reactTag];
+            NSArray<UIViewController *> *foundViewControlers = [_childrenViewControllers filteredArrayUsingPredicate:predicate];
+            if (foundViewControlers.count > 0){
+                [tempChildrenViewControllers addObject:foundViewControlers[0]];
+            } else {
+                [tempChildrenViewControllers addObject:[self createChildViewController:view]];
+            }
         }
+        _childrenViewControllers = tempChildrenViewControllers;
         _reactPageIndicatorView.numberOfPages = _childrenViewControllers.count;
+        [self goTo:[NSNumber numberWithInteger:_currentIndex] animated:NO];
+        
     } else {
         RCTLog(@"getParentViewController returns nil");
     }
