@@ -133,12 +133,13 @@
                            with:(UIViewController *)pageViewController
                       direction:(UIPageViewControllerNavigationDirection)direction
                        animated:(BOOL)animated {
-    _currentIndex = index;
     [_reactPageViewController
      setViewControllers:[NSArray arrayWithObjects:pageViewController, nil]
      direction:direction
      animated:animated
-     completion:nil];
+     completion:^(BOOL finished) {
+         _currentIndex = index;
+     }];
 }
 
 - (UIViewController *)createChildViewController:(UIView *)view {
@@ -156,7 +157,7 @@
         (index.integerValue > _currentIndex)
         ? UIPageViewControllerNavigationDirectionForward
         : UIPageViewControllerNavigationDirectionReverse;
-        
+
         UIViewController *viewController =
         [_childrenViewControllers objectAtIndex:index.integerValue];
         [self setReactViewControllers:index.integerValue
@@ -173,10 +174,7 @@
 willTransitionToViewControllers:
 (NSArray<UIViewController *> *)pendingViewControllers {
     if (pendingViewControllers.count == 1) {
-        NSMutableArray<UIViewController *> *childrenViewControllers =
-        _childrenViewControllers;
-        NSUInteger index = [childrenViewControllers
-                            indexOfObject:[pendingViewControllers objectAtIndex:0]];
+        NSUInteger index = [_childrenViewControllers indexOfObject:[pendingViewControllers objectAtIndex:0]];
         swipeDirection = (index > _currentIndex)
         ? UIPageViewControllerNavigationDirectionForward
         : UIPageViewControllerNavigationDirectionReverse;
@@ -190,7 +188,6 @@ willTransitionToViewControllers:
                             previousViewControllers: (nonnull NSArray<UIViewController *> *)previousViewControllers
                             transitionCompleted:(BOOL)completed {
     if (completed){
-        NSUInteger index = [_childrenViewControllers indexOfObject:[previousViewControllers objectAtIndex:0]];
         switch (swipeDirection) {
             case UIPageViewControllerNavigationDirectionForward:
                 _currentIndex++;
@@ -204,7 +201,7 @@ willTransitionToViewControllers:
         if (_onPageSelected) {
             _onPageSelected(@{@"position" : [NSNumber numberWithLong:_currentIndex]});
         }
-        _reactPageIndicatorView.currentPage = index;
+        _reactPageIndicatorView.currentPage = _currentIndex;
     }
     
 }
@@ -277,6 +274,9 @@ willTransitionToViewControllers:
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     CGPoint point = scrollView.contentOffset;
     float percentComplete = (point.x - self.frame.size.width)/self.frame.size.width;
+    if (percentComplete > 1) {
+        percentComplete = 1.0;
+    }
     if (_onPageScroll) {
         _onPageScroll(@{@"position": [NSNumber numberWithInteger:_currentIndex], @"offset": [NSNumber numberWithFloat:percentComplete]});
     }
