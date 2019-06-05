@@ -198,7 +198,7 @@ willTransitionToViewControllers:
             default:
                 break;
         }
-        if (_onPageSelected) {
+        if (_onPageSelected && _currentIndex < _childrenViewControllers.count && _currentIndex > -1) {
             _onPageSelected(@{@"position" : [NSNumber numberWithLong:_currentIndex]});
         }
         _reactPageIndicatorView.currentPage = _currentIndex;
@@ -277,6 +277,7 @@ willTransitionToViewControllers:
     if (percentComplete > 1) {
         percentComplete = 1.0;
     }
+    
     if (_onPageScroll) {
         _onPageScroll(@{@"position": [NSNumber numberWithInteger:_currentIndex], @"offset": [NSNumber numberWithFloat:percentComplete]});
     }
