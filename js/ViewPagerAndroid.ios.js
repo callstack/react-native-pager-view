@@ -38,6 +38,7 @@ type Props = $ReadOnly<{|
     scrollEnabled?: boolean,
     initialPage?: number,
     style?: ?ViewStyleProp,
+    keyboardDismissMode?: ?('none' | 'on-drag'),
   |}>;
   
   /**

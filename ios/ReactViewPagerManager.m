@@ -35,6 +35,10 @@ RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView) {
     [view shouldScroll:[RCTConvert BOOL:json]];
 }
 
+RCT_CUSTOM_VIEW_PROPERTY(keyboardDismissMode, NSString, ReactNativePageView) {
+    [view shouldDismissKeyboard:[RCTConvert NSString:json]];
+}
+
 RCT_CUSTOM_VIEW_PROPERTY(showPageIndicator, BOOL, ReactNativePageView) {
     [view shouldShowPageIndicator:[RCTConvert BOOL:json]];
 }

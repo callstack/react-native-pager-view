@@ -78,6 +78,7 @@
         for (UIView *subview in _reactPageViewController.view.subviews) {
             if([subview isKindOfClass:UIScrollView.class]){
                 ((UIScrollView *)subview).delegate = self;
+                ((UIScrollView *)subview).keyboardDismissMode = _dismissKeyboard ? UIScrollViewKeyboardDismissModeOnDrag : UIScrollViewKeyboardDismissModeNone;
             }
         }
         
@@ -104,6 +105,15 @@
     _scrollEnabled = scrollEnabled;
     if (_reactPageViewController.view) {
         _reactPageViewController.view.userInteractionEnabled = scrollEnabled;
+    }
+}
+
+- (void)shouldDismissKeyboard:(NSString *)dismissKeyboard {
+    _dismissKeyboard = [dismissKeyboard  isEqual: @"on-drag"];
+    for (UIView *subview in _reactPageViewController.view.subviews) {
+        if([subview isKindOfClass:UIScrollView.class]){
+            ((UIScrollView *)subview).keyboardDismissMode = _dismissKeyboard ? UIScrollViewKeyboardDismissModeOnDrag : UIScrollViewKeyboardDismissModeNone;
+        }
     }
 }
 
