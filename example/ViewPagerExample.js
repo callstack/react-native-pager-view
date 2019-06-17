@@ -73,8 +73,6 @@ export default class ViewPagerExample extends React.Component {
     } else {
       this.viewPager.setPageWithoutAnimation(page);
     }
-
-    this.setState({page});
   };
 
   createPage(key) {

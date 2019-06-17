@@ -133,12 +133,16 @@
                            with:(UIViewController *)pageViewController
                       direction:(UIPageViewControllerNavigationDirection)direction
                        animated:(BOOL)animated {
+    __weak ReactNativePageView *weakSelf = self;
     [_reactPageViewController
      setViewControllers:[NSArray arrayWithObjects:pageViewController, nil]
      direction:direction
      animated:animated
      completion:^(BOOL finished) {
-         _currentIndex = index;
+         weakSelf.currentIndex = index;
+         if (weakSelf.onPageSelected) {
+             weakSelf.onPageSelected(@{@"position" : [NSNumber numberWithLong:index]});
+         }
      }];
 }
 
@@ -187,23 +191,15 @@ willTransitionToViewControllers:
                             didFinishAnimating:(BOOL)finished
                             previousViewControllers: (nonnull NSArray<UIViewController *> *)previousViewControllers
                             transitionCompleted:(BOOL)completed {
-    if (completed){
-        switch (swipeDirection) {
-            case UIPageViewControllerNavigationDirectionForward:
-                _currentIndex++;
-                break;
-            case UIPageViewControllerNavigationDirectionReverse:
-                _currentIndex--;
-                break;
-            default:
-                break;
-        }
-        if (_onPageSelected && _currentIndex < _childrenViewControllers.count && _currentIndex > -1) {
-            _onPageSelected(@{@"position" : [NSNumber numberWithLong:_currentIndex]});
-        }
-        _reactPageIndicatorView.currentPage = _currentIndex;
+    UIViewController* currentVC = pageViewController.viewControllers[0];
+    _currentIndex = [_childrenViewControllers indexOfObject:currentVC];
+    if (_onPageSelected) {
+        _onPageSelected(@{@"position" : [NSNumber numberWithLong:_currentIndex]});
     }
-    
+    if (_onPageScroll) {
+        _onPageScroll(@{@"position": [NSNumber numberWithInteger:_currentIndex], @"offset": [NSNumber numberWithFloat:0]});
+    }
+    _reactPageIndicatorView.currentPage = _currentIndex;
 }
 
 #pragma mark - Datasource After
@@ -273,13 +269,12 @@ willTransitionToViewControllers:
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     CGPoint point = scrollView.contentOffset;
-    float percentComplete = (point.x - self.frame.size.width)/self.frame.size.width;
-    if (percentComplete > 1) {
-        percentComplete = 1.0;
+    float offset = (point.x - self.frame.size.width)/self.frame.size.width;
+    if(fabs(offset) > 1) {
+        offset = offset > 0 ? 1.0 : -1.0;
     }
-    
     if (_onPageScroll) {
-        _onPageScroll(@{@"position": [NSNumber numberWithInteger:_currentIndex], @"offset": [NSNumber numberWithFloat:percentComplete]});
+        _onPageScroll(@{@"position": [NSNumber numberWithInteger:_currentIndex], @"offset": [NSNumber numberWithFloat:offset]});
     }
 }
 
