@@ -14,6 +14,7 @@
         _transitionStyle = UIPageViewControllerTransitionStyleScroll;
         _orientation = UIPageViewControllerNavigationOrientationHorizontal;
         _currentIndex = 0;
+        _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
     }
     return self;
 }
@@ -78,7 +79,7 @@
         for (UIView *subview in _reactPageViewController.view.subviews) {
             if([subview isKindOfClass:UIScrollView.class]){
                 ((UIScrollView *)subview).delegate = self;
-                ((UIScrollView *)subview).keyboardDismissMode = _dismissKeyboard ? UIScrollViewKeyboardDismissModeOnDrag : UIScrollViewKeyboardDismissModeNone;
+                ((UIScrollView *)subview).keyboardDismissMode = _dismissKeyboard;
             }
         }
         
@@ -109,10 +110,11 @@
 }
 
 - (void)shouldDismissKeyboard:(NSString *)dismissKeyboard {
-    _dismissKeyboard = [dismissKeyboard  isEqual: @"on-drag"];
+    _dismissKeyboard = [dismissKeyboard  isEqual: @"on-drag"] ?
+        UIScrollViewKeyboardDismissModeOnDrag : UIScrollViewKeyboardDismissModeNone;
     for (UIView *subview in _reactPageViewController.view.subviews) {
         if([subview isKindOfClass:UIScrollView.class]){
-            ((UIScrollView *)subview).keyboardDismissMode = _dismissKeyboard ? UIScrollViewKeyboardDismissModeOnDrag : UIScrollViewKeyboardDismissModeNone;
+            ((UIScrollView *)subview).keyboardDismissMode = _dismissKeyboard;
         }
     }
 }
