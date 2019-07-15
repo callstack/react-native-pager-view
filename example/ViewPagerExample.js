@@ -4,94 +4,28 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  *
- * @format
+ * @flow
  */
 
 'use strict';
 
-const React = require('react');
-const ReactNative = require('react-native');
-const {
-  Image,
+import React from 'react';
+import { Image,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
   TouchableOpacity,
-  View,
-} = ReactNative;
+  View, 
+  SafeAreaView,
+  Platform } from 'react-native' 
+
 import ViewPagerAndroid from '@react-native-community/viewpager';
+import { PAGES, BGCOLOR, IMAGE_URIS, createPage } from "./Common";
+import { Button } from "./src/component/Button";
+import { LikeCount } from "./src/component/LikeCount";
+import { ProgressBar } from "./src/component/ProgressBar";
 
-const PAGES = 5;
-const BGCOLOR = ['#fdc08e', '#fff6b9', '#99d1b7', '#dde5fe', '#f79273'];
-const IMAGE_URIS = [
-  'https://apod.nasa.gov/apod/image/1410/20141008tleBaldridge001h990.jpg',
-  'https://apod.nasa.gov/apod/image/1409/volcanicpillar_vetter_960.jpg',
-  'https://apod.nasa.gov/apod/image/1409/m27_snyder_960.jpg',
-  'https://apod.nasa.gov/apod/image/1409/PupAmulti_rot0.jpg',
-  'https://apod.nasa.gov/apod/image/1510/lunareclipse_27Sep_beletskycrop4.jpg',
-];
-
-type Props = $ReadOnly<{||}>;
-type State = {|likes: number|};
-class LikeCount extends React.Component<Props, State> {
-  state = {
-    likes: 7,
-  };
-
-  onClick = () => {
-    this.setState({likes: this.state.likes + 1});
-  };
-
-  render() {
-    const thumbsUp = '\uD83D\uDC4D';
-    return (
-      <View style={styles.likeContainer}>
-        <TouchableOpacity onPress={this.onClick} style={styles.likeButton}>
-          <Text style={styles.likesText}>{thumbsUp + ' Like'}</Text>
-        </TouchableOpacity>
-        <Text style={styles.likesText}>{this.state.likes + ' likes'}</Text>
-      </View>
-    );
-  }
-}
-
-class Button extends React.Component {
-  _handlePress = () => {
-    if (this.props.enabled && this.props.onPress) {
-      this.props.onPress();
-    }
-  };
-
-  render() {
-    return (
-      <TouchableWithoutFeedback onPress={this._handlePress}>
-        <View
-          style={[
-            styles.button,
-            this.props.enabled ? {} : styles.buttonDisabled,
-          ]}>
-          <Text style={styles.buttonText}>{this.props.text}</Text>
-        </View>
-      </TouchableWithoutFeedback>
-    );
-  }
-}
-
-class ProgressBar extends React.Component {
-  render() {
-    const fractionalPosition =
-      this.props.progress.position + this.props.progress.offset;
-    const progressBarSize =
-      (fractionalPosition / (this.props.numberOfPages - 1)) * this.props.size;
-    return (
-      <View style={[styles.progressBarContainer, {width: this.props.size}]}>
-        <View style={[styles.progressBar, {width: progressBarSize}]} />
-      </View>
-    );
-  }
-}
-
-export default class ViewPagerAndroidExample extends React.Component {
+export default class ViewPagerExample extends React.Component {
   constructor(props) {
     super(props);
 
@@ -139,8 +73,6 @@ export default class ViewPagerAndroidExample extends React.Component {
     } else {
       this.viewPager.setPageWithoutAnimation(page);
     }
-
-    this.setState({page});
   };
 
   createPage(key) {
@@ -170,7 +102,7 @@ export default class ViewPagerAndroidExample extends React.Component {
   render() {
     const {page, pages, animationsAreEnabled} = this.state;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <ViewPagerAndroid
           style={styles.viewPager}
           initialPage={0}
@@ -194,11 +126,7 @@ export default class ViewPagerAndroidExample extends React.Component {
               this.setState({scrollEnabled: !this.state.scrollEnabled})
             }
           />
-          <Button
-            enabled={true}
-            text="Add new page"
-            onPress={this.addPage}
-          />
+          <Button enabled={true} text="Add new page" onPress={this.addPage} />
         </View>
         <View style={styles.buttons}>
           {animationsAreEnabled ? (
@@ -225,10 +153,6 @@ export default class ViewPagerAndroidExample extends React.Component {
             enabled={page > 0}
             onPress={() => this.move(-1)}
           />
-          <Text style={styles.buttonText}>
-            Page {page + 1} / {pages.length}
-          </Text>
-          <ProgressBar numberOfPages={pages.length} size={100} progress={this.state.progress} />
           <Button
             text="Next"
             enabled={page < pages.length - 1}
@@ -240,7 +164,11 @@ export default class ViewPagerAndroidExample extends React.Component {
             onPress={() => this.go(pages.length - 1)}
           />
         </View>
-      </View>
+        <View style={styles.progress}>
+          <Text style={styles.buttonText}> Page {page + 1} / {pages.length} </Text>
+          <ProgressBar numberOfPages={pages.length} size={300} progress={this.state.progress} /> 
+        </View>
+      </SafeAreaView>
     );
   }
 }
@@ -248,22 +176,15 @@ export default class ViewPagerAndroidExample extends React.Component {
 const styles = StyleSheet.create({
   buttons: {
     flexDirection: 'row',
-    height: 30,
     backgroundColor: 'black',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  button: {
-    flex: 1,
-    width: 0,
-    margin: 5,
-    borderColor: 'gray',
-    borderWidth: 1,
-    backgroundColor: 'gray',
-  },
-  buttonDisabled: {
+  progress: {
+    flexDirection: 'row',
+    height: 40,
     backgroundColor: 'black',
-    opacity: 0.5,
+    justifyContent: 'space-between',
   },
   buttonText: {
     color: 'white',
@@ -279,34 +200,6 @@ const styles = StyleSheet.create({
     width: 300,
     height: 200,
     padding: 20,
-  },
-  likeButton: {
-    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-    borderColor: '#333333',
-    borderWidth: 1,
-    borderRadius: 5,
-    flex: 1,
-    margin: 8,
-  },
-  likeContainer: {
-    flexDirection: 'row',
-    height: 45,
-  },
-  likesText: {
-    flex: 1,
-    fontSize: 18,
-    alignSelf: 'center',
-  },
-  progressBarContainer: {
-    height: 10,
-    margin: 10,
-    borderColor: '#eeeeee',
-    borderWidth: 2,
-  },
-  progressBar: {
-    alignSelf: 'flex-start',
-    flex: 1,
-    backgroundColor: '#eeeeee',
   },
   viewPager: {
     flex: 1,
