@@ -38,6 +38,9 @@ type PageSelectedEvent = SyntheticEvent<
   |}>,
 >;
 
+type TransitionStyle = 'scroll' | 'curl'
+type Orientation = 'horizontal' | 'vertical'
+
 type NativeProps = $ReadOnly<{|
   /**
    * Index of initial page that should be selected. Use `setPage` method to
@@ -103,6 +106,10 @@ type NativeProps = $ReadOnly<{|
   children?: Node,
 
   style?: ?ViewStyleProp,
+
+  orientation?: Orientation,
+  transitionStyle?: TransitionStyle,
+
 |}>;
 
 type ViewPagerNativeType = Class<NativeComponent<NativeProps>>;

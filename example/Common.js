@@ -10,8 +10,15 @@ export const IMAGE_URIS = [
   'https://apod.nasa.gov/apod/image/1510/lunareclipse_27Sep_beletskycrop4.jpg',
 ];
 export const thumbsUp = '\uD83D\uDC4D';
+import type { ViewStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
 
-export const createPage = (key) => {
+export type CreatePage = {
+  key: number,
+  style: ViewStyleProp,
+  imgSource: { uri: string }
+}
+
+export const createPage = (key: number): CreatePage => {
     return {
       key: key,
       style: {

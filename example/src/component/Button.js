@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native'
 
-export class Button extends React.Component {
+export class Button extends React.Component<*> {
     
   _handlePress = () => {
       if (this.props.enabled && this.props.onPress) {

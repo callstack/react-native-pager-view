@@ -31,7 +31,7 @@ type Props = $ReadOnly<{|
      * Index of initial page that should be selected. Use `setPage` method to
      * update the page, and `onPageSelected` to monitor page changes
      */
-    onPageSelected?: (e: PageSelectedEvent) => void,
+    onPageSelected?: ?(e: PageSelectedEvent) => void,
     orientation?: Orientation,
     transitionStyle?: TransitionStyle,
     pageMargin?: number,

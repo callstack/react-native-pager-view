@@ -9,7 +9,7 @@
 
 'use strict';
 
-import React from 'react';
+import * as React from "react";
 import { Image,
   StyleSheet,
   Text,
@@ -19,19 +19,58 @@ import { Image,
   SafeAreaView,
   Platform } from 'react-native' 
 
+import type {ViewProps} from 'ViewPropTypes';
 import ViewPagerAndroid from '@react-native-community/viewpager';
 import { PAGES, BGCOLOR, IMAGE_URIS, createPage } from "./Common";
 import { Button } from "./src/component/Button";
 import { LikeCount } from "./src/component/LikeCount";
 import { ProgressBar } from "./src/component/ProgressBar";
+import type { CreatePage } from "./Common"
 
-export default class ViewPagerExample extends React.Component {
-  constructor(props) {
+type State = {
+  page: number,
+  animationsAreEnabled: boolean,
+  scrollEnabled: boolean,
+  progress: {
+    position: number,
+    offset: number,
+  },
+  pages: Array<CreatePage>,
+  // $FlowFixMe it should be particular state instead of string 
+  scrollState: string
+};
+
+// type PageScrollState = 'idle' | 'dragging' | 'settling';
+
+// type PageScrollEvent = SyntheticEvent<
+//   $ReadOnly<{|
+//     position: number,
+//     offset: number,
+//   |}>,
+// >;
+
+// type PageScrollStateChangedEvent = SyntheticEvent<
+//   $ReadOnly<{|
+//     pageScrollState: PageScrollState,
+//   |}>,
+// >;
+
+// type PageSelectedEvent = SyntheticEvent<
+//   $ReadOnly<{|
+//     position: number,
+//   |}>,
+// >;
+
+export default class ViewPagerExample extends React.Component<*, State> {
+  
+  viewPager: React.Ref<typeof ViewPagerAndroid>
+
+  constructor(props: any) {
     super(props);
 
     const pages = [];
     for (let i = 0; i < PAGES; i++) {
-      pages.push(this.createPage(i));
+      pages.push(createPage(i));
     }
     
     this.state = {
@@ -42,52 +81,42 @@ export default class ViewPagerExample extends React.Component {
         position: 0,
         offset: 0,
       },
-      pages
+      pages: pages,
+      scrollState: 'idle'
     };
+    this.viewPager = React.createRef();
   };
 
-  onPageSelected = e => {
+  onPageSelected = (e: PageSelectedEvent) => {
     this.setState({page: e.nativeEvent.position});
   };
 
-  onPageScroll = e => {
+  onPageScroll = (e: PageScrollEvent)=> {
     this.setState({progress: e.nativeEvent});
   };
 
-  onPageScrollStateChanged = e => {
+  onPageScrollStateChanged = (e:PageScrollStateChangedEvent) => {
     this.setState({scrollState: e.nativeEvent.pageScrollState});
   };
 
-  addPage = e => {
-    this.setState(prevState => ({ pages: [...prevState.pages, this.createPage(prevState.pages.length)]}));
+  addPage = () => {
+    this.setState(prevState => ({ pages: [...prevState.pages, createPage(prevState.pages.length)]}));
   }
 
-  move = delta => {
+  move = (delta: number) => {
     const page = this.state.page + delta;
     this.go(page);
   };
 
-  go = page => {
+  go = (page: number) => {
     if (this.state.animationsAreEnabled) {
-      this.viewPager.setPage(page);
+      this.viewPager.current.setPage(page);
     } else {
-      this.viewPager.setPageWithoutAnimation(page);
-    }
-  };
-
-  createPage(key) {
-    return {
-      key: key,
-      style: {
-        backgroundColor: BGCOLOR[key % BGCOLOR.length],
-        alignItems: 'center',
-        padding: 20,
-      }, 
-      imgSource: { uri: IMAGE_URIS[key % BGCOLOR.length] }
+      this.viewPager.current.setPageWithoutAnimation(page);
     }
   };
   
-  renderPage(page) {
+  renderPage(page: CreatePage) {
     return (
       <View key={page.key} style={page.style} collapsable={false}>
         <Image
@@ -111,9 +140,7 @@ export default class ViewPagerExample extends React.Component {
           onPageSelected={this.onPageSelected}
           onPageScrollStateChanged={this.onPageScrollStateChanged}
           pageMargin={10}
-          ref={viewPager => {
-            this.viewPager = viewPager;
-          }}>
+          ref={this.viewPager}>
           { pages.map( page => this.renderPage(page)) }
         </ViewPagerAndroid>
         <View style={styles.buttons}>

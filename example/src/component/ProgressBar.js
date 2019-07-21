@@ -7,7 +7,7 @@ import { Image,
   TouchableOpacity,
   View } from 'react-native' 
 
-export class ProgressBar extends React.Component {
+export class ProgressBar extends React.Component<*> {
     
     render() {
         const fractionalPosition = this.props.progress.position + this.props.progress.offset;
