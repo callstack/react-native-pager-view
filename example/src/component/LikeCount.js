@@ -1,14 +1,21 @@
-// @flow
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
 
 import React from 'react';
-import { Image,
+import {
   StyleSheet,
   Text,
-  TouchableWithoutFeedback,
   TouchableOpacity,
-  View } from 'react-native' 
+  View,
+} from 'react-native'
 
-import { thumbsUp } from './../../Common'
+import { thumbsUp } from '../../utils'
 
 type Props = $ReadOnly<{||}>;
 type State = {|likes: number|};
