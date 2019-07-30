@@ -1,21 +1,32 @@
-// @flow
-import React from 'react';
-import { Image,
-  StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  View } from 'react-native' 
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
 
-export class ProgressBar extends React.Component {
-    
-    render() {
-        const fractionalPosition = this.props.progress.position + this.props.progress.offset;
-        const progressBarSize = (fractionalPosition / (this.props.numberOfPages - 1)) * this.props.size;
-        return (
-        <View style={[styles.progressBarContainer, {width: this.props.size}]}>
-            <View style={[styles.progressBar, {width: progressBarSize}]} />
-        </View>
+import React from 'react';
+import {StyleSheet, View} from 'react-native'
+
+type Props = {
+  progress: {
+    position: number,
+    offset: number,
+  },
+  numberOfPages: number,
+  size: number,
+}
+
+export class ProgressBar extends React.Component<Props> {
+  render() {
+    const fractionalPosition = this.props.progress.position + this.props.progress.offset;
+    const progressBarSize = (fractionalPosition / (this.props.numberOfPages - 1)) * this.props.size;
+    return (
+      <View style={[styles.progressBarContainer, {width: this.props.size}]}>
+        <View style={[styles.progressBar, {width: progressBarSize}]} />
+      </View>
     );
   }
 }

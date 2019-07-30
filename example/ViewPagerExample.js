@@ -9,31 +9,46 @@
 
 'use strict';
 
-import React from 'react';
+import * as React from "react";
 import { Image,
   StyleSheet,
   Text,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  View, 
+  View,
   SafeAreaView,
-  Platform } from 'react-native' 
+} from 'react-native'
 
 import ViewPagerAndroid from '@react-native-community/viewpager';
-import { PAGES, BGCOLOR, IMAGE_URIS, createPage } from "./Common";
+import { PAGES, BGCOLOR, IMAGE_URIS, createPage } from "./utils";
 import { Button } from "./src/component/Button";
 import { LikeCount } from "./src/component/LikeCount";
 import { ProgressBar } from "./src/component/ProgressBar";
+import type { CreatePage } from "./utils"
+import type {PageScrollEvent, PageScrollState, PageScrollStateChangedEvent, PageSelectedEvent} from "../js";
 
-export default class ViewPagerExample extends React.Component {
-  constructor(props) {
+type State = {
+  page: number,
+  animationsAreEnabled: boolean,
+  scrollEnabled: boolean,
+  progress: {
+    position: number,
+    offset: number,
+  },
+  pages: Array<CreatePage>,
+  scrollState: PageScrollState
+};
+
+export default class ViewPagerExample extends React.Component<*, State> {
+
+  viewPager: React.Ref<typeof ViewPagerAndroid>;
+
+  constructor(props: any) {
     super(props);
 
     const pages = [];
     for (let i = 0; i < PAGES; i++) {
-      pages.push(this.createPage(i));
+      pages.push(createPage(i));
     }
-    
+
     this.state = {
       page: 0,
       animationsAreEnabled: true,
@@ -42,52 +57,47 @@ export default class ViewPagerExample extends React.Component {
         position: 0,
         offset: 0,
       },
-      pages
+      pages: pages,
+      scrollState: 'idle'
     };
+    this.viewPager = React.createRef();
   };
 
-  onPageSelected = e => {
+  onPageSelected = (e: PageSelectedEvent) => {
     this.setState({page: e.nativeEvent.position});
   };
 
-  onPageScroll = e => {
-    this.setState({progress: e.nativeEvent});
+  onPageScroll = (e: PageScrollEvent)=> {
+    this.setState({progress: {
+      position: e.nativeEvent.position,
+      offset: e.nativeEvent.offset,
+    }});
   };
 
-  onPageScrollStateChanged = e => {
+  onPageScrollStateChanged = (e: PageScrollStateChangedEvent) => {
     this.setState({scrollState: e.nativeEvent.pageScrollState});
   };
 
-  addPage = e => {
-    this.setState(prevState => ({ pages: [...prevState.pages, this.createPage(prevState.pages.length)]}));
-  }
+  addPage = () => {
+    this.setState(prevState => ({ pages: [...prevState.pages, createPage(prevState.pages.length)]}));
+  };
 
-  move = delta => {
+  move = (delta: number) => {
     const page = this.state.page + delta;
     this.go(page);
   };
 
-  go = page => {
+  go = (page: number) => {
     if (this.state.animationsAreEnabled) {
-      this.viewPager.setPage(page);
+      /* $FlowFixMe we need to update flow to support React.Ref and createRef() */
+      this.viewPager.current.setPage(page);
     } else {
-      this.viewPager.setPageWithoutAnimation(page);
+      /* $FlowFixMe we need to update flow to support React.Ref and createRef() */
+      this.viewPager.current.setPageWithoutAnimation(page);
     }
   };
 
-  createPage(key) {
-    return {
-      key: key,
-      style: {
-        backgroundColor: BGCOLOR[key % BGCOLOR.length],
-        alignItems: 'center',
-        padding: 20,
-      }, 
-      imgSource: { uri: IMAGE_URIS[key % BGCOLOR.length] }
-    }
-  };
-  
-  renderPage(page) {
+  renderPage(page: CreatePage) {
     return (
       <View key={page.key} style={page.style} collapsable={false}>
         <Image
@@ -111,9 +121,7 @@ export default class ViewPagerExample extends React.Component {
           onPageSelected={this.onPageSelected}
           onPageScrollStateChanged={this.onPageScrollStateChanged}
           pageMargin={10}
-          ref={viewPager => {
-            this.viewPager = viewPager;
-          }}>
+          ref={this.viewPager}>
           { pages.map( page => this.renderPage(page)) }
         </ViewPagerAndroid>
         <View style={styles.buttons}>
@@ -166,7 +174,7 @@ export default class ViewPagerExample extends React.Component {
         </View>
         <View style={styles.progress}>
           <Text style={styles.buttonText}> Page {page + 1} / {pages.length} </Text>
-          <ProgressBar numberOfPages={pages.length} size={300} progress={this.state.progress} /> 
+          <ProgressBar numberOfPages={pages.length} size={300} progress={this.state.progress} />
         </View>
       </SafeAreaView>
     );
