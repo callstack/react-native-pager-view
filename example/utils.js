@@ -1,4 +1,11 @@
-// @flow
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
 
 export const PAGES = 5;
 export const BGCOLOR = ['#fdc08e', '#fff6b9', '#99d1b7', '#dde5fe', '#f79273'];
@@ -25,7 +32,7 @@ export const createPage = (key: number): CreatePage => {
         backgroundColor: BGCOLOR[key % BGCOLOR.length],
         alignItems: 'center',
         padding: 20,
-      }, 
+      },
       imgSource: { uri: IMAGE_URIS[key % BGCOLOR.length] }
     }
   };

@@ -7,25 +7,24 @@
  * @flow
  */
 
+
 'use strict';
 
 import * as React from "react";
 import { Image,
   StyleSheet,
   Text,
-  TouchableWithoutFeedback,
-  TouchableOpacity,
-  View, 
+  View,
   SafeAreaView,
-  Platform } from 'react-native' 
+} from 'react-native'
 
-import type {ViewProps} from 'ViewPropTypes';
 import ViewPagerAndroid from '@react-native-community/viewpager';
-import { PAGES, BGCOLOR, IMAGE_URIS, createPage } from "./Common";
+import { PAGES, BGCOLOR, IMAGE_URIS, createPage } from "./utils";
 import { Button } from "./src/component/Button";
 import { LikeCount } from "./src/component/LikeCount";
 import { ProgressBar } from "./src/component/ProgressBar";
-import type { CreatePage } from "./Common"
+import type { CreatePage } from "./utils"
+import type {PageScrollEvent, PageScrollState, PageScrollStateChangedEvent, PageSelectedEvent} from "../js";
 
 type State = {
   page: number,
@@ -36,34 +35,12 @@ type State = {
     offset: number,
   },
   pages: Array<CreatePage>,
-  // $FlowFixMe it should be particular state instead of string 
-  scrollState: string
+  scrollState: PageScrollState
 };
 
-// type PageScrollState = 'idle' | 'dragging' | 'settling';
-
-// type PageScrollEvent = SyntheticEvent<
-//   $ReadOnly<{|
-//     position: number,
-//     offset: number,
-//   |}>,
-// >;
-
-// type PageScrollStateChangedEvent = SyntheticEvent<
-//   $ReadOnly<{|
-//     pageScrollState: PageScrollState,
-//   |}>,
-// >;
-
-// type PageSelectedEvent = SyntheticEvent<
-//   $ReadOnly<{|
-//     position: number,
-//   |}>,
-// >;
-
 export default class ViewPagerExample extends React.Component<*, State> {
-  
-  viewPager: React.Ref<typeof ViewPagerAndroid>
+
+  viewPager: React.Ref<typeof ViewPagerAndroid>;
 
   constructor(props: any) {
     super(props);
@@ -72,7 +49,7 @@ export default class ViewPagerExample extends React.Component<*, State> {
     for (let i = 0; i < PAGES; i++) {
       pages.push(createPage(i));
     }
-    
+
     this.state = {
       page: 0,
       animationsAreEnabled: true,
@@ -92,16 +69,19 @@ export default class ViewPagerExample extends React.Component<*, State> {
   };
 
   onPageScroll = (e: PageScrollEvent)=> {
-    this.setState({progress: e.nativeEvent});
+    this.setState({progress: {
+      position: e.nativeEvent.position,
+      offset: e.nativeEvent.offset,
+    }});
   };
 
-  onPageScrollStateChanged = (e:PageScrollStateChangedEvent) => {
+  onPageScrollStateChanged = (e: PageScrollStateChangedEvent) => {
     this.setState({scrollState: e.nativeEvent.pageScrollState});
   };
 
   addPage = () => {
     this.setState(prevState => ({ pages: [...prevState.pages, createPage(prevState.pages.length)]}));
-  }
+  };
 
   move = (delta: number) => {
     const page = this.state.page + delta;
@@ -110,12 +90,14 @@ export default class ViewPagerExample extends React.Component<*, State> {
 
   go = (page: number) => {
     if (this.state.animationsAreEnabled) {
+      /* $FlowFixMe we need to update flow to support React.Ref and createRef() */
       this.viewPager.current.setPage(page);
     } else {
+      /* $FlowFixMe we need to update flow to support React.Ref and createRef() */
       this.viewPager.current.setPageWithoutAnimation(page);
     }
   };
-  
+
   renderPage(page: CreatePage) {
     return (
       <View key={page.key} style={page.style} collapsable={false}>
@@ -193,7 +175,7 @@ export default class ViewPagerExample extends React.Component<*, State> {
         </View>
         <View style={styles.progress}>
           <Text style={styles.buttonText}> Page {page + 1} / {pages.length} </Text>
-          <ProgressBar numberOfPages={pages.length} size={300} progress={this.state.progress} /> 
+          <ProgressBar numberOfPages={pages.length} size={300} progress={this.state.progress} />
         </View>
       </SafeAreaView>
     );

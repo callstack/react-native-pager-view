@@ -6,9 +6,9 @@ import { Image,
   Text,
   TouchableWithoutFeedback,
   TouchableOpacity,
-  View } from 'react-native' 
+  View } from 'react-native'
 
-import { thumbsUp } from './../../Common'
+import { thumbsUp } from '../../utils'
 
 type Props = $ReadOnly<{||}>;
 type State = {|likes: number|};
