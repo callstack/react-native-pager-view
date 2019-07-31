@@ -15,10 +15,10 @@ RCT_EXPORT_VIEW_PROPERTY(orientation, UIPageViewControllerNavigationOrientation)
 RCT_EXPORT_VIEW_PROPERTY(onPageSelected, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPageScroll, RCTBubblingEventBlock)
 
-RCT_EXPORT_METHOD(goToPage
+- (void) goToPage
                   : (nonnull NSNumber *)reactTag index
                   : (nonnull NSNumber *)index animated
-                  : (BOOL)animated) {
+                  : (BOOL)animated {
     [self.bridge.uiManager addUIBlock:^(
                                         RCTUIManager *uiManager,
                                         NSDictionary<NSNumber *, UIView *> *viewRegistry) {
@@ -29,6 +29,18 @@ RCT_EXPORT_METHOD(goToPage
         }
         [view goTo:index animated:animated];
     }];
+}
+
+RCT_EXPORT_METHOD(setPage
+                  : (nonnull NSNumber *)reactTag index
+                  : (nonnull NSNumber *)index) {
+    [self goToPage:reactTag index:index animated:true];
+}
+
+RCT_EXPORT_METHOD(setPageWithoutAnimation
+                  : (nonnull NSNumber *)reactTag index
+                  : (nonnull NSNumber *)index) {
+    [self goToPage:reactTag index:index animated:false];
 }
 
 RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView) {

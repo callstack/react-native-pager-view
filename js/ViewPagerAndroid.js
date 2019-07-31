@@ -20,7 +20,8 @@ import type {
 
 const React = require('react');
 const ReactNative = require('react-native');
-const {UIManager} = ReactNative;
+
+const {Platform, UIManager} = ReactNative;
 
 const dismissKeyboard = require('react-native/Libraries/Utilities/dismissKeyboard');
 
@@ -28,7 +29,8 @@ import {childrenWithOverriddenStyle} from "./utils";
 
 const NativeAndroidViewPager = require('./AndroidViewPagerNativeComponent');
 
-const VIEWPAGER_REF = 'viewPager';
+const VIEW_PAGER_REF = 'viewPager';
+const VIEW_MANAGER_NAME = Platform.OS === 'android' ? 'AndroidViewPager' : 'RNCViewPager';
 
 function getViewManagerConfig(viewManagerName) {
   if (!UIManager.getViewManagerConfig) {
@@ -82,23 +84,29 @@ function getViewManagerConfig(viewManagerName) {
 
 class ViewPagerAndroid extends React.Component<ViewPagerProps> {
   componentDidMount() {
-    if (this.props.initialPage != null) {
-      this.setPageWithoutAnimation(this.props.initialPage);
+    // On iOS we do it directly on the native side
+    if (Platform.OS === 'android') {
+      if (this.props.initialPage != null) {
+        this.setPageWithoutAnimation(this.props.initialPage);
+      }
     }
   }
 
   /* $FlowFixMe(>=0.78.0 site=react_native_android_fb) This issue was found
    * when making Flow check .android.js files. */
   getInnerViewNode = (): ReactComponent => {
-    return this.refs[VIEWPAGER_REF].getInnerViewNode();
+    return this.refs[VIEW_PAGER_REF].getInnerViewNode();
   };
 
   _onPageScroll = (e: PageScrollEvent) => {
     if (this.props.onPageScroll) {
       this.props.onPageScroll(e);
     }
-    if (this.props.keyboardDismissMode === 'on-drag') {
-      dismissKeyboard();
+    // Not implemented on iOS yet
+    if (Platform.OS === 'android') {
+      if (this.props.keyboardDismissMode === 'on-drag') {
+        dismissKeyboard();
+      }
     }
   };
 
@@ -121,7 +129,7 @@ class ViewPagerAndroid extends React.Component<ViewPagerProps> {
   setPage = (selectedPage: number) => {
     UIManager.dispatchViewManagerCommand(
       ReactNative.findNodeHandle(this),
-      getViewManagerConfig('AndroidViewPager').Commands.setPage,
+      getViewManagerConfig(VIEW_MANAGER_NAME).Commands.setPage,
       [selectedPage],
     );
   };
@@ -133,7 +141,7 @@ class ViewPagerAndroid extends React.Component<ViewPagerProps> {
   setPageWithoutAnimation = (selectedPage: number) => {
     UIManager.dispatchViewManagerCommand(
       ReactNative.findNodeHandle(this),
-      getViewManagerConfig('AndroidViewPager').Commands
+      getViewManagerConfig(VIEW_MANAGER_NAME).Commands
         .setPageWithoutAnimation,
       [selectedPage],
     );
@@ -143,7 +151,7 @@ class ViewPagerAndroid extends React.Component<ViewPagerProps> {
     return (
       <NativeAndroidViewPager
         {...this.props}
-        ref={VIEWPAGER_REF}
+        ref={VIEW_PAGER_REF}
         style={this.props.style}
         onPageScroll={this._onPageScroll}
         onPageScrollStateChanged={this._onPageScrollStateChanged}
