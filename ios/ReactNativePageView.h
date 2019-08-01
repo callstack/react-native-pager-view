@@ -21,6 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) UIPageViewControllerNavigationOrientation orientation;
 @property(nonatomic, copy) RCTBubblingEventBlock onPageSelected;
 @property(nonatomic, copy) RCTBubblingEventBlock onPageScroll;
+@property(nonatomic, copy) RCTBubblingEventBlock onPageScrollStateChanged;
+
 
 - (void)goTo:(NSNumber *)index animated:(BOOL)animated;
 - (void)shouldScroll:(BOOL)scrollEnabled;

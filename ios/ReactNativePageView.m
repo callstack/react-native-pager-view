@@ -279,6 +279,18 @@ willTransitionToViewControllers:
 
 #pragma mark - UIScrollViewDelegate
 
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+     _onPageScrollStateChanged(@{@"pageScrollState": @"dragging"});
+}
+
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
+    _onPageScrollStateChanged(@{@"pageScrollState": @"settling"});
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    _onPageScrollStateChanged(@{@"pageScrollState": @"idle"});
+}
+
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     CGPoint point = scrollView.contentOffset;
     float offset = (point.x - self.frame.size.width)/self.frame.size.width;
