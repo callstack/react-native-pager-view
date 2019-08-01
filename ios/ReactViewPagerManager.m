@@ -14,6 +14,7 @@ RCT_EXPORT_VIEW_PROPERTY(transitionStyle, UIPageViewControllerTransitionStyle)
 RCT_EXPORT_VIEW_PROPERTY(orientation, UIPageViewControllerNavigationOrientation)
 RCT_EXPORT_VIEW_PROPERTY(onPageSelected, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPageScroll, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onPageScrollStateChanged, RCTBubblingEventBlock)
 
 - (void) goToPage
                   : (nonnull NSNumber *)reactTag index
