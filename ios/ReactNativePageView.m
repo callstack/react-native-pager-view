@@ -66,8 +66,8 @@
                                  [NSNumber numberWithLong:_pageMargin],
                                  UIPageViewControllerOptionInterPageSpacingKey, nil];
         
-        ReactPageViewController *reactPageViewController =
-        [[ReactPageViewController alloc]
+        UIPageViewController *reactPageViewController =
+        [[UIPageViewController alloc]
          initWithTransitionStyle:_transitionStyle
          navigationOrientation:_orientation
          options:options];
