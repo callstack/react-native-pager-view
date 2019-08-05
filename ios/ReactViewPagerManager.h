@@ -3,7 +3,6 @@
 #import <React/RCTViewManager.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTLog.h>
-#import "ReactPageViewController.h"
 #import "ReactNativePageView.h"
 NS_ASSUME_NONNULL_BEGIN
 

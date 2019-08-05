@@ -1,4 +1,4 @@
-#import "ReactPageViewController.h"
+
 #import <React/RCTShadowView.h>
 #import <React/UIView+React.h>
 #import <UIKit/UIKit.h>
@@ -7,7 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ReactNativePageView: UIView <UIPageViewControllerDataSource, UIPageViewControllerDelegate,UIScrollViewDelegate>
 
-@property(strong, nonatomic, readonly) ReactPageViewController *reactPageViewController;
+@property(strong, nonatomic, readonly) UIPageViewController *reactPageViewController;
 @property(strong, nonatomic, readonly) UIPageControl *reactPageIndicatorView;
 
 @property(nonatomic, strong) NSMutableArray<UIViewController *> *childrenViewControllers;
