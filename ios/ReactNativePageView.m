@@ -1,11 +1,216 @@
 
 #import "ReactNativePageView.h"
 #import "React/RCTLog.h"
+#import <React/RCTViewManager.h>
+
+
+@interface RCTOnPageScrollEvent : NSObject <RCTEvent>
+
+- (instancetype) initWithReactTag:(NSNumber *)reactTag
+                         position:(NSNumber *)position
+                           offset:(NSNumber *)offset
+                    coalescingKey:(uint16_t)coalescingKey;
+
+@end
+
+@implementation RCTOnPageScrollEvent
+{
+    NSNumber* _position;
+    NSNumber* _offset;
+    uint16_t _coalescingKey;
+}
+
+@synthesize viewTag = _viewTag;
+
+- (NSString *)eventName {
+    return @"onPageScroll";
+}
+
+- (instancetype) initWithReactTag:(NSNumber *)reactTag
+                         position:(NSNumber *)position
+                           offset:(NSNumber *)offset
+                    coalescingKey:(uint16_t)coalescingKey;
+{
+    RCTAssertParam(reactTag);
+    
+    if ((self = [super init])) {
+        _viewTag = reactTag;
+        _position = position;
+        _offset = offset;
+        _coalescingKey = coalescingKey;
+    }
+    return self;
+}
+
+RCT_NOT_IMPLEMENTED(- (instancetype)init)
+- (uint16_t)coalescingKey
+{
+    return _coalescingKey;
+}
+
+
+- (BOOL)canCoalesce
+{
+    return NO;
+}
+
++ (NSString *)moduleDotMethod
+{
+    return @"RCTEventEmitter.receiveEvent";
+}
+
+- (NSArray *)arguments
+{
+    return @[self.viewTag, RCTNormalizeInputEventName(self.eventName), @{
+                 @"position": _position,
+                 @"offset": _offset
+                 }];
+}
+
+- (id<RCTEvent>)coalesceWithEvent:(id<RCTEvent>)newEvent;
+{
+    return newEvent;
+}
+
+@end
+
+@interface RCTOnPageScrollStateChanged : NSObject <RCTEvent>
+
+- (instancetype) initWithReactTag:(NSNumber *)reactTag
+                            state:(NSString *)state
+                    coalescingKey:(uint16_t)coalescingKey;
+
+@end
+
+@implementation RCTOnPageScrollStateChanged
+{
+    NSString* _state;
+    uint16_t _coalescingKey;
+}
+
+@synthesize viewTag = _viewTag;
+
+- (NSString *)eventName {
+    return @"onPageScrollStateChanged";
+}
+
+- (instancetype) initWithReactTag:(NSNumber *)reactTag
+                            state:(NSString *)state
+                    coalescingKey:(uint16_t)coalescingKey;
+{
+    RCTAssertParam(reactTag);
+    
+    if ((self = [super init])) {
+        _viewTag = reactTag;
+        _state = state;
+        _coalescingKey = coalescingKey;
+    }
+    return self;
+}
+
+RCT_NOT_IMPLEMENTED(- (instancetype)init)
+- (uint16_t)coalescingKey
+{
+    return _coalescingKey;
+}
+
+
+- (BOOL)canCoalesce
+{
+    return NO;
+}
+
++ (NSString *)moduleDotMethod
+{
+    return @"RCTEventEmitter.receiveEvent";
+}
+
+- (NSArray *)arguments
+{
+    return @[self.viewTag, RCTNormalizeInputEventName(self.eventName), @{
+                 @"pageScrollState": _state,
+                 }];
+}
+
+- (id<RCTEvent>)coalesceWithEvent:(id<RCTEvent>)newEvent;
+{
+    return newEvent;
+}
+
+@end
+
+
+@interface RCTOnPageSelected : NSObject <RCTEvent>
+
+- (instancetype) initWithReactTag:(NSNumber *)reactTag
+                         position:(NSNumber *)position
+                    coalescingKey:(uint16_t)coalescingKey;
+
+@end
+
+@implementation RCTOnPageSelected
+{
+    NSNumber* _position;
+    uint16_t _coalescingKey;
+}
+
+@synthesize viewTag = _viewTag;
+
+- (NSString *)eventName {
+    return @"onPageSelected";
+}
+
+- (instancetype) initWithReactTag:(NSNumber *)reactTag
+                         position:(NSNumber *)position
+                    coalescingKey:(uint16_t)coalescingKey;
+{
+    RCTAssertParam(reactTag);
+    
+    if ((self = [super init])) {
+        _viewTag = reactTag;
+        _position = position;
+        _coalescingKey = coalescingKey;
+    }
+    return self;
+}
+
+RCT_NOT_IMPLEMENTED(- (instancetype)init)
+- (uint16_t)coalescingKey
+{
+    return _coalescingKey;
+}
+
+
+- (BOOL)canCoalesce
+{
+    return NO;
+}
+
++ (NSString *)moduleDotMethod
+{
+    return @"RCTEventEmitter.receiveEvent";
+}
+
+- (NSArray *)arguments
+{
+    return @[self.viewTag, RCTNormalizeInputEventName(self.eventName), @{
+                 @"position": _position,
+                 }];
+}
+
+- (id<RCTEvent>)coalesceWithEvent:(id<RCTEvent>)newEvent;
+{
+    return newEvent;
+}
+
+@end
+
 
 @implementation ReactNativePageView {
     UIPageViewControllerNavigationDirection swipeDirection;
+    uint16_t _coalescingKey;
 }
-- (instancetype)init {
+- (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher {
     self = [super init];
     if (self) {
         _childrenViewControllers = [[NSMutableArray alloc] init];
@@ -15,6 +220,8 @@
         _orientation = UIPageViewControllerNavigationOrientationHorizontal;
         _currentIndex = 0;
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
+        _coalescingKey = 0;
+        _eventDispatcher = eventDispatcher;
     }
     return self;
 }
@@ -75,7 +282,7 @@
         _reactPageViewController = reactPageViewController;
         _reactPageViewController.delegate = self;
         _reactPageViewController.dataSource = self;
-
+        
         for (UIView *subview in _reactPageViewController.view.subviews) {
             if([subview isKindOfClass:UIScrollView.class]){
                 ((UIScrollView *)subview).delegate = self;
@@ -111,7 +318,7 @@
 
 - (void)shouldDismissKeyboard:(NSString *)dismissKeyboard {
     _dismissKeyboard = [dismissKeyboard  isEqual: @"on-drag"] ?
-        UIScrollViewKeyboardDismissModeOnDrag : UIScrollViewKeyboardDismissModeNone;
+    UIScrollViewKeyboardDismissModeOnDrag : UIScrollViewKeyboardDismissModeNone;
     for (UIView *subview in _reactPageViewController.view.subviews) {
         if([subview isKindOfClass:UIScrollView.class]){
             ((UIScrollView *)subview).keyboardDismissMode = _dismissKeyboard;
@@ -146,15 +353,17 @@
                       direction:(UIPageViewControllerNavigationDirection)direction
                        animated:(BOOL)animated {
     __weak ReactNativePageView *weakSelf = self;
+    uint16_t coalescingKey = _coalescingKey++;
     [_reactPageViewController
      setViewControllers:[NSArray arrayWithObjects:pageViewController, nil]
      direction:direction
      animated:animated
      completion:^(BOOL finished) {
          weakSelf.currentIndex = index;
-         if (weakSelf.onPageSelected) {
-             weakSelf.onPageSelected(@{@"position" : [NSNumber numberWithLong:index]});
+         if (weakSelf.eventDispatcher) {
+             [weakSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:weakSelf.reactTag position:[NSNumber numberWithInteger:index] coalescingKey:coalescingKey]];
          }
+         
      }];
 }
 
@@ -173,14 +382,14 @@
         (index.integerValue > _currentIndex)
         ? UIPageViewControllerNavigationDirectionForward
         : UIPageViewControllerNavigationDirectionReverse;
-
+        
         UIViewController *viewController =
         [_childrenViewControllers objectAtIndex:index.integerValue];
         [self setReactViewControllers:index.integerValue
-                                     with:viewController
-                                direction:direction
-                                 animated:animated];
-
+                                 with:viewController
+                            direction:direction
+                             animated:animated];
+        
     }
 }
 
@@ -200,17 +409,14 @@ willTransitionToViewControllers:
 }
 
 - (void)pageViewController:(UIPageViewController *)pageViewController
-                            didFinishAnimating:(BOOL)finished
-                            previousViewControllers: (nonnull NSArray<UIViewController *> *)previousViewControllers
-                            transitionCompleted:(BOOL)completed {
+        didFinishAnimating:(BOOL)finished
+   previousViewControllers: (nonnull NSArray<UIViewController *> *)previousViewControllers
+       transitionCompleted:(BOOL)completed {
     UIViewController* currentVC = pageViewController.viewControllers[0];
     _currentIndex = [_childrenViewControllers indexOfObject:currentVC];
-    if (_onPageSelected) {
-        _onPageSelected(@{@"position" : [NSNumber numberWithLong:_currentIndex]});
-    }
-    if (_onPageScroll) {
-        _onPageScroll(@{@"position": [NSNumber numberWithInteger:_currentIndex], @"offset": [NSNumber numberWithFloat:0]});
-    }
+    [_eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] coalescingKey:_coalescingKey++]];
+    
+    [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] offset:[NSNumber numberWithFloat:0] coalescingKey:_coalescingKey++]];
     _reactPageIndicatorView.currentPage = _currentIndex;
 }
 
@@ -280,15 +486,15 @@ willTransitionToViewControllers:
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-     _onPageScrollStateChanged(@{@"pageScrollState": @"dragging"});
+    [_eventDispatcher sendEvent:[[RCTOnPageScrollStateChanged alloc] initWithReactTag:self.reactTag state:@"dragging" coalescingKey:_coalescingKey++]];
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
-    _onPageScrollStateChanged(@{@"pageScrollState": @"settling"});
+    [_eventDispatcher sendEvent:[[RCTOnPageScrollStateChanged alloc] initWithReactTag:self.reactTag state:@"settling" coalescingKey:_coalescingKey++]];
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    _onPageScrollStateChanged(@{@"pageScrollState": @"idle"});
+    [_eventDispatcher sendEvent:[[RCTOnPageScrollStateChanged alloc] initWithReactTag:self.reactTag state:@"idle" coalescingKey:_coalescingKey++]];
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
@@ -297,9 +503,8 @@ willTransitionToViewControllers:
     if(fabs(offset) > 1) {
         offset = offset > 0 ? 1.0 : -1.0;
     }
-    if (_onPageScroll) {
-        _onPageScroll(@{@"position": [NSNumber numberWithInteger:_currentIndex], @"offset": [NSNumber numberWithFloat:offset]});
-    }
+    [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] offset:[NSNumber numberWithFloat:offset] coalescingKey:_coalescingKey++]];
 }
 
 @end
+
