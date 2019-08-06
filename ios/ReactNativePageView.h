@@ -7,8 +7,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ReactNativePageView: UIView <UIPageViewControllerDataSource, UIPageViewControllerDelegate,UIScrollViewDelegate>
 
+- (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher;
+
 @property(strong, nonatomic, readonly) UIPageViewController *reactPageViewController;
 @property(strong, nonatomic, readonly) UIPageControl *reactPageIndicatorView;
+@property(nonatomic, readonly) RCTEventDispatcher *eventDispatcher;
 
 @property(nonatomic, strong) NSMutableArray<UIViewController *> *childrenViewControllers;
 @property(nonatomic) NSInteger initialPage;
@@ -19,9 +22,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) UIScrollViewKeyboardDismissMode dismissKeyboard;
 @property(nonatomic) UIPageViewControllerTransitionStyle transitionStyle;
 @property(nonatomic) UIPageViewControllerNavigationOrientation orientation;
-@property(nonatomic, copy) RCTBubblingEventBlock onPageSelected;
-@property(nonatomic, copy) RCTBubblingEventBlock onPageScroll;
-@property(nonatomic, copy) RCTBubblingEventBlock onPageScrollStateChanged;
+@property(nonatomic, copy) RCTDirectEventBlock onPageSelected;
+@property(nonatomic, copy) RCTDirectEventBlock onPageScroll;
+@property(nonatomic, copy) RCTDirectEventBlock onPageScrollStateChanged;
 
 
 - (void)goTo:(NSNumber *)index animated:(BOOL)animated;
