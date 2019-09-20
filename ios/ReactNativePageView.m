@@ -229,8 +229,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
 - (void)layoutSubviews {
     [super layoutSubviews];
     if (_reactPageViewController) {
-        _reactPageViewController.view.userInteractionEnabled = _scrollEnabled;
-        
+        [self shouldScroll:_scrollEnabled];
         //Below line fix bug, where the view does not update after orientation changed.
         [self goTo:[NSNumber numberWithInteger:_currentIndex] animated:NO];
     } else {
@@ -312,7 +311,11 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
 - (void)shouldScroll:(BOOL)scrollEnabled {
     _scrollEnabled = scrollEnabled;
     if (_reactPageViewController.view) {
-        _reactPageViewController.view.userInteractionEnabled = scrollEnabled;
+        for (UIScrollView *view in _reactPageViewController.view.subviews) {
+            if ([view isKindOfClass:[UIScrollView class]]) {
+                view.scrollEnabled = scrollEnabled;
+            }
+        }
     }
 }
 
