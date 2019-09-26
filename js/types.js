@@ -79,13 +79,6 @@ export type ViewPagerProps = $ReadOnly<{|
   pageMargin?: ?number,
 
   /**
-   * Whether enable showing peekFraction or not. If this is true, the preview of
-   * last and next page will show in current screen. Defaults to false.
-   */
-
-  peekEnabled?: ?boolean,
-
-  /**
    * Determines whether the keyboard gets dismissed in response to a drag.
    *   - 'none' (the default), drags do not dismiss the keyboard.
    *   - 'on-drag', the keyboard is dismissed when a drag begins.
