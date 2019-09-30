@@ -5,7 +5,7 @@
 *Note: This module has been extracted from `react-native` as a part of the 
 [Lean Core](https://github.com/facebook/react-native/issues/23313) effort.*
 
-This component allows the user to swipe left and right through pages of data. Under the hood it is using the native [Android](https://developer.android.com/reference/android/support/v4/view/ViewPager) and [iOS](https://developer.apple.com/documentation/uikit/uipageviewcontroller) implementation. You can use it to see the native transitions between each screen contained in `ViewPager`. 
+This component allows the user to swipe left and right through pages of data. Under the hood it is using the native [Android](https://developer.android.com/reference/android/support/v4/view/ViewPager) and [iOS](https://developer.apple.com/documentation/uikit/uipageviewcontroller) implementations. You can use it to see the native transitions between each screen contained in `ViewPager`. 
 
 ![](viewpager.gif)
 
@@ -14,8 +14,6 @@ This component allows the user to swipe left and right through pages of data. Un
 `yarn add @react-native-community/viewpager`
 
 # Linking 
-
-#### Using React Native <0.60
 
 `react-native link @react-native-community/viewpager`
 
@@ -69,11 +67,6 @@ protected List<ReactPackage> getPackages() {
 ```
 </details>
 
-#### Using React Native >= 0.60
-
-Use [Jetifier tool](https://github.com/mikehardy/jetifier) for backward-compatibility. Migration will be done in the [future](https://github.com/react-native-community/react-native-viewpager/pull/22#issuecomment-516340194)
-
-
 # Usage
 
 ```js
@@ -107,7 +100,7 @@ const styles = StyleSheet.create({
 
 |Prop|Description|Platform|
 |-|:-----:|:---:|
-|`initialPage`|Index (`number`) of initial page that should be selected|both
+|`initialPage`|Index of initial page that should be selected|both
 |`scrollEnabled: boolean`|Should viewpager scroll, when scroll enabled|both
 |`onPageScroll: (e: PageScrollEvent) => void`|Executed, when transitioning between pages (ether because of animation for the requested page change or when user is swiping/dragging between pages)|both
 |`onPageScrollStateChanged: (e: PageScrollStateChangedEvent) => void`|Function called when the page scrolling state has changed|both
