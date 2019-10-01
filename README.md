@@ -106,7 +106,6 @@ const styles = StyleSheet.create({
 |`onPageScrollStateChanged: (e: PageScrollStateChangedEvent) => void`|Function called when the page scrolling state has changed|both
 |`onPageSelected: (e: PageSelectedEvent) => void`|This callback will be called once ViewPager finish navigating to selected page|both
 |`pageMargin: number`|Blank space to show between pages|both
-|~~peekEnabled: boolean~~| The preview of last and next page will show in current screen. [See how to achive that](https://github.com/facebook/react-native/issues/16158)|both
 |`keyboardDismissMode: ('none' / 'on-drag')`| Determines whether the keyboard gets dismissed in response to  a drag|both
 |`orientation: Orientation`|Set `horizontal` or `vertical` scrolling orientation of Viewpager|iOS
 |`transitionStyle: TransitionStyle`|Use `scroll` or `curl` to change transiotion style|iOS
