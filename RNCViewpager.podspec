@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.homepage     = package['homepage']
 
   s.platform     = :ios, "7.0"
-  s.source       = { :git => "https://github.com/author/RNCViewpager.git", :tag => "master" }
+  s.source       = { :git => "https://github.com/author/RNCViewpager.git", :tag => "v#{s.version}" }
   s.source_files  = "RNCViewpager/**/*.{h,m}"
   s.requires_arc = true
 
