@@ -19,13 +19,13 @@ This component allows the user to swipe left and right through pages of data. Un
 
 <details>
 <summary>Manually link the library on iOS</summary>
+</br>
 
 Follow the [instructions in the React Native documentation](https://facebook.github.io/react-native/docs/linking-libraries-ios#manual-linking) to manually link the framework or link using [Cocoapods](https://cocoapods.org) by adding this to your `Podfile`:
 
 ```ruby
 pod 'react-native-viewpager', :path => '../node_modules/@react-native-community/viewpager'
 ```
-
 </details>
 
 <details>
