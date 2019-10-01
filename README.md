@@ -5,8 +5,7 @@
 *Note: This module has been extracted from `react-native` as a part of the 
 [Lean Core](https://github.com/facebook/react-native/issues/23313) effort.*
 
-For now, this module only works for Android. Under the hood it is using the native Android 
-[ViewPager](https://developer.android.com/reference/android/support/v4/view/ViewPager).
+This component allows the user to swipe left and right through pages of data. Under the hood it is using the native [Android ViewPager](https://developer.android.com/reference/android/support/v4/view/ViewPager) and the [iOS UIPageViewController](https://developer.apple.com/documentation/uikit/uipageviewcontroller) implementations.
 
 ![](viewpager.gif)
 
@@ -14,16 +13,20 @@ For now, this module only works for Android. Under the hood it is using the nati
 
 `yarn add @react-native-community/viewpager`
 
-### Mostly automatic installation
+## Linking 
 
 `react-native link @react-native-community/viewpager`
 
-### Manual installation
+<details>
+<summary>Manually link the library on iOS</summary>
+</br>
 
-#### iOS
-Not Supported.
+Follow the [instructions in the React Native documentation](https://facebook.github.io/react-native/docs/linking-libraries-ios#manual-linking) to manually link the framework or link using [Cocoapods](https://cocoapods.org) by adding this to your `Podfile`:
 
-#### Android
+```ruby
+pod 'react-native-viewpager', :path => '../node_modules/@react-native-community/viewpager'
+```
+</details>
 
 <details>
 <summary>Manually link the library on Android</summary>
@@ -92,3 +95,17 @@ const styles = StyleSheet.create({
   },
 })
 ```
+
+## API
+
+|Prop|Description|Platform|
+|-|:-----:|:---:|
+|`initialPage`|Index of initial page that should be selected|both
+|`scrollEnabled: boolean`|Should viewpager scroll, when scroll enabled|both
+|`onPageScroll: (e: PageScrollEvent) => void`|Executed when transitioning between pages (ether because the animation for the requested page has changed or when the user is swiping/dragging between pages)|both
+|`onPageScrollStateChanged: (e: PageScrollStateChangedEvent) => void`|Function called when the page scrolling state has changed|both
+|`onPageSelected: (e: PageSelectedEvent) => void`|This callback will be called once the ViewPager finishes navigating to the selected page|both
+|`pageMargin: number`|Blank space to be shown between pages|both
+|`keyboardDismissMode: ('none' / 'on-drag')`| Determines whether the keyboard gets dismissed in response to a drag|both
+|`orientation: Orientation`|Set `horizontal` or `vertical` scrolling orientation|iOS
+|`transitionStyle: TransitionStyle`|Use `scroll` or `curl` to change transition style|iOS
