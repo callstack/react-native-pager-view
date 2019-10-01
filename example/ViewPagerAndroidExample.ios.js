@@ -3,6 +3,6 @@ import ViewPagerAndroid from '@react-native-community/viewpager';
 
 export default class ViewPagerAndroidExample extends React.Component {
   render() {
-    return <ViewPagerAndroid />
+    return <ViewPagerAndroid />;
   }
 }

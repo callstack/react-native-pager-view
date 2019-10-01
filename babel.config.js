@@ -1,14 +1,14 @@
 module.exports = {
-  presets: ["module:metro-react-native-babel-preset"],
+  presets: ['module:metro-react-native-babel-preset'],
   plugins: [
     [
-      "module-resolver",
+      'module-resolver',
       {
         alias: {
-          "@react-native-community/viewpager": "./js"
+          '@react-native-community/viewpager': './js',
         },
-        cwd: "babelrc"
-      }
-    ]
-  ]
+        cwd: 'babelrc',
+      },
+    ],
+  ],
 };

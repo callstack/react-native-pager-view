@@ -21,8 +21,6 @@ import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet';
 
 const NativeAndroidViewPager = require('./AndroidViewPagerNativeComponent');
 
-const VIEWPAGER_REF = 'viewPager';
-
 function getViewManagerConfig(viewManagerName) {
   if (!UIManager.getViewManagerConfig) {
     // react-native <= 0.57
@@ -168,6 +166,10 @@ type Props = $ReadOnly<{|
  */
 
 class ViewPagerAndroid extends React.Component<Props> {
+  constructor(props) {
+    super(props);
+    this.viewPagerRef = React.createRef();
+  }
   componentDidMount() {
     if (this.props.initialPage != null) {
       this.setPageWithoutAnimation(this.props.initialPage);
@@ -177,7 +179,7 @@ class ViewPagerAndroid extends React.Component<Props> {
   /* $FlowFixMe(>=0.78.0 site=react_native_android_fb) This issue was found
    * when making Flow check .android.js files. */
   getInnerViewNode = (): ReactComponent => {
-    return this.refs[VIEWPAGER_REF].getInnerViewNode();
+    return this.viewPagerRef.current.getInnerViewNode();
   };
 
   /* $FlowFixMe(>=0.78.0 site=react_native_android_fb) This issue was found
@@ -261,8 +263,7 @@ class ViewPagerAndroid extends React.Component<Props> {
   setPageWithoutAnimation = (selectedPage: number) => {
     UIManager.dispatchViewManagerCommand(
       ReactNative.findNodeHandle(this),
-      getViewManagerConfig('AndroidViewPager').Commands
-        .setPageWithoutAnimation,
+      getViewManagerConfig('AndroidViewPager').Commands.setPageWithoutAnimation,
       [selectedPage],
     );
   };
@@ -271,7 +272,7 @@ class ViewPagerAndroid extends React.Component<Props> {
     return (
       <NativeAndroidViewPager
         {...this.props}
-        ref={VIEWPAGER_REF}
+        ref={this.viewPagerRef}
         style={this.props.style}
         onPageScroll={this._onPageScroll}
         onPageScrollStateChanged={this._onPageScrollStateChanged}
