@@ -179,6 +179,9 @@ export default class ViewPagerAndroidExample extends React.Component {
           onPageSelected={this.onPageSelected}
           onPageScrollStateChanged={this.onPageScrollStateChanged}
           pageMargin={10}
+          pageWidth={0.92}
+          peekEnabled={true}
+          paddingLeft={20}
           ref={viewPager => {
             this.viewPager = viewPager;
           }}>
@@ -310,5 +313,6 @@ const styles = StyleSheet.create({
   },
   viewPager: {
     flex: 1,
+    margin: 10
   },
 });

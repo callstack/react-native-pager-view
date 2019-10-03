@@ -121,4 +121,27 @@ public class ReactViewPagerManager extends ViewGroupManager<ReactViewPager> {
   public void setPeekEnabled(ReactViewPager pager, boolean peekEnabled) {
     pager.setClipToPadding(!peekEnabled);
   }
+
+  @ReactProp(name = "pageWidth", defaultFloat = 1)
+  public void setPageWidth(ReactViewPager pager, float width) {
+    if (width < 0 || width > 1) {
+      throw new IllegalArgumentException("PageWidth must be 0.0 <= width <= 1.0");
+    }
+
+    pager.setPageWidth(width);
+
+    // We must set offScreenPageLimit to 3 when pageWidth is less than 1.f
+    if (width < 1.0f) {
+      pager.setOffscreenPageLimit(3);
+    }
+  }
+
+  @ReactProp(name = "paddingLeft", defaultFloat = 0)
+  public void setPaddingLeft(ReactViewPager pager, float paddingLeft) {
+    pager.setPadding(
+            (int) PixelUtil.toPixelFromDIP(paddingLeft),
+            pager.getPaddingTop(),
+            pager.getPaddingRight(),
+            pager.getPaddingBottom());
+  }
 }

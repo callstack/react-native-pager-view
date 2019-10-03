@@ -123,6 +123,16 @@ type Props = $ReadOnly<{|
   children?: React.Node,
 
   style?: ?ViewStyleProp,
+
+  /**
+   * When it is value is 0.0 <= w <= 1.0, previous and next pages will be visible
+   */
+  pageWidth?: ?number,
+
+  /**
+   * This is necessary when pageWidth is specified. If not, UI looks ugly
+   */
+  paddingLeft?: ?number,
 |}>;
 
 /**

@@ -32,6 +32,7 @@ public class ReactViewPager extends ViewPager {
 
     private final List<View> mViews = new ArrayList<>();
     private boolean mIsViewPagerInIntentionallyInconsistentState = false;
+    private float pageWidth = 1.f;
 
     void addView(View child, int index) {
       mViews.add(index, child);
@@ -73,6 +74,10 @@ public class ReactViewPager extends ViewPager {
       return mViews.get(index);
     }
 
+    void setPageWidth(float pageWidth) {
+      this.pageWidth = pageWidth;
+    }
+
     @Override
     public int getCount() {
       return mViews.size();
@@ -101,6 +106,11 @@ public class ReactViewPager extends ViewPager {
     @Override
     public boolean isViewFromObject(View view, Object object) {
       return view == object;
+    }
+
+    @Override
+    public float getPageWidth(int position) {
+      return pageWidth;
     }
   }
 
@@ -241,6 +251,10 @@ public class ReactViewPager extends ViewPager {
 
   /*package*/ View getViewFromAdapter(int index) {
     return getAdapter().getViewAt(index);
+  }
+
+  /*package*/ void setPageWidth(float width) {
+    getAdapter().setPageWidth(width);
   }
 
   public void setViews(List<View> views) {
