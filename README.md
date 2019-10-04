@@ -5,9 +5,16 @@
 *Note: This module has been extracted from `react-native` as a part of the 
 [Lean Core](https://github.com/facebook/react-native/issues/23313) effort.*
 
-This component allows the user to swipe left and right through pages of data. Under the hood it is using the native [Android ViewPager](https://developer.android.com/reference/android/support/v4/view/ViewPager) and the [iOS UIPageViewController](https://developer.apple.com/documentation/uikit/uipageviewcontroller) implementations.
+This component allows the user to swipe left and right through pages of data. Under the hood it is using the native [Android ViewPager](https://developer.android.com/reference/android/support/v4/view/ViewPager) and the [iOS UIPageViewController](https://developer.apple.com/documentation/uikit/uipageviewcontroller) implementations. [See it in action!](README.md#preview)
 
 <img src="docs/viewpager-logo.png" alt="ViewPager" width="500" height="500">
+
+## Versions
+
+| 1.x              | 2.x              |
+| ---------------- | -------------    |
+|                  | iOS support      |
+| Android support  | Android support  |
 
 ## Getting started
 
@@ -15,7 +22,17 @@ This component allows the user to swipe left and right through pages of data. Un
 
 ## Linking 
 
+### >= 0.60
+
+Autolinking will just do the job.
+
+### < 0.60
+
+#### Mostly automatic
+
 `react-native link @react-native-community/viewpager`
+
+#### Manual linking
 
 <details>
 <summary>Manually link the library on iOS</summary>
