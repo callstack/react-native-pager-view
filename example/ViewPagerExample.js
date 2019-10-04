@@ -121,6 +121,10 @@ export default class ViewPagerExample extends React.Component<*, State> {
           onPageSelected={this.onPageSelected}
           onPageScrollStateChanged={this.onPageScrollStateChanged}
           pageMargin={10}
+          // Lib does not support dynamically orientation change
+          orientation="horizontal"
+          // Lib does not support dynamically transitionStyle change
+          transitionStyle="scroll" 
           ref={this.viewPager}>
           { pages.map( page => this.renderPage(page)) }
         </ViewPagerAndroid>
