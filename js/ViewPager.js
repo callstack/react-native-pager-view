@@ -27,7 +27,7 @@ const dismissKeyboard = require('react-native/Libraries/Utilities/dismissKeyboar
 
 import {childrenWithOverriddenStyle} from "./utils";
 
-const NativeAndroidViewPager = require('./AndroidViewPagerNativeComponent');
+const NativeViewPager = require('./ViewPagerNativeComponent');
 
 const VIEW_PAGER_REF = 'viewPager';
 const VIEW_MANAGER_NAME = Platform.OS === 'android' ? 'AndroidViewPager' : 'RNCViewPager';
@@ -42,8 +42,8 @@ function getViewManagerConfig(viewManagerName) {
 
 /**
  * Container that allows to flip left and right between child views. Each
- * child view of the `ViewPagerAndroid` will be treated as a separate page
- * and will be stretched to fill the `ViewPagerAndroid`.
+ * child view of the `ViewPager` will be treated as a separate page
+ * and will be stretched to fill the `ViewPager`.
  *
  * It is important all children are `<View>`s and not composite components.
  * You can set style properties like `padding` or `backgroundColor` for each
@@ -54,7 +54,7 @@ function getViewManagerConfig(viewManagerName) {
  * ```
  * render: function() {
  *   return (
- *     <ViewPagerAndroid
+ *     <ViewPager
  *       style={styles.viewPager}
  *       initialPage={0}>
  *       <View style={styles.pageStyle} key="1">
@@ -63,7 +63,7 @@ function getViewManagerConfig(viewManagerName) {
  *       <View style={styles.pageStyle} key="2">
  *         <Text>Second page</Text>
  *       </View>
- *     </ViewPagerAndroid>
+ *     </ViewPager>
  *   );
  * }
  *
@@ -82,7 +82,7 @@ function getViewManagerConfig(viewManagerName) {
  * ```
  */
 
-class ViewPagerAndroid extends React.Component<ViewPagerProps> {
+class ViewPager extends React.Component<ViewPagerProps> {
   componentDidMount() {
     // On iOS we do it directly on the native side
     if (Platform.OS === 'android') {
@@ -149,7 +149,7 @@ class ViewPagerAndroid extends React.Component<ViewPagerProps> {
 
   render() {
     return (
-      <NativeAndroidViewPager
+      <NativeViewPager
         {...this.props}
         ref={VIEW_PAGER_REF}
         style={this.props.style}
@@ -162,4 +162,4 @@ class ViewPagerAndroid extends React.Component<ViewPagerProps> {
   }
 }
 
-module.exports = ViewPagerAndroid;
+module.exports = ViewPager;

@@ -21,4 +21,4 @@ export type PageSelectedEvent = _PageSelectedEvent;
 export type TransitionStyle = _TransitionStyle;
 export type Orientation = _Orientation;
 
-module.exports = require('./ViewPagerAndroid');
+module.exports = require('./ViewPager');

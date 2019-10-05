@@ -1,16 +1,16 @@
 import * as React from "react";
 import * as ReactNative from "react-native";
 
-export interface ViewPagerAndroidOnPageScrollEventData {
+export interface ViewPagerOnPageScrollEventData {
     position: number;
     offset: number;
 }
 
-export interface ViewPagerAndroidOnPageSelectedEventData {
+export interface ViewPagerOnPageSelectedEventData {
     position: number;
 }
 
-export interface ViewPagerAndroidProps extends ReactNative.ViewProps {
+export interface ViewPagerProps extends ReactNative.ViewProps {
     /**
      * Index of initial page that should be selected. Use `setPage` method to
      * update the page, and `onPageSelected` to monitor page changes
@@ -32,7 +32,7 @@ export interface ViewPagerAndroidProps extends ReactNative.ViewProps {
      *    Value x means that (1 - x) fraction of the page at "position" index is
      *    visible, and x fraction of the next page is visible.
      */
-    onPageScroll?: (event: ReactNative.NativeSyntheticEvent<ViewPagerAndroidOnPageScrollEventData>) => void;
+    onPageScroll?: (event: ReactNative.NativeSyntheticEvent<ViewPagerOnPageScrollEventData>) => void;
 
     /**
      * This callback will be called once ViewPager finish navigating to selected page
@@ -40,7 +40,7 @@ export interface ViewPagerAndroidProps extends ReactNative.ViewProps {
      * callback will have following fields:
      *  - position - index of page that has been selected
      */
-    onPageSelected?: (event: ReactNative.NativeSyntheticEvent<ViewPagerAndroidOnPageSelectedEventData>) => void;
+    onPageSelected?: (event: ReactNative.NativeSyntheticEvent<ViewPagerOnPageSelectedEventData>) => void;
 
     /**
      * Function called when the page scrolling state has changed.
@@ -66,9 +66,9 @@ export interface ViewPagerAndroidProps extends ReactNative.ViewProps {
     pageMargin?: number;
 }
 
-declare class ViewPagerAndroidComponent extends React.Component<ViewPagerAndroidProps> {}
-declare const ViewPagerAndroidBase: ReactNative.Constructor<ReactNative.NativeMethodsMixin> & typeof ViewPagerAndroidComponent;
-export default class ViewPagerAndroid extends ViewPagerAndroidBase {
+declare class ViewPagerComponent extends React.Component<ViewPagerProps> {}
+declare const ViewPagerBase: ReactNative.Constructor<ReactNative.NativeMethodsMixin> & typeof ViewPagerComponent;
+export default class ViewPager extends ViewPagerBase {
     /**
      * A helper function to scroll to a specific page in the ViewPager.
      * The transition between pages will be animated.
