@@ -17,7 +17,7 @@ import { Image,
   SafeAreaView,
 } from 'react-native'
 
-import ViewPagerAndroid from '@react-native-community/viewpager';
+import ViewPager from '@react-native-community/viewpager';
 import { PAGES, BGCOLOR, IMAGE_URIS, createPage } from "./utils";
 import { Button } from "./src/component/Button";
 import { LikeCount } from "./src/component/LikeCount";
@@ -39,7 +39,7 @@ type State = {
 
 export default class ViewPagerExample extends React.Component<*, State> {
 
-  viewPager: React.Ref<typeof ViewPagerAndroid>;
+  viewPager: React.Ref<typeof ViewPager>;
 
   constructor(props: any) {
     super(props);
@@ -113,7 +113,7 @@ export default class ViewPagerExample extends React.Component<*, State> {
     const {page, pages, animationsAreEnabled} = this.state;
     return (
       <SafeAreaView style={styles.container}>
-        <ViewPagerAndroid
+        <ViewPager
           style={styles.viewPager}
           initialPage={0}
           scrollEnabled={this.state.scrollEnabled}
@@ -127,7 +127,7 @@ export default class ViewPagerExample extends React.Component<*, State> {
           transitionStyle="scroll" 
           ref={this.viewPager}>
           { pages.map( page => this.renderPage(page)) }
-        </ViewPagerAndroid>
+        </ViewPager>
         <View style={styles.buttons}>
           <Button
             enabled={true}
