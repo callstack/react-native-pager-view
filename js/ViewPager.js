@@ -30,7 +30,7 @@ import {childrenWithOverriddenStyle} from "./utils";
 const NativeViewPager = require('./ViewPagerNativeComponent');
 
 const VIEW_PAGER_REF = 'viewPager';
-const VIEW_MANAGER_NAME = Platform.OS === 'android' ? 'AndroidViewPager' : 'RNCViewPager';
+const VIEW_MANAGER_NAME = 'RNCViewPager';
 
 function getViewManagerConfig(viewManagerName) {
   if (!UIManager.getViewManagerConfig) {
