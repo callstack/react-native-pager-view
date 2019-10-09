@@ -29,9 +29,6 @@ public class VerticalViewPager extends ViewPager {
         // Make page transit vertical
         setPageTransformer(true, mVertical ? new VerticalPageTransformer() : null);
 
-        // Get rid of the overscroll drawing that happens on the left and right (the ripple)
-        setOverScrollMode(View.OVER_SCROLL_NEVER);
-
         // Nested scroll issue, follow the link
         // https://stackoverflow.com/questions/46828920/vertical-viewpager-with-horizontalscrollview-inside-fragment
         mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
@@ -51,7 +48,7 @@ public class VerticalViewPager extends ViewPager {
     }
 
     /**
-     * @return {@code true} iff a normal view pager would support horizontal scrolling at this time
+     * @return {@code true} if a normal view pager would support horizontal scrolling at this time
      */
     @Override
     public boolean canScrollVertically(int direction) {
