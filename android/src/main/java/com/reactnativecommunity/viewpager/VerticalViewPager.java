@@ -1,0 +1,109 @@
+package com.reactnativecommunity.viewpager;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
+
+import androidx.viewpager.widget.ViewPager;
+
+// Vertical ViewPager implement, original code from
+// https://android.googlesource.com/platform/packages/apps/DeskClock/+/master/src/com/android/deskclock/VerticalViewPager.java
+public class VerticalViewPager extends ViewPager {
+    private boolean mVertical = false;
+    private GestureDetector mGestureDetector;
+
+    public VerticalViewPager(Context context) {
+        this(context, null);
+    }
+
+    public VerticalViewPager(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        setOrientation(false);
+    }
+
+    public void setOrientation(boolean vertical) {
+        mVertical = vertical;
+
+        // Make page transit vertical
+        setPageTransformer(true, mVertical ? new VerticalPageTransformer() : null);
+
+        // Get rid of the overscroll drawing that happens on the left and right (the ripple)
+        setOverScrollMode(View.OVER_SCROLL_NEVER);
+
+        // Nested scroll issue, follow the link
+        // https://stackoverflow.com/questions/46828920/vertical-viewpager-with-horizontalscrollview-inside-fragment
+        mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                return mVertical ? Math.abs(distanceY) > Math.abs(distanceX) : Math.abs(distanceY) < Math.abs(distanceX);
+            }
+        });
+    }
+
+    /**
+     * @return {@code false} since a vertical view pager can never be scrolled horizontally
+     */
+    @Override
+    public boolean canScrollHorizontally(int direction) {
+        return !canScrollVertically(direction);
+    }
+
+    /**
+     * @return {@code true} iff a normal view pager would support horizontal scrolling at this time
+     */
+    @Override
+    public boolean canScrollVertically(int direction) {
+        return mVertical;
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        super.onInterceptTouchEvent(flipXY(ev));
+        // Return MotionEvent to normal
+        flipXY(ev);
+        return mGestureDetector.onTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        super.onTouchEvent(flipXY(ev));
+        // Return MotionEvent to normal
+        flipXY(ev);
+        return mGestureDetector.onTouchEvent(ev);
+    }
+
+    private MotionEvent flipXY(MotionEvent ev) {
+        if (mVertical) {
+            final float width = getWidth();
+            final float height = getHeight();
+            final float x = (ev.getY() / height) * width;
+            final float y = (ev.getX() / width) * height;
+            ev.setLocation(x, y);
+        }
+        return ev;
+    }
+
+    private static final class VerticalPageTransformer implements ViewPager.PageTransformer {
+        @Override
+        public void transformPage(View view, float position) {
+            final int pageWidth = view.getWidth();
+            final int pageHeight = view.getHeight();
+            if (position < -1) {
+                // This page is way off-screen to the left.
+                view.setAlpha(0);
+            } else if (position <= 1) {
+                view.setAlpha(1);
+                // Counteract the default slide transition
+                view.setTranslationX(pageWidth * -position);
+                // set Y position to swipe in from top
+                float yPosition = position * pageHeight;
+                view.setTranslationY(yPosition);
+            } else {
+                // This page is way off-screen to the right.
+                view.setAlpha(0);
+            }
+        }
+    }
+}
