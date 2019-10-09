@@ -18,22 +18,6 @@ export const childrenWithOverriddenStyle = (children?: React.Node): Array<React.
     if (!child) {
       return null;
     }
-    const newProps = {
-      ...child.props,
-      style: [
-        child.props.style,
-        {
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          right: 0,
-          bottom: 0,
-          width: undefined,
-          height: undefined,
-        },
-      ],
-      collapsable: false,
-    };
     if (
       child.type &&
       child.type.displayName &&
@@ -45,6 +29,6 @@ export const childrenWithOverriddenStyle = (children?: React.Node): Array<React.
         child.type.displayName,
       );
     }
-    return React.createElement(child.type, newProps);
+    return React.createElement(child.type, child.props);
   });
 };
