@@ -1,6 +1,7 @@
 # react-native-viewpager
 
 [![CircleCI branch](https://img.shields.io/circleci/project/github/react-native-community/react-native-viewpager/master.svg)](https://circleci.com/gh/react-native-community/react-native-viewpager/tree/master)
+[![npm package](https://badge.fury.io/js/%40react-native-community%2Fviewpager.svg)](https://badge.fury.io/js/%40react-native-community%2Fviewpager)
 [![Lean Core Extracted](https://img.shields.io/badge/Lean%20Core-Extracted-brightgreen.svg)](https://github.com/facebook/react-native/issues/23313)
 [![License](https://img.shields.io/github/license/react-native-community/react-native-viewpager?color=blue)](https://github.com/react-native-community/react-native-viewpager/blob/master/LICENSE)
 
