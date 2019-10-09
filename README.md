@@ -1,9 +1,8 @@
 # react-native-viewpager
 
 [![CircleCI branch](https://img.shields.io/circleci/project/github/react-native-community/react-native-viewpager/master.svg)](https://circleci.com/gh/react-native-community/react-native-viewpager/tree/master)
-
-*Note: This module has been extracted from `react-native` as a part of the 
-[Lean Core](https://github.com/facebook/react-native/issues/23313) effort.*
+[![Lean Core Extracted](https://img.shields.io/badge/Lean%20Core-Extracted-brightgreen.svg)](https://github.com/facebook/react-native/issues/23313)
+[![License](https://img.shields.io/github/license/react-native-community/react-native-viewpager?color=blue)](https://github.com/react-native-community/react-native-viewpager/blob/master/LICENSE)
 
 This component allows the user to swipe left and right through pages of data. Under the hood it is using the native [Android ViewPager](https://developer.android.com/reference/android/support/v4/view/ViewPager) and the [iOS UIPageViewController](https://developer.apple.com/documentation/uikit/uipageviewcontroller) implementations. [See it in action!](https://github.com/react-native-community/react-native-viewpager#preview)
 
