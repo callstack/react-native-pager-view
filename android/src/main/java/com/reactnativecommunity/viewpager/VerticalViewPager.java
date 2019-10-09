@@ -6,7 +6,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-import androidx.viewpager.widget.ViewPager;
+import android.support.v4.view.ViewPager;
 
 // Vertical ViewPager implement, original code from
 // https://android.googlesource.com/platform/packages/apps/DeskClock/+/master/src/com/android/deskclock/VerticalViewPager.java
