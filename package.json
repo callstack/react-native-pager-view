@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/viewpager",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "React Native ViewPager native view",
   "main": "js/index.js",
   "types": "typings/index.d.ts",
