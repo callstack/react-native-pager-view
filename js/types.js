@@ -8,9 +8,9 @@
  * @flow strict-local
  */
 
-import type {Node} from "react";
-import type {SyntheticEvent} from "react-native/Libraries/Types/CoreEventTypes";
-import type {ViewStyleProp} from "react-native/Libraries/StyleSheet/StyleSheet";
+import type {Node} from 'react';
+import type {SyntheticEvent} from 'react-native/Libraries/Types/CoreEventTypes';
+import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet';
 
 export type PageScrollState = 'idle' | 'dragging' | 'settling';
 
@@ -33,8 +33,8 @@ export type PageSelectedEvent = SyntheticEvent<
   |}>,
 >;
 
-export type TransitionStyle = 'scroll' | 'curl'
-export type Orientation = 'horizontal' | 'vertical'
+export type TransitionStyle = 'scroll' | 'curl';
+export type Orientation = 'horizontal' | 'vertical';
 
 export type ViewPagerProps = $ReadOnly<{|
   /**

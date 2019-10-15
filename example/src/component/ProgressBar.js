@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import {StyleSheet, View} from 'react-native'
+import {StyleSheet, View} from 'react-native';
 
 type Props = {
   progress: {
@@ -17,12 +17,14 @@ type Props = {
   },
   numberOfPages: number,
   size: number,
-}
+};
 
 export class ProgressBar extends React.Component<Props> {
   render() {
-    const fractionalPosition = this.props.progress.position + this.props.progress.offset;
-    const progressBarSize = (fractionalPosition / (this.props.numberOfPages - 1)) * this.props.size;
+    const fractionalPosition =
+      this.props.progress.position + this.props.progress.offset;
+    const progressBarSize =
+      (fractionalPosition / (this.props.numberOfPages - 1)) * this.props.size;
     return (
       <View style={[styles.progressBarContainer, {width: this.props.size}]}>
         <View style={[styles.progressBar, {width: progressBarSize}]} />
@@ -32,15 +34,15 @@ export class ProgressBar extends React.Component<Props> {
 }
 
 const styles = StyleSheet.create({
-    progressBarContainer: {
-      height: 10,
-      margin: 10,
-      borderColor: '#eeeeee',
-      borderWidth: 2,
-    },
-    progressBar: {
-      alignSelf: 'flex-start',
-      flex: 1,
-      backgroundColor: '#eeeeee',
-    },
-  });
+  progressBarContainer: {
+    height: 10,
+    margin: 10,
+    borderColor: '#eeeeee',
+    borderWidth: 2,
+  },
+  progressBar: {
+    alignSelf: 'flex-start',
+    flex: 1,
+    backgroundColor: '#eeeeee',
+  },
+});
