@@ -13,7 +13,7 @@ import * as React from 'react';
 import {Image, StyleSheet, Text, View, SafeAreaView} from 'react-native';
 
 import ViewPager from '@react-native-community/viewpager';
-import {PAGES, BGCOLOR, IMAGE_URIS, createPage} from './utils';
+import {PAGES, createPage} from './utils';
 import {Button} from './src/component/Button';
 import {LikeCount} from './src/component/LikeCount';
 import {ProgressBar} from './src/component/ProgressBar';
