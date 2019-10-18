@@ -7,7 +7,9 @@
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "flow": "flow"
+    "flow": "flow",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix --ext .js"
   },
   "keywords": [
     "react-native",
@@ -27,9 +29,11 @@
     "react-native": ">=0.57"
   },
   "devDependencies": {
+    "@react-native-community/eslint-config": "^0.0.5",
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "24.1.0",
     "babel-plugin-module-resolver": "^3.1.3",
+    "eslint": "^6.5.1",
     "flow-bin": "^0.86.0",
     "jest": "24.1.0",
     "metro-react-native-babel-preset": "0.51.1",

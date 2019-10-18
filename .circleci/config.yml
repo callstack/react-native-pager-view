@@ -19,7 +19,6 @@ android_defaults: &android_defaults
   <<: *defaults
   docker:
     - image: circleci/android:api-27-node8-alpha
-  resource_class: "large"
   environment:
     - TERM: "dumb"
     - ADB_INSTALL_TIMEOUT: 10
@@ -30,7 +29,6 @@ android_defaults: &android_defaults
 # MACOS
 macos_defaults: &macos_defaults
   <<: *defaults
-  resource_class: "large"
   macos:
     xcode: "10.1.0"
 
@@ -65,9 +63,9 @@ aliases:
       yarn install --network-concurrency 1 --non-interactive --cache-folder ~/.cache/yarn & wait
 
   # ANALYSE
-  # - &eslint
-  #   name: ESLint Checks
-  #   command: yarn test:eslint
+  - &eslint
+    name: ESLint Checks
+    command: yarn lint
 
   - &flow
     name: Flow Checks
@@ -96,12 +94,12 @@ jobs:
           root: .
           paths: .
 
-  # eslint:
-  #   <<: *linux_defaults
-  #   steps:
-  #   - attach_workspace:
-  #       at: ~/react-native-viewpager
-  #   - run: *eslint
+  eslint:
+    <<: *linux_defaults
+    steps:
+    - attach_workspace:
+        at: ~/react-native-viewpager
+    - run: *eslint
 
   flow:
     <<: *linux_defaults
@@ -166,9 +164,9 @@ workflows:
   Test:
     jobs:
       - linux-checkout
-      # - eslint:
-      #     requires:
-      #     - linux-checkout
+      - eslint:
+          requires:
+          - linux-checkout
       - flow:
           requires:
             - linux-checkout

@@ -8,12 +8,7 @@
  */
 
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableWithoutFeedback,
-  View,
-} from 'react-native'
+import {StyleSheet, Text, TouchableWithoutFeedback, View} from 'react-native';
 
 type Props = $ReadOnly<{|
   enabled?: boolean,

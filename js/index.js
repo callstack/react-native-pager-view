@@ -7,12 +7,12 @@
  * @flow
  */
 
-import type { PageScrollState as _PageScrollState } from './types';
-import type { PageScrollEvent as _PageScrollEvent } from './types';
-import type { PageScrollStateChangedEvent as _PageScrollStateChangedEvent } from './types';
-import type { PageSelectedEvent as _PageSelectedEvent } from './types';
-import type { TransitionStyle as _TransitionStyle } from './types';
-import type { Orientation as _Orientation } from './types';
+import type {PageScrollState as _PageScrollState} from './types';
+import type {PageScrollEvent as _PageScrollEvent} from './types';
+import type {PageScrollStateChangedEvent as _PageScrollStateChangedEvent} from './types';
+import type {PageSelectedEvent as _PageSelectedEvent} from './types';
+import type {TransitionStyle as _TransitionStyle} from './types';
+import type {Orientation as _Orientation} from './types';
 
 export type PageScrollState = _PageScrollState;
 export type PageScrollEvent = _PageScrollEvent;

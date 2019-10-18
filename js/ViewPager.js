@@ -8,15 +8,14 @@
  * @flow strict-local
  */
 
-
 'use strict';
 
 import type {
   PageScrollEvent,
   PageScrollStateChangedEvent,
   PageSelectedEvent,
-  ViewPagerProps
-} from "./types";
+  ViewPagerProps,
+} from './types';
 
 const React = require('react');
 const ReactNative = require('react-native');
@@ -25,7 +24,7 @@ const {Platform, UIManager} = ReactNative;
 
 const dismissKeyboard = require('react-native/Libraries/Utilities/dismissKeyboard');
 
-import {childrenWithOverriddenStyle} from "./utils";
+import {childrenWithOverriddenStyle} from './utils';
 
 const NativeViewPager = require('./ViewPagerNativeComponent');
 
@@ -141,8 +140,7 @@ class ViewPager extends React.Component<ViewPagerProps> {
   setPageWithoutAnimation = (selectedPage: number) => {
     UIManager.dispatchViewManagerCommand(
       ReactNative.findNodeHandle(this),
-      getViewManagerConfig(VIEW_MANAGER_NAME).Commands
-        .setPageWithoutAnimation,
+      getViewManagerConfig(VIEW_MANAGER_NAME).Commands.setPageWithoutAnimation,
       [selectedPage],
     );
   };
