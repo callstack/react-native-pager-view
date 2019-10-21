@@ -8,14 +8,13 @@
  * @flow
  */
 
-
 'use strict';
 
 const {requireNativeComponent} = require('react-native');
 
 import type {NativeComponent} from 'react-native/Libraries/Renderer/shims/ReactNative';
 
-import type {ViewPagerProps} from "./types";
+import type {ViewPagerProps} from './types';
 
 type ViewPagerNativeType = Class<NativeComponent<ViewPagerProps>>;
 

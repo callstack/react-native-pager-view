@@ -9,21 +9,21 @@
 
 'use strict';
 
-import * as React from "react";
-import { Image,
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-} from 'react-native'
+import * as React from 'react';
+import {Image, StyleSheet, Text, View, SafeAreaView} from 'react-native';
 
 import ViewPager from '@react-native-community/viewpager';
-import { PAGES, BGCOLOR, IMAGE_URIS, createPage } from "./utils";
-import { Button } from "./src/component/Button";
-import { LikeCount } from "./src/component/LikeCount";
-import { ProgressBar } from "./src/component/ProgressBar";
-import type { CreatePage } from "./utils"
-import type {PageScrollEvent, PageScrollState, PageScrollStateChangedEvent, PageSelectedEvent} from "../js";
+import {PAGES, createPage} from './utils';
+import {Button} from './src/component/Button';
+import {LikeCount} from './src/component/LikeCount';
+import {ProgressBar} from './src/component/ProgressBar';
+import type {CreatePage} from './utils';
+import type {
+  PageScrollEvent,
+  PageScrollState,
+  PageScrollStateChangedEvent,
+  PageSelectedEvent,
+} from '../js';
 
 type State = {
   page: number,
@@ -34,11 +34,10 @@ type State = {
     offset: number,
   },
   pages: Array<CreatePage>,
-  scrollState: PageScrollState
+  scrollState: PageScrollState,
 };
 
 export default class ViewPagerExample extends React.Component<*, State> {
-
   viewPager: React.Ref<typeof ViewPager>;
 
   constructor(props: any) {
@@ -58,20 +57,22 @@ export default class ViewPagerExample extends React.Component<*, State> {
         offset: 0,
       },
       pages: pages,
-      scrollState: 'idle'
+      scrollState: 'idle',
     };
     this.viewPager = React.createRef();
-  };
+  }
 
   onPageSelected = (e: PageSelectedEvent) => {
     this.setState({page: e.nativeEvent.position});
   };
 
-  onPageScroll = (e: PageScrollEvent)=> {
-    this.setState({progress: {
-      position: e.nativeEvent.position,
-      offset: e.nativeEvent.offset,
-    }});
+  onPageScroll = (e: PageScrollEvent) => {
+    this.setState({
+      progress: {
+        position: e.nativeEvent.position,
+        offset: e.nativeEvent.offset,
+      },
+    });
   };
 
   onPageScrollStateChanged = (e: PageScrollStateChangedEvent) => {
@@ -79,7 +80,9 @@ export default class ViewPagerExample extends React.Component<*, State> {
   };
 
   addPage = () => {
-    this.setState(prevState => ({ pages: [...prevState.pages, createPage(prevState.pages.length)]}));
+    this.setState(prevState => ({
+      pages: [...prevState.pages, createPage(prevState.pages.length)],
+    }));
   };
 
   move = (delta: number) => {
@@ -100,14 +103,11 @@ export default class ViewPagerExample extends React.Component<*, State> {
   renderPage(page: CreatePage) {
     return (
       <View key={page.key} style={page.style} collapsable={false}>
-        <Image
-          style={styles.image}
-          source={page.imgSource}
-        />
+        <Image style={styles.image} source={page.imgSource} />
         <LikeCount />
       </View>
     );
-  };
+  }
 
   render() {
     const {page, pages, animationsAreEnabled} = this.state;
@@ -124,9 +124,9 @@ export default class ViewPagerExample extends React.Component<*, State> {
           // Lib does not support dynamically orientation change
           orientation="horizontal"
           // Lib does not support dynamically transitionStyle change
-          transitionStyle="scroll" 
+          transitionStyle="scroll"
           ref={this.viewPager}>
-          { pages.map( page => this.renderPage(page)) }
+          {pages.map(page => this.renderPage(page))}
         </ViewPager>
         <View style={styles.buttons}>
           <Button
@@ -177,8 +177,15 @@ export default class ViewPagerExample extends React.Component<*, State> {
           />
         </View>
         <View style={styles.progress}>
-          <Text style={styles.buttonText}> Page {page + 1} / {pages.length} </Text>
-          <ProgressBar numberOfPages={pages.length} size={300} progress={this.state.progress} />
+          <Text style={styles.buttonText}>
+            {' '}
+            Page {page + 1} / {pages.length}{' '}
+          </Text>
+          <ProgressBar
+            numberOfPages={pages.length}
+            size={300}
+            progress={this.state.progress}
+          />
         </View>
       </SafeAreaView>
     );

@@ -1,9 +1,9 @@
 # react-native-viewpager
 
 [![CircleCI branch](https://img.shields.io/circleci/project/github/react-native-community/react-native-viewpager/master.svg)](https://circleci.com/gh/react-native-community/react-native-viewpager/tree/master)
-
-*Note: This module has been extracted from `react-native` as a part of the 
-[Lean Core](https://github.com/facebook/react-native/issues/23313) effort.*
+[![npm package](https://badge.fury.io/js/%40react-native-community%2Fviewpager.svg)](https://badge.fury.io/js/%40react-native-community%2Fviewpager)
+[![Lean Core Extracted](https://img.shields.io/badge/Lean%20Core-Extracted-brightgreen.svg)](https://github.com/facebook/react-native/issues/23313)
+[![License](https://img.shields.io/github/license/react-native-community/react-native-viewpager?color=blue)](https://github.com/react-native-community/react-native-viewpager/blob/master/LICENSE)
 
 This component allows the user to swipe left and right through pages of data. Under the hood it is using the native [Android ViewPager](https://developer.android.com/reference/android/support/v4/view/ViewPager) and the [iOS UIPageViewController](https://developer.apple.com/documentation/uikit/uipageviewcontroller) implementations. [See it in action!](https://github.com/react-native-community/react-native-viewpager#preview)
 
@@ -87,30 +87,28 @@ protected List<ReactPackage> getPackages() {
 ## Usage
 
 ```js
-import ViewPager from "@react-native-community/viewpager";
+import React from 'react';
+import {StyleSheet, View, Text} from 'react-native';
+import ViewPager from '@react-native-community/viewpager';
 
-class MyPager extends React.Component { 
-  render() {
-    return (
-      <ViewPager
-        style={styles.viewPager}
-        initialPage={0}>
-        <View key="1">
-          <Text>First page</Text>
-        </View>
-        <View key="2">
-          <Text>Second page</Text>
-        </View>
-      </ViewPager>
-    );
-  }
-}
+const MyPager = () => {
+  return (
+    <ViewPager style={styles.viewPager} initialPage={0}>
+      <View key="1">
+        <Text>First page</Text>
+      </View>
+      <View key="2">
+        <Text>Second page</Text>
+      </View>
+    </ViewPager>
+  );
+};
 
 const styles = StyleSheet.create({
   viewPager: {
-    flex: 1
+    flex: 1,
   },
-})
+});
 ```
 
 ## API

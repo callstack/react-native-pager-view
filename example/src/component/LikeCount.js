@@ -8,14 +8,9 @@
  */
 
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import { thumbsUp } from '../../utils'
+import {thumbsUp} from '../../utils';
 
 type Props = $ReadOnly<{||}>;
 type State = {|likes: number|};
@@ -26,7 +21,7 @@ export class LikeCount extends React.Component<Props, State> {
   };
 
   onClick = () => {
-    this.setState(state => ({ likes: state.likes + 1}));
+    this.setState(state => ({likes: state.likes + 1}));
   };
 
   render() {
@@ -47,10 +42,10 @@ const styles = StyleSheet.create({
     height: 45,
   },
   likesText: {
-      flex: 1,
-      fontSize: 18,
-      alignSelf: 'center',
-    },
+    flex: 1,
+    fontSize: 18,
+    alignSelf: 'center',
+  },
   likeButton: {
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
     borderColor: '#333333',

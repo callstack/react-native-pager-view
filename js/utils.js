@@ -10,7 +10,9 @@
 
 import * as React from 'react';
 
-export const childrenWithOverriddenStyle = (children?: React.Node): Array<React.Node> => {
+export const childrenWithOverriddenStyle = (
+  children?: React.Node,
+): Array<React.Node> => {
   // Override styles so that each page will fill the parent. Native component
   // will handle positioning of elements, so it's not important to offset
   // them correctly.
@@ -41,8 +43,7 @@ export const childrenWithOverriddenStyle = (children?: React.Node): Array<React.
       child.type.displayName !== 'View'
     ) {
       console.warn(
-        'Each ViewPager child must be a <View>. Was ' +
-        child.type.displayName,
+        'Each ViewPager child must be a <View>. Was ' + child.type.displayName,
       );
     }
     return React.createElement(child.type, newProps);
