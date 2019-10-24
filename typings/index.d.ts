@@ -64,6 +64,13 @@ export interface ViewPagerProps extends ReactNative.ViewProps {
      * edge-to-edge.
      */
     pageMargin?: number;
+    
+    /**
+    * iOS only
+    */
+    orientation?: 'horizontal' | 'vertical',
+    transitionStyle?: 'scroll' | 'curl',
+    showPageIndicator?: boolean,
 }
 
 declare class ViewPagerComponent extends React.Component<ViewPagerProps> {}
