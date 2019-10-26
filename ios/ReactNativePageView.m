@@ -483,7 +483,16 @@ willTransitionToViewControllers:
     pageControl.tintColor = UIColor.blackColor;
     pageControl.pageIndicatorTintColor = UIColor.whiteColor;
     pageControl.currentPageIndicatorTintColor = UIColor.blackColor;
+    [pageControl addTarget:self
+                    action:@selector(pageControlValueChanged:)
+          forControlEvents:UIControlEventValueChanged];
+
     return pageControl;
+}
+- (void)pageControlValueChanged:(UIPageControl *)sender {
+    if (_reactPageIndicatorView.currentPage != _currentIndex) {
+        [self goTo:@(_reactPageIndicatorView.currentPage) animated:YES];
+    }
 }
 
 #pragma mark - UIScrollViewDelegate
