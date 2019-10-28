@@ -9,7 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "flow": "flow",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix --ext .js"
+    "lint:fix": "eslint . --fix --ext .js",
+    "postinstall": "patch-package"
   },
   "keywords": [
     "react-native",
@@ -43,5 +44,9 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "dependencies": {
+    "patch-package": "^6.2.0",
+    "postinstall-postinstall": "^2.0.0"
   }
 }
