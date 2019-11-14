@@ -103,6 +103,7 @@ export default class ViewPagerExample extends React.Component<*, State> {
   renderPage(page: CreatePage) {
     return (
       <View key={page.key} style={page.style} collapsable={false}>
+        {/* $FlowFixMe */}
         <Image style={styles.image} source={page.imgSource} />
         <LikeCount />
       </View>
@@ -127,7 +128,7 @@ export default class ViewPagerExample extends React.Component<*, State> {
           transitionStyle="scroll"
           showPageIndicator
           ref={this.viewPager}>
-          {pages.map(page => this.renderPage(page))}
+          {pages.map(p => this.renderPage(p))}
         </ViewPager>
         <View style={styles.buttons}>
           <Button
