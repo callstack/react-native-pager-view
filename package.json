@@ -6,6 +6,8 @@
   "types": "typings/index.d.ts",
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
+    "android": "react-native run-android --root=\"./example\"",
+    "ios": "react-native run-ios --project-path=\"./example/ios\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "flow": "flow",
     "lint": "eslint .",
