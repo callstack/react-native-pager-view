@@ -6,7 +6,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
-import android.support.v4.view.ViewPager;
+import androidx.viewpager.widget.ViewPager;
 
 // Vertical ViewPager implement, original code from
 // https://android.googlesource.com/platform/packages/apps/DeskClock/+/master/src/com/android/deskclock/VerticalViewPager.java
@@ -57,18 +57,28 @@ public class VerticalViewPager extends ViewPager {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        super.onInterceptTouchEvent(flipXY(ev));
+        Boolean result = super.onInterceptTouchEvent(flipXY(ev));
         // Return MotionEvent to normal
         flipXY(ev);
-        return mGestureDetector.onTouchEvent(ev);
+
+        if (mGestureDetector.onTouchEvent(ev)) {
+            result = true;
+        }
+
+        return result;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        super.onTouchEvent(flipXY(ev));
+        Boolean result = super.onTouchEvent(flipXY(ev));
         // Return MotionEvent to normal
         flipXY(ev);
-        return mGestureDetector.onTouchEvent(ev);
+
+        if (mGestureDetector.onTouchEvent(ev)) {
+            result = true;
+        }
+
+        return result;
     }
 
     private MotionEvent flipXY(MotionEvent ev) {
@@ -104,3 +114,4 @@ public class VerticalViewPager extends ViewPager {
         }
     }
 }
+
