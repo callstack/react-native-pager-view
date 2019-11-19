@@ -35,6 +35,7 @@ type State = {
   },
   pages: Array<CreatePage>,
   scrollState: PageScrollState,
+  dotsVisible: boolean,
 };
 
 export default class ViewPagerExample extends React.Component<*, State> {
@@ -58,6 +59,7 @@ export default class ViewPagerExample extends React.Component<*, State> {
       },
       pages: pages,
       scrollState: 'idle',
+      dotsVisible: false,
     };
     this.viewPager = React.createRef();
   }
@@ -110,8 +112,12 @@ export default class ViewPagerExample extends React.Component<*, State> {
     );
   }
 
+  toggleDotsVisibility = () => {
+    this.setState(prevState => ({dotsVisible: !prevState.dotsVisible}));
+  };
+
   render() {
-    const {page, pages, animationsAreEnabled} = this.state;
+    const {page, pages, animationsAreEnabled, dotsVisible} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <ViewPager
@@ -126,7 +132,7 @@ export default class ViewPagerExample extends React.Component<*, State> {
           orientation="horizontal"
           // Lib does not support dynamically transitionStyle change
           transitionStyle="scroll"
-          showPageIndicator
+          showPageIndicator={dotsVisible}
           ref={this.viewPager}>
           {pages.map(p => this.renderPage(p))}
         </ViewPager>
@@ -139,6 +145,11 @@ export default class ViewPagerExample extends React.Component<*, State> {
             onPress={() =>
               this.setState({scrollEnabled: !this.state.scrollEnabled})
             }
+          />
+          <Button
+            enabled={true}
+            text={dotsVisible ? 'Hide dots' : 'Show dots'}
+            onPress={this.toggleDotsVisibility}
           />
           <Button enabled={true} text="Add new page" onPress={this.addPage} />
         </View>
