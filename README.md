@@ -122,8 +122,8 @@ const styles = StyleSheet.create({
 |`onPageSelected: (e: PageSelectedEvent) => void`|This callback will be called once the ViewPager finishes navigating to the selected page|both
 |`pageMargin: number`|Blank space to be shown between pages|both
 |`keyboardDismissMode: ('none' / 'on-drag')`| Determines whether the keyboard gets dismissed in response to a drag|both
-|`orientation: Orientation`|Set `horizontal` or `vertical` scrolling orientation|iOS
-|`transitionStyle: TransitionStyle`|Use `scroll` or `curl` to change transition style|iOS
+|`orientation: Orientation`|Set `horizontal` or `vertical` scrolling orientation (it does **not** work dynamically)|both
+|`transitionStyle: TransitionStyle`|Use `scroll` or `curl` to change transition style (it does **not** work dynamically)|iOS
 |`showPageIndicator: boolean`|Shows the dots indicator at the bottom of the view|iOS
 
 ## Preview
