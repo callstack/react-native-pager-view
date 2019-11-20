@@ -46,6 +46,11 @@ public class ReactViewPagerManager extends ViewGroupManager<ReactViewPager> {
     viewPager.setScrollEnabled(value);
   }
 
+  @ReactProp(name = "orientation")
+  public void setOrientation(ReactViewPager viewPager, String value) {
+    viewPager.setOrientation(value.equals("vertical"));
+  }
+
   @Override
   public boolean needsCustomLayoutForChildren() {
     return true;
