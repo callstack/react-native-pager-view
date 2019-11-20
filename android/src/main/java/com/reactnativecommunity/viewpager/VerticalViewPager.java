@@ -15,26 +15,22 @@ public class VerticalViewPager extends ViewPager {
     private GestureDetector mGestureDetector;
 
     public VerticalViewPager(Context context) {
-        this(context, null);
-    }
-
-    public VerticalViewPager(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        setOrientation(false);
+        super(context);
     }
 
     public void setOrientation(boolean vertical) {
         mVertical = vertical;
+        if (!mVertical) return;
 
         // Make page transit vertical
-        setPageTransformer(true, mVertical ? new VerticalPageTransformer() : null);
+        setPageTransformer(true, new VerticalPageTransformer());
 
         // Nested scroll issue, follow the link
         // https://stackoverflow.com/questions/46828920/vertical-viewpager-with-horizontalscrollview-inside-fragment
         mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
             @Override
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                return mVertical ? Math.abs(distanceY) > Math.abs(distanceX) : Math.abs(distanceY) < Math.abs(distanceX);
+                return Math.abs(distanceY) > Math.abs(distanceX);
             }
         });
     }
@@ -57,12 +53,14 @@ public class VerticalViewPager extends ViewPager {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        Boolean result = super.onInterceptTouchEvent(flipXY(ev));
+        boolean result = super.onInterceptTouchEvent(flipXY(ev));
         // Return MotionEvent to normal
         flipXY(ev);
 
-        if (mGestureDetector.onTouchEvent(ev)) {
-            result = true;
+        if (mVertical) {
+            if (mGestureDetector.onTouchEvent(ev)) {
+                result = true;
+            }
         }
 
         return result;
@@ -70,12 +68,14 @@ public class VerticalViewPager extends ViewPager {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
-        Boolean result = super.onTouchEvent(flipXY(ev));
+        boolean result = super.onTouchEvent(flipXY(ev));
         // Return MotionEvent to normal
         flipXY(ev);
 
-        if (mGestureDetector.onTouchEvent(ev)) {
-            result = true;
+        if (mVertical) {
+            if (mGestureDetector.onTouchEvent(ev)) {
+                result = true;
+            }
         }
 
         return result;
