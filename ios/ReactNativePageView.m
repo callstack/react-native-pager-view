@@ -299,6 +299,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
         _reactPageViewController.view.frame = [self bounds];
         
         [_reactPageViewController didMoveToParentViewController:[self reactViewController]];
+        [self shouldScroll:_scrollEnabled];
         
         // Add the page view controller's gesture recognizers to the view controller's view so that the gestures are started more easily.
         self.gestureRecognizers = _reactPageViewController.gestureRecognizers;
