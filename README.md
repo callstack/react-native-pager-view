@@ -11,10 +11,10 @@ This component allows the user to swipe left and right through pages of data. Un
 
 ## Versions
 
-| 1.x              | 2.x              |
-| ---------------- | -------------    |
-|                  | iOS support      |
-| Android support  | Android support  |
+| 1.x              | 2.x              | 3.x
+| ---------------- | -------------    | -------------    |
+|                  | iOS support      | iOS support      |
+| Android support  | Android support  | AndroidX support  |
 
 ## Getting started
 
@@ -122,14 +122,17 @@ const styles = StyleSheet.create({
 |`onPageSelected: (e: PageSelectedEvent) => void`|This callback will be called once the ViewPager finishes navigating to the selected page|both
 |`pageMargin: number`|Blank space to be shown between pages|both
 |`keyboardDismissMode: ('none' / 'on-drag')`| Determines whether the keyboard gets dismissed in response to a drag|both
-|`orientation: Orientation`|Set `horizontal` or `vertical` scrolling orientation|iOS
-|`transitionStyle: TransitionStyle`|Use `scroll` or `curl` to change transition style|iOS
+|`orientation: Orientation`|Set `horizontal` or `vertical` scrolling orientation (it does **not** work dynamically)|both
+|`transitionStyle: TransitionStyle`|Use `scroll` or `curl` to change transition style (it does **not** work dynamically)|iOS
+|`showPageIndicator: boolean`|Shows the dots indicator at the bottom of the view|iOS
 
 ## Preview
 
 ### Android
 
-<img src="docs/android-viewpager.gif" alt="ViewPager" width="325">
+horizontal                 |  vertical
+:-------------------------:|:-------------------------:
+<img src="docs/android-viewpager.gif" alt="ViewPager" width="325"> |  <img src="docs/android-viewpager-vertical.gif" alt="ViewPager" width="325">
 
 ### iOS
 

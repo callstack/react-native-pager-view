@@ -34,6 +34,7 @@ const VIEW_MANAGER_NAME = 'RNCViewPager';
 function getViewManagerConfig(viewManagerName) {
   if (!UIManager.getViewManagerConfig) {
     // react-native <= 0.57
+    // $FlowFixMe
     return UIManager[viewManagerName];
   }
   return UIManager.getViewManagerConfig(viewManagerName);

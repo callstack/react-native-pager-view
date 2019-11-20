@@ -36,16 +36,6 @@ export const childrenWithOverriddenStyle = (
       ],
       collapsable: false,
     };
-    if (
-      child.type &&
-      child.type.displayName &&
-      child.type.displayName !== 'RCTView' &&
-      child.type.displayName !== 'View'
-    ) {
-      console.warn(
-        'Each ViewPager child must be a <View>. Was ' + child.type.displayName,
-      );
-    }
     return React.createElement(child.type, newProps);
   });
 };

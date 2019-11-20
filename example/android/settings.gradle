@@ -3,4 +3,6 @@ rootProject.name = 'ViewPagerExample'
 include ':react-native-viewpager'
 project(':react-native-viewpager').projectDir = new File(rootProject.projectDir, '../../android')
 
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+
 include ':app'
