@@ -130,7 +130,9 @@ const styles = StyleSheet.create({
 
 ### Android
 
-<img src="docs/android-viewpager.gif" alt="ViewPager" width="325">
+horizontal                 |  vertical
+:-------------------------:|:-------------------------:
+<img src="docs/android-viewpager.gif" alt="ViewPager" width="325"> |  <img src="docs/android-viewpager-vertical.gif" alt="ViewPager" width="325">
 
 ### iOS
 
