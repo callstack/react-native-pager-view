@@ -32,7 +32,7 @@
                     coalescingKey:(uint16_t)coalescingKey;
 {
     RCTAssertParam(reactTag);
-    
+
     if ((self = [super init])) {
         _viewTag = reactTag;
         _position = position;
@@ -99,7 +99,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
                     coalescingKey:(uint16_t)coalescingKey;
 {
     RCTAssertParam(reactTag);
-    
+
     if ((self = [super init])) {
         _viewTag = reactTag;
         _state = state;
@@ -165,7 +165,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
                     coalescingKey:(uint16_t)coalescingKey;
 {
     RCTAssertParam(reactTag);
-    
+
     if ((self = [super init])) {
         _viewTag = reactTag;
         _position = position;
@@ -222,6 +222,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
         _coalescingKey = 0;
         _eventDispatcher = eventDispatcher;
+        _overdrag = YES;
     }
     return self;
 }
@@ -259,7 +260,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
         _childrenViewControllers = tempChildrenViewControllers;
         _reactPageIndicatorView.numberOfPages = _childrenViewControllers.count;
         [self goTo:[NSNumber numberWithInteger:_currentIndex] animated:NO];
-        
+
     } else {
         RCTLog(@"getParentViewController returns nil");
     }
@@ -271,36 +272,36 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
                                  dictionaryWithObjectsAndKeys:
                                  [NSNumber numberWithLong:_pageMargin],
                                  UIPageViewControllerOptionInterPageSpacingKey, nil];
-        
+
         UIPageViewController *reactPageViewController =
         [[UIPageViewController alloc]
          initWithTransitionStyle:_transitionStyle
          navigationOrientation:_orientation
          options:options];
-        
+
         _reactPageViewController = reactPageViewController;
         _reactPageViewController.delegate = self;
         _reactPageViewController.dataSource = self;
-        
+
         for (UIView *subview in _reactPageViewController.view.subviews) {
             if([subview isKindOfClass:UIScrollView.class]){
                 ((UIScrollView *)subview).delegate = self;
                 ((UIScrollView *)subview).keyboardDismissMode = _dismissKeyboard;
             }
         }
-        
+
         [self renderChildrenViewControllers];
         _reactPageIndicatorView = [self createPageIndicator:self];
         _reactPageIndicatorView.hidden = !_showPageIndicator;
-    
+
         [[self reactViewController] addChildViewController:_reactPageViewController];
         [reactPageViewController.view addSubview:_reactPageIndicatorView];
         [self addSubview:reactPageViewController.view];
         _reactPageViewController.view.frame = [self bounds];
-        
+
         [_reactPageViewController didMoveToParentViewController:[self reactViewController]];
         [self shouldScroll:_scrollEnabled];
-        
+
         // Add the page view controller's gesture recognizers to the view controller's view so that the gestures are started more easily.
         self.gestureRecognizers = _reactPageViewController.gestureRecognizers;
         _reactPageIndicatorView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -341,7 +342,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
         [vc.view removeFromSuperview];
     }
     [_childrenViewControllers removeAllObjects];
-    
+
     for (UIView *view in [self reactSubviews]) {
         [view removeFromSuperview];
         UIViewController *pageViewController = [self createChildViewController:view];
@@ -372,7 +373,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
          if (weakSelf.eventDispatcher) {
              [weakSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:weakSelf.reactTag position:[NSNumber numberWithInteger:index] coalescingKey:coalescingKey]];
          }
-         
+
      }];
 }
 
@@ -385,20 +386,20 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
 - (void)goTo:(NSNumber *)index animated:(BOOL)animated {
     if (_currentIndex >= 0 &&
         index.integerValue < _childrenViewControllers.count) {
-        
+
         _reactPageIndicatorView.currentPage = index.integerValue;
         UIPageViewControllerNavigationDirection direction =
         (index.integerValue > _currentIndex)
         ? UIPageViewControllerNavigationDirectionForward
         : UIPageViewControllerNavigationDirectionReverse;
-        
+
         UIViewController *viewController =
         [_childrenViewControllers objectAtIndex:index.integerValue];
         [self setReactViewControllers:index.integerValue
                                  with:viewController
                             direction:direction
                              animated:animated];
-        
+
     }
 }
 
@@ -424,7 +425,7 @@ willTransitionToViewControllers:
     UIViewController* currentVC = pageViewController.viewControllers[0];
     _currentIndex = [_childrenViewControllers indexOfObject:currentVC];
     [_eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] coalescingKey:_coalescingKey++]];
-    
+
     [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] offset:[NSNumber numberWithFloat:0] coalescingKey:_coalescingKey++]];
     _reactPageIndicatorView.currentPage = _currentIndex;
 }
@@ -435,13 +436,13 @@ willTransitionToViewControllers:
 (UIPageViewController *)pageViewController
        viewControllerAfterViewController:(UIViewController *)viewController {
     NSUInteger index = [_childrenViewControllers indexOfObject:viewController];
-    
+
     if (index == NSNotFound) {
         return nil;
     }
-    
+
     index++;
-    
+
     if (index == [_childrenViewControllers count]) {
         return nil;
     }
@@ -454,15 +455,15 @@ willTransitionToViewControllers:
 (UIPageViewController *)pageViewController
       viewControllerBeforeViewController:(UIViewController *)viewController {
     NSUInteger index = [_childrenViewControllers indexOfObject:viewController];
-    
+
     if (index == NSNotFound) {
         return nil;
     }
-    
+
     if (index == 0) {
         return nil;
     }
-    
+
     index--;
     return [_childrenViewControllers objectAtIndex:index];
 }
@@ -504,6 +505,13 @@ willTransitionToViewControllers:
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
+    if (!_overdrag) {
+        if (_currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width) {
+            *targetContentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+        } else if (_currentIndex == _reactPageIndicatorView.numberOfPages-1 && scrollView.contentOffset.x >= scrollView.bounds.size.width) {
+            *targetContentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+        }
+    }
     [_eventDispatcher sendEvent:[[RCTOnPageScrollStateChanged alloc] initWithReactTag:self.reactTag state:@"settling" coalescingKey:_coalescingKey++]];
 }
 
@@ -512,6 +520,14 @@ willTransitionToViewControllers:
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (!_overdrag) {
+        if (_currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width) {
+            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+        } else if (_currentIndex == _reactPageIndicatorView.numberOfPages-1 && scrollView.contentOffset.x > scrollView.bounds.size.width) {
+            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+        }
+    }
+
     CGPoint point = scrollView.contentOffset;
     float offset = (point.x - self.frame.size.width)/self.frame.size.width;
     if(fabs(offset) > 1) {
