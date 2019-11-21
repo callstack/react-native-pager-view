@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(strong, nonatomic, readonly) UIPageViewController *reactPageViewController;
 @property(strong, nonatomic, readonly) UIPageControl *reactPageIndicatorView;
 @property(nonatomic, readonly) RCTEventDispatcher *eventDispatcher;
+@property(nonatomic) BOOL overdrag;
 
 @property(nonatomic, strong) NSMutableArray<UIViewController *> *childrenViewControllers;
 @property(nonatomic) NSInteger initialPage;
