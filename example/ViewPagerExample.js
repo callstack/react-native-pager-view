@@ -119,7 +119,13 @@ export default class ViewPagerExample extends React.Component<*, State> {
   };
 
   render() {
-    const {page, pages, animationsAreEnabled, dotsVisible, overdragEnabled} = this.state;
+    const {
+      page,
+      pages,
+      animationsAreEnabled,
+      dotsVisible,
+      overdragEnabled,
+    } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <ViewPager
@@ -136,8 +142,7 @@ export default class ViewPagerExample extends React.Component<*, State> {
           transitionStyle="scroll"
           showPageIndicator={dotsVisible}
           ref={this.viewPager}
-          overdrag={overdragEnabled}
-        >
+          overdrag={overdragEnabled}>
           {pages.map(p => this.renderPage(p))}
         </ViewPager>
         <View style={styles.buttons}>
