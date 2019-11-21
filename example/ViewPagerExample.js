@@ -163,7 +163,7 @@ export default class ViewPagerExample extends React.Component<*, State> {
                 : 'Overdrag Disabled'
             }
             onPress={() =>
-              this.setState({overdragEnabled: !this.state.overdragEnabled})
+              this.setState((state) => {overdragEnabled: !state.overdragEnabled})
             }
           />
           <Button
