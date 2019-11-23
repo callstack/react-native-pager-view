@@ -506,11 +506,7 @@ willTransitionToViewControllers:
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
     if (!_overdrag) {
-        if (_currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width) {
-            *targetContentOffset = CGPointMake(scrollView.bounds.size.width, 0);
-        } else if (_currentIndex == _reactPageIndicatorView.numberOfPages-1 && scrollView.contentOffset.x >= scrollView.bounds.size.width) {
-            *targetContentOffset = CGPointMake(scrollView.bounds.size.width, 0);
-        }
+        [self disableBounce:scrollView dragEnd:true];
     }
     [_eventDispatcher sendEvent:[[RCTOnPageScrollStateChanged alloc] initWithReactTag:self.reactTag state:@"settling" coalescingKey:_coalescingKey++]];
 }
@@ -521,19 +517,40 @@ willTransitionToViewControllers:
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     if (!_overdrag) {
-        if (_currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width) {
-            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
-        } else if (_currentIndex == _reactPageIndicatorView.numberOfPages-1 && scrollView.contentOffset.x > scrollView.bounds.size.width) {
-            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
-        }
+        [self disableBounce:scrollView dragEnd:false];
     }
 
+    float offset = [self orientationOffset:scrollView];
+    [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] offset:[NSNumber numberWithFloat:offset] coalescingKey:_coalescingKey++]];
+}
+
+- (float)orientationOffset:(UIScrollView *)scrollView {
     CGPoint point = scrollView.contentOffset;
-    float offset = (point.x - self.frame.size.width)/self.frame.size.width;
+    float offset = (_orientation == UIPageViewControllerNavigationOrientationVertical) ? (point.y - self.frame.size.height)/self.frame.size.height : (point.x - self.frame.size.width)/self.frame.size.width;
     if(fabs(offset) > 1) {
         offset = offset > 0 ? 1.0 : -1.0;
     }
-    [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] offset:[NSNumber numberWithFloat:offset] coalescingKey:_coalescingKey++]];
+    return offset;
+}
+
+- (void)disableBounce:(UIScrollView *)scrollView dragEnd:(BOOL)dragEnd {
+    if (_orientation == UIPageViewControllerNavigationOrientationVertical) {
+        if (_currentIndex == 0 && [self greaterThan:scrollView.bounds.size.height :scrollView.contentOffset.y :dragEnd]) {
+            scrollView.contentOffset = CGPointMake(0, scrollView.bounds.size.height);
+        } else if (_currentIndex == _reactPageIndicatorView.numberOfPages-1 && [self greaterThan:scrollView.contentOffset.y :scrollView.bounds.size.height :dragEnd]) {
+            scrollView.contentOffset = CGPointMake(0, scrollView.bounds.size.height);
+        }
+    } else {
+        if (_currentIndex == 0 && [self greaterThan:scrollView.bounds.size.width :scrollView.contentOffset.x :dragEnd]) {
+            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+        } else if (_currentIndex == _reactPageIndicatorView.numberOfPages-1 && [self greaterThan:scrollView.contentOffset.x :scrollView.bounds.size.width :dragEnd]) {
+            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+        }
+    }
+}
+
+- (BOOL)greaterThan:(float)a :(float)b :(BOOL)orEqual {
+    return orEqual ? a >= b : a > b;
 }
 
 @end
