@@ -101,9 +101,4 @@ export type ViewPagerProps = $ReadOnly<{|
   orientation?: Orientation,
   transitionStyle?: TransitionStyle,
   showPageIndicator?: boolean,
-  /**
-   * Determines whether it's possible to overscroll a bit
-   * after reaching end or very beginning of pages.
-   */
-  overdrag?: boolean,
 |}>;

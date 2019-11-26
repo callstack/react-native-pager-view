@@ -125,7 +125,6 @@ const styles = StyleSheet.create({
 |`orientation: Orientation`|Set `horizontal` or `vertical` scrolling orientation (it does **not** work dynamically)|both
 |`transitionStyle: TransitionStyle`|Use `scroll` or `curl` to change transition style (it does **not** work dynamically)|iOS
 |`showPageIndicator: boolean`|Shows the dots indicator at the bottom of the view|iOS
-|`overdrag: boolean`|Allows for overscrolling after reaching the end or very beginning or pages|iOS
 
 ## Preview
 

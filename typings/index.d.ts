@@ -64,18 +64,13 @@ export interface ViewPagerProps extends ReactNative.ViewProps {
      * edge-to-edge.
      */
     pageMargin?: number;
-
+    
     /**
     * iOS only
     */
     orientation?: 'horizontal' | 'vertical',
     transitionStyle?: 'scroll' | 'curl',
     showPageIndicator?: boolean,
-    /**
-     * Determines whether it's possible to overscroll a bit
-     * after reaching end or very beginning of pages.
-     */
-    overdrag?: boolean,
 }
 
 declare class ViewPagerComponent extends React.Component<ViewPagerProps> {}
