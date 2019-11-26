@@ -36,7 +36,6 @@ type State = {
   pages: Array<CreatePage>,
   scrollState: PageScrollState,
   dotsVisible: boolean,
-  overdragEnabled: boolean,
 };
 
 export default class ViewPagerExample extends React.Component<*, State> {
@@ -61,7 +60,6 @@ export default class ViewPagerExample extends React.Component<*, State> {
       pages: pages,
       scrollState: 'idle',
       dotsVisible: false,
-      overdragEnabled: true,
     };
     this.viewPager = React.createRef();
   }
@@ -119,13 +117,7 @@ export default class ViewPagerExample extends React.Component<*, State> {
   };
 
   render() {
-    const {
-      page,
-      pages,
-      animationsAreEnabled,
-      dotsVisible,
-      overdragEnabled,
-    } = this.state;
+    const {page, pages, animationsAreEnabled, dotsVisible} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <ViewPager
@@ -141,8 +133,7 @@ export default class ViewPagerExample extends React.Component<*, State> {
           // Lib does not support dynamically transitionStyle change
           transitionStyle="scroll"
           showPageIndicator={dotsVisible}
-          ref={this.viewPager}
-          overdrag={overdragEnabled}>
+          ref={this.viewPager}>
           {pages.map(p => this.renderPage(p))}
         </ViewPager>
         <View style={styles.buttons}>
@@ -153,19 +144,6 @@ export default class ViewPagerExample extends React.Component<*, State> {
             }
             onPress={() =>
               this.setState({scrollEnabled: !this.state.scrollEnabled})
-            }
-          />
-          <Button
-            enabled={true}
-            text={
-              this.state.overdragEnabled
-                ? 'Overdrag Enabled'
-                : 'Overdrag Disabled'
-            }
-            onPress={() =>
-              this.setState(state => {
-                overdragEnabled: !state.overdragEnabled;
-              })
             }
           />
           <Button
