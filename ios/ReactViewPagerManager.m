@@ -74,6 +74,10 @@ RCT_EXPORT_METHOD(setPageWithoutAnimation
 
 RCT_EXPORT_METHOD(setScrollEnabled
                   : (nonnull NSNumber *)reactTag enabled
+                  : (BOOL) enabled) {
+    [self changeScrollEnabled:reactTag enabled:enabled];
+}
+                  : (nonnull NSNumber *)reactTag enabled
                   : (nonnull NSNumber *)enabled) {
     BOOL isEnabled = [enabled boolValue];
     [self changeScrollEnabled:reactTag enabled:isEnabled];
