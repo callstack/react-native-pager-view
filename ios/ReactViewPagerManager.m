@@ -34,6 +34,19 @@ RCT_EXPORT_VIEW_PROPERTY(onPageScrollStateChanged, RCTDirectEventBlock)
 
 - (void) changeScrollEnabled
 : (nonnull NSNumber *)reactTag enabled
+: (BOOL)enabled {
+    [self.bridge.uiManager addUIBlock:^(
+                                        RCTUIManager *uiManager,
+                                        NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+        ReactNativePageView *view = (ReactNativePageView *)viewRegistry[reactTag];
+        if (!view || ![view isKindOfClass:[ReactNativePageView class]]) {
+            RCTLogError(@"Cannot find ReactNativePageView with tag #%@", reactTag);
+            return;
+        }
+        [view shouldScroll:enabled];
+    }];
+}
+: (nonnull NSNumber *)reactTag enabled
 : (nonnull BOOL *)enabled {
     [self.bridge.uiManager addUIBlock:^(
                                         RCTUIManager *uiManager,
