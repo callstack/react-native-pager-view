@@ -46,19 +46,6 @@ RCT_EXPORT_VIEW_PROPERTY(onPageScrollStateChanged, RCTDirectEventBlock)
         [view shouldScroll:enabled];
     }];
 }
-: (nonnull NSNumber *)reactTag enabled
-: (nonnull BOOL *)enabled {
-    [self.bridge.uiManager addUIBlock:^(
-                                        RCTUIManager *uiManager,
-                                        NSDictionary<NSNumber *, UIView *> *viewRegistry) {
-        ReactNativePageView *view = (ReactNativePageView *)viewRegistry[reactTag];
-        if (!view || ![view isKindOfClass:[ReactNativePageView class]]) {
-            RCTLogError(@"Cannot find ReactNativePageView with tag #%@", reactTag);
-            return;
-        }
-        [view shouldScroll:enabled];
-    }];
-}
 
 RCT_EXPORT_METHOD(setPage
                   : (nonnull NSNumber *)reactTag index
@@ -73,10 +60,6 @@ RCT_EXPORT_METHOD(setPageWithoutAnimation
 }
 
 RCT_EXPORT_METHOD(setScrollEnabled
-                  : (nonnull NSNumber *)reactTag enabled
-                  : (BOOL) enabled) {
-    [self changeScrollEnabled:reactTag enabled:enabled];
-}
                   : (nonnull NSNumber *)reactTag enabled
                   : (nonnull NSNumber *)enabled) {
     BOOL isEnabled = [enabled boolValue];
