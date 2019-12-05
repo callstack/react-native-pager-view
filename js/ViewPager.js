@@ -146,6 +146,19 @@ class ViewPager extends React.Component<ViewPagerProps> {
     );
   };
 
+  /**
+   * A helper function to enable/disable scroll imperatively
+   * The recommended way is using the scrollEnabled prop, however, there might be a case where a
+   * imperative solution is more useful (e.g. for not blocking an animation)
+   */
+  setScrollEnabled = (scrollEnabled: boolean) => {
+    UIManager.dispatchViewManagerCommand(
+      ReactNative.findNodeHandle(this),
+      getViewManagerConfig(VIEW_MANAGER_NAME).Commands.setScrollEnabled,
+      [scrollEnabled],
+    );
+  };
+
   render() {
     return (
       <NativeViewPager

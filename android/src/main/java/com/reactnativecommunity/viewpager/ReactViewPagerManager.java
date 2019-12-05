@@ -30,6 +30,7 @@ public class ReactViewPagerManager extends ViewGroupManager<ReactViewPager> {
 
   private static final int COMMAND_SET_PAGE = 1;
   private static final int COMMAND_SET_PAGE_WITHOUT_ANIMATION = 2;
+  private static final int COMMAND_SET_SCROLL_ENABLED = 3;
 
   @Override
   public String getName() {
@@ -70,7 +71,9 @@ public class ReactViewPagerManager extends ViewGroupManager<ReactViewPager> {
         "setPage",
         COMMAND_SET_PAGE,
         "setPageWithoutAnimation",
-        COMMAND_SET_PAGE_WITHOUT_ANIMATION);
+        COMMAND_SET_PAGE_WITHOUT_ANIMATION,
+        "setScrollEnabled",
+        COMMAND_SET_SCROLL_ENABLED);
   }
 
   @Override
@@ -87,6 +90,10 @@ public class ReactViewPagerManager extends ViewGroupManager<ReactViewPager> {
       }
       case COMMAND_SET_PAGE_WITHOUT_ANIMATION: {
         viewPager.setCurrentItemFromJs(args.getInt(0), false);
+        return;
+      }
+      case COMMAND_SET_SCROLL_ENABLED: {
+        viewPager.setScrollEnabled(args.getBoolean(0));
         return;
       }
       default:
