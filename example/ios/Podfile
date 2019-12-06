@@ -53,3 +53,7 @@ target 'ViewPagerExample-tvOS' do
   end
 
 end
+
+post_install do |installer|
+  system('sh ./postinstall.sh')
+end
