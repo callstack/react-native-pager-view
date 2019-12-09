@@ -7,10 +7,17 @@
  * @format
  * @flow strict-local
  */
-
+import * as React from 'react';
+import {View} from 'react-native';
 import type {Node} from 'react';
 import type {SyntheticEvent} from 'react-native/Libraries/Types/CoreEventTypes';
 import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet';
+
+type ViewProps = React.ElementProps<typeof View>;
+type ResponderCaptureType = $PropertyType<
+  ViewProps,
+  'onMoveShouldSetResponderCapture',
+>;
 
 export type PageScrollState = 'idle' | 'dragging' | 'settling';
 
@@ -94,6 +101,17 @@ export type ViewPagerProps = $ReadOnly<{|
   children?: Node,
 
   style?: ?ViewStyleProp,
+
+  /**
+   * If a parent `View` wants to prevent a child `View` from becoming responder
+   * on a move, it should have this handler which returns `true`.
+   *
+   * `View.props.onMoveShouldSetResponderCapture: (event) => [true | false]`,
+   * where `event` is a synthetic touch event as described above.
+   *
+   * See http://facebook.github.io/react-native/docs/view.html#onMoveShouldsetrespondercapture
+   */
+  onMoveShouldSetResponderCapture?: ?ResponderCaptureType,
 
   /**
    * iOS only

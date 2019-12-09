@@ -10,6 +10,10 @@ export interface ViewPagerOnPageSelectedEventData {
     position: number;
 }
 
+export interface PageScrollStateChangedEvent {
+    pageScrollState: 'idle' | 'dragging' | 'settling';
+}
+
 export interface ViewPagerProps extends ReactNative.ViewProps {
     /**
      * Index of initial page that should be selected. Use `setPage` method to
@@ -50,7 +54,7 @@ export interface ViewPagerProps extends ReactNative.ViewProps {
      * - settling, meaning that there was an interaction with the page scroller, and the
      *   page scroller is now finishing it's closing or opening animation
      */
-    onPageScrollStateChanged?: (state: "Idle" | "Dragging" | "Settling") => void;
+    onPageScrollStateChanged?: (event: ReactNative.NativeSyntheticEvent<PageScrollStateChangedEvent>) => void;
 
     /**
      * Determines whether the keyboard gets dismissed in response to a drag.
@@ -64,6 +68,8 @@ export interface ViewPagerProps extends ReactNative.ViewProps {
      * edge-to-edge.
      */
     pageMargin?: number;
+
+    onMoveShouldSetResponderCapture?: (event: any) => boolean;
     
     /**
     * iOS only
