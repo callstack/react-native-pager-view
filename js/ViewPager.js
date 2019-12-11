@@ -83,6 +83,8 @@ function getViewManagerConfig(viewManagerName) {
  */
 
 class ViewPager extends React.Component<ViewPagerProps> {
+  isScrolling = false;
+
   componentDidMount() {
     // On iOS we do it directly on the native side
     if (Platform.OS === 'android') {
@@ -114,6 +116,7 @@ class ViewPager extends React.Component<ViewPagerProps> {
     if (this.props.onPageScrollStateChanged) {
       this.props.onPageScrollStateChanged(e);
     }
+    this.isScrolling = e.nativeEvent.pageScrollState === 'dragging';
   };
 
   _onPageSelected = (e: PageSelectedEvent) => {
@@ -159,6 +162,13 @@ class ViewPager extends React.Component<ViewPagerProps> {
     );
   };
 
+  _onMoveShouldSetResponderCapture = () => {
+    if (Platform.OS === 'ios') {
+      return this.isScrolling;
+    }
+    return false;
+  };
+
   render() {
     return (
       <NativeViewPager
@@ -168,6 +178,7 @@ class ViewPager extends React.Component<ViewPagerProps> {
         onPageScroll={this._onPageScroll}
         onPageScrollStateChanged={this._onPageScrollStateChanged}
         onPageSelected={this._onPageSelected}
+        onMoveShouldSetResponderCapture={this._onMoveShouldSetResponderCapture}
         children={childrenWithOverriddenStyle(this.props.children)}
       />
     );
