@@ -133,6 +133,8 @@ export default class ViewPagerExample extends React.Component<*, State> {
           // Lib does not support dynamically transitionStyle change
           transitionStyle="scroll"
           showPageIndicator={dotsVisible}
+          currentPageIndicatorTintColor={'#0000FF'}
+          pageIndicatorTintColor={'#FF0000'}
           ref={this.viewPager}>
           {pages.map(p => this.renderPage(p))}
         </ViewPager>

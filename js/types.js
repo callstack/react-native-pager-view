@@ -101,4 +101,6 @@ export type ViewPagerProps = $ReadOnly<{|
   orientation?: Orientation,
   transitionStyle?: TransitionStyle,
   showPageIndicator?: boolean,
+  currentPageIndicatorTintColor?: string,
+  pageIndicatorTintColor?: string,
 |}>;

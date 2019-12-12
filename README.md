@@ -125,6 +125,8 @@ const styles = StyleSheet.create({
 |`orientation: Orientation`|Set `horizontal` or `vertical` scrolling orientation (it does **not** work dynamically)|both
 |`transitionStyle: TransitionStyle`|Use `scroll` or `curl` to change transition style (it does **not** work dynamically)|iOS
 |`showPageIndicator: boolean`|Shows the dots indicator at the bottom of the view|iOS
+|`currentPageIndicatorTintColor: string`|A hexadecimal representation of the color for the active tab of the page indicator|iOS
+|`pageIndicatorTintColor: string`|A hexadecimal representation of the color for the inactive tabs of the page indicator|iOS
 
 ## Preview
 
