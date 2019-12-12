@@ -200,7 +200,6 @@ public class ReactViewPager extends VerticalViewPager {
   public void setCurrentItemFromJs(int item, boolean animated) {
     mIsCurrentItemFromJs = true;
     setCurrentItem(item, animated);
-    mEventDispatcher.dispatchEvent(new PageSelectedEvent(getId(), item));
     mIsCurrentItemFromJs = false;
   }
 

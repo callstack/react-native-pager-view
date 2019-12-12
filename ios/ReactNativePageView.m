@@ -370,10 +370,6 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
      animated:animated
      completion:^(BOOL finished) {
          weakSelf.currentIndex = index;
-         if (weakSelf.eventDispatcher) {
-             [weakSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:weakSelf.reactTag position:[NSNumber numberWithInteger:index] coalescingKey:coalescingKey]];
-         }
-         
      }];
 }
 
