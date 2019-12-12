@@ -9,6 +9,8 @@ RCT_EXPORT_MODULE(RNCViewPager)
 
 RCT_EXPORT_VIEW_PROPERTY(initialPage, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(pageMargin, NSInteger)
+RCT_EXPORT_VIEW_PROPERTY(currentPageIndicatorTintColor, UIColor)
+RCT_EXPORT_VIEW_PROPERTY(pageIndicatorTintColor, UIColor)
 
 RCT_EXPORT_VIEW_PROPERTY(transitionStyle, UIPageViewControllerTransitionStyle)
 RCT_EXPORT_VIEW_PROPERTY(orientation, UIPageViewControllerNavigationOrientation)

@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) RCTEventDispatcher *eventDispatcher;
 
 @property(nonatomic, strong) NSMutableArray<UIViewController *> *childrenViewControllers;
+@property(nonatomic) UIColor *currentPageIndicatorTintColor;
+@property(nonatomic) UIColor *pageIndicatorTintColor;
 @property(nonatomic) NSInteger initialPage;
 @property(nonatomic) NSInteger currentIndex;
 @property(nonatomic) NSInteger pageMargin;
