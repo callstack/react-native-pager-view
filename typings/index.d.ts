@@ -69,9 +69,9 @@ export interface ViewPagerProps {
      */
     pageMargin?: number;
 
-    style: ReactNative.StyleProp<ReactNative.ViewStyle>
+    style?: ReactNative.StyleProp<ReactNative.ViewStyle>
 
-    children: React.ReactChildren
+    children?: React.ReactChildren
 
     /**
      * If a parent `View` wants to prevent a child `View` from becoming responder
