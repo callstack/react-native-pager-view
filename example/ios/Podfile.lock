@@ -182,7 +182,7 @@ PODS:
     - React-cxxreact (= 0.61.4)
     - React-jsi (= 0.61.4)
   - React-jsinspector (0.61.4)
-  - react-native-viewpager (3.2.0):
+  - react-native-viewpager (3.3.0):
     - React
   - React-RCTActionSheet (0.61.4):
     - React-Core/RCTActionSheetHeaders (= 0.61.4)
@@ -286,7 +286,7 @@ EXTERNAL SOURCES:
   React-jsinspector:
     :path: "../../node_modules/react-native/ReactCommon/jsinspector"
   react-native-viewpager:
-    :podspec: "../../react-native-viewpager.podspec"
+    :path: "../../react-native-viewpager.podspec"
   React-RCTActionSheet:
     :path: "../../node_modules/react-native/Libraries/ActionSheetIOS"
   React-RCTAnimation:
@@ -326,7 +326,7 @@ SPEC CHECKSUMS:
   React-jsi: ca921f4041505f9d5197139b2d09eeb020bb12e8
   React-jsiexecutor: 8dfb73b987afa9324e4009bdce62a18ce23d983c
   React-jsinspector: d15478d0a8ada19864aa4d1cc1c697b41b3fa92f
-  react-native-viewpager: 0cb7a533ce6e9ef0a48a5a7c8b3e3e3e345ae298
+  react-native-viewpager: a7b438ca32c57b2614ece2a123e7fe116f743131
   React-RCTActionSheet: 7369b7c85f99b6299491333affd9f01f5a130c22
   React-RCTAnimation: d07be15b2bd1d06d89417eb0343f98ffd2b099a7
   React-RCTBlob: 8e0b23d95c9baa98f6b0e127e07666aaafd96c34
@@ -339,6 +339,6 @@ SPEC CHECKSUMS:
   ReactCommon: a6a294e7028ed67b926d29551aa9394fd989c24c
   Yoga: ba3d99dbee6c15ea6bbe3783d1f0cb1ffb79af0f
 
-PODFILE CHECKSUM: 98eccb3fcaa9f502392e0d71d9667549d78f02b5
+PODFILE CHECKSUM: 540de3ad0d436cdbbc6bc0b893f6494734f435e5
 
 COCOAPODS: 1.8.4

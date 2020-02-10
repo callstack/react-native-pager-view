@@ -34,7 +34,7 @@ target 'ViewPagerExample' do
   pod 'glog', :podspec => '../../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
-  pod 'react-native-viewpager', :podspec => '../../react-native-viewpager.podspec'
+  pod 'react-native-viewpager', :path => '../../react-native-viewpager.podspec'
 
   target 'ViewPagerExampleTests' do
     inherit! :search_paths
