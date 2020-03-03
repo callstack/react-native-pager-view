@@ -14,7 +14,7 @@ export interface PageScrollStateChangedEvent {
     pageScrollState: 'idle' | 'dragging' | 'settling';
 }
 
-export interface ViewPagerProps extends ReactNative.ViewProps {
+export interface ViewPagerProps {
     /**
      * Index of initial page that should be selected. Use `setPage` method to
      * update the page, and `onPageSelected` to monitor page changes
@@ -69,7 +69,20 @@ export interface ViewPagerProps extends ReactNative.ViewProps {
      */
     pageMargin?: number;
 
-    onMoveShouldSetResponderCapture?: (event: any) => boolean;
+    style?: ReactNative.StyleProp<ReactNative.ViewStyle>
+
+    children?: React.ReactChildren
+
+    /**
+     * If a parent `View` wants to prevent a child `View` from becoming responder
+     * on a move, it should have this handler which returns `true`.
+     *
+     * `View.props.onMoveShouldSetResponderCapture: (event) => [true | false]`,
+     * where `event` is a synthetic touch event as described above.
+     *
+     * See http://facebook.github.io/react-native/docs/view.html#onMoveShouldsetrespondercapture
+     */
+    onMoveShouldSetResponderCapture?: (event: ReactNative.GestureResponderEvent) => boolean;
     
     /**
     * iOS only
