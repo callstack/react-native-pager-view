@@ -391,13 +391,12 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
         : UIPageViewControllerNavigationDirectionReverse;
         
         
-        NSInteger indexToDisplay = index.integerValue;
         NSInteger indexToDisplay = index.integerValue < _childrenViewControllers.count ? index.integerValue : _childrenViewControllers.count - 1;
-        UIViewController *controlerToDisplay = _childrenViewControllers[indexToDisplay];
+        UIViewController *controllerToDisplay = _childrenViewControllers[indexToDisplay];
         _reactPageIndicatorView.currentPage = indexToDisplay;
         
         [self setReactViewControllers:indexToDisplay
-                                 with:controlerToDisplay
+                                 with:controllerToDisplay
                             direction:direction
                              animated:animated];
     }
