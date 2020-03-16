@@ -231,13 +231,13 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
     if (_reactPageViewController) {
         [self shouldScroll:_scrollEnabled];
         //Below line fix bug, where the view does not update after orientation changed.
-        [self goTo:[NSNumber numberWithInteger:_currentIndex] animated:NO];
+        [self goTo:@(_currentIndex) animated:NO];
     } else {
         [self embed];
     }
 }
 
-- (void)didUpdateReactSubviews {
+- (void)didUpdateReactSubviews {    
     if (_childrenViewControllers.count == 0){
         return;
     }
@@ -258,7 +258,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
         }
         _childrenViewControllers = tempChildrenViewControllers;
         _reactPageIndicatorView.numberOfPages = _childrenViewControllers.count;
-        [self goTo:[NSNumber numberWithInteger:_currentIndex] animated:NO];
+        [self goTo:@(_currentIndex) animated:NO];
         
     } else {
         RCTLog(@"getParentViewController returns nil");
@@ -365,16 +365,16 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
     __weak ReactNativePageView *weakSelf = self;
     uint16_t coalescingKey = _coalescingKey++;
     [_reactPageViewController
-     setViewControllers:[NSArray arrayWithObjects:pageViewController, nil]
+     setViewControllers:@[pageViewController]
      direction:direction
      animated:animated
      completion:^(BOOL finished) {
-         weakSelf.currentIndex = index;
-         if (weakSelf.eventDispatcher) {
-             [weakSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:weakSelf.reactTag position:[NSNumber numberWithInteger:index] coalescingKey:coalescingKey]];
-         }
-         
-     }];
+        weakSelf.currentIndex = index;
+        if (weakSelf.eventDispatcher) {
+            [weakSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:weakSelf.reactTag position:[NSNumber numberWithInteger:index] coalescingKey:coalescingKey]];
+        }
+        
+    }];
 }
 
 - (UIViewController *)createChildViewController:(UIView *)view {
@@ -384,22 +384,21 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
 }
 
 - (void)goTo:(NSNumber *)index animated:(BOOL)animated {
-    if (_currentIndex >= 0 &&
-        index.integerValue < _childrenViewControllers.count) {
-        
-        _reactPageIndicatorView.currentPage = index.integerValue;
+    if (_currentIndex >= 0) {
         UIPageViewControllerNavigationDirection direction =
         (index.integerValue > _currentIndex)
         ? UIPageViewControllerNavigationDirectionForward
         : UIPageViewControllerNavigationDirectionReverse;
         
-        UIViewController *viewController =
-        [_childrenViewControllers objectAtIndex:index.integerValue];
-        [self setReactViewControllers:index.integerValue
-                                 with:viewController
+        
+        NSInteger indexToDisplay = index.integerValue < _childrenViewControllers.count ? index.integerValue : _childrenViewControllers.count - 1;
+        UIViewController *controllerToDisplay = _childrenViewControllers[indexToDisplay];
+        _reactPageIndicatorView.currentPage = indexToDisplay;
+        
+        [self setReactViewControllers:indexToDisplay
+                                 with:controllerToDisplay
                             direction:direction
                              animated:animated];
-        
     }
 }
 
@@ -478,8 +477,6 @@ willTransitionToViewControllers:
 }
 
 - (UIPageControl *)createPageIndicator:(UIView *)parentView {
-    CGPoint parentOrigin = parentView.frame.origin;
-    CGSize parentSize = parentView.frame.size;
     UIPageControl *pageControl = [[UIPageControl alloc] init];
     pageControl.numberOfPages = _childrenViewControllers.count;
     pageControl.currentPage = _initialPage;
@@ -522,4 +519,3 @@ willTransitionToViewControllers:
 }
 
 @end
-
