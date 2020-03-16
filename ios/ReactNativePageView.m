@@ -392,14 +392,8 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
         
         
         NSInteger indexToDisplay = index.integerValue;
-        UIViewController *controlerToDisplay = nil;
-        
-        if (index.integerValue < _childrenViewControllers.count) {
-            controlerToDisplay = _childrenViewControllers[indexToDisplay];
-        } else {
-            indexToDisplay = _childrenViewControllers.count;
-            controlerToDisplay = _childrenViewControllers.lastObject;
-        }
+        NSInteger indexToDisplay = index.integerValue < _childrenViewControllers.count ? index.integerValue : _childrenViewControllers.count - 1;
+        UIViewController *controlerToDisplay = _childrenViewControllers[indexToDisplay];
         _reactPageIndicatorView.currentPage = indexToDisplay;
         
         [self setReactViewControllers:indexToDisplay
@@ -526,4 +520,3 @@ willTransitionToViewControllers:
 }
 
 @end
-
