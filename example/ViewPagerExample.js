@@ -87,6 +87,11 @@ export default class ViewPagerExample extends React.Component<*, State> {
     }));
   };
 
+  removeLastPage = () => {
+    this.setState(prevState => ({
+      pages: prevState.pages.slice(0, prevState.pages.length - 1),
+    }));
+  };
   move = (delta: number) => {
     const page = this.state.page + delta;
     this.go(page);
@@ -152,6 +157,11 @@ export default class ViewPagerExample extends React.Component<*, State> {
             onPress={this.toggleDotsVisibility}
           />
           <Button enabled={true} text="Add new page" onPress={this.addPage} />
+          <Button
+            enabled={true}
+            text="Remove last page"
+            onPress={this.removeLastPage}
+          />
         </View>
         <View style={styles.buttons}>
           {animationsAreEnabled ? (
