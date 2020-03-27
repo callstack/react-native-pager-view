@@ -511,7 +511,12 @@ willTransitionToViewControllers:
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     CGPoint point = scrollView.contentOffset;
-    float offset = (point.x - self.frame.size.width)/self.frame.size.width;
+    float offset = 0;
+    if (_orientation == UIPageViewControllerNavigationOrientationHorizontal) {
+        offset = (point.x - self.frame.size.width)/self.frame.size.width;
+    } else {
+        offset = (point.y - self.frame.size.height)/self.frame.size.height;
+    }
     if(fabs(offset) > 1) {
         offset = offset > 0 ? 1.0 : -1.0;
     }
