@@ -23,8 +23,13 @@ export class ProgressBar extends React.Component<Props> {
   render() {
     const fractionalPosition =
       this.props.progress.position + this.props.progress.offset;
-    const progressBarSize =
-      (fractionalPosition / (this.props.numberOfPages - 1)) * this.props.size;
+
+    let progressBarSize = this.props.size;
+    if (this.props.numberOfPages !== 1) {
+      progressBarSize =
+        (fractionalPosition / (this.props.numberOfPages - 1)) * this.props.size;
+    }
+
     return (
       <View style={[styles.progressBarContainer, {width: this.props.size}]}>
         <View style={[styles.progressBar, {width: progressBarSize}]} />
