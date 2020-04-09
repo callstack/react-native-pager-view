@@ -238,7 +238,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
 }
 
 - (void)didUpdateReactSubviews {    
-    if (_childrenViewControllers.count == 0){
+    if (self.reactSubviews.count == 0) {
         return;
     }
     [self addPages];
@@ -384,7 +384,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
 }
 
 - (void)goTo:(NSNumber *)index animated:(BOOL)animated {
-    if (_currentIndex >= 0) {
+    if (_currentIndex >= 0 && _currentIndex < _childrenViewControllers.count) {
         UIPageViewControllerNavigationDirection direction =
         (index.integerValue > _currentIndex)
         ? UIPageViewControllerNavigationDirectionForward
