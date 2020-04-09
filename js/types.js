@@ -14,6 +14,7 @@ import type {SyntheticEvent} from 'react-native/Libraries/Types/CoreEventTypes';
 import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet';
 
 type ViewProps = React.ElementProps<typeof View>;
+// $FlowFixMe onMoveShouldSetResponderCapture is missing in mixed
 type ResponderCaptureType = $PropertyType<
   ViewProps,
   'onMoveShouldSetResponderCapture',
