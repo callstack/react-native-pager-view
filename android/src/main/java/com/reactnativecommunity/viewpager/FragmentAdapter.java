@@ -39,7 +39,7 @@ public class FragmentAdapter extends FragmentStateAdapter {
     public void removeFragment(View child) {
         for (int i = 0; i < children.size(); i++) {
             Fragment fragment = children.get(i);
-            if(fragment.getId() == child.getId()){
+            if (fragment.getId() == child.getId()) {
                 children.remove(i);
                 notifyItemRemoved(i);
                 return;
@@ -50,11 +50,6 @@ public class FragmentAdapter extends FragmentStateAdapter {
     public void removeFragmentAt(int index) {
         children.remove(index);
         notifyItemRemoved(index);
-    }
-
-    public void removeAll() {
-        children.clear();
-        notifyDataSetChanged();
     }
 
     public View getChildAt(int index) {

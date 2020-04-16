@@ -132,12 +132,6 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
     }
 
     @Override
-    public void removeAllViews(ViewPager2 parent) {
-        reactChildrenViews.clear();
-        ((FragmentAdapter) parent.getAdapter()).removeAll();
-    }
-
-    @Override
     public boolean needsCustomLayoutForChildren() {
         return true;
     }
