@@ -421,12 +421,14 @@ willTransitionToViewControllers:
         didFinishAnimating:(BOOL)finished
    previousViewControllers: (nonnull NSArray<UIViewController *> *)previousViewControllers
        transitionCompleted:(BOOL)completed {
-    UIViewController* currentVC = pageViewController.viewControllers[0];
-    _currentIndex = [_childrenViewControllers indexOfObject:currentVC];
-    [_eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] coalescingKey:_coalescingKey++]];
-    
-    [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] offset:[NSNumber numberWithFloat:0] coalescingKey:_coalescingKey++]];
-    _reactPageIndicatorView.currentPage = _currentIndex;
+    if (completed) {
+        UIViewController* currentVC = pageViewController.viewControllers[0];
+        _currentIndex = [_childrenViewControllers indexOfObject:currentVC];
+        [_eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] coalescingKey:_coalescingKey++]];
+
+        [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] offset:[NSNumber numberWithFloat:0] coalescingKey:_coalescingKey++]];
+        _reactPageIndicatorView.currentPage = _currentIndex;
+    }
 }
 
 #pragma mark - Datasource After
