@@ -8,8 +8,7 @@
 
 - (instancetype) initWithReactTag:(NSNumber *)reactTag
                          position:(NSNumber *)position
-                           offset:(NSNumber *)offset
-                    coalescingKey:(uint16_t)coalescingKey;
+                           offset:(NSNumber *)offset;
 
 @end
 
@@ -17,7 +16,6 @@
 {
     NSNumber* _position;
     NSNumber* _offset;
-    uint16_t _coalescingKey;
 }
 
 @synthesize viewTag = _viewTag;
@@ -28,8 +26,7 @@
 
 - (instancetype) initWithReactTag:(NSNumber *)reactTag
                          position:(NSNumber *)position
-                           offset:(NSNumber *)offset
-                    coalescingKey:(uint16_t)coalescingKey;
+                           offset:(NSNumber *)offset;
 {
     RCTAssertParam(reactTag);
     
@@ -37,7 +34,6 @@
         _viewTag = reactTag;
         _position = position;
         _offset = offset;
-        _coalescingKey = coalescingKey;
     }
     return self;
 }
@@ -45,13 +41,13 @@
 RCT_NOT_IMPLEMENTED(- (instancetype)init)
 - (uint16_t)coalescingKey
 {
-    return _coalescingKey;
+    return 0;
 }
 
 
 - (BOOL)canCoalesce
 {
-    return NO;
+    return YES;
 }
 
 + (NSString *)moduleDotMethod
@@ -426,7 +422,7 @@ willTransitionToViewControllers:
         _currentIndex = [_childrenViewControllers indexOfObject:currentVC];
         [_eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] coalescingKey:_coalescingKey++]];
 
-        [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] offset:[NSNumber numberWithFloat:0] coalescingKey:_coalescingKey++]];
+        [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] offset:[NSNumber numberWithFloat:0]]];
         _reactPageIndicatorView.currentPage = _currentIndex;
     }
 }
@@ -522,7 +518,7 @@ willTransitionToViewControllers:
     if(fabs(offset) > 1) {
         offset = offset > 0 ? 1.0 : -1.0;
     }
-    [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] offset:[NSNumber numberWithFloat:offset] coalescingKey:_coalescingKey++]];
+    [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] offset:[NSNumber numberWithFloat:offset]]];
 }
 
 @end
