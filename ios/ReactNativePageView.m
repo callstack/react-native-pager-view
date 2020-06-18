@@ -228,6 +228,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
         [self shouldScroll:_scrollEnabled];
         //Below line fix bug, where the view does not update after orientation changed.
         [self goTo:@(_currentIndex) animated:NO];
+        [self shouldShowPageIndicator:_showPageIndicator];
     } else {
         [self embed];
     }
@@ -471,6 +472,17 @@ willTransitionToViewControllers:
     _showPageIndicator = showPageIndicator;
     if (_reactPageIndicatorView){
         _reactPageIndicatorView.hidden = !showPageIndicator;
+    }
+    
+    // https://github.com/react-native-community/react-native-viewpager/issues/182
+    if (_transitionStyle == UIPageViewControllerTransitionStylePageCurl) {
+        NSArray *subviews = self.reactPageViewController.view.subviews;
+        for (int i=0; i<[subviews count]; i++) {
+            if ([[subviews objectAtIndex:i] isKindOfClass:[UIPageControl class]]) {
+                NSInteger numberOfPages = _showPageIndicator ? _childrenViewControllers.count : 0;
+                ((UIPageControl *)[subviews objectAtIndex:i]).numberOfPages = numberOfPages;
+            }
+        }
     }
 }
 
