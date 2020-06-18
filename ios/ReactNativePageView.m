@@ -477,10 +477,10 @@ willTransitionToViewControllers:
     // https://github.com/react-native-community/react-native-viewpager/issues/182
     if (_transitionStyle == UIPageViewControllerTransitionStylePageCurl) {
         NSArray *subviews = self.reactPageViewController.view.subviews;
-        for (int i=0; i<[subviews count]; i++) {
-            if ([[subviews objectAtIndex:i] isKindOfClass:[UIPageControl class]]) {
+        for (UIView *view in subviews) {
+            if ([view isKindOfClass:[UIPageControl class]]) {
                 NSInteger numberOfPages = _showPageIndicator ? _childrenViewControllers.count : 0;
-                ((UIPageControl *)[subviews objectAtIndex:i]).numberOfPages = numberOfPages;
+                ((UIPageControl *)view).numberOfPages = numberOfPages;
             }
         }
     }
