@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy) RCTDirectEventBlock onPageScrollStateChanged;
 
 
-- (void)goTo:(NSNumber *)index animated:(BOOL)animated;
+- (void)goTo:(NSInteger)index animated:(BOOL)animated;
 - (void)shouldScroll:(BOOL)scrollEnabled;
 - (void)shouldShowPageIndicator:(BOOL)showPageIndicator;
 - (void)shouldDismissKeyboard:(NSString *)dismissKeyboard;

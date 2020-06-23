@@ -227,7 +227,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
     if (_reactPageViewController) {
         [self shouldScroll:_scrollEnabled];
         //Below line fix bug, where the view does not update after orientation changed.
-        [self goTo:@(_currentIndex) animated:NO];
+        [self goTo:_currentIndex animated:NO];
     } else {
         [self embed];
     }
@@ -254,7 +254,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
         }
         _childrenViewControllers = tempChildrenViewControllers;
         _reactPageIndicatorView.numberOfPages = _childrenViewControllers.count;
-        [self goTo:@(_currentIndex) animated:NO];
+        [self goTo:_currentIndex animated:NO];
         
     } else {
         RCTLog(@"getParentViewController returns nil");
@@ -379,15 +379,15 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
     return childViewController;
 }
 
-- (void)goTo:(NSNumber *)index animated:(BOOL)animated {
+- (void)goTo:(NSInteger)index animated:(BOOL)animated {
     if (_currentIndex >= 0 && _currentIndex < _childrenViewControllers.count) {
         UIPageViewControllerNavigationDirection direction =
-        (index.integerValue > _currentIndex)
+        (index > _currentIndex)
         ? UIPageViewControllerNavigationDirectionForward
         : UIPageViewControllerNavigationDirectionReverse;
         
         
-        NSInteger indexToDisplay = index.integerValue < _childrenViewControllers.count ? index.integerValue : _childrenViewControllers.count - 1;
+        NSInteger indexToDisplay = index < _childrenViewControllers.count ? index : _childrenViewControllers.count - 1;
         UIViewController *controllerToDisplay = _childrenViewControllers[indexToDisplay];
         _reactPageIndicatorView.currentPage = indexToDisplay;
         
@@ -489,7 +489,7 @@ willTransitionToViewControllers:
 }
 - (void)pageControlValueChanged:(UIPageControl *)sender {
     if (_reactPageIndicatorView.currentPage != _currentIndex) {
-        [self goTo:@(_reactPageIndicatorView.currentPage) animated:YES];
+        [self goTo:_reactPageIndicatorView.currentPage animated:YES];
     }
 }
 
