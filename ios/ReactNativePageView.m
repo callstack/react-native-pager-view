@@ -300,11 +300,13 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
         
         // Add the page view controller's gesture recognizers to the view controller's view so that the gestures are started more easily.
         self.gestureRecognizers = _reactPageViewController.gestureRecognizers;
-        _reactPageIndicatorView.translatesAutoresizingMaskIntoConstraints = NO;
-        NSLayoutConstraint *bottomConstraint = [_reactPageIndicatorView.bottomAnchor constraintEqualToAnchor: self.reactPageViewController.view.bottomAnchor constant:0];
-        NSLayoutConstraint *leadingConstraint = [_reactPageIndicatorView.leadingAnchor constraintEqualToAnchor: self.reactPageViewController.view.leadingAnchor constant:0];
-        NSLayoutConstraint *trailingConstraint = [_reactPageIndicatorView.trailingAnchor constraintEqualToAnchor: self.reactPageViewController.view.trailingAnchor constant:0];
-        [self.reactPageViewController.view addConstraints:@[bottomConstraint,leadingConstraint,trailingConstraint]];
+        if (@available(iOS 9.0, *)) {
+            _reactPageIndicatorView.translatesAutoresizingMaskIntoConstraints = NO;
+            NSLayoutConstraint *bottomConstraint = [_reactPageIndicatorView.bottomAnchor constraintEqualToAnchor: self.reactPageViewController.view.bottomAnchor constant:0];
+            NSLayoutConstraint *leadingConstraint = [_reactPageIndicatorView.leadingAnchor constraintEqualToAnchor: self.reactPageViewController.view.leadingAnchor constant:0];
+            NSLayoutConstraint *trailingConstraint = [_reactPageIndicatorView.trailingAnchor constraintEqualToAnchor: self.reactPageViewController.view.trailingAnchor constant:0];
+            [self.reactPageViewController.view addConstraints:@[bottomConstraint,leadingConstraint,trailingConstraint]];
+        }
         [self.reactPageViewController.view layoutIfNeeded];
     } else {
         RCTLog(@"getParentViewController returns nil");
