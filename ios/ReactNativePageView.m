@@ -283,6 +283,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
                 ((UIScrollView *)subview).delegate = self;
                 ((UIScrollView *)subview).keyboardDismissMode = _dismissKeyboard;
                 ((UIScrollView *)subview).delaysContentTouches = NO;
+                self.scrollView = (UIScrollView *)subview;
             }
         }
         
@@ -316,22 +317,14 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
 - (void)shouldScroll:(BOOL)scrollEnabled {
     _scrollEnabled = scrollEnabled;
     if (_reactPageViewController.view) {
-        for (UIScrollView *view in _reactPageViewController.view.subviews) {
-            if ([view isKindOfClass:[UIScrollView class]]) {
-                view.scrollEnabled = scrollEnabled;
-            }
-        }
+        self.scrollView.scrollEnabled = scrollEnabled;
     }
 }
 
 - (void)shouldDismissKeyboard:(NSString *)dismissKeyboard {
     _dismissKeyboard = [dismissKeyboard  isEqual: @"on-drag"] ?
     UIScrollViewKeyboardDismissModeOnDrag : UIScrollViewKeyboardDismissModeNone;
-    for (UIView *subview in _reactPageViewController.view.subviews) {
-        if([subview isKindOfClass:UIScrollView.class]){
-            ((UIScrollView *)subview).keyboardDismissMode = _dismissKeyboard;
-        }
-    }
+    self.scrollView.keyboardDismissMode = _dismissKeyboard;
 }
 
 - (void)renderChildrenViewControllers {
