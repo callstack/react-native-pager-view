@@ -209,7 +209,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
 - (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher {
     self = [super init];
     if (self) {
-        _childrenViewControllers = [[NSMutableArray alloc] init];
+        _childrenViewControllers = @[].mutableCopy;
         _scrollEnabled = YES;
         _pageMargin = 0;
         _transitionStyle = UIPageViewControllerTransitionStyleScroll;
@@ -242,7 +242,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
 
 - (void)addPages {
     if ([self reactViewController]) {
-        NSMutableArray<UIViewController *> *tempChildrenViewControllers = [[NSMutableArray alloc] init];
+        NSMutableArray<UIViewController *> *tempChildrenViewControllers = @[].mutableCopy;
         for (UIView *view in self.reactSubviews) {
             NSPredicate* predicate = [NSPredicate predicateWithFormat:@"view.reactTag == %@", view.reactTag];
             NSArray<UIViewController *> *foundViewControlers = [_childrenViewControllers filteredArrayUsingPredicate:predicate];
@@ -367,7 +367,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
      completion:^(BOOL finished) {
         weakSelf.currentIndex = index;
         if (weakSelf.eventDispatcher) {
-            [weakSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:weakSelf.reactTag position:[NSNumber numberWithInteger:index] coalescingKey:coalescingKey]];
+            [weakSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:weakSelf.reactTag position:@(index) coalescingKey:coalescingKey]];
         }
         
     }];
@@ -404,7 +404,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
 willTransitionToViewControllers:
 (NSArray<UIViewController *> *)pendingViewControllers {
     if (pendingViewControllers.count == 1) {
-        NSUInteger index = [_childrenViewControllers indexOfObject:[pendingViewControllers objectAtIndex:0]];
+        NSUInteger index = [_childrenViewControllers indexOfObject:[pendingViewControllers firstObject]];
         swipeDirection = (index > _currentIndex)
         ? UIPageViewControllerNavigationDirectionForward
         : UIPageViewControllerNavigationDirectionReverse;
@@ -418,11 +418,11 @@ willTransitionToViewControllers:
    previousViewControllers: (nonnull NSArray<UIViewController *> *)previousViewControllers
        transitionCompleted:(BOOL)completed {
     if (completed) {
-        UIViewController* currentVC = pageViewController.viewControllers[0];
+        UIViewController* currentVC = pageViewController.viewControllers.firstObject;
         _currentIndex = [_childrenViewControllers indexOfObject:currentVC];
-        [_eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] coalescingKey:_coalescingKey++]];
+        [_eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:@(_currentIndex) coalescingKey:_coalescingKey++]];
 
-        [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] offset:[NSNumber numberWithFloat:0]]];
+        [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:@(_currentIndex) offset:@(0.0)]];
         _reactPageIndicatorView.currentPage = _currentIndex;
     }
 }
@@ -518,7 +518,7 @@ willTransitionToViewControllers:
     if(fabs(offset) > 1) {
         offset = offset > 0 ? 1.0 : -1.0;
     }
-    [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInteger:_currentIndex] offset:[NSNumber numberWithFloat:offset]]];
+    [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:@(_currentIndex) offset:@(offset)]];
 }
 
 @end
