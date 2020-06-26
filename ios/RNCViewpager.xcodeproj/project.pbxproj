@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0813B11424A6277400B13827 /* UIViewController+CreateExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813B11324A6277400B13827 /* UIViewController+CreateExtension.m */; };
+		0813B11C24A627BA00B13827 /* RCTOnPageSelected.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813B11624A627BA00B13827 /* RCTOnPageSelected.m */; };
+		0813B11D24A627BA00B13827 /* RCTOnPageScrollStateChanged.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813B11724A627BA00B13827 /* RCTOnPageScrollStateChanged.m */; };
+		0813B11E24A627BA00B13827 /* RCTOnPageScrollEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 0813B11924A627BA00B13827 /* RCTOnPageScrollEvent.m */; };
 		183B5ECB228BEC260013B58C /* ReactNativePageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 183B5ECA228BEC260013B58C /* ReactNativePageView.m */; };
 		183B5FB8228DA0750013B58C /* RCTConvert+UIPageViewControllerTransitionStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 183B5FB7228DA0750013B58C /* RCTConvert+UIPageViewControllerTransitionStyle.m */; };
 		183B5FBB228DA1220013B58C /* RCTConvert+UIPageViewControllerNavigationOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = 183B5FBA228DA1220013B58C /* RCTConvert+UIPageViewControllerNavigationOrientation.m */; };
@@ -26,6 +30,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0813B11224A6277400B13827 /* UIViewController+CreateExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+CreateExtension.h"; sourceTree = "<group>"; };
+		0813B11324A6277400B13827 /* UIViewController+CreateExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+CreateExtension.m"; sourceTree = "<group>"; };
+		0813B11624A627BA00B13827 /* RCTOnPageSelected.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTOnPageSelected.m; sourceTree = "<group>"; };
+		0813B11724A627BA00B13827 /* RCTOnPageScrollStateChanged.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTOnPageScrollStateChanged.m; sourceTree = "<group>"; };
+		0813B11824A627BA00B13827 /* RCTOnPageScrollEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTOnPageScrollEvent.h; sourceTree = "<group>"; };
+		0813B11924A627BA00B13827 /* RCTOnPageScrollEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTOnPageScrollEvent.m; sourceTree = "<group>"; };
+		0813B11A24A627BA00B13827 /* RCTOnPageScrollStateChanged.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTOnPageScrollStateChanged.h; sourceTree = "<group>"; };
+		0813B11B24A627BA00B13827 /* RCTOnPageSelected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTOnPageSelected.h; sourceTree = "<group>"; };
 		134814201AA4EA6300B7C361 /* libRNCViewpager.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNCViewpager.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		183B5EC9228BEC260013B58C /* ReactNativePageView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactNativePageView.h; sourceTree = "<group>"; };
 		183B5ECA228BEC260013B58C /* ReactNativePageView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ReactNativePageView.m; sourceTree = "<group>"; };
@@ -48,6 +60,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0813B11524A627AC00B13827 /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				0813B11824A627BA00B13827 /* RCTOnPageScrollEvent.h */,
+				0813B11924A627BA00B13827 /* RCTOnPageScrollEvent.m */,
+				0813B11A24A627BA00B13827 /* RCTOnPageScrollStateChanged.h */,
+				0813B11724A627BA00B13827 /* RCTOnPageScrollStateChanged.m */,
+				0813B11B24A627BA00B13827 /* RCTOnPageSelected.h */,
+				0813B11624A627BA00B13827 /* RCTOnPageSelected.m */,
+			);
+			name = Events;
+			sourceTree = "<group>";
+		};
 		134814211AA4EA7D00B7C361 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -59,6 +84,8 @@
 		183B5FB5228DA03B0013B58C /* Extension */ = {
 			isa = PBXGroup;
 			children = (
+				0813B11224A6277400B13827 /* UIViewController+CreateExtension.h */,
+				0813B11324A6277400B13827 /* UIViewController+CreateExtension.m */,
 				183B5FB6228DA0750013B58C /* RCTConvert+UIPageViewControllerTransitionStyle.h */,
 				183B5FB7228DA0750013B58C /* RCTConvert+UIPageViewControllerTransitionStyle.m */,
 				183B5FB9228DA1220013B58C /* RCTConvert+UIPageViewControllerNavigationOrientation.h */,
@@ -70,6 +97,7 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				0813B11524A627AC00B13827 /* Events */,
 				183B5FB5228DA03B0013B58C /* Extension */,
 				183B5EC9228BEC260013B58C /* ReactNativePageView.h */,
 				183B5ECA228BEC260013B58C /* ReactNativePageView.m */,
@@ -140,6 +168,10 @@
 				18A7DC7A228ADDB3006DE42B /* ReactViewPagerManager.m in Sources */,
 				183B5ECB228BEC260013B58C /* ReactNativePageView.m in Sources */,
 				183B5FB8228DA0750013B58C /* RCTConvert+UIPageViewControllerTransitionStyle.m in Sources */,
+				0813B11C24A627BA00B13827 /* RCTOnPageSelected.m in Sources */,
+				0813B11E24A627BA00B13827 /* RCTOnPageScrollEvent.m in Sources */,
+				0813B11424A6277400B13827 /* UIViewController+CreateExtension.m in Sources */,
+				0813B11D24A627BA00B13827 /* RCTOnPageScrollStateChanged.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
