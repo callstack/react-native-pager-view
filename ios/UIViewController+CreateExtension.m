@@ -1,10 +1,3 @@
-//
-//  UIViewController+CreateExtension.m
-//  react-native-viewpager
-//
-//  Created by Krystian Śliwa on 24/06/2020.
-//
-
 #import "UIViewController+CreateExtension.h"
 
 @implementation UIViewController (CreateExtension)
