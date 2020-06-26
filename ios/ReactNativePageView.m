@@ -211,6 +211,8 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
 @property(nonatomic, weak) UIViewController *cached;
 @property(nonatomic, weak) UIViewController *nextToDisplay;
 
+@property(nonatomic, assign) BOOL isMoving;
+@property(nonatomic, strong) NSPointerArray *cachedControllers;
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated;
 - (void)shouldScroll:(BOOL)scrollEnabled;
@@ -233,6 +235,8 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
         _coalescingKey = 0;
         _eventDispatcher = eventDispatcher;
+        _isMoving = NO;
+        _cachedControllers = [[NSPointerArray alloc] initWithOptions:NSPointerFunctionsWeakMemory];
     }
     return self;
 }
@@ -251,7 +255,6 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
         [self embed];
         [self setupInitialController];
     } else {
-        self.reactPageIndicatorView.numberOfPages = self.reactSubviews.count;
         [self goTo:self.currentIndex animated:NO];
     }
 }
@@ -339,6 +342,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
                                            direction:direction
                                             animated:animated
                                           completion:^(BOOL finished) {
+        weakSelf.isMoving = NO;
         weakSelf.currentIndex = index;
         if (weakSelf.eventDispatcher) {
             [weakSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:weakSelf.reactTag position:@(index) coalescingKey:coalescingKey]];
@@ -347,53 +351,72 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
     }];
 }
 
+- (UIViewController *)currentlyDisplayed {
+    return self.reactPageViewController.viewControllers.firstObject;
+}
+
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
+    if (self.isMoving) {
+        return;
+    }
+    
     NSInteger numberOfPages = self.reactSubviews.count;
+    self.reactPageIndicatorView.numberOfPages = numberOfPages;
     
     if (self.currentIndex == index && numberOfPages == 0) {
         NSLog(@"NOTHING");
         return;
     }
     
-    if (self.currentIndex >= 0 && self.currentIndex < numberOfPages) {
-        UIPageViewControllerNavigationDirection direction = (index > self.currentIndex) ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
-        
-        NSInteger indexToDisplay = index < numberOfPages ? index : numberOfPages - 1;
-        
-        UIView *viewToDisplay = self.reactSubviews[indexToDisplay];
-        NSLog(@"GO TO %@", viewToDisplay.reactTag);
-
-        UIViewController *controllerToDisplay = nil;
-
-        if (self.cached && self.cached.view.reactTag == viewToDisplay.reactTag) {
-            NSLog(@"REUSE CACHED");
-            controllerToDisplay = self.cached;
-        }
-        
-        if (self.nextToDisplay && self.nextToDisplay.view.reactTag == viewToDisplay.reactTag) {
-            NSLog(@"REUSE NEXT");
-            controllerToDisplay = self.nextToDisplay;
-        }
-        
-        if (!controllerToDisplay) {
-            NSLog(@"LET'S CREATE NEW ONE");
-            controllerToDisplay = [[UIViewController alloc] initWithView:viewToDisplay];
-            self.cached = controllerToDisplay;
-        }
-        
-        self.reactPageIndicatorView.currentPage = indexToDisplay;
-        
-        [self setReactViewControllers:indexToDisplay
-                                 with:controllerToDisplay
-                            direction:direction
-                             animated:animated];
+    if (index < 0) {
+        NSLog(@"ZŁO");
+        return;
     }
+    
+    UIPageViewControllerNavigationDirection direction = (index > self.currentIndex) ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
+    
+    NSInteger indexToDisplay = index < numberOfPages ? index : numberOfPages - 1;
+    
+    UIView *viewToDisplay = self.reactSubviews[indexToDisplay];
+    NSLog(@"GO TO %@", viewToDisplay.reactTag);
+    
+    UIViewController *controllerToDisplay = nil;
+    
+    if (self.cached && self.cached.view.reactTag == viewToDisplay.reactTag) {
+        NSLog(@"REUSE CACHED");
+        controllerToDisplay = self.cached;
+    }
+    
+    if (self.nextToDisplay && self.nextToDisplay.view.reactTag == viewToDisplay.reactTag) {
+        NSLog(@"REUSE NEXT");
+        controllerToDisplay = self.nextToDisplay;
+    }
+    
+    UIViewController *current = [self currentlyDisplayed];
+    if (current.view.reactTag == viewToDisplay.reactTag) {
+        controllerToDisplay = current;
+    }
+    
+    if (!controllerToDisplay) {
+        NSLog(@"LET'S CREATE NEW ONE");
+        controllerToDisplay = [[UIViewController alloc] initWithView:viewToDisplay];
+        self.cached = controllerToDisplay;
+    }
+    
+    self.reactPageIndicatorView.currentPage = indexToDisplay;
+    
+    self.isMoving = YES;
+    [self setReactViewControllers:indexToDisplay
+                             with:controllerToDisplay
+                        direction:direction
+                         animated:animated];
+    
 }
 
 #pragma mark - Delegate
 
 - (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray<UIViewController *> *)pendingViewControllers {
-    NSLog(@"START TRANSITIONS");
+    NSLog(@"START TRANSITIONS %@", pendingViewControllers.firstObject.view.reactTag);
 }
 
 - (void)pageViewController:(UIPageViewController *)pageViewController
@@ -426,11 +449,10 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
     
     direction == UIPageViewControllerNavigationDirectionForward ? index++ : index--;
 
-    if (index < 0 || (index > numberOfPages - 1)) {
+    if (index < 0 || (index > (numberOfPages - 1))) {
         return nil;
     }
     
-        
     UIView *viewToDisplay = self.reactSubviews[index];
     
     NSLog(@"NEXT %@", viewToDisplay.reactTag);
