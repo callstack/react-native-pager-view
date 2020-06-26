@@ -213,25 +213,6 @@
     
 }
 
-#pragma mark - Delegate
-
-- (void)pageViewController:(UIPageViewController *)pageViewController
-        didFinishAnimating:(BOOL)finished
-   previousViewControllers:(nonnull NSArray<UIViewController *> *)previousViewControllers
-       transitionCompleted:(BOOL)completed {
-    
-    if (completed) {
-        UIViewController* currentVC = [self currentlyDisplayed];
-        NSUInteger currentIndex = [self.reactSubviews indexOfObject:currentVC.view];
-        
-        self.currentIndex = currentIndex;
-        self.reactPageIndicatorView.currentPage = currentIndex;
-        
-        [_eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:@(currentIndex) coalescingKey:_coalescingKey++]];
-        [_eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:@(currentIndex) offset:@(0.0)]];
-    }
-}
-
 - (UIViewController *)nextControllerForController:(UIViewController *)controller
                                       inDirection:(UIPageViewControllerNavigationDirection)direction {
     NSUInteger numberOfPages = self.reactSubviews.count;
@@ -255,21 +236,38 @@
     return controllerToDisplay;
 }
 
-#pragma mark - Datasource After
+#pragma mark - UIPageViewControllerDelegate
+
+- (void)pageViewController:(UIPageViewController *)pageViewController
+        didFinishAnimating:(BOOL)finished
+   previousViewControllers:(nonnull NSArray<UIViewController *> *)previousViewControllers
+       transitionCompleted:(BOOL)completed {
+    
+    if (completed) {
+        UIViewController* currentVC = [self currentlyDisplayed];
+        NSUInteger currentIndex = [self.reactSubviews indexOfObject:currentVC.view];
+        
+        self.currentIndex = currentIndex;
+        self.reactPageIndicatorView.currentPage = currentIndex;
+        
+        [self.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:@(currentIndex) coalescingKey:_coalescingKey++]];
+        [self.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:@(currentIndex) offset:@(0.0)]];
+    }
+}
+
+#pragma mark - UIPageViewControllerDataSource
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController
        viewControllerAfterViewController:(UIViewController *)viewController {
     return [self nextControllerForController:viewController inDirection:UIPageViewControllerNavigationDirectionForward];
 }
 
-#pragma mark - Datasource Before
-
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController
       viewControllerBeforeViewController:(UIViewController *)viewController {
     return [self nextControllerForController:viewController inDirection:UIPageViewControllerNavigationDirectionReverse];
 }
 
-#pragma mark - UIPageControl
+#pragma mark - UIPageControlDelegate
 
 - (void)shouldShowPageIndicator:(BOOL)showPageIndicator {
     _showPageIndicator = showPageIndicator;
@@ -290,6 +288,7 @@
     
     return pageControl;
 }
+
 - (void)pageControlValueChanged:(UIPageControl *)sender {
     if (self.reactPageIndicatorView.currentPage != self.currentIndex) {
         [self goTo:self.reactPageIndicatorView.currentPage animated:YES];
