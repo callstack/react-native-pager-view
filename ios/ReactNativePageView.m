@@ -290,8 +290,8 @@
 }
 
 - (void)pageControlValueChanged:(UIPageControl *)sender {
-    if (self.reactPageIndicatorView.currentPage != self.currentIndex) {
-        [self goTo:self.reactPageIndicatorView.currentPage animated:YES];
+    if (sender.currentPage != self.currentIndex) {
+        [self goTo:sender.currentPage animated:YES];
     }
 }
 
