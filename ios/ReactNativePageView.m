@@ -15,6 +15,7 @@
 @property(nonatomic, strong) RCTEventDispatcher *eventDispatcher;
 
 @property(nonatomic, weak) UIScrollView *scrollView;
+@property(nonatomic, weak) UIView *currentView;
 
 @property(nonatomic, assign) BOOL isMoving;
 @property(nonatomic, strong) NSHashTable<UIViewController *> *cachedControllers;
@@ -51,7 +52,7 @@
     if (self.reactPageViewController) {
         [self shouldScroll:self.scrollEnabled];
         //Below line fix bug, where the view does not update after orientation changed.
-        [self goTo:self.currentIndex animated:NO];
+        [self updateDataSource];
     }
 }
 
@@ -60,7 +61,7 @@
         [self embed];
         [self setupInitialController];
     } else {
-        [self goTo:self.currentIndex animated:NO];
+        [self updateDataSource];
     }
 }
 
@@ -149,6 +150,8 @@
                                           completion:^(BOOL finished) {
         weakSelf.isMoving = NO;
         weakSelf.currentIndex = index;
+        weakSelf.currentView = controller.view;
+        
         if (weakSelf.eventDispatcher) {
             [weakSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:weakSelf.reactTag position:@(index) coalescingKey:coalescingKey]];
         }
@@ -169,19 +172,30 @@
     return nil;
 }
 
+- (void)updateDataSource {
+    if (!self.currentView) {
+        return;
+    }
+    
+    NSInteger newIndex = [self.reactSubviews indexOfObject:self.currentView];
+    
+    if (newIndex == NSNotFound) {
+        // Current view was removed
+        [self goTo:self.currentIndex animated:NO];
+    } else {
+        [self goTo:newIndex animated:NO];
+    }
+}
+
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     if (self.isMoving) {
         return;
     }
+    self.isMoving = YES;
     
     NSInteger numberOfPages = self.reactSubviews.count;
-    self.reactPageIndicatorView.numberOfPages = numberOfPages;
     
-    if (self.currentIndex == index && numberOfPages == 0) {
-        return;
-    }
-    
-    if (index < 0) {
+    if (numberOfPages == 0 || index < 0) {
         return;
     }
     
@@ -203,9 +217,9 @@
         [self.cachedControllers addObject:controllerToDisplay];
     }
     
+    self.reactPageIndicatorView.numberOfPages = numberOfPages;
     self.reactPageIndicatorView.currentPage = indexToDisplay;
-    
-    self.isMoving = YES;
+        
     [self setReactViewControllers:indexToDisplay
                              with:controllerToDisplay
                         direction:direction
@@ -248,6 +262,8 @@
         NSUInteger currentIndex = [self.reactSubviews indexOfObject:currentVC.view];
         
         self.currentIndex = currentIndex;
+        
+        self.currentView = currentVC.view;
         self.reactPageIndicatorView.currentPage = currentIndex;
         
         [self.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:@(currentIndex) coalescingKey:_coalescingKey++]];
