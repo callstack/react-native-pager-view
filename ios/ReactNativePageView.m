@@ -17,7 +17,6 @@
 @property(nonatomic, weak) UIScrollView *scrollView;
 @property(nonatomic, weak) UIView *currentView;
 
-@property(nonatomic, assign) BOOL isMoving;
 @property(nonatomic, strong) NSHashTable<UIViewController *> *cachedControllers;
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated;
@@ -41,7 +40,6 @@
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
         _coalescingKey = 0;
         _eventDispatcher = eventDispatcher;
-        _isMoving = NO;
         _cachedControllers = [NSHashTable weakObjectsHashTable];
     }
     return self;
@@ -148,7 +146,7 @@
                                            direction:direction
                                             animated:animated
                                           completion:^(BOOL finished) {
-        weakSelf.isMoving = NO;
+        
         weakSelf.currentIndex = index;
         weakSelf.currentView = controller.view;
         
@@ -188,17 +186,12 @@
 }
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
-    if (self.isMoving) {
-        return;
-    }
-    self.isMoving = YES;
-    
     NSInteger numberOfPages = self.reactSubviews.count;
     
     if (numberOfPages == 0 || index < 0) {
         return;
     }
-    
+        
     UIPageViewControllerNavigationDirection direction = (index > self.currentIndex) ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
     
     NSInteger indexToDisplay = index < numberOfPages ? index : numberOfPages - 1;
@@ -243,8 +236,12 @@
     }
     
     UIView *viewToDisplay = self.reactSubviews[index];
+    
             
-    UIViewController *controllerToDisplay = [[UIViewController alloc] initWithView:viewToDisplay];
+    UIViewController *controllerToDisplay = [self findCachedControllerForView:viewToDisplay];
+    if (!controllerToDisplay) {
+         controllerToDisplay = [[UIViewController alloc] initWithView:viewToDisplay];
+    }
     [self.cachedControllers addObject:controllerToDisplay];
     
     return controllerToDisplay;
