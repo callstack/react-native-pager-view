@@ -375,7 +375,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
 
 - (UIViewController *)createChildViewController:(UIView *)view {
     UIViewController *childViewController = [[UIViewController alloc] init];
-    childViewController.view = view;
+    [childViewController.view addSubview: view];
     return childViewController;
 }
 
