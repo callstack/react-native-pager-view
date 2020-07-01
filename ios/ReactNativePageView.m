@@ -197,19 +197,8 @@
     NSInteger indexToDisplay = index < numberOfPages ? index : numberOfPages - 1;
     
     UIView *viewToDisplay = self.reactSubviews[indexToDisplay];
-    
-    UIViewController *controllerToDisplay = [self findCachedControllerForView:viewToDisplay];
-    UIViewController *current = [self currentlyDisplayed];
+    UIViewController *controllerToDisplay = [self findAndCacheControllerForView:viewToDisplay];
 
-    if (!controllerToDisplay && current.view.reactTag == viewToDisplay.reactTag) {
-        controllerToDisplay = current;
-    }
-    
-    if (!controllerToDisplay) {
-        controllerToDisplay = [[UIViewController alloc] initWithView:viewToDisplay];
-        [self.cachedControllers addObject:controllerToDisplay];
-    }
-    
     self.reactPageIndicatorView.numberOfPages = numberOfPages;
     self.reactPageIndicatorView.currentPage = indexToDisplay;
         
@@ -218,6 +207,23 @@
                         direction:direction
                          animated:animated];
     
+}
+
+- (UIViewController *)findAndCacheControllerForView:(UIView *)viewToDisplay {
+    if (!viewToDisplay) { return nil; }
+    
+    UIViewController *controllerToDisplay = [self findCachedControllerForView:viewToDisplay];
+    UIViewController *current = [self currentlyDisplayed];
+
+    if (!controllerToDisplay && current.view.reactTag == viewToDisplay.reactTag) {
+        controllerToDisplay = current;
+    }
+    if (!controllerToDisplay) {
+         controllerToDisplay = [[UIViewController alloc] initWithView:viewToDisplay];
+    }
+    [self.cachedControllers addObject:controllerToDisplay];
+    
+    return controllerToDisplay;
 }
 
 - (UIViewController *)nextControllerForController:(UIViewController *)controller
@@ -237,14 +243,7 @@
     
     UIView *viewToDisplay = self.reactSubviews[index];
     
-            
-    UIViewController *controllerToDisplay = [self findCachedControllerForView:viewToDisplay];
-    if (!controllerToDisplay) {
-         controllerToDisplay = [[UIViewController alloc] initWithView:viewToDisplay];
-    }
-    [self.cachedControllers addObject:controllerToDisplay];
-    
-    return controllerToDisplay;
+    return [self findAndCacheControllerForView:viewToDisplay];
 }
 
 #pragma mark - UIPageViewControllerDelegate
