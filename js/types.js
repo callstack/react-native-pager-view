@@ -43,6 +43,7 @@ export type PageSelectedEvent = SyntheticEvent<
 
 export type TransitionStyle = 'scroll' | 'curl';
 export type Orientation = 'horizontal' | 'vertical';
+export type OverScrollMode = 'auto' | 'always' | 'never';
 
 export type ViewPagerProps = $ReadOnly<{|
   /**
@@ -120,4 +121,8 @@ export type ViewPagerProps = $ReadOnly<{|
   orientation?: Orientation,
   transitionStyle?: TransitionStyle,
   showPageIndicator?: boolean,
+  /**
+   * Android only
+   */
+  overScrollMode?: OverScrollMode,
 |}>;
