@@ -87,9 +87,9 @@ export interface ViewPagerProps {
     /**
     * iOS only
     */
-   orientation?: 'horizontal' | 'vertical',
-   transitionStyle?: 'scroll' | 'curl',
-   showPageIndicator?: boolean,
+    orientation?: 'horizontal' | 'vertical',
+    transitionStyle?: 'scroll' | 'curl',
+    showPageIndicator?: boolean,
     /**
     * Android only
     */
