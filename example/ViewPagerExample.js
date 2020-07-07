@@ -137,6 +137,7 @@ export default class ViewPagerExample extends React.Component<*, State> {
           orientation="horizontal"
           // Lib does not support dynamically transitionStyle change
           transitionStyle="scroll"
+          overScrollMode="always"
           showPageIndicator={dotsVisible}
           ref={this.viewPager}>
           {pages.map((p) => this.renderPage(p))}
