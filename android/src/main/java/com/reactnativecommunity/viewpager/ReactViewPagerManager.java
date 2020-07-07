@@ -147,6 +147,17 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
         viewPager.setOrientation(value.equals("vertical") ? ViewPager2.ORIENTATION_VERTICAL : ORIENTATION_HORIZONTAL);
     }
 
+    @ReactProp(name = "overScrollMode")
+    public void setOverScrollMode(ViewPager2 viewPager, String value) {
+        View child = viewPager.getChildAt(0);
+        if (value.equals("never")) {
+            child.setOverScrollMode(ViewPager2.OVER_SCROLL_NEVER);
+        } else if (value.equals("always")) {
+            child.setOverScrollMode(ViewPager2.OVER_SCROLL_ALWAYS);
+        } else {
+            child.setOverScrollMode(ViewPager2.OVER_SCROLL_IF_CONTENT_SCROLLS);
+        }
+    }
 
     @Override
     public Map getExportedCustomDirectEventTypeConstants() {
