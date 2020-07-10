@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 
 public class ViewPagerFragment extends Fragment {
 
-    static String CHILD_VIEW_KEY = "CHILD_VIEW_KEY";
+    public static String CHILD_VIEW_KEY = "CHILD_VIEW_KEY";
 
     public static ViewPagerFragment newInstance(int id) {
         Bundle args = new Bundle();
@@ -27,5 +27,4 @@ public class ViewPagerFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return ReactViewPagerManager.reactChildrenViews.get(getArguments().getInt(CHILD_VIEW_KEY));
     }
-
 }

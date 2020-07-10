@@ -13,6 +13,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 
 
@@ -37,6 +38,7 @@ import static com.reactnative.community.viewpager2.widget.ViewPager2.ORIENTATION
 import static com.reactnative.community.viewpager2.widget.ViewPager2.SCROLL_STATE_DRAGGING;
 import static com.reactnative.community.viewpager2.widget.ViewPager2.SCROLL_STATE_IDLE;
 import static com.reactnative.community.viewpager2.widget.ViewPager2.SCROLL_STATE_SETTLING;
+import static com.reactnativecommunity.viewpager.ViewPagerFragment.CHILD_VIEW_KEY;
 
 public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
 
@@ -125,10 +127,24 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
         ((FragmentAdapter) parent.getAdapter()).removeFragment(view);
     }
 
+
+    public void removeAllViews(ViewPager2 parent) {
+        FragmentAdapter adapter = ((FragmentAdapter) parent.getAdapter());
+        for (Fragment fragment : adapter.getChildren()) {
+            int viewID = fragment.getArguments().getInt(CHILD_VIEW_KEY);
+            reactChildrenViews.remove(viewID);
+        }
+        adapter.removeAll();
+        parent.setAdapter(null);
+    }
+
     @Override
     public void removeViewAt(ViewPager2 parent, int index) {
-        reactChildrenViews.removeAt(index);
-        ((FragmentAdapter) parent.getAdapter()).removeFragmentAt(index);
+        FragmentAdapter adapter = ((FragmentAdapter) parent.getAdapter());
+        Fragment fragment = adapter.getChildren().get(index);
+        int viewID = fragment.getArguments().getInt(CHILD_VIEW_KEY);
+        reactChildrenViews.remove(viewID);
+        adapter.removeFragmentAt(index);
     }
 
     @Override
