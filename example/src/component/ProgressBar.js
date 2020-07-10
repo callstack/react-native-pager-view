@@ -30,6 +30,8 @@ export class ProgressBar extends React.Component<Props> {
         (fractionalPosition / (this.props.numberOfPages - 1)) * this.props.size;
     }
 
+    progressBarSize = isNaN(progressBarSize) ? 0 : progressBarSize;
+
     return (
       <View style={[styles.progressBarContainer, {width: this.props.size}]}>
         <View style={[styles.progressBar, {width: progressBarSize}]} />
