@@ -11,6 +11,8 @@ import com.reactnative.community.viewpager2.adapter.FragmentStateAdapter;
 
 import java.util.ArrayList;
 
+import static com.reactnativecommunity.viewpager.ViewPagerFragment.CHILD_VIEW_KEY;
+
 public class FragmentAdapter extends FragmentStateAdapter {
 
     public FragmentAdapter(@NonNull FragmentActivity fragmentActivity) {
@@ -39,7 +41,8 @@ public class FragmentAdapter extends FragmentStateAdapter {
     public void removeFragment(View child) {
         for (int i = 0; i < children.size(); i++) {
             Fragment fragment = children.get(i);
-            if (fragment.getId() == child.getId()) {
+            int viewID = fragment.getArguments().getInt(CHILD_VIEW_KEY);
+            if (viewID == child.getId()) {
                 children.remove(i);
                 notifyItemRemoved(i);
                 return;
@@ -50,6 +53,16 @@ public class FragmentAdapter extends FragmentStateAdapter {
     public void removeFragmentAt(int index) {
         children.remove(index);
         notifyItemRemoved(index);
+    }
+
+
+    public void removeAll() {
+        children.clear();
+        notifyDataSetChanged();
+    }
+
+    public ArrayList<ViewPagerFragment> getChildren() {
+        return children;
     }
 
     public View getChildAt(int index) {
