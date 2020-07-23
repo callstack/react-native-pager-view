@@ -22,13 +22,10 @@ jobs:
       - rn/yarn_install
       - run:
           name: Run ESLint
-          command: yarn eslint
+          command: yarn lint
       - run:
           name: Flow
           command: yarn flow
-      - run:
-          name: Jest
-          command: yarn jest
 
 workflows:
   test:
