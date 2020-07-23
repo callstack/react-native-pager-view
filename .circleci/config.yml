@@ -19,7 +19,12 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - rn/yarn_install
+      - run:
+          name: yarn dir
+          command: yarn cache dir
+      - run:
+          name: yarn install
+          command: yarn install --frozen-lockfile --non-interactive
       - run:
           name: Run ESLint
           command: yarn lint
@@ -50,11 +55,11 @@ workflows:
 
       # Build the iOS app in release mode and do not run tests
       # https://github.com/react-native-community/react-native-circleci-orb/issues/66
-      # - rn/ios_build:
-      #     name: build_ios
-      #     project_path: example/ios/ViewPagerExample.xcodeproj
-      #     device: "iPhone X"
-      #     build_configuration: Debug
-      #     scheme: ViewPagerExample
-      #     requires:
-      #       - analyse_js
+      - rn/ios_build:
+          name: build_ios
+          project_path: example/ios/ViewPagerExample.xcodeproj
+          device: "iPhone X"
+          build_configuration: Debug
+          scheme: ViewPagerExample
+          requires:
+            - analyse_js
