@@ -56,5 +56,6 @@ workflows:
           project_path: example/ios/ViewPagerExample.xcodeproj
           build_configuration: Debug
           scheme: ViewPagerExample
+          device: 'iPhone 11'
           requires:
             - analyse_js
