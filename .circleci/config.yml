@@ -3,7 +3,7 @@ version: 2.1
 
 # Make sure you use the latest version of the Orb!
 orbs:
-  rn: react-native-community/react-native@4.4.2
+  rn: react-native-community/react-native@4.2.2
 
 # Custom jobs which are not part of the Orb
 jobs:
@@ -19,12 +19,7 @@ jobs:
     steps:
       - attach_workspace:
           at: .
-      - run:
-          name: yarn dir
-          command: yarn cache dir
-      - run:
-          name: yarn install
-          command: yarn install --frozen-lockfile --non-interactive
+      - rn/yarn_install
       - run:
           name: Run ESLint
           command: yarn lint
