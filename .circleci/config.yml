@@ -27,7 +27,7 @@ jobs:
           name: Flow
           command: yarn flow
 
-          
+
 workflows:
   test:
     jobs:
@@ -54,7 +54,6 @@ workflows:
       - rn/ios_build:
           name: build_ios
           project_path: example/ios/ViewPagerExample.xcodeproj
-          device: "iPhone X"
           build_configuration: Debug
           scheme: ViewPagerExample
           requires:
