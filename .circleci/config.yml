@@ -43,7 +43,7 @@ workflows:
       # Build the Android app in debug mode
       - rn/android_build:
           name: build_android_debug
-          project_path: "android"
+          project_path: "example/android"
           build_type: debug
           requires:
             - analyse_js
