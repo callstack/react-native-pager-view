@@ -11,7 +11,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "flow": "flow",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix --ext .js"
+    "lint:fix": "eslint . --fix --ext .js",
+    "release": "release-it"
   },
   "keywords": [
     "react-native",
@@ -41,7 +42,8 @@
     "metro-react-native-babel-preset": "^0.58.0",
     "react": "16.11.0",
     "react-native": "0.62.2",
-    "react-test-renderer": "16.11.0"
+    "react-test-renderer": "16.11.0",
+    "release-it": "^13.6.5"
   },
   "jest": {
     "preset": "react-native"
