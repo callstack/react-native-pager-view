@@ -1,183 +1,49 @@
-# -------------------------
-#        DEFAULTS
-# -------------------------
-defaults: &defaults
-  working_directory: ~/react-native-viewpager
-  environment:
-    - GIT_COMMIT_DESC: git log --format=oneline -n 1 $CIRCLE_SHA1
+# Orb support is from version >= 2.1
+version: 2.1
 
-# LINUX
-linux_defaults: &linux_defaults
-  <<: *defaults
-  docker:
-    - image: circleci/node:8
-  environment:
-    - PATH: "/opt/yarn/yarn-v1.5.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+# Make sure you use the latest version of the Orb!
+orbs:
+  rn: react-native-community/react-native@4.4.2
 
-# ANDROID
-android_defaults: &android_defaults
-  <<: *defaults
-  docker:
-    - image: circleci/android:api-27-node8-alpha
-  environment:
-    - TERM: "dumb"
-    - ADB_INSTALL_TIMEOUT: 10
-    - _JAVA_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-    - GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs="-XX:+HeapDumpOnOutOfMemoryError"'
-    - BUILD_THREADS: 2
-
-# MACOS
-macos_defaults: &macos_defaults
-  <<: *defaults
-  macos:
-    xcode: "10.1.0"
-
-# -------------------------
-#         ALIASES
-# -------------------------
-
-aliases:
-  # CACHE
-  - &restore-yarn-cache
-    keys:
-      - yarn-cache-{{ arch }}-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-      - yarn-cache-{{ arch }}
-  - &save-yarn-cache
-    paths:
-      - ~/.cache/yarn
-      - ~/Library/Detox/ios
-    key: yarn-cache-{{ arch }}-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}
-
-  - &restore-gradle-cache
-    keys:
-      - gradle-cache-{{ checksum "android/build.gradle" }}-{{ checksum "example/android/build.gradle" }}-{{ checksum "example/android/app/build.gradle" }}
-  - &save-gradle-cache
-    paths:
-      - ~/.gradle
-    key: gradle-cache-{{ checksum "android/build.gradle" }}-{{ checksum "example/android/build.gradle" }}-{{ checksum "example/android/app/build.gradle" }}
-
-  # INSTALLATION
-  - &yarn
-    name: Yarn Install
-    command: |
-      yarn install --network-concurrency 1 --non-interactive --cache-folder ~/.cache/yarn & wait
-
-  # ANALYSE
-  - &eslint
-    name: ESLint Checks
-    command: yarn lint
-
-  - &flow
-    name: Flow Checks
-    command: yarn flow check
-
-# - &jest
-#   name: Jest Unit Tests
-#   command: yarn test:jest
-
-# -------------------------
-#          JOBS
-# -------------------------
-version: 2
+# Custom jobs which are not part of the Orb
 jobs:
-  # Set up a Linux environment for downstream jobs
-  linux-checkout:
-    <<: *linux_defaults
+  checkout_code:
+    executor: rn/linux_js
     steps:
       - checkout
-      - restore-cache: *restore-yarn-cache
-      - run: rm -rf node_modules
-      - run: yarn cache clean
-      - run: *yarn
-      - save-cache: *save-yarn-cache
       - persist_to_workspace:
           root: .
           paths: .
-
-  eslint:
-    <<: *linux_defaults
-    steps:
-    - attach_workspace:
-        at: ~/react-native-viewpager
-    - run: *eslint
-
-  flow:
-    <<: *linux_defaults
+  analyse_js:
+    executor: rn/linux_js
     steps:
       - attach_workspace:
-          at: ~/react-native-viewpager
-      - run: *flow
-
-  # jest:
-  #   <<: *linux_defaults
-  #   steps:
-  #   - attach_workspace:
-  #       at: ~/react-native-viewpager
-  #   - run: *jest
-
-  android-compile:
-    <<: *android_defaults
-    steps:
-      - attach_workspace:
-          at: ~/react-native-viewpager
-      - restore-cache: *restore-gradle-cache
+          at: .
+      - rn/yarn_install
       - run:
-          name: Accept Android licences
-          command: |-
-            yes | sdkmanager --licenses || exit 0
-            yes | sdkmanager --update || exit 0
+          name: Run ESLint
+          command: yarn lint
       - run:
-          name: Build Android Example App and Library
-          command: |-
-            cd example/android
-            ./gradlew clean assembleDebug
-      - save-cache: *save-gradle-cache
+          name: Flow
+          command: yarn flow
 
-  ios-checkout:
-    <<: *macos_defaults
-    steps:
-      - checkout
-      - restore-cache: *restore-yarn-cache
-      - run: rm -rf node_modules
-      - run: yarn cache clean
-      - run: *yarn
-      - save-cache: *save-yarn-cache
-      - persist_to_workspace:
-          root: .
-          paths: .
-
-  ios-compile:
-    <<: *macos_defaults
-    steps:
-      - attach_workspace:
-          at: ~/react-native-viewpager
-      - run:
-          name: Build example app
-          command: |-
-            react-native run-ios --project-path example/ios
-
-# -------------------------
-#        WORKFLOWS
-# -------------------------
 workflows:
-  version: 2
-  Test:
+  test:
     jobs:
-      - linux-checkout
-      - eslint:
+      # Checkout the code and persist to the Workspace
+      # Note: This is a job which is defined above and not part of the Orb
+      - checkout_code
+
+      # Analyze the Javascript using ESLint, Flow, and Jest
+      # Note: This is a job which is defined above and not part of the Orb
+      - analyse_js:
           requires:
-          - linux-checkout
-      - flow:
+            - checkout_code
+
+      # Build the Android app in debug mode
+      - rn/android_build:
+          name: build_android
+          project_path: "example/android"
+          build_type: debug
           requires:
-            - linux-checkout
-      # - jest:
-      #     requires:
-      #     - linux-checkout
-      - android-compile:
-          requires:
-            - linux-checkout
-# Disabled until we have macOS containers enabled
-#     - ios-checkout
-#     - ios-compile:
-#         requires:
-#         - ios-checkout
+            - analyse_js
