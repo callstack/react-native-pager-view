@@ -11,7 +11,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "flow": "flow",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix --ext .js"
+    "lint:fix": "eslint . --fix",
+    "release": "release-it"
   },
   "keywords": [
     "react-native",
@@ -25,6 +26,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/react-native-community/react-native-viewpager.git"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
   },
   "peerDependencies": {
     "react": "^16.0",
