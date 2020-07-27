@@ -34,7 +34,7 @@ public class FragmentAdapter extends FragmentStateAdapter {
 
     public void addFragment(View child, int index) {
         children.add(ViewPagerFragment.newInstance(child.getId()));
-        notifyDataSetChanged();
+        notifyItemChanged(index);
     }
 
 
