@@ -12,11 +12,11 @@
 
 const {requireNativeComponent} = require('react-native');
 
-import type {NativeComponent} from 'react-native/Libraries/Renderer/shims/ReactNative';
+import type {HostComponent} from 'react-native/Libraries/Renderer/shims/ReactNativeTypes';
 
 import type {ViewPagerProps} from './types';
 
-type ViewPagerNativeType = Class<NativeComponent<ViewPagerProps>>;
+type ViewPagerNativeType = HostComponent<ViewPagerProps>;
 
 module.exports = ((requireNativeComponent(
   'RNCViewPager',

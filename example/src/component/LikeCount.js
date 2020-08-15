@@ -21,7 +21,7 @@ export class LikeCount extends React.Component<Props, State> {
   };
 
   onClick = () => {
-    this.setState(state => ({likes: state.likes + 1}));
+    this.setState((state) => ({likes: state.likes + 1}));
   };
 
   render() {

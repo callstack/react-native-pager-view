@@ -16,7 +16,7 @@ export const childrenWithOverriddenStyle = (
   // Override styles so that each page will fill the parent. Native component
   // will handle positioning of elements, so it's not important to offset
   // them correctly.
-  return React.Children.map(children, function(child) {
+  return React.Children.map(children, function (child) {
     if (!child) {
       return null;
     }

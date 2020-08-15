@@ -82,13 +82,13 @@ export default class ViewPagerExample extends React.Component<*, State> {
   };
 
   addPage = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       pages: [...prevState.pages, createPage(prevState.pages.length)],
     }));
   };
 
   removeLastPage = () => {
-    this.setState(prevState => ({
+    this.setState((prevState) => ({
       pages: prevState.pages.slice(0, prevState.pages.length - 1),
     }));
   };
@@ -118,7 +118,7 @@ export default class ViewPagerExample extends React.Component<*, State> {
   }
 
   toggleDotsVisibility = () => {
-    this.setState(prevState => ({dotsVisible: !prevState.dotsVisible}));
+    this.setState((prevState) => ({dotsVisible: !prevState.dotsVisible}));
   };
 
   render() {
@@ -139,7 +139,7 @@ export default class ViewPagerExample extends React.Component<*, State> {
           transitionStyle="scroll"
           showPageIndicator={dotsVisible}
           ref={this.viewPager}>
-          {pages.map(p => this.renderPage(p))}
+          {pages.map((p) => this.renderPage(p))}
         </ViewPager>
         <View style={styles.buttons}>
           <Button
