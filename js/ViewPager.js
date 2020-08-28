@@ -164,8 +164,6 @@ class ViewPager extends React.Component<ViewPagerProps> {
    * See https://github.com/react-native-community/react-native-viewpager/issues/164
    */
   _onMoveShouldSetResponderCapture = () => true;
-    return true;
-  };
 
   render() {
     return (
