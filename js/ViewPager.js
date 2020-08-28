@@ -163,7 +163,7 @@ class ViewPager extends React.Component<ViewPagerProps> {
    * `ViewPager` wants to prevent a child `View` from becoming responder on a move
    * See https://github.com/react-native-community/react-native-viewpager/issues/164
    */
-  _onMoveShouldSetResponderCapture = (event) => {
+  _onMoveShouldSetResponderCapture = () => {
     return true;
   };
 
