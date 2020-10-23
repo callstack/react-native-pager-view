@@ -12,7 +12,7 @@
     "flow": "flow",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "release": "release-it"
+    "release": "release-it --npm.tag=next --github.preRelease"
   },
   "keywords": [
     "react-native",
