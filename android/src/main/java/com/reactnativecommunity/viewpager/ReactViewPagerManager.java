@@ -20,6 +20,13 @@ import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
 
+import com.facebook.react.uimanager.events.EventDispatcher;
+import com.reactnative.community.viewpager2.widget.MarginPageTransformer;
+import com.reactnative.community.viewpager2.widget.ViewPager2;
+import com.reactnativecommunity.viewpager.event.PageScrollEvent;
+import com.reactnativecommunity.viewpager.event.PageScrollStateChangedEvent;
+import com.reactnativecommunity.viewpager.event.PageSelectedEvent;
+
 import javax.annotation.Nullable;
 
 /**
@@ -36,6 +43,88 @@ public class ReactViewPagerManager extends ViewGroupManager<ReactViewPager> {
     @Override
     public String getName() {
         return REACT_CLASS;
+    }
+
+    @NonNull
+    @Override
+    protected ViewPager2 createViewInstance(@NonNull ThemedReactContext reactContext) {
+        final ViewPager2 vp = new ViewPager2(reactContext);
+        FragmentAdapter adapter = new FragmentAdapter((FragmentActivity) reactContext.getCurrentActivity());
+        vp.setAdapter(adapter);
+        eventDispatcher = reactContext.getNativeModule(UIManagerModule.class).getEventDispatcher();
+        vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                eventDispatcher.dispatchEvent(
+                        new PageScrollEvent(vp.getId(), position, positionOffset));
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                eventDispatcher.dispatchEvent(
+                        new PageSelectedEvent(vp.getId(), position));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                super.onPageScrollStateChanged(state);
+                String pageScrollState;
+                switch (state) {
+                    case SCROLL_STATE_IDLE:
+                        pageScrollState = "idle";
+                        break;
+                    case SCROLL_STATE_DRAGGING:
+                        pageScrollState = "dragging";
+                        break;
+                    case SCROLL_STATE_SETTLING:
+                        pageScrollState = "settling";
+                        break;
+                    default:
+                        throw new IllegalStateException("Unsupported pageScrollState");
+                }
+                eventDispatcher.dispatchEvent(
+                        new PageScrollStateChangedEvent(vp.getId(), pageScrollState));
+            }
+        });
+        return vp;
+    }
+
+    @Override
+    public void addView(ViewPager2 parent, View child, int index) {
+        if (child == null) {
+            return;
+        }
+        reactChildrenViews.put(child.getId(), child);
+        ((FragmentAdapter) parent.getAdapter()).addFragment(child, index);
+    }
+
+    @Override
+    public int getChildCount(ViewPager2 parent) {
+        return parent.getAdapter().getItemCount();
+    }
+
+
+    @Override
+    public View getChildAt(ViewPager2 parent, int index) {
+        return reactChildrenViews.get(((FragmentAdapter) parent.getAdapter()).getChildViewIDAt(index));
+    }
+
+    @Override
+    public void removeView(ViewPager2 parent, View view) {
+        reactChildrenViews.remove(view.getId());
+        ((FragmentAdapter) parent.getAdapter()).removeFragment(view);
+    }
+
+
+    public void removeAllViews(ViewPager2 parent) {
+        FragmentAdapter adapter = ((FragmentAdapter) parent.getAdapter());
+        for (int childID : adapter.getChildrenViewIDs()) {
+            reactChildrenViews.remove(childID);
+        }
+        adapter.removeAll();
+        parent.setAdapter(null);
     }
 
     @Override
@@ -137,8 +226,8 @@ public class ReactViewPagerManager extends ViewGroupManager<ReactViewPager> {
     }
 
     @ReactProp(name = "pageMargin", defaultFloat = 0)
-    public void setPageMargin(ReactViewPager pager, float margin) {
-        pager.setPageMargin((int) PixelUtil.toPixelFromDIP(margin));
+    public void setPageMargin(ViewPager2 pager, float margin) {
+        int pageMargin = (int) PixelUtil.toPixelFromDIP(margin);
+        pager.setPageTransformer(new MarginPageTransformer(pageMargin));
     }
-
 }
