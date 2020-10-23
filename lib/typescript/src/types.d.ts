@@ -66,6 +66,14 @@ export interface ViewPagerProps {
      */
     pageMargin?: number;
     style?: ReactNative.StyleProp<ReactNative.ViewStyle>;
+    /**
+     * Set the number of pages that should be retained to either side
+     * of the currently visible page(s). Pages beyond this limit will
+     * be recreated from the adapter when needed.
+     * Defaults to RecyclerView's caching strategy.
+     * The given value must either be larger than 0.
+     */
+    offscreenPageLimit?: number;
     children: ReactNode;
     /**
      * If a parent `View` wants to prevent a child `View` from becoming responder

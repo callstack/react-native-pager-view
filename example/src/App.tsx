@@ -1,12 +1,5 @@
 import * as React from 'react';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  Platform,
-} from 'react-native';
+import { Image, StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import ViewPager, {
   PageScrollState,
   OverScrollMode,
@@ -57,7 +50,7 @@ export default class ViewPagerExample extends React.Component<{}, State> {
       pages: pages,
       scrollState: 'idle',
       dotsVisible: false,
-      overScrollMode: 'always',
+      overScrollMode: 'auto',
     };
     this.viewPager = React.createRef();
   }
@@ -120,13 +113,7 @@ export default class ViewPagerExample extends React.Component<{}, State> {
   };
 
   render() {
-    const {
-      page,
-      pages,
-      animationsAreEnabled,
-      dotsVisible,
-      overScrollMode,
-    } = this.state;
+    const { page, pages, animationsAreEnabled, dotsVisible } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <ViewPager
@@ -141,8 +128,8 @@ export default class ViewPagerExample extends React.Component<{}, State> {
           orientation="horizontal"
           // Lib does not support dynamically transitionStyle change
           transitionStyle="scroll"
-          overScrollMode={overScrollMode}
           showPageIndicator={dotsVisible}
+          overScrollMode={this.state.overScrollMode}
           ref={this.viewPager}
         >
           {pages.map((p) => this.renderPage(p))}
@@ -170,36 +157,19 @@ export default class ViewPagerExample extends React.Component<{}, State> {
           />
         </View>
         <View style={styles.buttons}>
-          {Platform.OS === 'android' ? (
+          {animationsAreEnabled ? (
             <Button
-              text={`${
-                overScrollMode === 'always'
-                  ? 'Hide overscroll'
-                  : 'Show overscroll'
-              }`}
+              text="Turn off animations"
               enabled={true}
-              onPress={() =>
-                this.setState((prevState) => ({
-                  overScrollMode:
-                    prevState.overScrollMode === 'always' ? 'never' : 'always',
-                }))
-              }
+              onPress={() => this.setState({ animationsAreEnabled: false })}
             />
-          ) : null}
-
-          <Button
-            text={`${
-              animationsAreEnabled
-                ? 'Turn off animations'
-                : 'Turn animations back on'
-            }`}
-            enabled={true}
-            onPress={() =>
-              this.setState((prevState) => ({
-                animationsAreEnabled: !prevState.animationsAreEnabled,
-              }))
-            }
-          />
+          ) : (
+            <Button
+              text="Turn animations back on"
+              enabled={true}
+              onPress={() => this.setState({ animationsAreEnabled: true })}
+            />
+          )}
           <Text style={styles.scrollStateText}>
             ScrollState[ {this.state.scrollState} ]
           </Text>
