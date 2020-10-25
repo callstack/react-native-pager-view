@@ -111,6 +111,8 @@ const styles = StyleSheet.create({
 });
 ```
 
+**Attention:** Note that you can only use `View` components as children of `ViewPager` (cf. folder */example*)
+
 ## API
 
 |Prop|Description|Platform|
