@@ -13,6 +13,7 @@ import type {PageScrollStateChangedEvent as _PageScrollStateChangedEvent} from '
 import type {PageSelectedEvent as _PageSelectedEvent} from './types';
 import type {TransitionStyle as _TransitionStyle} from './types';
 import type {Orientation as _Orientation} from './types';
+import type {OverScrollMode as _OverScrollMode} from './types';
 
 export type PageScrollState = _PageScrollState;
 export type PageScrollEvent = _PageScrollEvent;
@@ -20,5 +21,6 @@ export type PageScrollStateChangedEvent = _PageScrollStateChangedEvent;
 export type PageSelectedEvent = _PageSelectedEvent;
 export type TransitionStyle = _TransitionStyle;
 export type Orientation = _Orientation;
+export type OverScrollMode = _OverScrollMode;
 
 module.exports = require('./ViewPager');
