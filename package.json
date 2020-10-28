@@ -1,7 +1,7 @@
 {
   "name": "@react-native-community/viewpager",
-  "version": "4.1.7",
-  "description": "React Native wrapper for Android and iOS ViewPager" ,
+  "version": "4.2.0",
+  "description": "React Native wrapper for Android and iOS ViewPager",
   "main": "js/index.js",
   "types": "typings/index.d.ts",
   "scripts": {
