@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-package com.reactnativecommunity.viewpager.event;
+package com.reactnativecommunity.viewpager;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
@@ -18,13 +18,13 @@ import com.facebook.react.uimanager.events.RCTEventEmitter;
  * Additional data provided by this event:
  *  - pageScrollState - {Idle,Dragging,Settling}
  */
-public class PageScrollStateChangedEvent extends Event<PageScrollStateChangedEvent> {
+class PageScrollStateChangedEvent extends Event<PageScrollStateChangedEvent> {
 
   public static final String EVENT_NAME = "topPageScrollStateChanged";
 
   private final String mPageScrollState;
 
-  public PageScrollStateChangedEvent(int viewTag, String pageScrollState) {
+  protected PageScrollStateChangedEvent(int viewTag, String pageScrollState) {
     super(viewTag);
     mPageScrollState = pageScrollState;
   }
