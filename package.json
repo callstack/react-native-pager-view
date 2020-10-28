@@ -1,7 +1,7 @@
 {
   "name": "@react-native-community/viewpager",
   "version": "4.1.7",
-  "description": "React Native ViewPager native view",
+  "description": "React Native wrapper for Android and iOS ViewPager" ,
   "main": "js/index.js",
   "types": "typings/index.d.ts",
   "scripts": {
@@ -20,12 +20,12 @@
     "view pager",
     "tabs"
   ],
-  "author": "Ferran Negre Pizarro <fnp.developer@gmail.com>",
-  "homepage": "https://github.com/react-native-community/react-native-viewpager#readme",
+  "author": "Ferran Negre Pizarro <fnp.developer@gmail.com>, Callstack <hello@callstack.com>",
+  "homepage": "https://github.com/callstack/react-native-viewpager#readme",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/react-native-community/react-native-viewpager.git"
+    "url": "https://github.com/callstack/react-native-viewpager.git"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
