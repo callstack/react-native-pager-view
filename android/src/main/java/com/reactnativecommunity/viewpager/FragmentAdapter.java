@@ -9,6 +9,8 @@ import androidx.fragment.app.FragmentActivity;
 import com.reactnative.community.viewpager2.adapter.FragmentStateAdapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class FragmentAdapter extends FragmentStateAdapter {
 
@@ -57,6 +59,10 @@ public class FragmentAdapter extends FragmentStateAdapter {
     public void removeAll() {
         childrenViewIDs.clear();
         notifyDataSetChanged();
+    }
+
+    public List<Integer> getChildrenViewIDs() {
+        return Collections.unmodifiableList(childrenViewIDs);
     }
 
     public int getChildViewIDAt(int index) {
