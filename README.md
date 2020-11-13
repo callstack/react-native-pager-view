@@ -11,7 +11,7 @@ This component allows the user to swipe left and right through pages of data. Un
 
 ## Versions
 
-| 1.x              | 2.x              | 3.x              | 4.0.x, 4.2.x       | > 4.2                                                                                               |
+| 1.x              | 2.x              | 3.x              | 4.0.x, 4.1.x       | >= 4.2.x                                                                                               |
 | ---------------- | -------------    | -------------    | -------------      | -------------                                                                                       |
 |                  | iOS support      | iOS support      | iOS support        | iOS support                                                                                         |
 | Android support  | Android support  | AndroidX support | ViewPager2 support | [Reverted to 3.3.0](https://github.com/callstack/react-native-viewpager/issues/233#issue-711000654) |
