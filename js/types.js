@@ -8,16 +8,16 @@
  * @flow strict-local
  */
 import * as React from 'react';
-import {View} from 'react-native';
-import type {Node} from 'react';
-import type {SyntheticEvent} from 'react-native/Libraries/Types/CoreEventTypes';
-import type {ViewStyleProp} from 'react-native/Libraries/StyleSheet/StyleSheet';
+import { View } from 'react-native';
+import type { Node } from 'react';
+import type { SyntheticEvent } from 'react-native/Libraries/Types/CoreEventTypes';
+import type { ViewStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
 
 type ViewProps = React.ElementProps<typeof View>;
 // $FlowFixMe onMoveShouldSetResponderCapture is missing in mixed
 type ResponderCaptureType = $PropertyType<
   ViewProps,
-  'onMoveShouldSetResponderCapture',
+  'onMoveShouldSetResponderCapture'
 >;
 
 export type PageScrollState = 'idle' | 'dragging' | 'settling';
@@ -26,19 +26,19 @@ export type PageScrollEvent = SyntheticEvent<
   $ReadOnly<{|
     position: number,
     offset: number,
-  |}>,
+  |}>
 >;
 
 export type PageScrollStateChangedEvent = SyntheticEvent<
   $ReadOnly<{|
     pageScrollState: PageScrollState,
-  |}>,
+  |}>
 >;
 
 export type PageSelectedEvent = SyntheticEvent<
   $ReadOnly<{|
     position: number,
-  |}>,
+  |}>
 >;
 
 export type TransitionStyle = 'scroll' | 'curl';
