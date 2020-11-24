@@ -100,6 +100,15 @@ export type ViewPagerProps = $ReadOnly<{|
    */
   scrollEnabled?: ?boolean,
 
+  /**
+   * Set the number of pages that should be retained to either side
+   * of the currently visible page(s). Pages beyond this limit will
+   * be recreated from the adapter when needed.
+   * Defaults to RecyclerView's caching strategy.
+   * The given value must either be larger than 0.
+   */
+  offscreenPageLimit?: ?number,
+
   children?: Node,
 
   style?: ?ViewStyleProp,
