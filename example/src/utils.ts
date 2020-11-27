@@ -6,7 +6,7 @@
  *
  * @flow
  */
-import { ViewStyle } from 'react-native';
+import type { ViewStyle } from 'react-native';
 
 export const PAGES = 5;
 export const BGCOLOR = ['#fdc08e', '#fff6b9', '#99d1b7', '#dde5fe', '#f79273'];

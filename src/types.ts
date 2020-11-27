@@ -1,17 +1,25 @@
-import * as React from 'react';
-import * as ReactNative from 'react-native';
+import type { ReactNode } from 'react';
+import type * as ReactNative from 'react-native';
 
+export type TransitionStyle = 'scroll' | 'curl';
+export type Orientation = 'horizontal' | 'vertical';
+export type OverScrollMode = 'auto' | 'always' | 'never';
+export type PageScrollState = 'idle' | 'dragging' | 'settling';
+
+export type ViewPagerOnPageScrollEvent = ReactNative.NativeSyntheticEvent<ViewPagerOnPageScrollEventData>;
 export interface ViewPagerOnPageScrollEventData {
   position: number;
   offset: number;
 }
 
+export type ViewPagerOnPageSelectedEvent = ReactNative.NativeSyntheticEvent<ViewPagerOnPageSelectedEventData>;
 export interface ViewPagerOnPageSelectedEventData {
   position: number;
 }
 
+export type PageScrollStateChangedNativeEvent = ReactNative.NativeSyntheticEvent<PageScrollStateChangedEvent>;
 export interface PageScrollStateChangedEvent {
-  pageScrollState: 'idle' | 'dragging' | 'settling';
+  pageScrollState: PageScrollState;
 }
 
 export interface ViewPagerProps {
@@ -36,9 +44,7 @@ export interface ViewPagerProps {
    *    Value x means that (1 - x) fraction of the page at "position" index is
    *    visible, and x fraction of the next page is visible.
    */
-  onPageScroll?: (
-    event: ReactNative.NativeSyntheticEvent<ViewPagerOnPageScrollEventData>
-  ) => void;
+  onPageScroll?: (event: ViewPagerOnPageScrollEvent) => void;
 
   /**
    * This callback will be called once ViewPager finish navigating to selected page
@@ -46,9 +52,7 @@ export interface ViewPagerProps {
    * callback will have following fields:
    *  - position - index of page that has been selected
    */
-  onPageSelected?: (
-    event: ReactNative.NativeSyntheticEvent<ViewPagerOnPageSelectedEventData>
-  ) => void;
+  onPageSelected?: (event: ViewPagerOnPageSelectedEvent) => void;
 
   /**
    * Function called when the page scrolling state has changed.
@@ -58,9 +62,7 @@ export interface ViewPagerProps {
    * - settling, meaning that there was an interaction with the page scroller, and the
    *   page scroller is now finishing it's closing or opening animation
    */
-  onPageScrollStateChanged?: (
-    event: ReactNative.NativeSyntheticEvent<PageScrollStateChangedEvent>
-  ) => void;
+  onPageScrollStateChanged?: (event: PageScrollStateChangedNativeEvent) => void;
 
   /**
    * Determines whether the keyboard gets dismissed in response to a drag.
@@ -77,7 +79,7 @@ export interface ViewPagerProps {
 
   style?: ReactNative.StyleProp<ReactNative.ViewStyle>;
 
-  children: React.ReactNode;
+  children: ReactNode;
 
   /**
    * If a parent `View` wants to prevent a child `View` from becoming responder
@@ -95,28 +97,11 @@ export interface ViewPagerProps {
   /**
    * iOS only
    */
-  orientation?: 'horizontal' | 'vertical';
-  transitionStyle?: 'scroll' | 'curl';
+  orientation?: Orientation;
+  transitionStyle?: TransitionStyle;
   showPageIndicator?: boolean;
   /**
    * Android only
    */
-  overScrollMode?: 'auto' | 'always' | 'never';
-}
-
-declare class ViewPagerComponent extends React.Component<ViewPagerProps> {}
-declare const ViewPagerBase: ReactNative.Constructor<ReactNative.NativeMethodsMixin> &
-  typeof ViewPagerComponent;
-export default class ViewPager extends ViewPagerBase {
-  /**
-   * A helper function to scroll to a specific page in the ViewPager.
-   * The transition between pages will be animated.
-   */
-  public setPage(selectedPage: number): void;
-
-  /**
-   * A helper function to scroll to a specific page in the ViewPager.
-   * The transition between pages will *not* be animated.
-   */
-  public setPageWithoutAnimation(selectedPage: number): void;
+  overScrollMode?: OverScrollMode;
 }

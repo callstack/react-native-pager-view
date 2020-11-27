@@ -7,20 +7,19 @@ import {
   SafeAreaView,
   Platform,
 } from 'react-native';
-import ViewPager from 'react-native-viewpager';
+import ViewPager, {
+  PageScrollState,
+  OverScrollMode,
+  ViewPagerOnPageScrollEvent,
+  ViewPagerOnPageSelectedEvent,
+  PageScrollStateChangedNativeEvent,
+} from 'react-native-viewpager';
 
 import { PAGES, createPage } from './utils';
 import { Button } from './component/Button';
 import { LikeCount } from './component/LikeCount';
 import { ProgressBar } from './component/ProgressBar';
-import { CreatePage } from './utils';
-// import type {
-//   PageScrollEvent,
-//   PageScrollState,
-//   PageScrollStateChangedEvent,
-//   PageSelectedEvent,
-//   OverScrollMode,
-// } from '../js';
+import type { CreatePage } from './utils';
 
 type State = {
   page: number;
@@ -31,16 +30,13 @@ type State = {
     offset: number;
   };
   pages: Array<CreatePage>;
-  scrollState: any;
+  scrollState: PageScrollState;
   dotsVisible: boolean;
-  overScrollMode: any;
-  // scrollState: PageScrollState;
-  // dotsVisible: boolean;
-  // overScrollMode: OverScrollMode;
+  overScrollMode: OverScrollMode;
 };
 
 export default class ViewPagerExample extends React.Component<{}, State> {
-  viewPager: React.Ref<typeof ViewPager>;
+  viewPager: React.RefObject<ViewPager>;
 
   constructor(props: any) {
     super(props);
@@ -66,11 +62,11 @@ export default class ViewPagerExample extends React.Component<{}, State> {
     this.viewPager = React.createRef();
   }
 
-  onPageSelected = (e: PageSelectedEvent) => {
+  onPageSelected = (e: ViewPagerOnPageSelectedEvent) => {
     this.setState({ page: e.nativeEvent.position });
   };
 
-  onPageScroll = (e: PageScrollEvent) => {
+  onPageScroll = (e: ViewPagerOnPageScrollEvent) => {
     this.setState({
       progress: {
         position: e.nativeEvent.position,
@@ -79,7 +75,7 @@ export default class ViewPagerExample extends React.Component<{}, State> {
     });
   };
 
-  onPageScrollStateChanged = (e: PageScrollStateChangedEvent) => {
+  onPageScrollStateChanged = (e: PageScrollStateChangedNativeEvent) => {
     this.setState({ scrollState: e.nativeEvent.pageScrollState });
   };
 
@@ -102,10 +98,10 @@ export default class ViewPagerExample extends React.Component<{}, State> {
   go = (page: number) => {
     if (this.state.animationsAreEnabled) {
       /* $FlowFixMe we need to update flow to support React.Ref and createRef() */
-      this.viewPager.current.setPage(page);
+      this.viewPager.current?.setPage(page);
     } else {
       /* $FlowFixMe we need to update flow to support React.Ref and createRef() */
-      this.viewPager.current.setPageWithoutAnimation(page);
+      this.viewPager.current?.setPageWithoutAnimation(page);
     }
   };
 

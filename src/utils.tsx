@@ -8,22 +8,18 @@
  * @flow strict-local
  */
 
-import * as React from 'react';
+import React, { Children, ReactElement, ReactNode } from 'react';
 
-export const childrenWithOverriddenStyle = (
-  children?: React.Node
-): Array<React.Node> => {
+export const childrenWithOverriddenStyle = (children?: ReactNode) => {
   // Override styles so that each page will fill the parent. Native component
   // will handle positioning of elements, so it's not important to offset
   // them correctly.
-  return React.Children.map(children, function (child) {
-    if (!child) {
-      return null;
-    }
+  return Children.map(children, (child) => {
+    const { props, type } = child as ReactElement;
     const newProps = {
-      ...child.props,
+      ...props,
       style: [
-        child.props.style,
+        props.style,
         {
           position: 'absolute',
           left: 0,
@@ -36,6 +32,6 @@ export const childrenWithOverriddenStyle = (
       ],
       collapsable: false,
     };
-    return React.createElement(child.type, newProps);
+    return React.createElement(type, newProps);
   });
 };

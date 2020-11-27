@@ -1,42 +1,28 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @format
- * @flow strict-local
- */
-
-'use strict';
-
+import React, { ReactElement } from 'react';
+import {
+  requireNativeComponent,
+  Platform,
+  UIManager,
+  Keyboard,
+} from 'react-native';
+import ReactNative from 'react-native';
 import type {
-  PageScrollEvent,
-  PageScrollStateChangedEvent,
-  PageSelectedEvent,
+  ViewPagerOnPageScrollEvent,
+  ViewPagerOnPageSelectedEvent,
+  PageScrollStateChangedNativeEvent,
   ViewPagerProps,
 } from './types';
 
-const React = require('react');
-const ReactNative = require('react-native');
-
-const {Platform, UIManager} = ReactNative;
-
-const dismissKeyboard = require('react-native/Libraries/Utilities/dismissKeyboard');
-
-import {childrenWithOverriddenStyle} from './utils';
-
-const NativeViewPager = require('./ViewPagerNativeComponent');
-
-const VIEW_PAGER_REF = 'viewPager';
 const VIEW_MANAGER_NAME = 'RNCViewPager';
+const VIEW_PAGER_REF = 'viewPager';
 
-function getViewManagerConfig(viewManagerName) {
-  if (!UIManager.getViewManagerConfig) {
-    // react-native <= 0.57
-    // $FlowFixMe
-    return UIManager[viewManagerName];
-  }
+const ViewpagerViewManager = requireNativeComponent<ViewPagerProps>(
+  VIEW_MANAGER_NAME
+);
+
+import { childrenWithOverriddenStyle } from './utils';
+
+function getViewManagerConfig(viewManagerName: string) {
   return UIManager.getViewManagerConfig(viewManagerName);
 }
 
@@ -82,7 +68,7 @@ function getViewManagerConfig(viewManagerName) {
  * ```
  */
 
-class ViewPager extends React.Component<ViewPagerProps> {
+export class ViewPager extends React.Component<ViewPagerProps> {
   isScrolling = false;
 
   componentDidMount() {
@@ -96,30 +82,32 @@ class ViewPager extends React.Component<ViewPagerProps> {
 
   /* $FlowFixMe(>=0.78.0 site=react_native_android_fb) This issue was found
    * when making Flow check .android.js files. */
-  getInnerViewNode = (): ReactComponent => {
-    return this.refs[VIEW_PAGER_REF].getInnerViewNode();
+  private getInnerViewNode = (): ReactElement => {
+    return (this.refs[VIEW_PAGER_REF] as ViewPager).getInnerViewNode();
   };
 
-  _onPageScroll = (e: PageScrollEvent) => {
+  private _onPageScroll = (e: ViewPagerOnPageScrollEvent) => {
     if (this.props.onPageScroll) {
       this.props.onPageScroll(e);
     }
     // Not implemented on iOS yet
     if (Platform.OS === 'android') {
       if (this.props.keyboardDismissMode === 'on-drag') {
-        dismissKeyboard();
+        Keyboard.dismiss();
       }
     }
   };
 
-  _onPageScrollStateChanged = (e: PageScrollStateChangedEvent) => {
+  private _onPageScrollStateChanged = (
+    e: PageScrollStateChangedNativeEvent
+  ) => {
     if (this.props.onPageScrollStateChanged) {
       this.props.onPageScrollStateChanged(e);
     }
     this.isScrolling = e.nativeEvent.pageScrollState === 'dragging';
   };
 
-  _onPageSelected = (e: PageSelectedEvent) => {
+  private _onPageSelected = (e: ViewPagerOnPageSelectedEvent) => {
     if (this.props.onPageSelected) {
       this.props.onPageSelected(e);
     }
@@ -129,11 +117,11 @@ class ViewPager extends React.Component<ViewPagerProps> {
    * A helper function to scroll to a specific page in the ViewPager.
    * The transition between pages will be animated.
    */
-  setPage = (selectedPage: number) => {
+  public setPage = (selectedPage: number) => {
     UIManager.dispatchViewManagerCommand(
       ReactNative.findNodeHandle(this),
       getViewManagerConfig(VIEW_MANAGER_NAME).Commands.setPage,
-      [selectedPage],
+      [selectedPage]
     );
   };
 
@@ -141,11 +129,11 @@ class ViewPager extends React.Component<ViewPagerProps> {
    * A helper function to scroll to a specific page in the ViewPager.
    * The transition between pages will *not* be animated.
    */
-  setPageWithoutAnimation = (selectedPage: number) => {
+  public setPageWithoutAnimation = (selectedPage: number) => {
     UIManager.dispatchViewManagerCommand(
       ReactNative.findNodeHandle(this),
       getViewManagerConfig(VIEW_MANAGER_NAME).Commands.setPageWithoutAnimation,
-      [selectedPage],
+      [selectedPage]
     );
   };
 
@@ -154,15 +142,15 @@ class ViewPager extends React.Component<ViewPagerProps> {
    * The recommended way is using the scrollEnabled prop, however, there might be a case where a
    * imperative solution is more useful (e.g. for not blocking an animation)
    */
-  setScrollEnabled = (scrollEnabled: boolean) => {
+  public setScrollEnabled = (scrollEnabled: boolean) => {
     UIManager.dispatchViewManagerCommand(
       ReactNative.findNodeHandle(this),
       getViewManagerConfig(VIEW_MANAGER_NAME).Commands.setScrollEnabled,
-      [scrollEnabled],
+      [scrollEnabled]
     );
   };
 
-  _onMoveShouldSetResponderCapture = () => {
+  private _onMoveShouldSetResponderCapture = () => {
     if (Platform.OS === 'ios') {
       return this.isScrolling;
     }
@@ -171,7 +159,7 @@ class ViewPager extends React.Component<ViewPagerProps> {
 
   render() {
     return (
-      <NativeViewPager
+      <ViewpagerViewManager
         {...this.props}
         ref={VIEW_PAGER_REF}
         style={this.props.style}
@@ -184,5 +172,3 @@ class ViewPager extends React.Component<ViewPagerProps> {
     );
   }
 }
-
-module.exports = ViewPager;
