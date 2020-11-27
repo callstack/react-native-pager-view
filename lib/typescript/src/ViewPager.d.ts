@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import type { ViewPagerProps } from './types';
 /**
  * Container that allows to flip left and right between child views. Each
@@ -42,9 +42,10 @@ import type { ViewPagerProps } from './types';
  * ```
  */
 export declare class ViewPager extends React.Component<ViewPagerProps> {
-    isScrolling: boolean;
+    private isScrolling;
+    private viewPager;
     componentDidMount(): void;
-    private getInnerViewNode;
+    getInnerViewNode: () => ReactElement;
     private _onPageScroll;
     private _onPageScrollStateChanged;
     private _onPageSelected;
