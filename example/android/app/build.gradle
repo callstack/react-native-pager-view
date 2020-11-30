@@ -212,6 +212,20 @@ dependencies {
     implementation project(':reactnativeviewpager')
 }
 
+task downloadDependencies() {
+    description 'Download all dependencies to the Gradle cache'
+    doLast {
+        configurations.findAll().each { config ->
+            if (config.name.contains("minReactNative") && config.canBeResolved) {
+                print config.name
+                print '\n'
+                config.files
+            }
+        }
+    }
+}
+
+
 // Run this once to be able to run the application with BUCK
 // puts all compile dependencies into folder libs for BUCK to use
 task copyDownloadableDepsToLibs(type: Copy) {
