@@ -45,15 +45,6 @@
     return self;
 }
 
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    if (self.reactPageViewController) {
-        [self shouldScroll:self.scrollEnabled];
-        //Below line fix bug, where the view does not update after orientation changed.
-        [self updateDataSource];
-    }
-}
-
 - (void)didUpdateReactSubviews {
     if (!self.reactPageViewController && self.reactViewController != nil) {
         [self embed];
