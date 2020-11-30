@@ -24,8 +24,8 @@ jobs:
           name: Run ESLint
           command: yarn lint
       - run:
-          name: Flow
-          command: yarn flow
+          name: Typescript
+          command: yarn typescript
 
 workflows:
   test:
