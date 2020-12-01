@@ -1,0 +1,1 @@
+{"version":3,"sources":["index.tsx"],"names":["ViewPager"],"mappings":"AAAA,cAAc,SAAd;AACA,SAASA,SAAT,QAA0B,aAA1B;AACA,eAAeA,SAAf","sourcesContent":["export * from './types';\nimport { ViewPager } from './ViewPager';\nexport default ViewPager;\n"]}
