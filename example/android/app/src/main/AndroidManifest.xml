@@ -1,17 +1,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.reactnativecommunity.viewpager.example">
+  package="com.example.reactnativeviewpager">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-      android:name="com.reactnativecommunity.viewpager.example.MainApplication"
+      android:name=".MainApplication"
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:roundIcon="@mipmap/ic_launcher_round"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
       <activity
-        android:name="com.reactnativecommunity.viewpager.example.MainActivity"
+        android:name=".MainActivity"
         android:label="@string/app_name"
         android:configChanges="keyboard|keyboardHidden|orientation|screenSize|uiMode"
         android:launchMode="singleTask"
