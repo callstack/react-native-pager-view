@@ -25,6 +25,7 @@ import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.EventDispatcher;
+import com.reactnative.community.viewpager2.widget.MarginPageTransformer;
 import com.reactnative.community.viewpager2.widget.ViewPager2;
 import com.reactnativecommunity.viewpager.event.PageScrollEvent;
 import com.reactnativecommunity.viewpager.event.PageScrollStateChangedEvent;
@@ -222,7 +223,8 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
     @ReactProp(name = "pageMargin", defaultFloat = 0)
     public void setPageMargin(ViewPager2 pager, float margin) {
         int pageMargin = (int) PixelUtil.toPixelFromDIP(margin);
-        pager.setPadding(pageMargin, pageMargin, pageMargin, pageMargin);
+        pager.setPageTransformer(new MarginPageTransformer(pageMargin));
     }
+
 
 }
