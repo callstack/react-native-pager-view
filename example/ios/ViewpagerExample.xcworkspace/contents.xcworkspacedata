@@ -7,7 +7,4 @@
    <FileRef
       location = "group:ViewpagerExample.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:ViewpagerExample.xcodeproj">
-   </FileRef>
 </Workspace>
