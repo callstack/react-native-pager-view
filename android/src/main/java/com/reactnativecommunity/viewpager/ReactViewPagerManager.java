@@ -14,6 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.MarginPageTransformer;
+import androidx.viewpager2.widget.ViewPager2;
 
 import com.facebook.infer.annotation.Assertions;
 import com.facebook.react.bridge.ReadableArray;
@@ -25,18 +28,16 @@ import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.EventDispatcher;
-import com.reactnative.community.viewpager2.widget.MarginPageTransformer;
-import com.reactnative.community.viewpager2.widget.ViewPager2;
 import com.reactnativecommunity.viewpager.event.PageScrollEvent;
 import com.reactnativecommunity.viewpager.event.PageScrollStateChangedEvent;
 import com.reactnativecommunity.viewpager.event.PageSelectedEvent;
 
 import java.util.Map;
 
-import static com.reactnative.community.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL;
-import static com.reactnative.community.viewpager2.widget.ViewPager2.SCROLL_STATE_DRAGGING;
-import static com.reactnative.community.viewpager2.widget.ViewPager2.SCROLL_STATE_IDLE;
-import static com.reactnative.community.viewpager2.widget.ViewPager2.SCROLL_STATE_SETTLING;
+import static androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL;
+import static androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_DRAGGING;
+import static androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_IDLE;
+import static androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_SETTLING;
 
 public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
 
@@ -57,8 +58,8 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
     @Override
     protected ViewPager2 createViewInstance(@NonNull ThemedReactContext reactContext) {
         final ViewPager2 vp = new ViewPager2(reactContext);
-        FragmentAdapter adapter = new FragmentAdapter((FragmentActivity) reactContext.getCurrentActivity());
-        vp.setAdapter(adapter);
+        final FragmentAdapter adapter = new FragmentAdapter((FragmentActivity) reactContext.getCurrentActivity());
+        vp.setAdapter((FragmentStateAdapter) adapter);
         eventDispatcher = reactContext.getNativeModule(UIManagerModule.class).getEventDispatcher();
         vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
@@ -98,6 +99,20 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
         });
         return vp;
     }
+
+    private void setCurrentItem(final ViewPager2 view, int selectedTab, boolean scrollSmooth) {
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                view.measure(
+                        View.MeasureSpec.makeMeasureSpec(view.getWidth(), View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.makeMeasureSpec(view.getHeight(), View.MeasureSpec.EXACTLY));
+                view.layout(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
+            }
+        });
+        view.setCurrentItem(selectedTab);
+    }
+
 
     @Override
     public void addView(ViewPager2 parent, View child, int index) {
@@ -197,13 +212,13 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
         Assertions.assertNotNull(args);
         switch (commandId) {
             case COMMAND_SET_PAGE: {
-                root.setCurrentItem(args.getInt(0), true);
+                setCurrentItem(root, args.getInt(0), true);
                 eventDispatcher.dispatchEvent(new PageSelectedEvent(root.getId(), args.getInt(0)));
                 return;
 
             }
             case COMMAND_SET_PAGE_WITHOUT_ANIMATION: {
-                root.setCurrentItem(args.getInt(0), false);
+                setCurrentItem(root, args.getInt(0), false);
                 eventDispatcher.dispatchEvent(new PageSelectedEvent(root.getId(), args.getInt(0)));
                 return;
             }

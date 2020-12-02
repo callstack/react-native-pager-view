@@ -5,8 +5,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-import com.reactnative.community.viewpager2.adapter.FragmentStateAdapter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,6 +19,7 @@ public class FragmentAdapter extends FragmentStateAdapter {
     }
 
     private ArrayList<Integer> childrenViewIDs = new ArrayList<>();
+
 
     @NonNull
     @Override

@@ -38,5 +38,5 @@ repositories {
 dependencies {
     //noinspection GradleDynamicVersion
     api 'com.facebook.react:react-native:+'
-    implementation 'com.github.troZee:ViewPager2:v1.0.7'
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
 }
