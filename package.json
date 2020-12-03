@@ -1,5 +1,5 @@
 {
-  "name": "react-native-viewpager",
+  "name": "@react-native-community/viewpager",
   "version": "5.0.5",
   "description": "React Native wrapper for Android and iOS ViewPager",
   "main": "lib/commonjs/index",
@@ -21,6 +21,7 @@
     "!android/build",
     "!ios/build"
   ],
+
   "scripts": {
     "test": "jest",
     "typescript": "tsc --noEmit",
