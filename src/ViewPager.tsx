@@ -135,10 +135,7 @@ export class ViewPager extends React.Component<ViewPagerProps> {
   };
 
   private _onMoveShouldSetResponderCapture = () => {
-    if (Platform.OS === 'ios') {
-      return this.isScrolling;
-    }
-    return false;
+    return this.isScrolling;
   };
 
   render() {
