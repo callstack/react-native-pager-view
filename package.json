@@ -64,6 +64,9 @@
     "release-it": "^13.5.8",
     "typescript": "^3.8.3"
   },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
