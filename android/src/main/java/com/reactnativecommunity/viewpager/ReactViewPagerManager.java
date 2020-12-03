@@ -46,7 +46,6 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
     private static final int COMMAND_SET_PAGE_WITHOUT_ANIMATION = 2;
     private static final int COMMAND_SET_SCROLL_ENABLED = 3;
     private EventDispatcher eventDispatcher;
-    static SparseArray<View> reactChildrenViews = new SparseArray<>();
 
     @NonNull
     @Override
@@ -119,7 +118,6 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
         if (child == null) {
             return;
         }
-        reactChildrenViews.put(child.getId(), child);
         ((FragmentAdapter) parent.getAdapter()).addFragment(child, index);
     }
 
@@ -131,21 +129,17 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
 
     @Override
     public View getChildAt(ViewPager2 parent, int index) {
-        return reactChildrenViews.get(((FragmentAdapter) parent.getAdapter()).getChildViewIDAt(index));
+        return ((FragmentAdapter) parent.getAdapter()).getChildViewAt(index);
     }
 
     @Override
     public void removeView(ViewPager2 parent, View view) {
-        reactChildrenViews.remove(view.getId());
         ((FragmentAdapter) parent.getAdapter()).removeFragment(view);
     }
 
 
     public void removeAllViews(ViewPager2 parent) {
         FragmentAdapter adapter = ((FragmentAdapter) parent.getAdapter());
-        for (int childID : adapter.getChildrenViewIDs()) {
-            reactChildrenViews.remove(childID);
-        }
         adapter.removeAll();
         parent.setAdapter(null);
     }
@@ -153,7 +147,6 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
     @Override
     public void removeViewAt(ViewPager2 parent, int index) {
         FragmentAdapter adapter = ((FragmentAdapter) parent.getAdapter());
-        reactChildrenViews.remove(adapter.getChildViewIDAt(index));
         adapter.removeFragmentAt(index);
     }
 
