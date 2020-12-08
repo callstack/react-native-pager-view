@@ -155,6 +155,9 @@
                            with:(UIViewController *)controller
                       direction:(UIPageViewControllerNavigationDirection)direction
                        animated:(BOOL)animated {
+    if (self.reactPageViewController == nil) {
+        return;
+    }
     __weak ReactNativePageView *weakSelf = self;
     uint16_t coalescingKey = _coalescingKey++;
     
