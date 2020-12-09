@@ -57,14 +57,14 @@ export class ViewPager extends React.Component<ViewPagerProps> {
   private isScrolling = false;
   private viewPager = React.createRef<typeof ViewpagerViewManager>();
 
-  componentDidMount() {
-    // On iOS we do it directly on the native side
-    if (Platform.OS === 'android') {
-      if (this.props.initialPage != null) {
-        this.setPageWithoutAnimation(this.props.initialPage);
-      }
-    }
-  }
+  // componentDidMount() {
+  //   // On iOS we do it directly on the native side
+  //   if (Platform.OS === 'android') {
+  //     if (this.props.initialPage != null) {
+  //       this.setPageWithoutAnimation(this.props.initialPage);
+  //     }
+  //   }
+  // }
 
   public getInnerViewNode = (): ReactElement => {
     return this.viewPager.current!.getInnerViewNode();
@@ -139,9 +139,17 @@ export class ViewPager extends React.Component<ViewPagerProps> {
   };
 
   render() {
+    const activePage =
+      typeof this.props.activePage === 'number'
+        ? { page: this.props.activePage, animated: true }
+        : this.props.activePage || { page: 0, animated: true };
+
+    console.log(activePage);
+
     return (
       <ViewpagerViewManager
         {...this.props}
+        activePage={activePage}
         ref={this.viewPager as any /** TODO: Fix ref type */}
         style={this.props.style}
         onPageScroll={this._onPageScroll}

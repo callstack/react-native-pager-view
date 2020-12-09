@@ -37,6 +37,7 @@
         _transitionStyle = UIPageViewControllerTransitionStyleScroll;
         _orientation = UIPageViewControllerNavigationOrientationHorizontal;
         _currentIndex = 0;
+        _embeded = NO;
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
         _coalescingKey = 0;
         _eventDispatcher = eventDispatcher;
@@ -85,7 +86,7 @@
     UIPageControl *pageIndicatorView = [self createPageIndicator];
     
     pageIndicatorView.numberOfPages = self.reactSubviews.count;
-    pageIndicatorView.currentPage = self.initialPage;
+    pageIndicatorView.currentPage = self.currentIndex;
     pageIndicatorView.hidden = !self.showPageIndicator;
     
     self.reactPageIndicatorView = pageIndicatorView;
@@ -107,6 +108,7 @@
         [NSLayoutConstraint activateConstraints:@[bottomConstraint, leadingConstraint, trailingConstraint]];
     }
     [pageViewController.view layoutIfNeeded];
+    _embeded = YES;
 }
 
 - (void)shouldScroll:(BOOL)scrollEnabled {
@@ -123,12 +125,12 @@
 }
 
 - (void)setupInitialController {
-    UIView *initialView = self.reactSubviews[self.initialPage];
+    UIView *initialView = self.reactSubviews[self.currentIndex];
     if (initialView) {
         UIViewController *initialController = [[UIViewController alloc] initWithView:initialView];
         [self.cachedControllers addObject:initialController];
         
-        [self setReactViewControllers:self.initialPage
+        [self setReactViewControllers:self.currentIndex
                                  with:initialController
                             direction:UIPageViewControllerNavigationDirectionForward
                              animated:YES];
@@ -202,7 +204,7 @@
     self.reactPageIndicatorView.numberOfPages = numberOfPages;
     self.reactPageIndicatorView.currentPage = indexToDisplay;
         
-    [self setReactViewControllers:indexToDisplay
+     [self setReactViewControllers:indexToDisplay
                              with:controllerToDisplay
                         direction:direction
                          animated:animated];

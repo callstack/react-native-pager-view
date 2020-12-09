@@ -44,7 +44,6 @@ import type { ViewPagerProps } from './types';
 export declare class ViewPager extends React.Component<ViewPagerProps> {
     private isScrolling;
     private viewPager;
-    componentDidMount(): void;
     getInnerViewNode: () => ReactElement;
     private _onPageScroll;
     private _onPageScrollStateChanged;

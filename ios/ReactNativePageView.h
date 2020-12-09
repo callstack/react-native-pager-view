@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher;
 
-@property(nonatomic) NSInteger initialPage;
+@property(nonatomic, readonly) BOOL embeded;
 @property(nonatomic) NSInteger currentIndex;
 @property(nonatomic) NSInteger pageMargin;
 @property(nonatomic, readonly) BOOL scrollEnabled;

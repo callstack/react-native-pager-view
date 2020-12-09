@@ -6,6 +6,7 @@ import ViewPager, {
   ViewPagerOnPageScrollEvent,
   ViewPagerOnPageSelectedEvent,
   PageScrollStateChangedNativeEvent,
+  ViewPagerProps,
 } from '@react-native-community/viewpager';
 
 import { PAGES, createPage } from './utils';
@@ -15,7 +16,7 @@ import { ProgressBar } from './component/ProgressBar';
 import type { CreatePage } from './utils';
 
 type State = {
-  page: number;
+  activePage: ViewPagerProps['activePage'];
   animationsAreEnabled: boolean;
   scrollEnabled: boolean;
   progress: {
@@ -40,7 +41,7 @@ export default class ViewPagerExample extends React.Component<{}, State> {
     }
 
     this.state = {
-      page: 0,
+      activePage: 3,
       animationsAreEnabled: true,
       scrollEnabled: true,
       progress: {
@@ -56,7 +57,13 @@ export default class ViewPagerExample extends React.Component<{}, State> {
   }
 
   onPageSelected = (e: ViewPagerOnPageSelectedEvent) => {
-    this.setState({ page: e.nativeEvent.position });
+    const page = e.nativeEvent.position;
+    this.setState(({ animationsAreEnabled }) => ({
+      activePage: {
+        page,
+        animated: animationsAreEnabled,
+      },
+    }));
   };
 
   onPageScroll = (e: ViewPagerOnPageScrollEvent) => {
@@ -83,19 +90,10 @@ export default class ViewPagerExample extends React.Component<{}, State> {
       pages: prevState.pages.slice(0, prevState.pages.length - 1),
     }));
   };
-  move = (delta: number) => {
-    const page = this.state.page + delta;
-    this.go(page);
-  };
-
-  go = (page: number) => {
-    if (this.state.animationsAreEnabled) {
-      /* $FlowFixMe we need to update flow to support React.Ref and createRef() */
-      this.viewPager.current?.setPage(page);
-    } else {
-      /* $FlowFixMe we need to update flow to support React.Ref and createRef() */
-      this.viewPager.current?.setPageWithoutAnimation(page);
-    }
+  move = (page: number) => {
+    this.setState(({ animationsAreEnabled }) => ({
+      activePage: { page, animated: animationsAreEnabled },
+    }));
   };
 
   renderPage(page: CreatePage) {
@@ -113,12 +111,14 @@ export default class ViewPagerExample extends React.Component<{}, State> {
   };
 
   render() {
-    const { page, pages, animationsAreEnabled, dotsVisible } = this.state;
+    const { activePage, pages, animationsAreEnabled, dotsVisible } = this.state;
+    const currentPage =
+      typeof activePage === 'number' ? activePage : activePage?.page || 0;
     return (
       <SafeAreaView style={styles.container}>
         <ViewPager
           style={styles.viewPager}
-          initialPage={0}
+          activePage={activePage}
           scrollEnabled={this.state.scrollEnabled}
           onPageScroll={this.onPageScroll}
           onPageSelected={this.onPageSelected}
@@ -175,27 +175,31 @@ export default class ViewPagerExample extends React.Component<{}, State> {
           </Text>
         </View>
         <View style={styles.buttons}>
-          <Button text="Start" enabled={page > 0} onPress={() => this.go(0)} />
+          <Button
+            text="Start"
+            enabled={currentPage > 0}
+            onPress={() => this.move(0)}
+          />
           <Button
             text="Prev"
-            enabled={page > 0}
-            onPress={() => this.move(-1)}
+            enabled={currentPage > 0}
+            onPress={() => this.move(currentPage - 1)}
           />
           <Button
             text="Next"
-            enabled={page < pages.length - 1}
-            onPress={() => this.move(1)}
+            enabled={currentPage < pages.length - 1}
+            onPress={() => this.move(currentPage + 1)}
           />
           <Button
             text="Last"
-            enabled={page < pages.length - 1}
-            onPress={() => this.go(pages.length - 1)}
+            enabled={currentPage < pages.length - 1}
+            onPress={() => this.move(pages.length - 1)}
           />
         </View>
         <View style={styles.progress}>
           <Text style={styles.buttonText}>
             {' '}
-            Page {page + 1} / {pages.length}{' '}
+            Page {currentPage + 1} / {pages.length}{' '}
           </Text>
           <ProgressBar
             numberOfPages={pages.length}

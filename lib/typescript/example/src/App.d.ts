@@ -2,7 +2,7 @@ import * as React from 'react';
 import ViewPager, { PageScrollState, OverScrollMode, ViewPagerOnPageScrollEvent, ViewPagerOnPageSelectedEvent, PageScrollStateChangedNativeEvent } from 'react-native-viewpager';
 import type { CreatePage } from './utils';
 declare type State = {
-    page: number;
+    activePage: number;
     animationsAreEnabled: boolean;
     scrollEnabled: boolean;
     progress: {
@@ -23,7 +23,6 @@ export default class ViewPagerExample extends React.Component<{}, State> {
     addPage: () => void;
     removeLastPage: () => void;
     move: (delta: number) => void;
-    go: (page: number) => void;
     renderPage(page: CreatePage): JSX.Element;
     toggleDotsVisibility: () => void;
     render(): JSX.Element;

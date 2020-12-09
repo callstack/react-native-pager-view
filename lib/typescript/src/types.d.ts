@@ -19,24 +19,20 @@ export interface PageScrollStateChangedEvent {
 }
 export interface ViewPagerProps {
     /**
-     * Index of initial page that should be selected. Use `setPage` method to
-     * update the page, and `onPageSelected` to monitor page changes
+     * Current visible page index.
+     * You can also specify whether page should be changed with animation or without.
+     * When pass number animated is set to true
+     * Remember to keep activePage in sync with onPageSelect
      */
-    initialPage?: number;
+    activePage?: number | {
+        page: number;
+        animated: boolean;
+    };
     /**
      * When false, the content does not scroll.
      * The default value is true.
      */
     scrollEnabled?: boolean;
-    /**
-     * Set the number of pages that should be retained to either side
-     * of the currently visible page(s). Pages beyond this limit will
-     * be recreated from the adapter when needed.
-     * Defaults to RecyclerView's caching strategy.
-     * The given value must either be larger than 0.
-     */
-    offscreenPageLimit?: ?number,
-
     /**
      * Executed when transitioning between pages (ether because of animation for
      * the requested page change or when user is swiping/dragging between pages)
@@ -75,6 +71,14 @@ export interface ViewPagerProps {
      */
     pageMargin?: number;
     style?: ReactNative.StyleProp<ReactNative.ViewStyle>;
+    /**
+     * Set the number of pages that should be retained to either side
+     * of the currently visible page(s). Pages beyond this limit will
+     * be recreated from the adapter when needed.
+     * Defaults to RecyclerView's caching strategy.
+     * The given value must either be larger than 0.
+     */
+    offscreenPageLimit?: number;
     children: ReactNode;
     /**
      * If a parent `View` wants to prevent a child `View` from becoming responder
