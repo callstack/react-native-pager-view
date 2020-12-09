@@ -65,6 +65,7 @@
 			children = (
 				871719007ECC5EAD276C345C /* Pods-ViewpagerExample.debug.xcconfig */,
 				4D7192F03A36A017E887435B /* Pods-ViewpagerExample.release.xcconfig */,
+				20F357AD24636CDE00C146DC /* ViewpagerExample-Bridging-Header.h */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -94,7 +95,6 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				1CFFDEF7170271C97B8B7E5A /* Pods */,
-				20F357AD24636CDE00C146DC /* ViewpagerExample-Bridging-Header.h */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
