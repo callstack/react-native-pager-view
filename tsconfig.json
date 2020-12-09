@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "react-native-viewpager": ["./src/index"]
+      "@react-native-community/viewpager": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
