@@ -13,7 +13,7 @@ import ViewPager, {
   ViewPagerOnPageScrollEvent,
   ViewPagerOnPageSelectedEvent,
   PageScrollStateChangedNativeEvent,
-} from 'react-native-viewpager';
+} from '@react-native-community/viewpager';
 
 import { PAGES, createPage } from './utils';
 import { Button } from './component/Button';
