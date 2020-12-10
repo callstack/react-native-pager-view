@@ -9,17 +9,21 @@ package com.reactnativecommunity.viewpager;
 
 import android.util.SparseArray;
 import android.view.View;
+import android.view.ViewTreeObserver;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.facebook.infer.annotation.Assertions;
 import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.ThemedReactContext;
@@ -32,6 +36,7 @@ import com.reactnativecommunity.viewpager.event.PageScrollEvent;
 import com.reactnativecommunity.viewpager.event.PageScrollStateChangedEvent;
 import com.reactnativecommunity.viewpager.event.PageSelectedEvent;
 
+import java.util.List;
 import java.util.Map;
 
 import static androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL;
@@ -47,6 +52,7 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
     private static final int COMMAND_SET_SCROLL_ENABLED = 3;
     private EventDispatcher eventDispatcher;
 
+
     @NonNull
     @Override
     public String getName() {
@@ -60,7 +66,9 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
         final FragmentAdapter adapter = new FragmentAdapter((FragmentActivity) reactContext.getCurrentActivity());
         vp.setAdapter((FragmentStateAdapter) adapter);
         eventDispatcher = reactContext.getNativeModule(UIManagerModule.class).getEventDispatcher();
+        this.handleInitialization(vp);
         vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
@@ -71,8 +79,14 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                eventDispatcher.dispatchEvent(
-                        new PageSelectedEvent(vp.getId(), position));
+                if(!adapter.initialized){
+                    return;
+                }
+
+                if (position != adapter.activePage) {
+                    eventDispatcher.dispatchEvent(new PageSelectedEvent(vp.getId(), position));
+                    adapter.activePage = position;
+                }
             }
 
             @Override
@@ -99,6 +113,22 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
         return vp;
     }
 
+    private void handleInitialization(final ViewPager2 vp) {
+        final RecyclerView recyclerView = (RecyclerView)vp.getChildAt(0);
+        final FragmentAdapter adapter = (FragmentAdapter)vp.getAdapter();
+
+        recyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                // False for without animation scroll
+                adapter.initialized = true;
+                setCurrentItem(vp,adapter.activePage,false);
+            }
+        });
+    }
+
     private void setCurrentItem(final ViewPager2 view, int selectedTab, boolean scrollSmooth) {
         view.post(new Runnable() {
             @Override
@@ -109,7 +139,7 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
                 view.layout(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
             }
         });
-        view.setCurrentItem(selectedTab);
+        view.setCurrentItem(selectedTab, scrollSmooth);
     }
 
 
@@ -155,6 +185,15 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
         return true;
     }
 
+
+    @ReactProp(name = "activePage")
+    public void setActivePage(ViewPager2 viewPager, ReadableMap value) {
+        int page = value.getInt("page");
+        if(viewPager.getCurrentItem() != page) {
+            ((FragmentAdapter) viewPager.getAdapter()).activePage = page;
+            setCurrentItem(viewPager, page, value.getBoolean("animated"));
+        }
+    }
 
     @ReactProp(name = "scrollEnabled", defaultBoolean = true)
     public void setScrollEnabled(ViewPager2 viewPager, boolean value) {
@@ -209,17 +248,6 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
         Assertions.assertNotNull(root);
         Assertions.assertNotNull(args);
         switch (commandId) {
-            case COMMAND_SET_PAGE: {
-                setCurrentItem(root, args.getInt(0), true);
-                eventDispatcher.dispatchEvent(new PageSelectedEvent(root.getId(), args.getInt(0)));
-                return;
-
-            }
-            case COMMAND_SET_PAGE_WITHOUT_ANIMATION: {
-                setCurrentItem(root, args.getInt(0), false);
-                eventDispatcher.dispatchEvent(new PageSelectedEvent(root.getId(), args.getInt(0)));
-                return;
-            }
             case COMMAND_SET_SCROLL_ENABLED: {
                 root.setUserInputEnabled(args.getBoolean(0));
                 return;
