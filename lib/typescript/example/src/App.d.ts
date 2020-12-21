@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ViewPager, { PageScrollState, OverScrollMode, ViewPagerOnPageScrollEvent, ViewPagerOnPageSelectedEvent, PageScrollStateChangedNativeEvent } from 'react-native-viewpager';
+import ViewPager, { PageScrollState, OverScrollMode, ViewPagerOnPageScrollEvent, ViewPagerOnPageSelectedEvent, PageScrollStateChangedNativeEvent } from '@react-native-community/viewpager';
 import type { CreatePage } from './utils';
 declare type State = {
     page: number;
