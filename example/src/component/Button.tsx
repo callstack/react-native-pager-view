@@ -1,24 +1,23 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- *
- * @flow
- */
-
 import React from 'react';
-import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native';
+import {
+  StyleProp,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+  ViewStyle,
+} from 'react-native';
 
 type Props = {
-  enabled?: boolean;
+  disabled?: boolean;
   onPress: () => void;
   text: string;
+  style?: StyleProp<ViewStyle>;
 };
 
 export class Button extends React.Component<Props> {
   _handlePress = () => {
-    if (this.props.enabled && this.props.onPress) {
+    if (!this.props.disabled && this.props.onPress) {
       this.props.onPress();
     }
   };
@@ -29,7 +28,8 @@ export class Button extends React.Component<Props> {
         <View
           style={[
             styles.button,
-            this.props.enabled ? {} : styles.buttonDisabled,
+            !this.props.disabled ? {} : styles.buttonDisabled,
+            this.props.style,
           ]}
         >
           <Text style={styles.buttonText}>{this.props.text}</Text>
