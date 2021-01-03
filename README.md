@@ -11,10 +11,17 @@ This component allows the user to swipe left and right through pages of data. Un
 
 ## Versions
 
-| 1.x              | 2.x              | 3.x              | 4.x                |
-| ---------------- | -------------    | -------------    | -------------      |
-|                  | iOS support      | iOS support      | iOS support        |
-| Android support  | Android support  | AndroidX support | ViewPager2 support |
+| 1.x              | 2.x              | 3.x              | 4.0.x, 4.1.x       | >= 4.2.x                                                                                               |
+| ---------------- | -------------    | -------------    | -------------      | -------------                                                                                       |
+|                  | iOS support      | iOS support      | iOS support        | iOS support                                                                                         |
+| Android support  | Android support  | AndroidX support | ViewPager2 support | [Reverted to 3.3.0](https://github.com/callstack/react-native-viewpager/issues/233#issue-711000654) |
+
+
+## Experimental version
+
+[ViewPager2](https://developer.android.com/jetpack/androidx/releases/viewpager2) for Android uses another implementation than ViewPager1, hence it caused lots of issues. You can try experimental version using below command 
+
+`yarn add @react-native-community/viewpager@next`
 
 ## Getting started
 
@@ -110,6 +117,9 @@ const styles = StyleSheet.create({
   },
 });
 ```
+
+**Attention:** Note that you can only use `View` components as children of `ViewPager` (cf. folder */example*)
+. For Android if `View` has own children, set prop `collapsable` to false https://reactnative.dev/docs/view#collapsable, otherwise react-native might remove those children views and  and it's children will be rendered as separate pages
 
 ## API
 

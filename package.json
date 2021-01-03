@@ -21,7 +21,6 @@
     "!android/build",
     "!ios/build"
   ],
-
   "scripts": {
     "test": "jest",
     "typescript": "tsc --noEmit",
