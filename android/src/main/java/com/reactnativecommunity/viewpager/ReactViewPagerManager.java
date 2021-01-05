@@ -58,7 +58,8 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
     protected ViewPager2 createViewInstance(@NonNull ThemedReactContext reactContext) {
         final ViewPager2 vp = new ViewPager2(reactContext);
         final FragmentAdapter adapter = new FragmentAdapter((FragmentActivity) reactContext.getCurrentActivity());
-        vp.setAdapter((FragmentStateAdapter) adapter);
+        vp.setAdapter(adapter);
+        //https://github.com/callstack/react-native-viewpager/issues/183
         vp.setSaveEnabled(false);
         eventDispatcher = reactContext.getNativeModule(UIManagerModule.class).getEventDispatcher();
         vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
