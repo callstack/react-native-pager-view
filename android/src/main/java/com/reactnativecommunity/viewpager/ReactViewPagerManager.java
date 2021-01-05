@@ -59,6 +59,7 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
         final ViewPager2 vp = new ViewPager2(reactContext);
         final FragmentAdapter adapter = new FragmentAdapter((FragmentActivity) reactContext.getCurrentActivity());
         vp.setAdapter((FragmentStateAdapter) adapter);
+        vp.setSaveEnabled(false);
         eventDispatcher = reactContext.getNativeModule(UIManagerModule.class).getEventDispatcher();
         vp.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
