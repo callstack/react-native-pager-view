@@ -143,7 +143,6 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
     public void removeAllViews(ViewPager2 parent) {
         FragmentAdapter adapter = ((FragmentAdapter) parent.getAdapter());
         adapter.removeAll();
-        parent.setAdapter(null);
     }
 
     @Override
