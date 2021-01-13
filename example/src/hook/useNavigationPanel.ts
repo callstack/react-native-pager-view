@@ -29,6 +29,7 @@ export function useNavigationPanel(
   );
   const [activePage, setActivePage] = useState(0);
   const [isAnimated, setIsAnimated] = useState(true);
+  const [overdragEnabled, setOverdragEnabled] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [scrollState, setScrollState] = useState('idle');
   const [dotsEnabled, setDotsEnabled] = useState(false);
@@ -68,6 +69,10 @@ export function useNavigationPanel(
   );
   const toggleDots = useCallback(
     () => setDotsEnabled((enabled) => !enabled),
+    []
+  );
+  const toggleOverdrag = useCallback(
+    () => setOverdragEnabled((enabled) => !enabled),
     []
   );
 
@@ -144,6 +149,7 @@ export function useNavigationPanel(
     scrollEnabled,
     dotsEnabled,
     progress,
+    overdragEnabled,
     setPage,
     addPage,
     removePage,
@@ -154,6 +160,7 @@ export function useNavigationPanel(
     onPageScroll,
     onPageSelected,
     onPageScrollStateChanged,
+    toggleOverdrag,
     logs,
   };
 }

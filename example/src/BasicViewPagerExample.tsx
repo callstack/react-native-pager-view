@@ -18,7 +18,7 @@ export function BasicViewPagerExample() {
         ref={ref}
         style={styles.viewPager}
         initialPage={0}
-        overdrag={false}
+        overdrag={navigationPanel.overdragEnabled}
         scrollEnabled={navigationPanel.scrollEnabled}
         onPageScroll={navigationPanel.onPageScroll}
         onPageSelected={navigationPanel.onPageSelected}
@@ -41,6 +41,7 @@ export function BasicViewPagerExample() {
           [navigationPanel.pages]
         )}
       </AnimatedViewPager>
+
       <NavigationPanel {...navigationPanel} />
     </SafeAreaView>
   );
