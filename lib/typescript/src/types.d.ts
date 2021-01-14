@@ -95,4 +95,9 @@ export interface ViewPagerProps {
      * Android only
      */
     overScrollMode?: OverScrollMode;
+    /**
+     * Determines whether it's possible to overscroll a bit
+     * after reaching end or very beginning of pages.
+     */
+    overdrag?: boolean;
 }
