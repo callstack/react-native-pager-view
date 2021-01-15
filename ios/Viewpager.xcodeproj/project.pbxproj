@@ -7,14 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1827D0AC259E110500CEB9C4 /* ReactNativePageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827D09E259E110500CEB9C4 /* ReactNativePageView.m */; };
-		1827D0AD259E110500CEB9C4 /* RCTOnPageScrollEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827D09F259E110500CEB9C4 /* RCTOnPageScrollEvent.m */; };
-		1827D0AE259E110500CEB9C4 /* RCTConvert+UIPageViewControllerTransitionStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827D0A2259E110500CEB9C4 /* RCTConvert+UIPageViewControllerTransitionStyle.m */; };
-		1827D0AF259E110500CEB9C4 /* ReactViewPagerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827D0A7259E110500CEB9C4 /* ReactViewPagerManager.m */; };
-		1827D0B0259E110500CEB9C4 /* RCTOnPageScrollStateChanged.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827D0A8259E110500CEB9C4 /* RCTOnPageScrollStateChanged.m */; };
-		1827D0B1259E110500CEB9C4 /* UIViewController+CreateExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827D0AA259E110500CEB9C4 /* UIViewController+CreateExtension.m */; };
-		1827D0B2259E110500CEB9C4 /* RCTOnPageSelected.m in Sources */ = {isa = PBXBuildFile; fileRef = 1827D0AB259E110500CEB9C4 /* RCTOnPageSelected.m */; };
-		18D79888259F4935002A4A96 /* RCTConvert+UIPageViewControllerNavigationOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = 18D79886259F4935002A4A96 /* RCTConvert+UIPageViewControllerNavigationOrientation.m */; };
+
+		5E555C0D2413F4C50049A1A2 /* Viewpager.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* Viewpager.m */; };
+		F4FF95D7245B92E800C19C63 /*  Viewpager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /*  Viewpager.swift */; };
+
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,22 +27,11 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libViewpager.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libViewpager.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		1827D09E259E110500CEB9C4 /* ReactNativePageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativePageView.m; sourceTree = "<group>"; };
-		1827D09F259E110500CEB9C4 /* RCTOnPageScrollEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTOnPageScrollEvent.m; sourceTree = "<group>"; };
-		1827D0A0259E110500CEB9C4 /* RCTOnPageScrollEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTOnPageScrollEvent.h; sourceTree = "<group>"; };
-		1827D0A1259E110500CEB9C4 /* RCTConvert+UIPageViewControllerTransitionStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RCTConvert+UIPageViewControllerTransitionStyle.h"; sourceTree = "<group>"; };
-		1827D0A2259E110500CEB9C4 /* RCTConvert+UIPageViewControllerTransitionStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+UIPageViewControllerTransitionStyle.m"; sourceTree = "<group>"; };
-		1827D0A3259E110500CEB9C4 /* ReactNativePageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativePageView.h; sourceTree = "<group>"; };
-		1827D0A4259E110500CEB9C4 /* RCTOnPageSelected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTOnPageSelected.h; sourceTree = "<group>"; };
-		1827D0A5259E110500CEB9C4 /* RCTOnPageScrollStateChanged.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTOnPageScrollStateChanged.h; sourceTree = "<group>"; };
-		1827D0A6259E110500CEB9C4 /* ReactViewPagerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactViewPagerManager.h; sourceTree = "<group>"; };
-		1827D0A7259E110500CEB9C4 /* ReactViewPagerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactViewPagerManager.m; sourceTree = "<group>"; };
-		1827D0A8259E110500CEB9C4 /* RCTOnPageScrollStateChanged.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTOnPageScrollStateChanged.m; sourceTree = "<group>"; };
-		1827D0A9259E110500CEB9C4 /* UIViewController+CreateExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+CreateExtension.h"; sourceTree = "<group>"; };
-		1827D0AA259E110500CEB9C4 /* UIViewController+CreateExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+CreateExtension.m"; sourceTree = "<group>"; };
-		1827D0AB259E110500CEB9C4 /* RCTOnPageSelected.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTOnPageSelected.m; sourceTree = "<group>"; };
-		18D79886259F4935002A4A96 /* RCTConvert+UIPageViewControllerNavigationOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+UIPageViewControllerNavigationOrientation.m"; sourceTree = "<group>"; };
-		18D79887259F4935002A4A96 /* RCTConvert+UIPageViewControllerNavigationOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RCTConvert+UIPageViewControllerNavigationOrientation.h"; sourceTree = "<group>"; };
+
+		B3E7B5891CC2AC0600A0062D /* Viewpager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Viewpager.m; sourceTree = "<group>"; };
+		F4FF95D5245B92E700C19C63 /* Viewpager-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Viewpager-Bridging-Header.h"; sourceTree = "<group>"; };
+		F4FF95D6245B92E800C19C63 /* Viewpager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Viewpager.swift; sourceTree = "<group>"; };
+
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,22 +56,11 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				18D79887259F4935002A4A96 /* RCTConvert+UIPageViewControllerNavigationOrientation.h */,
-				18D79886259F4935002A4A96 /* RCTConvert+UIPageViewControllerNavigationOrientation.m */,
-				1827D0A1259E110500CEB9C4 /* RCTConvert+UIPageViewControllerTransitionStyle.h */,
-				1827D0A2259E110500CEB9C4 /* RCTConvert+UIPageViewControllerTransitionStyle.m */,
-				1827D0A0259E110500CEB9C4 /* RCTOnPageScrollEvent.h */,
-				1827D09F259E110500CEB9C4 /* RCTOnPageScrollEvent.m */,
-				1827D0A5259E110500CEB9C4 /* RCTOnPageScrollStateChanged.h */,
-				1827D0A8259E110500CEB9C4 /* RCTOnPageScrollStateChanged.m */,
-				1827D0A4259E110500CEB9C4 /* RCTOnPageSelected.h */,
-				1827D0AB259E110500CEB9C4 /* RCTOnPageSelected.m */,
-				1827D0A3259E110500CEB9C4 /* ReactNativePageView.h */,
-				1827D09E259E110500CEB9C4 /* ReactNativePageView.m */,
-				1827D0A6259E110500CEB9C4 /* ReactViewPagerManager.h */,
-				1827D0A7259E110500CEB9C4 /* ReactViewPagerManager.m */,
-				1827D0A9259E110500CEB9C4 /* UIViewController+CreateExtension.h */,
-				1827D0AA259E110500CEB9C4 /* UIViewController+CreateExtension.m */,
+
+				F4FF95D6245B92E800C19C63 /* Viewpager.swift */,
+				B3E7B5891CC2AC0600A0062D /* Viewpager.m */,
+				F4FF95D5245B92E700C19C63 /* Viewpager-Bridging-Header.h */,
+
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -148,14 +122,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1827D0B0259E110500CEB9C4 /* RCTOnPageScrollStateChanged.m in Sources */,
-				1827D0AC259E110500CEB9C4 /* ReactNativePageView.m in Sources */,
-				1827D0B2259E110500CEB9C4 /* RCTOnPageSelected.m in Sources */,
-				1827D0B1259E110500CEB9C4 /* UIViewController+CreateExtension.m in Sources */,
-				18D79888259F4935002A4A96 /* RCTConvert+UIPageViewControllerNavigationOrientation.m in Sources */,
-				1827D0AE259E110500CEB9C4 /* RCTConvert+UIPageViewControllerTransitionStyle.m in Sources */,
-				1827D0AF259E110500CEB9C4 /* ReactViewPagerManager.m in Sources */,
-				1827D0AD259E110500CEB9C4 /* RCTOnPageScrollEvent.m in Sources */,
+
+				F4FF95D7245B92E800C19C63 /* Viewpager.swift in Sources */,
+				B3E7B58A1CC2AC0600A0062D /* Viewpager.m in Sources */,
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,9 +238,11 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Viewpager;
 				SKIP_INSTALL = YES;
+
 				SWIFT_OBJC_BRIDGING_HEADER = "Viewpager-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+
 			};
 			name = Debug;
 		};
@@ -287,8 +259,10 @@
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = Viewpager;
 				SKIP_INSTALL = YES;
+
 				SWIFT_OBJC_BRIDGING_HEADER = "Viewpager-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
+
 			};
 			name = Release;
 		};

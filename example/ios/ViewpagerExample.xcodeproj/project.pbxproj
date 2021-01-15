@@ -174,19 +174,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		2642DEB477C04E4F9680A1BE /* Resources */ = {
-			isa = "PBXGroup";
-			children = (
-				8380EE266CF84889B54D6E01 /* ue_black_logo.png */,
-				F4693596CD434018B84A86E9 /* urbanears_blue.png */,
-				D7BE455AE6554CCBAD423FD7 /* urbanears_grey.png */,
-				D4AB88917DF44FF99D76A690 /* urbanears_mint.png */,
-				CDD204FFC4AB488EB0A80628 /* urbanears_pink.png */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-			path = "";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -523,7 +510,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.reactnativeviewpager;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.reactnativecommunityviewpager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ViewpagerExample.app/ViewpagerExample";
 			};
@@ -542,7 +529,7 @@
 					"-lc++",
 					"$(inherited)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.reactnativeviewpager;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.reactnativecommunityviewpager;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ViewpagerExample.app/ViewpagerExample";
 			};
@@ -563,7 +550,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.reactnativeviewpager;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.reactnativecommunityviewpager;
 				PRODUCT_NAME = ViewpagerExample;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -585,7 +572,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.reactnativeviewpager;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.reactnativecommunityviewpager;
 				PRODUCT_NAME = ViewpagerExample;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

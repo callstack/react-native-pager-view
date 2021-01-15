@@ -2,54 +2,42 @@ package com.example.reactnativeviewpager;
 
 import android.app.Application;
 import android.content.Context;
+
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
-import com.facebook.react.ReactInstanceManager;
 import com.facebook.soloader.SoLoader;
-import com.reactnativecommunity.viewpager.RNCViewPagerPackage;
+import com.reactnativecommunityviewpager.ViewPagerPackage;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
-      new ReactNativeHost(this) {
-        @Override
-        public boolean getUseDeveloperSupport() {
-          return BuildConfig.DEBUG;
-        }
+    new ReactNativeHost(this) {
+      @Override
+      public boolean getUseDeveloperSupport() {
+        return BuildConfig.DEBUG;
+      }
 
-        @Override
-        protected List<ReactPackage> getPackages() {
-          @SuppressWarnings("UnnecessaryLocalVariable")
-          List<ReactPackage> packages = new PackageList(this).getPackages();
-          // Packages that cannot be autolinked yet can be added manually here, for ViewpagerExample:
-          // packages.add(new MyReactNativePackage());
-          packages.add(new RNCViewPagerPackage());
-          return packages;
-        }
+      @Override
+      protected List<ReactPackage> getPackages() {
+        @SuppressWarnings("UnnecessaryLocalVariable")
+        List<ReactPackage> packages = new PackageList(this).getPackages();
+        // Packages that cannot be autolinked yet can be added manually here, for ViewpagerExample:
+        // packages.add(new MyReactNativePackage());
+        packages.add(new ViewPagerPackage());
+        return packages;
+      }
 
-        @Override
-        protected String getJSMainModuleName() {
-          return "index";
-        }
-      };
-
-  @Override
-  public ReactNativeHost getReactNativeHost() {
-    return mReactNativeHost;
-  }
-
-  @Override
-  public void onCreate() {
-    super.onCreate();
-    SoLoader.init(this, /* native exopackage */ false);
-    initializeFlipper(this, getReactNativeHost().getReactInstanceManager()); // Remove this line if you don't want Flipper enabled
-  }
+      @Override
+      protected String getJSMainModuleName() {
+        return "index";
+      }
+    };
 
   /**
    * Loads Flipper in React Native templates.
@@ -63,10 +51,10 @@ public class MainApplication extends Application implements ReactApplication {
          We use reflection here to pick up the class that initializes Flipper,
         since Flipper library is not available in release mode
         */
-        Class<?> aClass = Class.forName("com.reactnativeviewpagerExample.ReactNativeFlipper");
+        Class<?> aClass = Class.forName("com.example.reactnativeviewpager.ReactNativeFlipper");
         aClass
-            .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
-            .invoke(null, context, reactInstanceManager);
+          .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
+          .invoke(null, context, reactInstanceManager);
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
       } catch (NoSuchMethodException e) {
@@ -77,5 +65,17 @@ public class MainApplication extends Application implements ReactApplication {
         e.printStackTrace();
       }
     }
+  }
+
+  @Override
+  public ReactNativeHost getReactNativeHost() {
+    return mReactNativeHost;
+  }
+
+  @Override
+  public void onCreate() {
+    super.onCreate();
+    SoLoader.init(this, /* native exopackage */ false);
+    initializeFlipper(this, getReactNativeHost().getReactInstanceManager()); // Remove this line if you don't want Flipper enabled
   }
 }
