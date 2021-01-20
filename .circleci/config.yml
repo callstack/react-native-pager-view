@@ -1,25 +1,23 @@
-# Orb support is from version >= 2.1
 version: 2.1
 
-# Make sure you use the latest version of the Orb!
-orbs:
-  rn: react-native-community/react-native@4.4.2
+executors:
+  default:
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/project
 
-# Custom jobs which are not part of the Orb
-jobs:
-  checkout_code:
-    executor: rn/linux_js
-    steps:
-      - checkout
-      - persist_to_workspace:
-          root: .
-          paths: 
-            - .
-  install-dependencies:
-    executor: rn/linux_js
+commands:
+  attach_project:
     steps:
       - attach_workspace:
-          at: .
+          at: ~/project
+
+jobs:
+  install-dependencies:
+    executor: default
+    steps:
+      - checkout
+      - attach_project
       - restore_cache:
           keys:
             - dependencies-{{ checksum "package.json" }}
@@ -35,49 +33,66 @@ jobs:
             yarn install --frozen-lockfile
       - save_cache:
           key: dependencies-{{ checksum "package.json" }}
-          paths: 
-            - node_modules
+          paths: node_modules
       - save_cache:
           key: dependencies-example-{{ checksum "example/package.json" }}
-          paths: 
-            - example/node_modules
+          paths: example/node_modules
       - persist_to_workspace:
           root: .
-          paths: 
-            - .
-  analyse_js:
-    executor: rn/linux_js
+          paths: .
+
+  lint:
+    executor: default
     steps:
-      - attach_workspace:
-          at: .
-      - rn/yarn_install
+      - attach_project
       - run:
-          name: Run ESLint
-          command: yarn lint
+          name: Lint files
+          command: |
+            yarn lint
+
+  typescript:
+    executor: default
+    steps:
+      - attach_project
       - run:
-          name: Typescript
-          command: yarn typescript
+          name: Typecheck files
+          command: |
+            yarn typescript
+
+  unit-tests:
+    executor: default
+    steps:
+      - attach_project
+      - run:
+          name: Run unit tests
+          command: |
+            yarn test --coverage
+      - store_artifacts:
+          path: coverage
+          destination: coverage
+
+  build-package:
+    executor: default
+    steps:
+      - attach_project
+      - run:
+          name: Build package
+          command: |
+            yarn prepare
 
 workflows:
-  test:
+  build-and-test:
     jobs:
-      # Checkout the code and persist to the Workspace
-      # Note: This is a job which is defined above and not part of the Orb
-      - checkout_code
-      - install-dependencies:
-          requires:
-            - checkout_code
-
-      # Analyze the Javascript using ESLint, Flow, and Jest
-      # Note: This is a job which is defined above and not part of the Orb
-      - analyse_js:
+      - install-dependencies
+      - lint:
           requires:
             - install-dependencies
-
-      # Build the Android app in debug mode
-      - rn/android_build:
-          name: build_android
-          project_path: "example/android"
-          build_type: debug
+      - typescript:
           requires:
-            - analyse_js
+            - install-dependencies
+      - unit-tests:
+          requires:
+            - install-dependencies
+      - build-package:
+          requires:
+            - install-dependencies

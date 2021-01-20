@@ -8,7 +8,7 @@ target 'ViewpagerExample' do
 
   use_react_native!(:path => config["reactNativePath"])
 
-      pod 'react-native-viewpager', :path => '../..'
+      pod 'react-native-community-viewpager', :path => '../..'
   
   # Enables Flipper.
   #
