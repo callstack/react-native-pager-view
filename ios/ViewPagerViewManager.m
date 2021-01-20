@@ -1,11 +1,11 @@
 #import <React/RCTViewManager.h>
 
-@interface ViewpagerViewManager : RCTViewManager
+@interface ViewPagerViewManager : RCTViewManager
 @end
 
-@implementation ViewpagerViewManager
+@implementation ViewPagerViewManager
 
-RCT_EXPORT_MODULE(ViewpagerView)
+RCT_EXPORT_MODULE(ViewPagerView)
 
 - (UIView *)view
 {

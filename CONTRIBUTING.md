@@ -49,7 +49,7 @@ Remember to add tests for your change if possible. Run the unit tests by:
 yarn test
 ```
 
-To edit the Objective-C files, open `example/ios/ViewpagerExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > @react-native-community/viewpager`.
+To edit the Objective-C files, open `example/ios/ViewPagerExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > @react-native-community/viewpager`.
 
 To edit the Kotlin files, open `example/android` in Android studio and find the source files at `reactnativecommunityviewpager` under `Android`.
 

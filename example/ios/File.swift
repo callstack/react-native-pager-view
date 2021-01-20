@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  ViewpagerExample
+//  ViewPagerExample
 //
 
 import Foundation
