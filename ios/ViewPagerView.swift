@@ -1,7 +1,10 @@
 class ViewPagerView: UIView, UIPageViewControllerDataSource, UIPageViewControllerDelegate {
+    @objc var count: NSNumber = 0
+    @objc var offset: NSNumber = 0
+    @objc var onPageSelected: RCTBubblingEventBlock?
+
     private let controllerCache = NSMapTable<UIView, UIViewController>.weakToWeakObjects()
     private var currentPage = 0
-    private var offset = 0
     private let pageIndexes = NSMapTable<UIViewController, NSNumber>.weakToStrongObjects()
     private let pager = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
 
@@ -18,19 +21,18 @@ class ViewPagerView: UIView, UIPageViewControllerDataSource, UIPageViewControlle
     }
 
     override func didUpdateReactSubviews() {
-        if pager.viewControllers?.isEmpty ?? true {
-            guard let controller = getControllerAtPosition(currentPage) else {
-                return
-            }
-            pager.setViewControllers(
-                [controller],
-                direction: .forward,
-                animated: false,
-                completion: nil
-            )
-            pager.view.frame = self.bounds
-            pager.view.layoutIfNeeded()
+        guard let controller = getControllerAtPosition(currentPage) else {
+            return
         }
+        // TODO: Is there a better way to invalidate placeholder views?
+        pager.setViewControllers(
+            [controller],
+            direction: .forward,
+            animated: false,
+            completion: nil
+        )
+        pager.view.frame = self.bounds
+        pager.view.layoutIfNeeded()
     }
 
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
@@ -55,6 +57,10 @@ class ViewPagerView: UIView, UIPageViewControllerDataSource, UIPageViewControlle
             return
         }
         currentPage = Int(truncating: pageIndex)
+
+        if let dispatcher = onPageSelected {
+            dispatcher(["page": currentPage])
+        }
     }
 
     private func getControllerForView(_ view: UIView) -> UIViewController {
@@ -68,10 +74,16 @@ class ViewPagerView: UIView, UIPageViewControllerDataSource, UIPageViewControlle
     }
 
     private func getControllerAtPosition(_ position: Int) -> UIViewController? {
-        guard let reactView = getViewAtPosition(position) else {
+        let controller: UIViewController
+        if let reactView = getViewAtPosition(position) {
+            controller = getControllerForView(reactView)
+        } else if position >= 0 && position < Int(truncating: count) {
+            // Not yet rendered? Give placeholder.
+            controller = UIViewController()
+        } else {
             return nil
         }
-        let controller = getControllerForView(reactView)
+
         pageIndexes.setObject(position as NSNumber, forKey: controller)
         return controller
     }
@@ -80,7 +92,7 @@ class ViewPagerView: UIView, UIPageViewControllerDataSource, UIPageViewControlle
         guard let reactChildrenViews = reactSubviews() else {
             return nil
         }
-        let index = position - offset
+        let index = position - Int(truncating: offset)
         if index >= 0 && index < reactChildrenViews.count {
             return reactChildrenViews[index]
         }
