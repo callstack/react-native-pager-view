@@ -39,6 +39,11 @@ class ReactViewAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapte
       }
     }
 
+    // Let the ViewPager2 know which pages need to be updated. These are the
+    // pages that are now available from JS-side, and the pages that were just
+    // unmounted from JS-side.
+    // TODO: Currently assumes no pages will be inserted/deleted at an index
+    // before the currently displayed page.
     for (position in changedPositions) {
       notifyItemChanged(position)
     }
