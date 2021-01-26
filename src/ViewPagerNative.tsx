@@ -1,17 +1,15 @@
-import type { ReactElement } from 'react';
-import { HostComponent, requireNativeComponent, UIManager } from 'react-native';
-import type { ViewPagerProps } from './types';
+import { requireNativeComponent, StyleProp, ViewStyle } from 'react-native';
+import type { ViewPagerOnPageSelectedEvent } from './types';
 
 const VIEW_MANAGER_NAME = 'RNCViewPager';
 
-interface ViewpagerViewManagerType extends HostComponent<ViewPagerProps> {
-  getInnerViewNode(): ReactElement;
-}
+type ViewPagerNativeProps = {
+  count: number;
+  offset: number;
+  onPageSelected: (event: ViewPagerOnPageSelectedEvent) => void;
+  style: StyleProp<ViewStyle>;
+};
 
-export const ViewpagerViewManager = requireNativeComponent(
+export const ViewPagerNative = requireNativeComponent<ViewPagerNativeProps>(
   VIEW_MANAGER_NAME
-) as ViewpagerViewManagerType;
-
-export function getViewManagerConfig(viewManagerName = VIEW_MANAGER_NAME) {
-  return UIManager.getViewManagerConfig(viewManagerName);
-}
+);

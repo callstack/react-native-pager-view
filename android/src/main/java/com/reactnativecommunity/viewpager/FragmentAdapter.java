@@ -1,72 +1,91 @@
 package com.reactnativecommunity.viewpager;
 
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
-
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FragmentAdapter extends FragmentStateAdapter {
-    private List<View> childrenViews = new ArrayList<>();
+    private final List<View> mReactChildrenViews = new ArrayList<>();
+    public int count = 0;
+    public int offset = 0;
+    private int mPrevOffset = 0;
+    private int mPrevReactChildrenCount = 0;
+
     public FragmentAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
     }
 
-
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        return new ViewPagerFragment(childrenViews.get(position));
+        return new ViewPagerFragment(getViewAtPosition(position));
     }
 
     @Override
     public int getItemCount() {
-        return childrenViews.size();
+        return count;
     }
 
-    @Override
-    public long getItemId(int position) {
-        return childrenViews.get(position).getId();
+    @Nullable
+    private View getViewAtPosition(int position) {
+        int index = position - offset;
+        return index >= 0 && index < mReactChildrenViews.size()
+                ? mReactChildrenViews.get(index)
+                : null;
     }
 
-    @Override
-    public boolean containsItem(long itemId) {
-        for(View child: childrenViews) {
-            if((int) itemId == child.getId()) {
-                return true;
+    public void onAfterUpdateTransaction() {
+        Set<Integer> changedPositions = new HashSet<>(mReactChildrenViews.size());
+        for (int i = 0; i < mReactChildrenViews.size(); ++i) {
+            changedPositions.add(offset + i);
+        }
+        int bound = Math.min(
+                count,
+                mPrevOffset + Math.max(mPrevReactChildrenCount, mReactChildrenViews.size())
+        );
+        for (int position = mPrevOffset; position < bound; ++position) {
+            if (changedPositions.contains(position)) {
+                changedPositions.remove(position);
+            } else {
+                changedPositions.add(position);
             }
         }
-        return false;
+
+        // Let the ViewPager2 know which pages need to be updated. These are the
+        // pages that are now available from JS-side, and the pages that were just
+        // unmounted from JS-side.
+        // TODO: Currently assumes no pages will be inserted/deleted at an index
+        // before the currently displayed page.
+        for (int position : changedPositions) {
+            notifyItemChanged(position);
+        }
+
+        mPrevOffset = offset;
+        mPrevReactChildrenCount = mReactChildrenViews.size();
     }
 
-    public void addFragment(View child, int index) {
-        childrenViews.add(index, child);
-        notifyItemInserted(index);
+    public void addReactView(View child, int index) {
+        mReactChildrenViews.add(index, child);
     }
 
-    public void removeFragment(View child) {
-        int index = childrenViews.indexOf(child);
-        removeFragmentAt(index);
+    public View getReactChildAt(int index) {
+        return mReactChildrenViews.get(index);
     }
 
-    public void removeFragmentAt(int index) {
-        childrenViews.remove(index);
-        notifyItemRemoved(index);
+    public int getReactChildCount() {
+        return mReactChildrenViews.size();
     }
 
-    public void removeAll() {
-        childrenViews.clear();
-        notifyDataSetChanged();
-    }
-
-    public View getChildViewAt(int index) {
-        return childrenViews.get(index);
+    public void removeReactViewAt(int index) {
+        mReactChildrenViews.remove(index);
     }
 }

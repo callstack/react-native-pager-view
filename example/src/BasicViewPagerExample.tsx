@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Image, StyleSheet, View, SafeAreaView, Animated } from 'react-native';
 
 import ViewPager from '@react-native-community/viewpager';
@@ -6,8 +6,10 @@ import ViewPager from '@react-native-community/viewpager';
 import { LikeCount } from './component/LikeCount';
 import { NavigationPanel } from './component/NavigationPanel';
 import { useNavigationPanel } from './hook/useNavigationPanel';
+import type { CreatePage } from './utils';
 
-const AnimatedViewPager = Animated.createAnimatedComponent(ViewPager);
+class CreatePageViewPager extends ViewPager<CreatePage> {}
+const AnimatedViewPager = Animated.createAnimatedComponent(CreatePageViewPager);
 
 export function BasicViewPagerExample() {
   const { ref, ...navigationPanel } = useNavigationPanel();
@@ -15,32 +17,16 @@ export function BasicViewPagerExample() {
   return (
     <SafeAreaView style={styles.container}>
       <AnimatedViewPager
-        ref={ref}
         style={styles.viewPager}
-        initialPage={0}
-        overdrag={navigationPanel.overdragEnabled}
-        scrollEnabled={navigationPanel.scrollEnabled}
-        onPageScroll={navigationPanel.onPageScroll}
-        onPageSelected={navigationPanel.onPageSelected}
-        onPageScrollStateChanged={navigationPanel.onPageScrollStateChanged}
-        pageMargin={10}
-        // Lib does not support dynamically orientation change
-        orientation="horizontal"
-        // Lib does not support dynamically transitionStyle change
-        transitionStyle="scroll"
-        showPageIndicator={navigationPanel.dotsEnabled}
-      >
-        {useMemo(
-          () =>
-            navigationPanel.pages.map((page) => (
-              <View key={page.key} style={page.style} collapsable={false}>
-                <Image style={styles.image} source={page.imgSource} />
-                <LikeCount />
-              </View>
-            )),
-          [navigationPanel.pages]
+        data={navigationPanel.pages}
+        keyExtractor={(page) => `${page.key}`}
+        renderItem={({ item }) => (
+          <View style={item.style}>
+            <Image style={styles.image} source={item.imgSource} />
+            <LikeCount />
+          </View>
         )}
-      </AnimatedViewPager>
+      />
 
       <NavigationPanel {...navigationPanel} />
     </SafeAreaView>
