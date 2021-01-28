@@ -121,6 +121,9 @@ const styles = StyleSheet.create({
 **Attention:** Note that you can only use `View` components as children of `ViewPager` (cf. folder */example*)
 . For Android if `View` has own children, set prop `collapsable` to false https://reactnative.dev/docs/view#collapsable, otherwise react-native might remove those children views and  and it's children will be rendered as separate pages
 
+## Advanced usage
+For advanced usage please take a look into our [example project](https://github.com/callstack/react-native-viewpager/blob/master/example/src/BasicViewPagerExample.tsx) 
+
 ## API
 
 |Prop|Description|Platform|
