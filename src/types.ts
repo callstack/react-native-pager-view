@@ -23,6 +23,11 @@ export interface PageScrollStateChangedEvent {
 
 export interface ViewPagerProps<ItemT> {
   /**
+   * Number of pages to render before/after the current page. Minimum 1.
+   */
+  buffer?: number;
+
+  /**
    * Array of data to be rendered as pages.
    */
   data: ItemT[];
@@ -33,6 +38,13 @@ export interface ViewPagerProps<ItemT> {
   keyExtractor: (item: ItemT, index: number) => string;
 
   /**
+   * Maximum number of pages allowed to stay rendered. Set to 0 for unlimited.
+   *
+   * Default unlimited. Will always render at least `1 + 2 * buffer` pages.
+   */
+  maxRenderWindow?: number;
+
+  /**
    * Render an item from `data` into a page.
    */
   renderItem: (info: { item: ItemT; index: number }) => React.ReactElement;
@@ -40,4 +52,4 @@ export interface ViewPagerProps<ItemT> {
   style?: ReactNative.StyleProp<ReactNative.ViewStyle>;
 }
 
-export type ViewPagerState = { offset: number };
+export type ViewPagerState = { offset: number; windowLength: number };

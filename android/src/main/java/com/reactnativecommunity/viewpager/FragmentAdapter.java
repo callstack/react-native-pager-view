@@ -48,10 +48,7 @@ public class FragmentAdapter extends FragmentStateAdapter {
         for (int i = 0; i < mReactChildrenViews.size(); ++i) {
             changedPositions.add(offset + i);
         }
-        int bound = Math.min(
-                count,
-                mPrevOffset + Math.max(mPrevReactChildrenCount, mReactChildrenViews.size())
-        );
+        int bound = Math.min(count, mPrevOffset + mPrevReactChildrenCount);
         for (int position = mPrevOffset; position < bound; ++position) {
             if (changedPositions.contains(position)) {
                 changedPositions.remove(position);

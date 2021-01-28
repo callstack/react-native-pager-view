@@ -54,7 +54,14 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
 
     @Override
     public void addView(ViewPager2 parent, View child, int index) {
-        ((FragmentAdapter) parent.getAdapter()).addReactView(child, index);
+        final FragmentAdapter adapter = (FragmentAdapter) parent.getAdapter();
+        adapter.addReactView(child, index);
+        parent.post(new Runnable() {
+            @Override
+            public void run() {
+                adapter.onAfterUpdateTransaction();
+            }
+        });
     }
 
     @Override
@@ -69,7 +76,14 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
 
     @Override
     public void removeViewAt(ViewPager2 parent, int index) {
-        ((FragmentAdapter) parent.getAdapter()).removeReactViewAt(index);
+        final FragmentAdapter adapter = (FragmentAdapter) parent.getAdapter();
+        adapter.removeReactViewAt(index);
+        parent.post(new Runnable() {
+            @Override
+            public void run() {
+                adapter.onAfterUpdateTransaction();
+            }
+        });
     }
 
     @Nullable
