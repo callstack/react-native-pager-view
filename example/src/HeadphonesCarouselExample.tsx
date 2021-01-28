@@ -16,7 +16,6 @@ import {
   Animated,
   ImageRequireSource,
 } from 'react-native';
-import type { ViewPagerOnPageScrollEventData } from 'src/types';
 import ViewPager from '@react-native-community/viewpager';
 
 const data = [
@@ -232,7 +231,8 @@ const Pagination = ({
   );
 };
 
-const AnimatedViewPager = Animated.createAnimatedComponent(ViewPager);
+class DataViewPager extends ViewPager<typeof data[number]> {}
+const AnimatedViewPager = Animated.createAnimatedComponent(DataViewPager);
 
 export default function HeadphonesCarouselExample() {
   const scrollOffsetAnimatedValue = React.useRef(new Animated.Value(0)).current;
@@ -242,35 +242,17 @@ export default function HeadphonesCarouselExample() {
     <View style={styles.container}>
       <Circle scrollOffsetAnimatedValue={scrollOffsetAnimatedValue} />
       <AnimatedViewPager
-        initialPage={0}
         style={{ width: '100%', height: '100%' }}
-        onPageScroll={Animated.event<ViewPagerOnPageScrollEventData>(
-          [
-            {
-              nativeEvent: {
-                offset: scrollOffsetAnimatedValue,
-                position: positionAnimatedValue,
-              },
-            },
-          ],
-          {
-            listener: ({ nativeEvent: { offset, position } }) => {
-              console.log(`Position: ${position} Offset: ${offset}`);
-            },
-            useNativeDriver: true,
-          }
+        data={data}
+        keyExtractor={(_, index) => `${index}`}
+        renderItem={({ item }) => (
+          <Item
+            {...item}
+            scrollOffsetAnimatedValue={scrollOffsetAnimatedValue}
+            positionAnimatedValue={positionAnimatedValue}
+          />
         )}
-      >
-        {data.map((item, index) => (
-          <View collapsable={false} key={index}>
-            <Item
-              {...item}
-              scrollOffsetAnimatedValue={scrollOffsetAnimatedValue}
-              positionAnimatedValue={positionAnimatedValue}
-            />
-          </View>
-        ))}
-      </AnimatedViewPager>
+      />
       <Image
         style={styles.logo}
         source={require('../assets/ue_black_logo.png')}

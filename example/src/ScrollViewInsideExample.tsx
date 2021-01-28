@@ -1,10 +1,7 @@
-import ViewPager from '@react-native-community/viewpager';
 import React from 'react';
 import { useState } from 'react';
-import { View, StyleSheet, Button, ScrollView, Animated } from 'react-native';
-import { PAGES, createPage } from './utils';
-
-const AnimatedViewPager = Animated.createAnimatedComponent(ViewPager);
+import { View, StyleSheet, Button, ScrollView } from 'react-native';
+import { AnimatedViewPager, PAGES, createPage } from './utils';
 
 export const ScrollViewInsideExample = (): JSX.Element => {
   const [pages] = useState(
@@ -14,13 +11,16 @@ export const ScrollViewInsideExample = (): JSX.Element => {
   );
 
   return (
-    <AnimatedViewPager style={styles.flex}>
-      {pages.map((page) => (
-        <ScrollView key={page.key} style={styles.content}>
+    <AnimatedViewPager
+      style={styles.flex}
+      data={pages}
+      keyExtractor={(page) => `${page.key}`}
+      renderItem={({ item }) => (
+        <ScrollView style={styles.content}>
           {Array(20)
             .fill(1)
             .map((_, index) => (
-              <View key={`${page.key}_${index}`} style={styles.separator}>
+              <View key={`${item.key}_${index}`} style={styles.separator}>
                 <Button
                   title="Click me"
                   onPress={() => {
@@ -30,8 +30,8 @@ export const ScrollViewInsideExample = (): JSX.Element => {
               </View>
             ))}
         </ScrollView>
-      ))}
-    </AnimatedViewPager>
+      )}
+    />
   );
 };
 

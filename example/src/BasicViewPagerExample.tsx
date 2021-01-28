@@ -1,15 +1,10 @@
 import React from 'react';
-import { Image, StyleSheet, View, SafeAreaView, Animated } from 'react-native';
-
-import ViewPager from '@react-native-community/viewpager';
+import { Image, StyleSheet, View, SafeAreaView } from 'react-native';
 
 import { LikeCount } from './component/LikeCount';
 import { NavigationPanel } from './component/NavigationPanel';
 import { useNavigationPanel } from './hook/useNavigationPanel';
-import type { CreatePage } from './utils';
-
-class CreatePageViewPager extends ViewPager<CreatePage> {}
-const AnimatedViewPager = Animated.createAnimatedComponent(CreatePageViewPager);
+import { AnimatedViewPager } from './utils';
 
 export function BasicViewPagerExample() {
   const { ref, ...navigationPanel } = useNavigationPanel();
@@ -17,6 +12,7 @@ export function BasicViewPagerExample() {
   return (
     <SafeAreaView style={styles.container}>
       <AnimatedViewPager
+        ref={ref}
         style={styles.viewPager}
         data={navigationPanel.pages}
         keyExtractor={(page) => `${page.key}`}

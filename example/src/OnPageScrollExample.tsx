@@ -1,12 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, Animated } from 'react-native';
-import ViewPager from '@react-native-community/viewpager';
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { ProgressBar } from './component/ProgressBar';
 import { useNavigationPanel } from './hook/useNavigationPanel';
 import { NavigationPanel } from './component/NavigationPanel';
-
-const AnimatedViewPager = Animated.createAnimatedComponent(ViewPager);
+import { AnimatedViewPager } from './utils';
 
 export function OnPageScrollExample() {
   const { ref, ...navigationPanel } = useNavigationPanel(5);
@@ -34,17 +32,16 @@ export function OnPageScrollExample() {
       </View>
 
       <AnimatedViewPager
-        {...navigationPanel}
         ref={ref}
         style={styles.viewpager}
-        initialPage={0}
-      >
-        {navigationPanel.pages.map(({ key, style }) => (
-          <View key={key} style={[style, styles.center]}>
-            <Text style={styles.text}>{`Page Index: ${key}`}</Text>
+        data={navigationPanel.pages}
+        keyExtractor={(page) => `${page.key}`}
+        renderItem={({ item, index }) => (
+          <View style={[item.style, styles.center]}>
+            <Text style={styles.text}>{`Page Index: ${index}`}</Text>
           </View>
-        ))}
-      </AnimatedViewPager>
+        )}
+      />
       <View style={styles.progressContainer}>
         <ProgressBar numberOfPages={pages.length} progress={progress} />
       </View>

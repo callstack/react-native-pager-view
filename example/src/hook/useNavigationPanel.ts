@@ -19,11 +19,11 @@ export interface EventLog {
 const getBasePages = (pages: number) =>
   new Array(pages).fill('').map((_v, index) => createPage(index));
 
-export function useNavigationPanel(
+export function useNavigationPanel<T>(
   pagesAmount: number = 10,
   onPageSelectedCallback: (position: number) => void = () => {}
 ) {
-  const ref = useRef<ViewPager>(null);
+  const ref = useRef<ViewPager<T>>(null);
   const [pages, setPages] = useState<CreatePage[]>(
     useMemo(() => getBasePages(pagesAmount), [pagesAmount])
   );
@@ -39,11 +39,12 @@ export function useNavigationPanel(
   const onPageScrollPosition = useRef(new Animated.Value(0)).current;
   const onPageSelectedPosition = useRef(new Animated.Value(0)).current;
 
+  // TODO
   const setPage = useCallback(
-    (page: number) =>
+    (_page: number) =>
       isAnimated
-        ? ref.current?.setPage(page)
-        : ref.current?.setPageWithoutAnimation(page),
+        ? console.log('ref.current?.setPage(page)')
+        : console.log('ref.current?.setPageWithoutAnimation(page)'),
     [isAnimated]
   );
 

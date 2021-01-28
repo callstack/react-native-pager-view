@@ -1,19 +1,10 @@
 import * as React from 'react';
 
-import {
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  Alert,
-  Animated,
-} from 'react-native';
+import { Alert, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
-import ViewPager from '@react-native-community/viewpager';
 import { NavigationPanel } from './component/NavigationPanel';
 import { useNavigationPanel } from './hook/useNavigationPanel';
-
-const AnimatedViewPager = Animated.createAnimatedComponent(ViewPager);
+import { AnimatedViewPager } from './utils';
 
 export const OnPageSelectedExample = () => {
   const callback = React.useCallback((position: number) => {
@@ -24,17 +15,16 @@ export const OnPageSelectedExample = () => {
   return (
     <SafeAreaView style={styles.flex}>
       <AnimatedViewPager
-        {...navigationPanel}
         ref={ref}
         style={styles.flex}
-        initialPage={0}
-      >
-        {navigationPanel.pages.map(({ key, style }) => (
-          <View key={key} style={[style, styles.center]}>
-            <Text style={styles.text}>{`Page Index: ${key}`}</Text>
+        data={navigationPanel.pages}
+        keyExtractor={(page) => `${page.key}`}
+        renderItem={({ item, index }) => (
+          <View style={[item.style, styles.center]}>
+            <Text style={styles.text}>{`Page Index: ${index}`}</Text>
           </View>
-        ))}
-      </AnimatedViewPager>
+        )}
+      />
       <NavigationPanel {...navigationPanel} />
     </SafeAreaView>
   );

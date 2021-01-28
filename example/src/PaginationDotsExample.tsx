@@ -7,9 +7,7 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import ViewPager, {
-  ViewPagerOnPageScrollEventData,
-} from '@react-native-community/viewpager';
+import ViewPager from '@react-native-community/viewpager';
 
 import {
   ScalingDot,
@@ -17,8 +15,6 @@ import {
   ExpandingDot,
   SlidingDot,
 } from 'react-native-animated-pagination-dots';
-
-const AnimatedViewPager = Animated.createAnimatedComponent(ViewPager);
 
 const INTRO_DATA = [
   {
@@ -47,9 +43,11 @@ const INTRO_DATA = [
   },
 ];
 
+class DataViewPager extends ViewPager<typeof INTRO_DATA[number]> {}
+const AnimatedViewPager = Animated.createAnimatedComponent(DataViewPager);
+
 export default function PaginationDotsExample() {
   const width = Dimensions.get('window').width;
-  const ref = React.useRef<ViewPager>(null);
   const scrollOffsetAnimatedValue = React.useRef(new Animated.Value(0)).current;
   const positionAnimatedValue = React.useRef(new Animated.Value(0)).current;
   const inputRange = [0, INTRO_DATA.length];
@@ -61,6 +59,7 @@ export default function PaginationDotsExample() {
     outputRange: [0, INTRO_DATA.length * width],
   });
 
+  /*
   const onPageScroll = React.useMemo(
     () =>
       Animated.event<ViewPagerOnPageScrollEventData>(
@@ -79,21 +78,20 @@ export default function PaginationDotsExample() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
+  */
 
   return (
     <SafeAreaView style={styles.flex}>
       <AnimatedViewPager
-        initialPage={0}
-        ref={ref}
         style={styles.viewpager}
-        onPageScroll={onPageScroll}
-      >
-        {INTRO_DATA.map(({ key }) => (
-          <View key={key} style={styles.center}>
-            <Text style={styles.text}>{`Page Index: ${key}`}</Text>
+        data={INTRO_DATA}
+        keyExtractor={(item) => item.key}
+        renderItem={({ item }) => (
+          <View style={styles.center}>
+            <Text style={styles.text}>{`Page Index: ${item.key}`}</Text>
           </View>
-        ))}
-      </AnimatedViewPager>
+        )}
+      />
       <View style={styles.dotsContainer}>
         <View style={styles.dotContainer}>
           <Text>Expanding Dot</Text>

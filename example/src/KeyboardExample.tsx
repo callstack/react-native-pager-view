@@ -34,11 +34,30 @@ const Page = ({ title, description, onPress, buttonTitle }: PageProps) => {
   );
 };
 
-const AnimatedViewPager = Animated.createAnimatedComponent(ViewPager);
+class ElementViewPager extends ViewPager<JSX.Element> {}
+const AnimatedViewPager = Animated.createAnimatedComponent(ElementViewPager);
 
 export function KeyboardExample() {
   const { ref, ...navigationPanel } = useNavigationPanel(2);
   const { setPage } = navigationPanel;
+  const pages = [
+    <View style={styles.sectionContainer}>
+      <Page
+        title="First Question"
+        description="What is your favourite lib ?"
+        onPress={useCallback(() => setPage(1), [setPage])}
+        buttonTitle="Go to next question"
+      />
+    </View>,
+    <View style={styles.sectionContainer}>
+      <Page
+        title="Second Question"
+        description="Why ViewPager?"
+        onPress={useCallback(() => setPage(0), [setPage])}
+        buttonTitle="Go to previous question"
+      />
+    </View>,
+  ];
   return (
     <SafeAreaView style={styles.flex}>
       <ScrollView contentContainerStyle={styles.flex} style={styles.flex}>
@@ -52,29 +71,12 @@ export function KeyboardExample() {
         </View>
         <View style={styles.flex}>
           <AnimatedViewPager
-            {...navigationPanel}
             ref={ref}
             style={styles.flex}
-            initialPage={0}
-            scrollEnabled={false}
-          >
-            <View style={styles.sectionContainer}>
-              <Page
-                title="First Question"
-                description="What is your favourite lib ?"
-                onPress={useCallback(() => setPage(1), [setPage])}
-                buttonTitle="Go to next question"
-              />
-            </View>
-            <View style={styles.sectionContainer}>
-              <Page
-                title="Second Question"
-                description="Why ViewPager?"
-                onPress={useCallback(() => setPage(0), [setPage])}
-                buttonTitle="Go to previous question"
-              />
-            </View>
-          </AnimatedViewPager>
+            data={pages}
+            keyExtractor={(_, index) => `${index}`}
+            renderItem={({ item }) => item}
+          />
         </View>
       </ScrollView>
       <NavigationPanel

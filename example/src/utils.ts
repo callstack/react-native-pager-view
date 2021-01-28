@@ -4,7 +4,8 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-import type { ViewStyle } from 'react-native';
+import { Animated, ViewStyle } from 'react-native';
+import ViewPager from '@react-native-community/viewpager';
 
 export const PAGES = 5;
 export const BGCOLOR = ['#fdc08e', '#fff6b9', '#99d1b7', '#dde5fe', '#f79273'];
@@ -31,8 +32,14 @@ export const createPage = (key: number): CreatePage => {
     style: {
       backgroundColor: BGCOLOR[key % BGCOLOR.length],
       alignItems: 'center',
+      flex: 1,
       padding: 20,
     },
     imgSource: { uri: IMAGE_URIS[key % BGCOLOR.length] },
   };
 };
+
+class CreatePageViewPager extends ViewPager<CreatePage> {}
+export const AnimatedViewPager = Animated.createAnimatedComponent(
+  CreatePageViewPager
+);

@@ -57,6 +57,7 @@ export class ViewPager<ItemT> extends React.PureComponent<
       .slice(offset, offset + windowLength)
       .map((item, index) => (
         <View
+          collapsable={false}
           key={this.props.keyExtractor(item, offset + index)}
           style={styles.pageContainer}
         >
