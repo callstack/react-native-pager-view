@@ -39,12 +39,11 @@ export function useNavigationPanel<T>(
   const onPageScrollPosition = useRef(new Animated.Value(0)).current;
   const onPageSelectedPosition = useRef(new Animated.Value(0)).current;
 
-  // TODO
   const setPage = useCallback(
     (page: number) =>
       isAnimated
         ? ref.current?.setPage(page)
-        : console.log('ref.current?.setPageWithoutAnimation(page)'),
+        : ref.current?.setPageWithoutAnimation(page),
     [isAnimated]
   );
 

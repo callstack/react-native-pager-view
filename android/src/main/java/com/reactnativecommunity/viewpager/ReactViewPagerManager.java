@@ -114,7 +114,7 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
     @Override
     public void receiveCommand(@NonNull ViewPager2 view, String commandId, @Nullable ReadableArray args) {
         if ("setPage".equals(commandId) && args != null) {
-            view.setCurrentItem(args.getInt(0));
+            setCurrentItem(view, args.getInt(0), args.getBoolean(1));
             return;
         }
         throw new IllegalArgumentException(String.format(
@@ -141,5 +141,18 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
     @ReactProp(name = "scrollEnabled", defaultBoolean = true)
     public void setScrollEnabled(ViewPager2 view, boolean enabled) {
         view.setUserInputEnabled(enabled);
+    }
+
+    private void setCurrentItem(final ViewPager2 view, int item, boolean smoothScroll) {
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                view.measure(
+                        View.MeasureSpec.makeMeasureSpec(view.getWidth(), View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.makeMeasureSpec(view.getHeight(), View.MeasureSpec.EXACTLY));
+                view.layout(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
+            }
+        });
+        view.setCurrentItem(item, smoothScroll);
     }
 }

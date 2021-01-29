@@ -34,6 +34,14 @@ export class ViewPager<ItemT> extends React.PureComponent<
   setPage(page: number) {
     UIManager.dispatchViewManagerCommand(findNodeHandle(this), 'setPage', [
       page,
+      true,
+    ]);
+  }
+
+  setPageWithoutAnimation(page: number) {
+    UIManager.dispatchViewManagerCommand(findNodeHandle(this), 'setPage', [
+      page,
+      false,
     ]);
   }
 
