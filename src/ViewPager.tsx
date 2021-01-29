@@ -1,6 +1,10 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
-import type { ViewPagerProps, ViewPagerState } from './types';
+import { findNodeHandle, StyleSheet, UIManager, View } from 'react-native';
+import type {
+  ViewPagerOnPageSelectedEvent,
+  ViewPagerProps,
+  ViewPagerState,
+} from './types';
 
 import { ViewPagerNative } from './ViewPagerNative';
 
@@ -27,13 +31,19 @@ export class ViewPager<ItemT> extends React.PureComponent<
     });
   }
 
+  setPage(page: number) {
+    UIManager.dispatchViewManagerCommand(findNodeHandle(this), 'setPage', [
+      page,
+    ]);
+  }
+
   /**
    * Compute desired render window size.
    *
    * Returns `offset` and `windowLength` unmodified, unless in conflict with
    * restrictions from `buffer` or `maxRenderWindow`.
    */
-  computeRenderWindow(data: RenderWindowData): ViewPagerState {
+  private computeRenderWindow(data: RenderWindowData): ViewPagerState {
     const buffer = Math.max(data.buffer ?? 1, 1);
     let offset = Math.max(Math.min(data.offset, data.currentPage - buffer), 0);
     let windowLength =
@@ -52,7 +62,21 @@ export class ViewPager<ItemT> extends React.PureComponent<
     return { offset, windowLength };
   }
 
-  renderChildren(offset: number, windowLength: number) {
+  private onPageSelected = (event: ViewPagerOnPageSelectedEvent) => {
+    const currentPage = event.nativeEvent.position;
+    this.setState((prevState) =>
+      this.computeRenderWindow({
+        buffer: this.props.buffer,
+        currentPage,
+        maxRenderWindow: this.props.maxRenderWindow,
+        offset: prevState.offset,
+        windowLength: prevState.windowLength,
+      })
+    );
+    this.props.onPageSelected?.(event);
+  };
+
+  private renderChildren(offset: number, windowLength: number) {
     return this.props.data
       .slice(offset, offset + windowLength)
       .map((item, index) => (
@@ -73,18 +97,10 @@ export class ViewPager<ItemT> extends React.PureComponent<
       <ViewPagerNative
         count={this.props.data.length}
         offset={offset}
-        onPageSelected={(event) => {
-          const currentPage = event.nativeEvent.position;
-          this.setState((prevState) =>
-            this.computeRenderWindow({
-              buffer: this.props.buffer,
-              currentPage,
-              maxRenderWindow: this.props.maxRenderWindow,
-              offset: prevState.offset,
-              windowLength: prevState.windowLength,
-            })
-          );
-        }}
+        onPageScroll={this.props.onPageScroll}
+        onPageSelected={this.onPageSelected}
+        orientation={this.props.orientation}
+        scrollEnabled={this.props.scrollEnabled}
         style={this.props.style}
       >
         {this.renderChildren(offset, windowLength)}

@@ -15,6 +15,7 @@ export const OnPageSelectedExample = () => {
   return (
     <SafeAreaView style={styles.flex}>
       <AnimatedViewPager
+        onPageSelected={navigationPanel.onPageSelected}
         ref={ref}
         style={styles.flex}
         data={navigationPanel.pages}

@@ -45,9 +45,39 @@ export interface ViewPagerProps<ItemT> {
   maxRenderWindow?: number;
 
   /**
+   * Executed when transitioning between pages (ether because of animation for
+   * the requested page change or when user is swiping/dragging between pages)
+   * The `event.nativeEvent` object for this callback will carry following data:
+   *  - position - index of first page from the left that is currently visible
+   *  - offset - value from range [0,1) describing stage between page transitions.
+   *    Value x means that (1 - x) fraction of the page at "position" index is
+   *    visible, and x fraction of the next page is visible.
+   */
+  onPageScroll?: (event: ViewPagerOnPageScrollEvent) => void;
+
+  /**
+   * This callback will be called once ViewPager finish navigating to selected page
+   * (when user swipes between pages). The `event.nativeEvent` object passed to this
+   * callback will have following fields:
+   *  - position - index of page that has been selected
+   */
+  onPageSelected?: (event: ViewPagerOnPageSelectedEvent) => void;
+
+  /**
+   * Orientation of pager.
+   */
+  orientation?: Orientation;
+
+  /**
    * Render an item from `data` into a page.
    */
   renderItem: (info: { item: ItemT; index: number }) => React.ReactElement;
+
+  /**
+   * When false, the content does not scroll.
+   * The default value is true.
+   */
+  scrollEnabled?: boolean;
 
   style?: ReactNative.StyleProp<ReactNative.ViewStyle>;
 }

@@ -14,6 +14,9 @@ export function BasicViewPagerExample() {
       <AnimatedViewPager
         ref={ref}
         style={styles.viewPager}
+        scrollEnabled={navigationPanel.scrollEnabled}
+        onPageScroll={navigationPanel.onPageScroll}
+        onPageSelected={navigationPanel.onPageSelected}
         data={navigationPanel.pages}
         keyExtractor={(page) => `${page.key}`}
         renderItem={({ item }) => (

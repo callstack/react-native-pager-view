@@ -7,7 +7,9 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import ViewPager from '@react-native-community/viewpager';
+import ViewPager, {
+  ViewPagerOnPageScrollEventData,
+} from '@react-native-community/viewpager';
 
 import {
   ScalingDot,
@@ -59,7 +61,6 @@ export default function PaginationDotsExample() {
     outputRange: [0, INTRO_DATA.length * width],
   });
 
-  /*
   const onPageScroll = React.useMemo(
     () =>
       Animated.event<ViewPagerOnPageScrollEventData>(
@@ -78,12 +79,12 @@ export default function PaginationDotsExample() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
-  */
 
   return (
     <SafeAreaView style={styles.flex}>
       <AnimatedViewPager
         style={styles.viewpager}
+        onPageScroll={onPageScroll}
         data={INTRO_DATA}
         keyExtractor={(item) => item.key}
         renderItem={({ item }) => (

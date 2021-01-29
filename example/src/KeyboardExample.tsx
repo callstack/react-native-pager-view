@@ -73,6 +73,7 @@ export function KeyboardExample() {
           <AnimatedViewPager
             ref={ref}
             style={styles.flex}
+            scrollEnabled={false}
             data={pages}
             keyExtractor={(_, index) => `${index}`}
             renderItem={({ item }) => item}

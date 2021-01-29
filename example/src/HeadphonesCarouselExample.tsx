@@ -16,6 +16,7 @@ import {
   Animated,
   ImageRequireSource,
 } from 'react-native';
+import type { ViewPagerOnPageScrollEventData } from 'src/types';
 import ViewPager from '@react-native-community/viewpager';
 
 const data = [
@@ -243,6 +244,22 @@ export default function HeadphonesCarouselExample() {
       <Circle scrollOffsetAnimatedValue={scrollOffsetAnimatedValue} />
       <AnimatedViewPager
         style={{ width: '100%', height: '100%' }}
+        onPageScroll={Animated.event<ViewPagerOnPageScrollEventData>(
+          [
+            {
+              nativeEvent: {
+                offset: scrollOffsetAnimatedValue,
+                position: positionAnimatedValue,
+              },
+            },
+          ],
+          {
+            listener: ({ nativeEvent: { offset, position } }) => {
+              console.log(`Position: ${position} Offset: ${offset}`);
+            },
+            useNativeDriver: true,
+          }
+        )}
         data={data}
         keyExtractor={(_, index) => `${index}`}
         renderItem={({ item }) => (

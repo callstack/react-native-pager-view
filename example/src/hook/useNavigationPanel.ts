@@ -41,9 +41,9 @@ export function useNavigationPanel<T>(
 
   // TODO
   const setPage = useCallback(
-    (_page: number) =>
+    (page: number) =>
       isAnimated
-        ? console.log('ref.current?.setPage(page)')
+        ? ref.current?.setPage(page)
         : console.log('ref.current?.setPageWithoutAnimation(page)'),
     [isAnimated]
   );

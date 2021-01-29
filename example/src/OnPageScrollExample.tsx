@@ -32,6 +32,8 @@ export function OnPageScrollExample() {
       </View>
 
       <AnimatedViewPager
+        onPageScroll={navigationPanel.onPageScroll}
+        onPageSelected={navigationPanel.onPageSelected}
         ref={ref}
         style={styles.viewpager}
         data={navigationPanel.pages}
