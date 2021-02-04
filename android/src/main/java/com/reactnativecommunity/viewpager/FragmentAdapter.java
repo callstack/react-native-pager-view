@@ -1,6 +1,8 @@
 package com.reactnativecommunity.viewpager;
 
 import android.view.View;
+import android.view.ViewParent;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -8,17 +10,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 public class FragmentAdapter extends FragmentStateAdapter {
+    private final List<WeakReference<ViewPagerFragment>> mFragments = new LinkedList<>();
     private final List<View> mReactChildrenViews = new ArrayList<>();
     public int count = 0;
     public int offset = 0;
-    private int mPrevOffset = 0;
-    private int mPrevReactChildrenCount = 0;
 
     public FragmentAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
@@ -27,7 +29,9 @@ public class FragmentAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        return new ViewPagerFragment(getViewAtPosition(position));
+        ViewPagerFragment fragment = new ViewPagerFragment(position, getViewAtPosition(position));
+        mFragments.add(new WeakReference<>(fragment));
+        return fragment;
     }
 
     @Override
@@ -36,7 +40,7 @@ public class FragmentAdapter extends FragmentStateAdapter {
     }
 
     @Nullable
-    private View getViewAtPosition(int position) {
+    public View getViewAtPosition(int position) {
         int index = position - offset;
         return index >= 0 && index < mReactChildrenViews.size()
                 ? mReactChildrenViews.get(index)
@@ -44,30 +48,15 @@ public class FragmentAdapter extends FragmentStateAdapter {
     }
 
     public void onAfterUpdateTransaction() {
-        Set<Integer> changedPositions = new HashSet<>(mReactChildrenViews.size());
-        for (int i = 0; i < mReactChildrenViews.size(); ++i) {
-            changedPositions.add(offset + i);
-        }
-        int bound = Math.min(count, mPrevOffset + mPrevReactChildrenCount);
-        for (int position = mPrevOffset; position < bound; ++position) {
-            if (changedPositions.contains(position)) {
-                changedPositions.remove(position);
-            } else {
-                changedPositions.add(position);
+        Iterator<WeakReference<ViewPagerFragment>> it = mFragments.iterator();
+        while (it.hasNext()) {
+            ViewPagerFragment fragment = it.next().get();
+            if (fragment == null) {
+                it.remove();
+            } else if (fragment.onReactViewUpdate(this)) {
+                notifyItemChanged(fragment.getPosition());
             }
         }
-
-        // Let the ViewPager2 know which pages need to be updated. These are the
-        // pages that are now available from JS-side, and the pages that were just
-        // unmounted from JS-side.
-        // TODO: Currently assumes no pages will be inserted/deleted at an index
-        // before the currently displayed page.
-        for (int position : changedPositions) {
-            notifyItemChanged(position);
-        }
-
-        mPrevOffset = offset;
-        mPrevReactChildrenCount = mReactChildrenViews.size();
     }
 
     public void addReactView(View child, int index) {
@@ -83,6 +72,10 @@ public class FragmentAdapter extends FragmentStateAdapter {
     }
 
     public void removeReactViewAt(int index) {
-        mReactChildrenViews.remove(index);
+        View reactView = mReactChildrenViews.remove(index);
+        ViewParent rootView = reactView.getParent();
+        if (rootView instanceof FrameLayout) {
+            ((FrameLayout) rootView).removeAllViews();
+        }
     }
 }
