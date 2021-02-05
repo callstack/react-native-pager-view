@@ -110,6 +110,7 @@ export class ViewPager<ItemT> extends React.PureComponent<
         orientation={this.props.orientation}
         scrollEnabled={this.props.scrollEnabled}
         style={this.props.style}
+        transitionStyle={this.props.transitionStyle}
       >
         {this.renderChildren(offset, windowLength)}
       </ViewPagerNative>

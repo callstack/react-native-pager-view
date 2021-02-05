@@ -17,6 +17,8 @@ export function BasicViewPagerExample() {
         scrollEnabled={navigationPanel.scrollEnabled}
         onPageScroll={navigationPanel.onPageScroll}
         onPageSelected={navigationPanel.onPageSelected}
+        orientation="horizontal"
+        transitionStyle="scroll"
         data={navigationPanel.pages}
         keyExtractor={(page) => `${page.key}`}
         renderItem={({ item }) => (

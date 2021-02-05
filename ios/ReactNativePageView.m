@@ -20,30 +20,81 @@
     if (self = [super init]) {
         _controllerCache = [NSMapTable weakToWeakObjectsMapTable];
         _currentPage = 0;
+        _transitionStyle = UIPageViewControllerTransitionStyleScroll;
+        _orientation = UIPageViewControllerNavigationOrientationHorizontal;
         _pageIndexes = [NSMapTable weakToStrongObjectsMapTable];
-        _reactPageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:nil];
-        _reactPageViewController.dataSource = self;
-        _reactPageViewController.delegate = self;
-        [self addSubview:_reactPageViewController.view];
-
-        for (UIView *subview in _reactPageViewController.view.subviews) {
-            if([subview isKindOfClass:UIScrollView.class]) {
-                _scrollView = (UIScrollView *)subview;
-                _scrollView.delegate = self;
-                break;
-            }
-        }
+        [self embed];
     }
     return self;
 }
 
 - (void)didUpdateReactSubviews {
-    UIViewController *controller = [self getControllerAtPosition:self.currentPage];
-    if (controller) {
-        [self.reactPageViewController setViewControllers:@[controller] direction:UIPageViewControllerNavigationDirectionForward animated:false completion:nil];
-        self.reactPageViewController.view.frame = self.bounds;
-        [self.reactPageViewController.view layoutIfNeeded];
+    [self goTo:self.currentPage animated:false];
+}
+
+- (void)didSetProps:(NSArray<NSString *> *)changedProps {
+    if (
+        [changedProps containsObject:@"orientation"]
+        || [changedProps containsObject:@"transitionStyle"]) {
+        [self embed];
+        [self goTo:self.currentPage animated:false];
     }
+}
+
+- (void)embed {
+    if (self.reactPageViewController) {
+        if (
+            self.reactPageViewController.navigationOrientation == self.orientation
+            && self.reactPageViewController.transitionStyle == self.transitionStyle) {
+            // No change needed.
+            return;
+        }
+        // Need to reinitialize.
+        [self.reactPageViewController removeFromParentViewController];
+        for (UIView *key in self.controllerCache) {
+            [self.controllerCache objectForKey:key].view = nil;
+        }
+        [self.controllerCache removeAllObjects];
+    }
+
+    self.reactPageViewController = [[UIPageViewController alloc] initWithTransitionStyle:self.transitionStyle
+                                                                   navigationOrientation:self.orientation
+                                                                                 options:nil];
+    self.reactPageViewController.dataSource = self;
+    self.reactPageViewController.delegate = self;
+    [self addSubview:self.reactPageViewController.view];
+
+    for (UIView *subview in self.reactPageViewController.view.subviews) {
+        if([subview isKindOfClass:UIScrollView.class]) {
+            self.scrollView = (UIScrollView *)subview;
+            self.scrollView.delegate = self;
+            break;
+        }
+    }
+}
+
+- (void)goTo:(NSInteger)index animated:(BOOL)animated {
+    UIViewController *controller = [self getControllerAtPosition:index];
+    if (!controller) {
+        return;
+    }
+
+    __weak ReactNativePageView *weakSelf = self;
+    [self.reactPageViewController setViewControllers:@[controller]
+                                           direction:index < self.currentPage ? UIPageViewControllerNavigationDirectionReverse : UIPageViewControllerNavigationDirectionForward
+                                            animated:animated
+                                          completion:^(BOOL finished) {
+        if (weakSelf && weakSelf.currentPage != index) {
+            weakSelf.currentPage = index;
+            if (weakSelf.onPageSelected) {
+                weakSelf.onPageSelected(@{
+                    @"position": [NSNumber numberWithInteger:weakSelf.currentPage]
+                });
+            }
+        }
+    }];
+    self.reactPageViewController.view.frame = self.bounds;
+    [self.reactPageViewController.view layoutIfNeeded];
 }
 
 - (UIViewController *)getControllerForView:(UIView *)view {
@@ -97,9 +148,11 @@
     }
     self.currentPage = [pageIndex integerValue];
 
-    self.onPageSelected(@{
-        @"position": [NSNumber numberWithInteger:self.currentPage]
-    });
+    if (self.onPageSelected) {
+        self.onPageSelected(@{
+            @"position": [NSNumber numberWithInteger:self.currentPage]
+        });
+    }
 }
 
 #pragma mark - UIPageViewControllerDataSource
@@ -125,6 +178,9 @@
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (!self.onPageScroll) {
+        return;
+    }
     CGPoint point = scrollView.contentOffset;
     float offset = 0;
     if (self.frame.size.width != 0) {
@@ -133,9 +189,14 @@
     if (fabs(offset) > 1) {
         offset = offset > 0 ? 1.0 : -1.0;
     }
+    NSInteger position = self.currentPage;
+    if (offset < 0 && position > 0) {
+        offset += 1;
+        position -= 1;
+    }
     self.onPageScroll(@{
         @"offset": [NSNumber numberWithFloat:offset],
-        @"position": [NSNumber numberWithInteger:self.currentPage]
+        @"position": [NSNumber numberWithInteger:position]
     });
 }
 

@@ -80,6 +80,11 @@ export interface ViewPagerProps<ItemT> {
   scrollEnabled?: boolean;
 
   style?: ReactNative.StyleProp<ReactNative.ViewStyle>;
+
+  /**
+   * Transition style of pager.
+   */
+  transitionStyle?: TransitionStyle;
 }
 
 export type ViewPagerState = { offset: number; windowLength: number };
