@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic) NSInteger count;
 @property(nonatomic) NSInteger offset;
+@property(nonatomic) BOOL scrollEnabled;
 @property(nonatomic) UIPageViewControllerTransitionStyle transitionStyle;
 @property(nonatomic) UIPageViewControllerNavigationOrientation orientation;
 @property(nonatomic, copy) RCTDirectEventBlock onPageSelected;

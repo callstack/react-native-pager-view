@@ -33,6 +33,12 @@ export interface ViewPagerProps<ItemT> {
   data: ItemT[];
 
   /**
+   * Index of initial page that should be selected. Use `setPage` method to
+   * update the page, and `onPageSelected` to monitor page changes
+   */
+  initialPage?: number;
+
+  /**
    * Compute a unique key for the given item at the specified index.
    */
   keyExtractor: (item: ItemT, index: number) => string;

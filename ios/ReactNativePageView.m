@@ -20,6 +20,7 @@
     if (self = [super init]) {
         _controllerCache = [NSMapTable weakToWeakObjectsMapTable];
         _currentPage = 0;
+        _scrollEnabled = true;
         _transitionStyle = UIPageViewControllerTransitionStyleScroll;
         _orientation = UIPageViewControllerNavigationOrientationHorizontal;
         _pageIndexes = [NSMapTable weakToStrongObjectsMapTable];
@@ -38,6 +39,10 @@
         || [changedProps containsObject:@"transitionStyle"]) {
         [self embed];
         [self goTo:self.currentPage animated:false];
+    } else if ([changedProps containsObject:@"scrollEnabled"]) {
+        if (self.scrollView) {
+            self.scrollView.scrollEnabled = self.scrollEnabled;
+        }
     }
 }
 
@@ -68,6 +73,7 @@
         if([subview isKindOfClass:UIScrollView.class]) {
             self.scrollView = (UIScrollView *)subview;
             self.scrollView.delegate = self;
+            self.scrollView.scrollEnabled = self.scrollEnabled;
             break;
         }
     }

@@ -24,11 +24,17 @@ export class ViewPager<ItemT> extends React.PureComponent<
     super(props);
     this.state = this.computeRenderWindow({
       buffer: props.buffer,
-      currentPage: 0,
+      currentPage: props.initialPage ?? 0,
       maxRenderWindow: props.maxRenderWindow,
       offset: 0,
       windowLength: 0,
     });
+  }
+
+  componentDidMount() {
+    if (this.props.initialPage != null && this.props.initialPage > 0) {
+      this.setPageWithoutAnimation(this.props.initialPage);
+    }
   }
 
   setPage(page: number) {
