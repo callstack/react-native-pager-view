@@ -18,6 +18,7 @@ export function BasicViewPagerExample() {
         onPageScroll={navigationPanel.onPageScroll}
         onPageSelected={navigationPanel.onPageSelected}
         orientation="horizontal"
+        overdrag={navigationPanel.overdragEnabled}
         transitionStyle="scroll"
         data={navigationPanel.pages}
         keyExtractor={(page) => `${page.key}`}

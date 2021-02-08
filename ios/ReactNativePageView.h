@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) UIPageViewControllerNavigationOrientation orientation;
 @property(nonatomic, copy) RCTDirectEventBlock onPageSelected;
 @property(nonatomic, copy) RCTDirectEventBlock onPageScroll;
+@property(nonatomic) BOOL overdrag;
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated;
 

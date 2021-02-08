@@ -75,6 +75,12 @@ export interface ViewPagerProps<ItemT> {
   orientation?: Orientation;
 
   /**
+   * Determines whether it's possible to overscroll a bit
+   * after reaching end or very beginning of pages.
+   */
+  overdrag?: boolean;
+
+  /**
    * Render an item from `data` into a page.
    */
   renderItem: (info: { item: ItemT; index: number }) => React.ReactElement;

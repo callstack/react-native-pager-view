@@ -23,6 +23,7 @@
         _scrollEnabled = true;
         _transitionStyle = UIPageViewControllerTransitionStyleScroll;
         _orientation = UIPageViewControllerNavigationOrientationHorizontal;
+        _overdrag = true;
         _pageIndexes = [NSMapTable weakToStrongObjectsMapTable];
         [self embed];
     }
@@ -183,7 +184,25 @@
 
 #pragma mark - UIScrollViewDelegate
 
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
+    if (!self.overdrag) {
+        if (self.currentPage == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width) {
+            *targetContentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+        } else if (self.currentPage == self.count -1 && scrollView.contentOffset.x >= scrollView.bounds.size.width) {
+            *targetContentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+        }
+    }
+}
+
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (!self.overdrag) {
+        if (self.currentPage == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width) {
+            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+        } else if (self.currentPage == self.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width) {
+            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+        }
+    }
+
     if (!self.onPageScroll) {
         return;
     }

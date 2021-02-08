@@ -14,6 +14,7 @@ type ViewPagerNativeProps = {
   onPageScroll?: (event: ViewPagerOnPageScrollEvent) => void;
   onPageSelected: (event: ViewPagerOnPageSelectedEvent) => void;
   orientation?: Orientation;
+  overdrag?: boolean;
   scrollEnabled?: boolean;
   style: StyleProp<ViewStyle>;
   transitionStyle?: TransitionStyle;
