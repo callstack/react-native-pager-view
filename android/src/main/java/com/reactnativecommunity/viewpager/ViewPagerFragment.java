@@ -16,6 +16,7 @@ public class ViewPagerFragment extends Fragment {
         view = child;
     }
 
+    public ViewPagerFragment() {}
 
     @Nullable
     @Override
