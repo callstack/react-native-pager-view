@@ -44,18 +44,18 @@ public class ViewPagerFragment extends Fragment {
     }
 
     public boolean onReactViewUpdate(FragmentAdapter adapter) {
-        FrameLayout rootView = (FrameLayout) getView();
         View reactView = adapter.getViewAtPosition(mPosition);
-        if (rootView == null || reactView == null) {
-            return reactView != null;
-        }
-        if (rootView.getChildCount() == 1 && rootView.getChildAt(0) == reactView) {
+        if (reactView == null || reactView == mReactViewRef.get()) {
             return false;
         }
-
         mReactViewRef = new WeakReference<>(reactView);
-        rootView.removeAllViews();
-        rootView.addView(reactView, MATCH_PARENT, MATCH_PARENT);
+        FrameLayout rootView = (FrameLayout) getView();
+        if (rootView != null) {
+            if (rootView.getChildCount() > 0) {
+                rootView.removeAllViews();
+            }
+            rootView.addView(reactView, MATCH_PARENT, MATCH_PARENT);
+        }
         return true;
     }
 }

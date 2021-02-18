@@ -33,22 +33,40 @@ export class ViewPager<ItemT> extends React.PureComponent<
 
   componentDidMount() {
     if (this.props.initialPage != null && this.props.initialPage > 0) {
-      this.setPageWithoutAnimation(this.props.initialPage);
+      // Send command directly; render window already contains destination.
+      UIManager.dispatchViewManagerCommand(findNodeHandle(this), 'setPage', [
+        this.props.initialPage,
+        false,
+      ]);
     }
   }
 
-  setPage(page: number) {
-    UIManager.dispatchViewManagerCommand(findNodeHandle(this), 'setPage', [
-      page,
-      true,
-    ]);
+  setPage(page: number, animated = true) {
+    if (page < 0 || page >= this.props.data.length) {
+      return;
+    }
+
+    // Start rendering the destination.
+    this.setState((prevState) =>
+      this.computeRenderWindow({
+        buffer: this.props.buffer,
+        currentPage: page,
+        maxRenderWindow: this.props.maxRenderWindow,
+        offset: prevState.offset,
+        windowLength: prevState.windowLength,
+      })
+    );
+    // Send paging command.
+    requestAnimationFrame(() => {
+      UIManager.dispatchViewManagerCommand(findNodeHandle(this), 'setPage', [
+        page,
+        animated,
+      ]);
+    });
   }
 
   setPageWithoutAnimation(page: number) {
-    UIManager.dispatchViewManagerCommand(findNodeHandle(this), 'setPage', [
-      page,
-      false,
-    ]);
+    this.setPage(page, false);
   }
 
   /**
