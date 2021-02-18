@@ -138,6 +138,14 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
         view.setOrientation("vertical".equals(orientation) ? ORIENTATION_VERTICAL : ORIENTATION_HORIZONTAL);
     }
 
+    @ReactProp(name = "overdrag", defaultBoolean = true)
+    public void setOverdrag(ViewPager2 view, boolean overdrag) {
+        view.getChildAt(0).setOverScrollMode(overdrag
+                ? ViewPager2.OVER_SCROLL_IF_CONTENT_SCROLLS
+                : ViewPager2.OVER_SCROLL_NEVER
+        );
+    }
+
     @ReactProp(name = "scrollEnabled", defaultBoolean = true)
     public void setScrollEnabled(ViewPager2 view, boolean enabled) {
         view.setUserInputEnabled(enabled);
