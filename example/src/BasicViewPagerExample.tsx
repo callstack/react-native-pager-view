@@ -41,7 +41,6 @@ export function BasicViewPagerExample() {
           [navigationPanel.pages]
         )}
       </AnimatedViewPager>
-
       <NavigationPanel {...navigationPanel} />
     </SafeAreaView>
   );

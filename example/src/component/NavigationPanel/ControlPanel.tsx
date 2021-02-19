@@ -35,7 +35,6 @@ export function ControlsPanel({
     pages.length,
     setPage,
   ]);
-
   return (
     <>
       <View style={styles.buttons}>
@@ -60,7 +59,6 @@ export function ControlsPanel({
           <Button text="Remove last page" onPress={removePage} />
         </View>
       ) : null}
-
       <View style={styles.buttons}>
         <Button
           text={isAnimated ? 'Turn off animations' : 'Turn animations back on'}
