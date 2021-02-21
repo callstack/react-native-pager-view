@@ -21,34 +21,12 @@ export interface PageScrollStateChangedEvent {
   pageScrollState: PageScrollState;
 }
 
-export interface ViewPagerProps<ItemT> {
-  /**
-   * Number of pages to render before/after the current page. Minimum 1.
-   */
-  buffer?: number;
-
-  /**
-   * Array of data to be rendered as pages.
-   */
-  data: ItemT[];
-
+export interface EagerPagerProps {
   /**
    * Index of initial page that should be selected. Use `setPage` method to
    * update the page, and `onPageSelected` to monitor page changes
    */
   initialPage?: number;
-
-  /**
-   * Compute a unique key for the given item at the specified index.
-   */
-  keyExtractor: (item: ItemT, index: number) => string;
-
-  /**
-   * Maximum number of pages allowed to stay rendered. Set to 0 for unlimited.
-   *
-   * Default unlimited. Will always render at least `1 + 2 * buffer` pages.
-   */
-  maxRenderWindow?: number;
 
   /**
    * Executed when transitioning between pages (ether because of animation for
@@ -81,11 +59,6 @@ export interface ViewPagerProps<ItemT> {
   overdrag?: boolean;
 
   /**
-   * Render an item from `data` into a page.
-   */
-  renderItem: (info: { item: ItemT; index: number }) => React.ReactElement;
-
-  /**
    * When false, the content does not scroll.
    * The default value is true.
    */
@@ -97,6 +70,35 @@ export interface ViewPagerProps<ItemT> {
    * Transition style of pager.
    */
   transitionStyle?: TransitionStyle;
+}
+
+export interface ViewPagerProps<ItemT> extends EagerPagerProps {
+  /**
+   * Number of pages to render before/after the current page. Minimum 1.
+   */
+  buffer?: number;
+
+  /**
+   * Array of data to be rendered as pages.
+   */
+  data: ItemT[];
+
+  /**
+   * Compute a unique key for the given item at the specified index.
+   */
+  keyExtractor: (item: ItemT, index: number) => string;
+
+  /**
+   * Maximum number of pages allowed to stay rendered. Set to 0 for unlimited.
+   *
+   * Default unlimited. Will always render at least `1 + 2 * buffer` pages.
+   */
+  maxRenderWindow?: number;
+
+  /**
+   * Render an item from `data` into a page.
+   */
+  renderItem: (info: { item: ItemT; index: number }) => React.ReactElement;
 }
 
 export type ViewPagerState = { offset: number; windowLength: number };

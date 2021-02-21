@@ -12,7 +12,7 @@ type ViewPagerNativeProps = {
   count: number;
   offset: number;
   onPageScroll?: (event: ViewPagerOnPageScrollEvent) => void;
-  onPageSelected: (event: ViewPagerOnPageSelectedEvent) => void;
+  onPageSelected?: (event: ViewPagerOnPageSelectedEvent) => void;
   orientation?: Orientation;
   overdrag?: boolean;
   scrollEnabled?: boolean;
