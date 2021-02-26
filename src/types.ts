@@ -104,4 +104,12 @@ export interface ViewPagerProps {
    * Android only
    */
   overScrollMode?: OverScrollMode;
+
+  /**
+   * Android only
+   * Set the number of pages that should be retained to either side of the
+   * current page in the view hierarchy in an idle state. Pages beyond this
+   * limit will be recreated from the adapter when needed.
+   */
+  offscreenPageLimit?: number;
 }

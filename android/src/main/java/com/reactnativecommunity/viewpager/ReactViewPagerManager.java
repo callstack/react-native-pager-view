@@ -141,4 +141,9 @@ public class ReactViewPagerManager extends ViewGroupManager<ReactViewPager> {
         pager.setPageMargin((int) PixelUtil.toPixelFromDIP(margin));
     }
 
+    @ReactProp(name = "offscreenPageLimit")
+    public void setOffscreenPageLimit(ReactViewPager pager, int offscreenPageLimit) {
+        pager.setOffscreenPageLimit(offscreenPageLimit);
+    }
+
 }
