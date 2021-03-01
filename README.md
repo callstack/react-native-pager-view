@@ -1,4 +1,4 @@
-# react-native-viewpager
+# react-native-viewpager <img src="docs/viewpager-logo.png" alt="ViewPager" width="24" height="24">
 
 [![CircleCI branch](https://img.shields.io/circleci/build/github/callstack/react-native-viewpager/master.svg)](https://circleci.com/gh/callstack/react-native-viewpager/tree/master)
 [![npm package](https://badge.fury.io/js/%40react-native-community%2Fviewpager.svg)](https://badge.fury.io/js/%40react-native-community%2Fviewpager)
@@ -7,7 +7,12 @@
 
 This component allows the user to swipe left and right through pages of data. Under the hood it is using the native [Android ViewPager](https://developer.android.com/reference/android/support/v4/view/ViewPager) and the [iOS UIPageViewController](https://developer.apple.com/documentation/uikit/uipageviewcontroller) implementations. [See it in action!](https://github.com/react-native-community/react-native-viewpager#preview)
 
-<img src="docs/viewpager-logo.png" alt="ViewPager" width="500" height="500">
+<br/>
+<p align="center">
+  <img src="docs/vp-carousel.gif" alt="ViewPager" width="300">
+</p>
+
+<br/>
 
 ## Versions
 
