@@ -239,6 +239,5 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
         int pageMargin = (int) PixelUtil.toPixelFromDIP(margin);
         pager.setPageTransformer(new MarginPageTransformer(pageMargin));
     }
-
-
 }
+
