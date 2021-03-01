@@ -19,6 +19,7 @@ export declare function useNavigationPanel(pagesAmount?: number, onPageSelectedC
         position: number;
         offset: number;
     };
+    overdragEnabled: boolean;
     setPage: (page: number) => void;
     addPage: () => void;
     removePage: () => void;
@@ -32,5 +33,6 @@ export declare function useNavigationPanel(pagesAmount?: number, onPageSelectedC
     onPageScroll: (...args: any[]) => void;
     onPageSelected: (...args: any[]) => void;
     onPageScrollStateChanged: (e: PageScrollStateChangedNativeEvent) => void;
+    toggleOverdrag: () => void;
     logs: EventLog[];
 };

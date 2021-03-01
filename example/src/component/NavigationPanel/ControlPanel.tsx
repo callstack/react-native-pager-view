@@ -13,12 +13,14 @@ export function ControlsPanel({
   dotsEnabled,
   progress,
   disablePagesAmountManagement,
+  overdragEnabled,
   setPage,
   addPage,
   removePage,
   toggleScroll,
   toggleDots,
   toggleAnimation,
+  toggleOverdrag,
 }: NavigationPanelProps) {
   const firstPage = useCallback(() => setPage(0), [setPage]);
   const prevPage = useCallback(() => setPage(activePage - 1), [
@@ -44,6 +46,11 @@ export function ControlsPanel({
           style={styles.buttonAdjustment}
           text={dotsEnabled ? 'Hide dots' : 'Show dots'}
           onPress={toggleDots}
+        />
+        <Button
+          style={styles.buttonAdjustment}
+          text={overdragEnabled ? 'Overdrag Enabled' : 'Overdrag Disabled'}
+          onPress={() => toggleOverdrag()}
         />
       </View>
       {!disablePagesAmountManagement ? (

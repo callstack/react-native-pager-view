@@ -18,6 +18,7 @@ export function BasicViewPagerExample() {
         ref={ref}
         style={styles.viewPager}
         initialPage={0}
+        overdrag={navigationPanel.overdragEnabled}
         scrollEnabled={navigationPanel.scrollEnabled}
         onPageScroll={navigationPanel.onPageScroll}
         onPageSelected={navigationPanel.onPageSelected}
