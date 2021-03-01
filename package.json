@@ -1,6 +1,6 @@
 {
   "name": "@react-native-community/viewpager",
-  "version": "5.0.8",
+  "version": "5.0.9",
   "description": "React Native wrapper for Android and iOS ViewPager",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
