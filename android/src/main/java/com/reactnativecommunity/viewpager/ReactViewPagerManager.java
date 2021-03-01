@@ -109,7 +109,7 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
                 view.layout(view.getLeft(), view.getTop(), view.getRight(), view.getBottom());
             }
         });
-        view.setCurrentItem(selectedTab);
+        view.setCurrentItem(selectedTab, scrollSmooth);
     }
 
 
