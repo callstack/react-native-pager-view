@@ -370,10 +370,8 @@
             offset = (point.y - self.frame.size.height)/self.frame.size.height;
         }
     }
-    if(fabs(offset) > 1) {
-        offset = offset > 0 ? 1.0 : -1.0;
-    }
-    [self.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:@(self.currentIndex) offset:@(offset)]];
+
+    [self.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:@(self.currentIndex) offset:@(fabs(offset))]];
 }
 
 @end
