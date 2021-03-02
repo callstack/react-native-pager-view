@@ -139,6 +139,7 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
 
 
     public void removeAllViews(ViewPager2 parent) {
+        parent.setUserInputEnabled(false);
         FragmentAdapter adapter = ((FragmentAdapter) parent.getAdapter());
         adapter.removeAll();
     }
