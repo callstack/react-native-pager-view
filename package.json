@@ -45,7 +45,6 @@
   "homepage": "https://github.com/callstack/react-native-viewpager#readme",
   "devDependencies": {
     "@commitlint/config-conventional": "^8.3.4",
-    "@react-native-community/bob": "^0.16.2",
     "@react-native-community/eslint-config": "^2.0.0",
     "@release-it/conventional-changelog": "^1.1.4",
     "@types/jest": "^26.0.0",
@@ -61,6 +60,7 @@
     "prettier": "^2.0.5",
     "react": "16.13.1",
     "react-native": "0.63.4",
+    "react-native-builder-bob": "^0.17.1",
     "release-it": "^13.5.8",
     "typescript": "^3.8.3"
   },
@@ -113,7 +113,7 @@
     "trailingComma": "es5",
     "useTabs": false
   },
-  "@react-native-community/bob": {
+  "react-native-builder-bob": {
     "source": "src",
     "output": "lib",
     "targets": [
