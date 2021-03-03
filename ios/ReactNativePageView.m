@@ -18,11 +18,13 @@
 @property(nonatomic, weak) UIView *currentView;
 
 @property(nonatomic, strong) NSHashTable<UIViewController *> *cachedControllers;
+@property (nonatomic, assign) CGPoint lastContentOffset;
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated;
 - (void)shouldScroll:(BOOL)scrollEnabled;
 - (void)shouldShowPageIndicator:(BOOL)showPageIndicator;
 - (void)shouldDismissKeyboard:(NSString *)dismissKeyboard;
+
 
 @end
 
@@ -349,8 +351,13 @@
     [self.eventDispatcher sendEvent:[[RCTOnPageScrollStateChanged alloc] initWithReactTag:self.reactTag state:@"idle" coalescingKey:_coalescingKey++]];
 }
 
+- (BOOL)isHorizontal {
+    return self.orientation == UIPageViewControllerNavigationOrientationHorizontal;
+}
+
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     CGPoint point = scrollView.contentOffset;
+
     float offset = 0;
     
     if (!_overdrag) {
@@ -361,7 +368,7 @@
         }
     }
     
-    if (self.orientation == UIPageViewControllerNavigationOrientationHorizontal) {
+    if (self.isHorizontal) {
         if (self.frame.size.width != 0) {
             offset = (point.x - self.frame.size.width)/self.frame.size.width;
         }
@@ -370,10 +377,41 @@
             offset = (point.y - self.frame.size.height)/self.frame.size.height;
         }
     }
-    if(fabs(offset) > 1) {
-        offset = offset > 0 ? 1.0 : -1.0;
+
+    float absoluteOffset = fabs(offset);
+    if(absoluteOffset > 1) {
+        absoluteOffset = 1.0;
     }
-    [self.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:@(self.currentIndex) offset:@(offset)]];
+    
+    NSString *scrollDirection = [self determineScrollDirection:scrollView];
+    NSString *oppositeDirection = self.isHorizontal ? @"left" : @"up";
+    NSInteger position = self.currentIndex;
+
+    if(absoluteOffset > 0) {
+        position = [scrollDirection  isEqual: oppositeDirection] ? self.currentIndex - 1 : self.currentIndex;
+        absoluteOffset =  [scrollDirection  isEqual: oppositeDirection] ? 1 - absoluteOffset : absoluteOffset;
+    }
+   
+    
+    self.lastContentOffset = scrollView.contentOffset;
+    [self.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:@(position) offset:@(absoluteOffset)]];
 }
 
+- (NSString *)determineScrollDirection:(UIScrollView *)scrollView {
+    NSString *scrollDirection;
+    if (self.isHorizontal) {
+        if (self.lastContentOffset.x > scrollView.contentOffset.x) {
+            scrollDirection = @"left";
+        } else if (self.lastContentOffset.x < scrollView.contentOffset.x) {
+            scrollDirection = @"right";
+        }
+    } else {
+        if (self.lastContentOffset.y > scrollView.contentOffset.y) {
+            scrollDirection = @"up";
+        } else if (self.lastContentOffset.y < scrollView.contentOffset.y) {
+            scrollDirection = @"down";
+        }
+    }
+    return scrollDirection;
+}
 @end
