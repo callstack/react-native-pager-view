@@ -36,6 +36,7 @@
     if (self = [super init]) {
         _scrollEnabled = YES;
         _pageMargin = 0;
+        _previousIndex = -1;
         _transitionStyle = UIPageViewControllerTransitionStyleScroll;
         _orientation = UIPageViewControllerNavigationOrientationHorizontal;
         _currentIndex = 0;
@@ -173,7 +174,10 @@
         weakSelf.currentView = controller.view;
         
         if (weakSelf.eventDispatcher) {
-            [weakSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:weakSelf.reactTag position:@(index) coalescingKey:coalescingKey]];
+            if(_previousIndex != _currentIndex){
+                [weakSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:weakSelf.reactTag position:@(index) coalescingKey:coalescingKey]];
+            }
+            _previousIndex = _currentIndex;
         }
         
     }];
@@ -280,7 +284,7 @@
         NSUInteger currentIndex = [self.reactSubviews indexOfObject:currentVC.view];
         
         self.currentIndex = currentIndex;
-        
+        self.previousIndex = currentIndex - 1;
         self.currentView = currentVC.view;
         self.reactPageIndicatorView.currentPage = currentIndex;
         
