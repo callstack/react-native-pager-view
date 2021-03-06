@@ -19,8 +19,8 @@ import java.util.List;
 public class FragmentAdapter extends FragmentStateAdapter {
     private final List<WeakReference<ViewPagerFragment>> mFragments = new LinkedList<>();
     private final List<View> mReactChildrenViews = new ArrayList<>();
-    public int count = 0;
-    public int offset = 0;
+    private int count = 0;
+    private int offset = 0;
 
     public FragmentAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
@@ -37,6 +37,14 @@ public class FragmentAdapter extends FragmentStateAdapter {
     @Override
     public int getItemCount() {
         return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
     @Nullable

@@ -125,12 +125,12 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
 
     @ReactProp(name = "count")
     public void setCount(ViewPager2 view, int count) {
-        ((FragmentAdapter) view.getAdapter()).count = count;
+        ((FragmentAdapter) view.getAdapter()).setCount(count);
     }
 
     @ReactProp(name = "offset")
     public void setOffset(ViewPager2 view, int offset) {
-        ((FragmentAdapter) view.getAdapter()).offset = offset;
+        ((FragmentAdapter) view.getAdapter()).setOffset(offset);
     }
 
     @ReactProp(name = "orientation")
