@@ -184,13 +184,35 @@
 
 #pragma mark - UIScrollViewDelegate
 
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if (self.onPageScrollStateChanged) {
+        self.onPageScrollStateChanged(@{
+            @"pageScrollState": @"dragging"
+        });
+    }
+}
+
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
+    if (self.onPageScrollStateChanged) {
+        self.onPageScrollStateChanged(@{
+            @"pageScrollState": @"settling"
+        });
+    }
+
     if (!self.overdrag) {
         if (self.currentPage == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width) {
             *targetContentOffset = CGPointMake(scrollView.bounds.size.width, 0);
         } else if (self.currentPage == self.count -1 && scrollView.contentOffset.x >= scrollView.bounds.size.width) {
             *targetContentOffset = CGPointMake(scrollView.bounds.size.width, 0);
         }
+    }
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    if (self.onPageScrollStateChanged) {
+        self.onPageScrollStateChanged(@{
+            @"pageScrollState": @"idle"
+        });
     }
 }
 

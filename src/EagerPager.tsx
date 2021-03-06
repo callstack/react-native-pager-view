@@ -28,6 +28,7 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
         count={React.Children.count(this.props.children)}
         offset={0}
         onPageScroll={this.props.onPageScroll}
+        onPageScrollStateChanged={this.props.onPageScrollStateChanged}
         onPageSelected={this.props.onPageSelected}
         orientation={this.props.orientation}
         overdrag={this.props.overdrag}

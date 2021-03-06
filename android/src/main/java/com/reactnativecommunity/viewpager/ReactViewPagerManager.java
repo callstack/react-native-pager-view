@@ -22,12 +22,16 @@ import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.EventDispatcher;
 import com.reactnativecommunity.viewpager.event.PageScrollEvent;
+import com.reactnativecommunity.viewpager.event.PageScrollStateChangedEvent;
 import com.reactnativecommunity.viewpager.event.PageSelectedEvent;
 
 import java.util.Map;
 
 import static androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL;
 import static androidx.viewpager2.widget.ViewPager2.ORIENTATION_VERTICAL;
+import static androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_DRAGGING;
+import static androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_IDLE;
+import static androidx.viewpager2.widget.ViewPager2.SCROLL_STATE_SETTLING;
 
 public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
 
@@ -58,6 +62,26 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
             public void onPageSelected(int position) {
                 eventDispatcher.dispatchEvent(
                         new PageSelectedEvent(vp.getId(), position));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                String pageScrollState;
+                switch (state) {
+                    case SCROLL_STATE_IDLE:
+                        pageScrollState = "idle";
+                        break;
+                    case SCROLL_STATE_DRAGGING:
+                        pageScrollState = "dragging";
+                        break;
+                    case SCROLL_STATE_SETTLING:
+                        pageScrollState = "settling";
+                        break;
+                    default:
+                        throw new IllegalStateException("Unsupported pageScrollState");
+                }
+                eventDispatcher.dispatchEvent(
+                        new PageScrollStateChangedEvent(vp.getId(), pageScrollState));
             }
         });
         return vp;
@@ -102,6 +126,7 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
     public Map<String, Object> getExportedCustomDirectEventTypeConstants() {
         return MapBuilder.<String, Object>of(
                 PageScrollEvent.EVENT_NAME, MapBuilder.of("registrationName", "onPageScroll"),
+                PageScrollStateChangedEvent.EVENT_NAME, MapBuilder.of("registrationName", "onPageScrollStateChanged"),
                 PageSelectedEvent.EVENT_NAME, MapBuilder.of("registrationName", "onPageSelected"));
     }
 

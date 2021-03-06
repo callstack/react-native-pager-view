@@ -130,6 +130,7 @@ export class ViewPager<ItemT> extends React.PureComponent<
         count={this.props.data.length}
         offset={offset}
         onPageScroll={this.props.onPageScroll}
+        onPageScrollStateChanged={this.props.onPageScrollStateChanged}
         onPageSelected={this.onPageSelected}
         orientation={this.props.orientation}
         overdrag={this.props.overdrag}
