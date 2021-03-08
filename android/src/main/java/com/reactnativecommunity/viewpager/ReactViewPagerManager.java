@@ -5,15 +5,12 @@
 
 package com.reactnativecommunity.viewpager;
 
-import android.util.SparseArray;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import androidx.fragment.app.FragmentActivity;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
-import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.facebook.infer.annotation.Assertions;
@@ -235,8 +232,25 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
 
     @ReactProp(name = "pageMargin", defaultFloat = 0)
     public void setPageMargin(ViewPager2 pager, float margin) {
-        int pageMargin = (int) PixelUtil.toPixelFromDIP(margin);
-        pager.setPageTransformer(new MarginPageTransformer(pageMargin));
+        final int pageMargin = (int) PixelUtil.toPixelFromDIP(margin);
+        final ViewPager2 vp = pager;
+
+        /**
+         * Don't use MarginPageTransformer to be able to support negative margins
+         */
+        pager.setPageTransformer(new ViewPager2.PageTransformer() {
+            @Override
+            public void transformPage(@NonNull View page, float position) {
+                float offset = pageMargin * position;
+
+                if (vp.getOrientation() == ViewPager2.ORIENTATION_HORIZONTAL) {
+                    boolean isRTL = vp.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+
+                    page.setTranslationX(isRTL ? -offset : offset);
+                } else {
+                    page.setTranslationY(offset);
+                }
+            }
+        });
     }
 }
-

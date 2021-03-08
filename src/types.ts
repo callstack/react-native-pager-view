@@ -84,6 +84,8 @@ export interface ViewPagerProps {
    * be recreated from the adapter when needed.
    * Defaults to RecyclerView's caching strategy.
    * The given value must either be larger than 0.
+   *
+   * Only supported on Android.
    */
   offscreenPageLimit?: number;
 
