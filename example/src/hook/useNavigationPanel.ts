@@ -3,7 +3,7 @@ import type {
   PageScrollStateChangedNativeEvent,
   ViewPagerOnPageScrollEventData,
   ViewPagerOnPageSelectedEventData,
-} from '@react-native-community/viewpager';
+} from 'react-native-pager-view';
 import { Animated } from 'react-native';
 import { createPage, CreatePage } from '../utils';
 import { useCallback, useMemo, useRef, useState } from 'react';

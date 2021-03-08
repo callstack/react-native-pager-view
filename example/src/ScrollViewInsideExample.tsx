@@ -1,4 +1,4 @@
-import ViewPager from '@react-native-community/viewpager';
+import ViewPager from 'react-native-pager-view';
 import React from 'react';
 import { useState } from 'react';
 import { View, StyleSheet, Button, ScrollView, Animated } from 'react-native';

@@ -17,7 +17,7 @@ import {
   ImageRequireSource,
 } from 'react-native';
 import type { ViewPagerOnPageScrollEventData } from 'src/types';
-import ViewPager from '@react-native-community/viewpager';
+import ViewPager from 'react-native-pager-view';
 
 const data = [
   {

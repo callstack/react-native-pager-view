@@ -11,7 +11,7 @@ import {
   Animated,
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import ViewPager from '@react-native-community/viewpager';
+import ViewPager from 'react-native-pager-view';
 import { logoUrl } from './utils';
 
 import { NavigationPanel } from './component/NavigationPanel';

@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import ViewPager, {
   ViewPagerOnPageScrollEventData,
-} from '@react-native-community/viewpager';
+} from 'react-native-pager-view';
 
 import {
   ScalingDot,

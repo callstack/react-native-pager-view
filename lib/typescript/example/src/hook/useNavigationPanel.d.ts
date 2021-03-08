@@ -1,5 +1,5 @@
 /// <reference types="react" />
-import type { default as ViewPager, PageScrollStateChangedNativeEvent } from '@react-native-community/viewpager';
+import type { default as ViewPager, PageScrollStateChangedNativeEvent } from 'react-native-pager-view';
 import { CreatePage } from '../utils';
 export declare type UseNavigationPanelProps = ReturnType<typeof useNavigationPanel>;
 export interface EventLog {
