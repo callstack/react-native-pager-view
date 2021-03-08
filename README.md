@@ -180,7 +180,7 @@ yarn lint --fix
 - `flex:1` does not work for child views, please use `width:”100%”, height:”100%” ` [instead](https://github.com/react-native-community/react-native-viewpager/issues/186#issuecomment-675320732)
 
 - [iOS]: In case of `UIViewControllerHierarchyInconsistency` error, please use below fix:
- 
+
 ```
 requestAnimationFrame(() => refViewPager.current?.setPage(index));
 ```
