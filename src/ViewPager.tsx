@@ -128,6 +128,7 @@ export class ViewPager<ItemT> extends React.PureComponent<
     return (
       <ViewPagerNative
         count={this.props.data.length}
+        offscreenPageLimit={this.props.offscreenPageLimit}
         offset={offset}
         onPageScroll={this.props.onPageScroll}
         onPageScrollStateChanged={this.props.onPageScrollStateChanged}

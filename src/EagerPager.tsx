@@ -26,6 +26,7 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
     return (
       <ViewPagerNative
         count={React.Children.count(this.props.children)}
+        offscreenPageLimit={this.props.offscreenPageLimit}
         offset={0}
         onPageScroll={this.props.onPageScroll}
         onPageScrollStateChanged={this.props.onPageScrollStateChanged}

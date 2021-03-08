@@ -153,6 +153,11 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
         ((FragmentAdapter) view.getAdapter()).setCount(count);
     }
 
+    @ReactProp(name = "offscreenPageLimit", defaultInt = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT)
+    public void setOffscreenPageLimit(ViewPager2 view, int limit) {
+        view.setOffscreenPageLimit(limit);
+    }
+
     @ReactProp(name = "offset")
     public void setOffset(ViewPager2 view, int offset) {
         ((FragmentAdapter) view.getAdapter()).setOffset(offset);

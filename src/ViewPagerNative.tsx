@@ -11,6 +11,7 @@ const VIEW_MANAGER_NAME = 'RNCViewPager';
 
 type ViewPagerNativeProps = {
   count: number;
+  offscreenPageLimit?: number;
   offset: number;
   onPageScroll?: (event: ViewPagerOnPageScrollEvent) => void;
   onPageScrollStateChanged?: (event: PageScrollStateChangedNativeEvent) => void;
