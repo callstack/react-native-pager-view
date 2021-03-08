@@ -4,6 +4,75 @@
 
 `yarn add react-native-pager-view`
 
+## Linking
+
+### >= 0.60
+
+Autolinking will just do the job.
+
+### < 0.60
+
+#### Mostly automatic
+
+`react-native link react-native-pager-view`
+
+#### Manual linking
+
+<details>
+<summary>Manually link the library on iOS</summary>
+</br>
+
+Follow the [instructions in the React Native documentation](https://facebook.github.io/react-native/docs/linking-libraries-ios#manual-linking) to manually link the framework or link using [Cocoapods](https://cocoapods.org) by adding this to your `Podfile`:
+
+```ruby
+pod 'react-native-pager-view', :path => '../node_modules/react-native-pager-view'
+```
+
+</details>
+
+<details>
+<summary>Manually link the library on Android</summary>
+</br>
+Make the following changes:
+
+#### `android/settings.gradle`
+
+```groovy
+include ':react-native-pager-view'
+project(':react-native-pager-view').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-pager-view')
+```
+
+#### `android/app/build.gradle`
+
+```groovy
+dependencies {
+   ...
+   implementation project(':react-native-pager-view')
+}
+```
+
+#### `android/app/src/main/.../MainApplication.java`
+
+On top, where imports are:
+
+```java
+import com.reactnativecommunity.viewpager.RNCViewPagerPackage;
+```
+
+Add the `RNCViewPagerPackage` class to your list of exported packages.
+
+```java
+@Override
+protected List<ReactPackage> getPackages() {
+  return Arrays.<ReactPackage>asList(
+    new MainReactPackage(),
+    new RNCViewPagerPackage()
+  );
+}
+```
+
+</details>
+
 ## Usage
 
 ```js
