@@ -215,10 +215,18 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     if (!self.overdrag) {
-        if (self.currentPage == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width) {
-            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
-        } else if (self.currentPage == self.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width) {
-            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+        if (self.orientation == UIPageViewControllerNavigationOrientationHorizontal) {
+            if (self.currentPage == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width) {
+                scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+            } else if (self.currentPage == self.count - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width) {
+                scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+            }
+        } else {
+            if (self.currentPage == 0 && scrollView.contentOffset.y < scrollView.bounds.size.height) {
+                scrollView.contentOffset = CGPointMake(0, scrollView.bounds.size.height);
+            } else if (self.currentPage == self.count - 1 && scrollView.contentOffset.y > scrollView.bounds.size.height) {
+                scrollView.contentOffset = CGPointMake(0, scrollView.bounds.size.height);
+            }
         }
     }
 
@@ -227,8 +235,14 @@
     }
     CGPoint point = scrollView.contentOffset;
     float offset = 0;
-    if (self.frame.size.width != 0) {
-        offset = (point.x - self.frame.size.width) / self.frame.size.width;
+    if (self.orientation == UIPageViewControllerNavigationOrientationHorizontal) {
+        if (self.frame.size.width != 0) {
+            offset = (point.x - self.frame.size.width) / self.frame.size.width;
+        }
+    } else {
+        if (self.frame.size.height != 0) {
+            offset = (point.y - self.frame.size.height) / self.frame.size.height;
+        }
     }
     if (fabs(offset) > 1) {
         offset = offset > 0 ? 1.0 : -1.0;
