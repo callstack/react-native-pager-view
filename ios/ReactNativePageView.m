@@ -20,6 +20,7 @@
     if (self = [super init]) {
         _controllerCache = [NSMapTable weakToWeakObjectsMapTable];
         _currentPage = 0;
+        _pageMargin = 0;
         _scrollEnabled = true;
         _transitionStyle = UIPageViewControllerTransitionStyleScroll;
         _orientation = UIPageViewControllerNavigationOrientationHorizontal;
@@ -37,6 +38,7 @@
 - (void)didSetProps:(NSArray<NSString *> *)changedProps {
     if (
         [changedProps containsObject:@"orientation"]
+        || [changedProps containsObject:@"pageMargin"]
         || [changedProps containsObject:@"transitionStyle"]) {
         [self embed];
         [self goTo:self.currentPage animated:false];
@@ -49,12 +51,6 @@
 
 - (void)embed {
     if (self.reactPageViewController) {
-        if (
-            self.reactPageViewController.navigationOrientation == self.orientation
-            && self.reactPageViewController.transitionStyle == self.transitionStyle) {
-            // No change needed.
-            return;
-        }
         // Need to reinitialize.
         [self.reactPageViewController removeFromParentViewController];
         for (UIView *key in self.controllerCache) {
@@ -63,9 +59,10 @@
         [self.controllerCache removeAllObjects];
     }
 
+    NSDictionary *options = @{ UIPageViewControllerOptionInterPageSpacingKey: @(self.pageMargin) };
     self.reactPageViewController = [[UIPageViewController alloc] initWithTransitionStyle:self.transitionStyle
                                                                    navigationOrientation:self.orientation
-                                                                                 options:nil];
+                                                                                 options:options];
     self.reactPageViewController.dataSource = self;
     self.reactPageViewController.delegate = self;
     [self addSubview:self.reactPageViewController.view];

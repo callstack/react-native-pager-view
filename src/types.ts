@@ -80,6 +80,12 @@ export interface EagerPagerProps {
   overdrag?: boolean;
 
   /**
+   * Blank space to show between pages. This is only visible while scrolling,
+   * pages are still edge-to-edge.
+   */
+  pageMargin?: number;
+
+  /**
    * When false, the content does not scroll.
    * The default value is true.
    */

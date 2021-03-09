@@ -135,6 +135,7 @@ export class ViewPager<ItemT> extends React.PureComponent<
         onPageSelected={this.onPageSelected}
         orientation={this.props.orientation}
         overdrag={this.props.overdrag}
+        pageMargin={this.props.pageMargin}
         scrollEnabled={this.props.scrollEnabled}
         style={this.props.style}
         transitionStyle={this.props.transitionStyle}

@@ -33,6 +33,7 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
         onPageSelected={this.props.onPageSelected}
         orientation={this.props.orientation}
         overdrag={this.props.overdrag}
+        pageMargin={this.props.pageMargin}
         scrollEnabled={this.props.scrollEnabled}
         style={this.props.style}
         transitionStyle={this.props.transitionStyle}

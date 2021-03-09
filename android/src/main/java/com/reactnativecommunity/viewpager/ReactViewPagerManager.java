@@ -16,6 +16,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.common.MapBuilder;
+import com.facebook.react.uimanager.PixelUtil;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.facebook.react.uimanager.UIManagerModule;
 import com.facebook.react.uimanager.ViewGroupManager;
@@ -174,6 +175,28 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
                 ? ViewPager2.OVER_SCROLL_IF_CONTENT_SCROLLS
                 : ViewPager2.OVER_SCROLL_NEVER
         );
+    }
+
+    @ReactProp(name = "pageMargin", defaultFloat = 0)
+    public void setPageMargin(ViewPager2 view, float margin) {
+        final int pageMargin = (int) PixelUtil.toPixelFromDIP(margin);
+        final ViewPager2 vp = view;
+
+        // Don't use MarginPageTransformer to be able to support negative margins.
+        view.setPageTransformer(new ViewPager2.PageTransformer() {
+            @Override
+            public void transformPage(@NonNull View page, float position) {
+                float offset = pageMargin * position;
+
+                if (vp.getOrientation() == ViewPager2.ORIENTATION_HORIZONTAL) {
+                    boolean isRTL = vp.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL;
+
+                    page.setTranslationX(isRTL ? -offset : offset);
+                } else {
+                    page.setTranslationY(offset);
+                }
+            }
+        });
     }
 
     @ReactProp(name = "scrollEnabled", defaultBoolean = true)

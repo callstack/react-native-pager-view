@@ -18,6 +18,7 @@ export function BasicViewPagerExample() {
         onPageScroll={navigationPanel.onPageScroll}
         onPageSelected={navigationPanel.onPageSelected}
         onPageScrollStateChanged={navigationPanel.onPageScrollStateChanged}
+        pageMargin={10}
         orientation="horizontal"
         overdrag={navigationPanel.overdragEnabled}
         transitionStyle="scroll"
