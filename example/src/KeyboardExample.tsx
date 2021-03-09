@@ -11,7 +11,7 @@ import {
   Animated,
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import ViewPager from '@react-native-community/viewpager';
+import PagerView from 'react-native-pager-view';
 import { logoUrl } from './utils';
 
 import { NavigationPanel } from './component/NavigationPanel';
@@ -34,7 +34,7 @@ const Page = ({ title, description, onPress, buttonTitle }: PageProps) => {
   );
 };
 
-const AnimatedViewPager = Animated.createAnimatedComponent(ViewPager);
+const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
 export function KeyboardExample() {
   const { ref, ...navigationPanel } = useNavigationPanel(2);
@@ -51,7 +51,7 @@ export function KeyboardExample() {
           />
         </View>
         <View style={styles.flex}>
-          <AnimatedViewPager
+          <AnimatedPagerView
             {...navigationPanel}
             ref={ref}
             style={styles.flex}
@@ -69,12 +69,12 @@ export function KeyboardExample() {
             <View style={styles.sectionContainer}>
               <Page
                 title="Second Question"
-                description="Why ViewPager?"
+                description="Why Pager View?"
                 onPress={useCallback(() => setPage(0), [setPage])}
                 buttonTitle="Go to previous question"
               />
             </View>
-          </AnimatedViewPager>
+          </AnimatedPagerView>
         </View>
       </ScrollView>
       <NavigationPanel

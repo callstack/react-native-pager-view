@@ -1,10 +1,10 @@
-import ViewPager from '@react-native-community/viewpager';
+import PagerView from 'react-native-pager-view';
 import React from 'react';
 import { useState } from 'react';
 import { View, StyleSheet, Button, ScrollView, Animated } from 'react-native';
 import { PAGES, createPage } from './utils';
 
-const AnimatedViewPager = Animated.createAnimatedComponent(ViewPager);
+const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
 export const ScrollViewInsideExample = (): JSX.Element => {
   const [pages] = useState(
@@ -14,7 +14,7 @@ export const ScrollViewInsideExample = (): JSX.Element => {
   );
 
   return (
-    <AnimatedViewPager style={styles.flex}>
+    <AnimatedPagerView style={styles.flex}>
       {pages.map((page) => (
         <ScrollView key={page.key} style={styles.content}>
           {Array(20)
@@ -31,7 +31,7 @@ export const ScrollViewInsideExample = (): JSX.Element => {
             ))}
         </ScrollView>
       ))}
-    </AnimatedViewPager>
+    </AnimatedPagerView>
   );
 };
 

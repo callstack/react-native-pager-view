@@ -1,6 +1,6 @@
 {
-  "name": "react-native-viewpager-example",
-  "description": "Example app for react-native-viewpager",
+  "name": "react-native-pager-view-example",
+  "description": "Example app for react-native-pager-view",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -21,9 +21,9 @@
     "react-native-screens": "^2.16.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.9.6",
-    "@babel/runtime": "^7.9.6",
+    "@babel/core": "^7.12.10",
+    "@babel/runtime": "^7.12.5",
     "babel-plugin-module-resolver": "^4.0.0",
-    "metro-react-native-babel-preset": "^0.59.0"
+    "metro-react-native-babel-preset": "^0.64.0"
   }
 }

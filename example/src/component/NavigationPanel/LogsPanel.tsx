@@ -11,6 +11,7 @@ export function LogsPanel({ logs }: LogsPanelProps) {
       keyExtractor={({ timestamp }) => `${timestamp.getTime()}`}
       data={logs}
       renderItem={({ item }) => (
+        //@ts-ignore
         <View style={[styles.item, styles[item.event]]}>
           <Text style={styles.text}>
             {item.timestamp.toLocaleTimeString()}
