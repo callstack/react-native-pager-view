@@ -1,4 +1,9 @@
-import { requireNativeComponent, StyleProp, ViewStyle } from 'react-native';
+import {
+  GestureResponderEvent,
+  requireNativeComponent,
+  StyleProp,
+  ViewStyle,
+} from 'react-native';
 import type {
   Orientation,
   PageScrollStateChangedNativeEvent,
@@ -13,6 +18,7 @@ type ViewPagerNativeProps = {
   count: number;
   offscreenPageLimit?: number;
   offset: number;
+  onMoveShouldSetResponderCapture: (event: GestureResponderEvent) => boolean;
   onPageScroll?: (event: ViewPagerOnPageScrollEvent) => void;
   onPageScrollStateChanged?: (event: PageScrollStateChangedNativeEvent) => void;
   onPageSelected?: (event: ViewPagerOnPageSelectedEvent) => void;

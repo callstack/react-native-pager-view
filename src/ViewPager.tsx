@@ -1,6 +1,7 @@
 import React from 'react';
 import { findNodeHandle, StyleSheet, UIManager, View } from 'react-native';
 import type {
+  PageScrollStateChangedNativeEvent,
   ViewPagerOnPageSelectedEvent,
   ViewPagerProps,
   ViewPagerState,
@@ -20,6 +21,8 @@ export class ViewPager<ItemT> extends React.PureComponent<
   ViewPagerProps<ItemT>,
   ViewPagerState
 > {
+  private isScrolling = false;
+
   constructor(props: ViewPagerProps<ItemT>) {
     super(props);
     this.state = this.computeRenderWindow({
@@ -94,6 +97,15 @@ export class ViewPager<ItemT> extends React.PureComponent<
     return { offset, windowLength };
   }
 
+  private onMoveShouldSetResponderCapture = () => this.isScrolling;
+
+  private onPageScrollStateChanged = (
+    event: PageScrollStateChangedNativeEvent
+  ) => {
+    this.props.onPageScrollStateChanged?.(event);
+    this.isScrolling = event.nativeEvent.pageScrollState === 'dragging';
+  };
+
   private onPageSelected = (event: ViewPagerOnPageSelectedEvent) => {
     const currentPage = event.nativeEvent.position;
     this.setState((prevState) =>
@@ -130,8 +142,9 @@ export class ViewPager<ItemT> extends React.PureComponent<
         count={this.props.data.length}
         offscreenPageLimit={this.props.offscreenPageLimit}
         offset={offset}
+        onMoveShouldSetResponderCapture={this.onMoveShouldSetResponderCapture}
         onPageScroll={this.props.onPageScroll}
-        onPageScrollStateChanged={this.props.onPageScrollStateChanged}
+        onPageScrollStateChanged={this.onPageScrollStateChanged}
         onPageSelected={this.onPageSelected}
         orientation={this.props.orientation}
         overdrag={this.props.overdrag}
