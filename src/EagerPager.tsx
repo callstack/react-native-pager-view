@@ -1,8 +1,9 @@
 import React from 'react';
-import { findNodeHandle, UIManager } from 'react-native';
+import { findNodeHandle, Keyboard, UIManager } from 'react-native';
 import type {
   EagerPagerProps,
   PageScrollStateChangedNativeEvent,
+  ViewPagerOnPageScrollEvent,
 } from './types';
 
 import { ViewPagerNative } from './ViewPagerNative';
@@ -29,6 +30,13 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
 
   private onMoveShouldSetResponderCapture = () => this.isScrolling;
 
+  private onPageScroll = (event: ViewPagerOnPageScrollEvent) => {
+    this.props.onPageScroll?.(event);
+    if (this.props.keyboardDismissMode === 'on-drag') {
+      Keyboard.dismiss();
+    }
+  };
+
   private onPageScrollStateChanged = (
     event: PageScrollStateChangedNativeEvent
   ) => {
@@ -43,7 +51,7 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
         offscreenPageLimit={this.props.offscreenPageLimit}
         offset={0}
         onMoveShouldSetResponderCapture={this.onMoveShouldSetResponderCapture}
-        onPageScroll={this.props.onPageScroll}
+        onPageScroll={this.onPageScroll}
         onPageScrollStateChanged={this.onPageScrollStateChanged}
         onPageSelected={this.props.onPageSelected}
         orientation={this.props.orientation}

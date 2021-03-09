@@ -1,7 +1,14 @@
 import React from 'react';
-import { findNodeHandle, StyleSheet, UIManager, View } from 'react-native';
+import {
+  findNodeHandle,
+  Keyboard,
+  StyleSheet,
+  UIManager,
+  View,
+} from 'react-native';
 import type {
   PageScrollStateChangedNativeEvent,
+  ViewPagerOnPageScrollEvent,
   ViewPagerOnPageSelectedEvent,
   ViewPagerProps,
   ViewPagerState,
@@ -99,6 +106,13 @@ export class ViewPager<ItemT> extends React.PureComponent<
 
   private onMoveShouldSetResponderCapture = () => this.isScrolling;
 
+  private onPageScroll = (event: ViewPagerOnPageScrollEvent) => {
+    this.props.onPageScroll?.(event);
+    if (this.props.keyboardDismissMode === 'on-drag') {
+      Keyboard.dismiss();
+    }
+  };
+
   private onPageScrollStateChanged = (
     event: PageScrollStateChangedNativeEvent
   ) => {
@@ -143,7 +157,7 @@ export class ViewPager<ItemT> extends React.PureComponent<
         offscreenPageLimit={this.props.offscreenPageLimit}
         offset={offset}
         onMoveShouldSetResponderCapture={this.onMoveShouldSetResponderCapture}
-        onPageScroll={this.props.onPageScroll}
+        onPageScroll={this.onPageScroll}
         onPageScrollStateChanged={this.onPageScrollStateChanged}
         onPageSelected={this.onPageSelected}
         orientation={this.props.orientation}

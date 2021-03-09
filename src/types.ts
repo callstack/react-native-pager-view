@@ -29,6 +29,13 @@ export interface EagerPagerProps {
   initialPage?: number;
 
   /**
+   * Determines whether the keyboard gets dismissed in response to a drag.
+   *  - 'none' (the default), drags do not dismiss the keyboard.
+   *  - 'on-drag', the keyboard is dismissed when a drag begins.
+   */
+  keyboardDismissMode?: 'none' | 'on-drag';
+
+  /**
    * Set the number of pages that should be retained to either side of the
    * currently visible page(s). Pages beyond this limit will be recreated from
    * the adapter when needed.
