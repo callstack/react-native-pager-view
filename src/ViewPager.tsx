@@ -137,6 +137,7 @@ export class ViewPager<ItemT> extends React.PureComponent<
         overdrag={this.props.overdrag}
         pageMargin={this.props.pageMargin}
         scrollEnabled={this.props.scrollEnabled}
+        showPageIndicator={this.props.showPageIndicator}
         style={this.props.style}
         transitionStyle={this.props.transitionStyle}
       >

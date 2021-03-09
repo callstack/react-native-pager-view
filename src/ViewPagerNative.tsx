@@ -20,6 +20,7 @@ type ViewPagerNativeProps = {
   overdrag?: boolean;
   pageMargin?: number;
   scrollEnabled?: boolean;
+  showPageIndicator?: boolean;
   style: StyleProp<ViewStyle>;
   transitionStyle?: TransitionStyle;
 };

@@ -7,6 +7,7 @@
 @property NSInteger currentPage;
 @property(nonatomic, strong) NSMapTable<UIViewController *, NSNumber *> *pageIndexes;
 @property(nonatomic, strong) UIPageViewController *reactPageViewController;
+@property(nonatomic, strong) UIPageControl *reactPageIndicatorView;
 
 @property(nonatomic, weak) UIScrollView *scrollView;
 
@@ -21,10 +22,11 @@
         _controllerCache = [NSMapTable weakToWeakObjectsMapTable];
         _currentPage = 0;
         _pageMargin = 0;
-        _scrollEnabled = true;
+        _scrollEnabled = YES;
+        _showPageIndicator = NO;
         _transitionStyle = UIPageViewControllerTransitionStyleScroll;
         _orientation = UIPageViewControllerNavigationOrientationHorizontal;
-        _overdrag = true;
+        _overdrag = YES;
         _pageIndexes = [NSMapTable weakToStrongObjectsMapTable];
         [self embed];
     }
@@ -32,7 +34,7 @@
 }
 
 - (void)didUpdateReactSubviews {
-    [self goTo:self.currentPage animated:false];
+    [self goTo:self.currentPage animated:NO];
 }
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps {
@@ -41,10 +43,13 @@
         || [changedProps containsObject:@"pageMargin"]
         || [changedProps containsObject:@"transitionStyle"]) {
         [self embed];
-        [self goTo:self.currentPage animated:false];
-    } else if ([changedProps containsObject:@"scrollEnabled"]) {
-        if (self.scrollView) {
+        [self goTo:self.currentPage animated:NO];
+    } else {
+        if ([changedProps containsObject:@"scrollEnabled"] && self.scrollView) {
             self.scrollView.scrollEnabled = self.scrollEnabled;
+        }
+        if ([changedProps containsObject:@"showPageIndicator"]) {
+            self.reactPageIndicatorView.hidden = !self.showPageIndicator;
         }
     }
 }
@@ -52,7 +57,7 @@
 - (void)embed {
     if (self.reactPageViewController) {
         // Need to reinitialize.
-        [self.reactPageViewController removeFromParentViewController];
+        [self.reactPageViewController.view removeFromSuperview];
         for (UIView *key in self.controllerCache) {
             [self.controllerCache objectForKey:key].view = nil;
         }
@@ -75,6 +80,37 @@
             break;
         }
     }
+
+    [self attachPageIndicator];
+}
+
+- (void)attachPageIndicator {
+    UIPageControl *pageIndicatorView = [[UIPageControl alloc] init];
+    pageIndicatorView.tintColor = UIColor.blackColor;
+    pageIndicatorView.pageIndicatorTintColor = UIColor.whiteColor;
+    pageIndicatorView.currentPageIndicatorTintColor = UIColor.blackColor;
+    [pageIndicatorView addTarget:self
+                          action:@selector(pageControlValueChanged:)
+                forControlEvents:UIControlEventValueChanged];
+    pageIndicatorView.numberOfPages = self.count;
+    pageIndicatorView.currentPage = self.currentPage;
+    pageIndicatorView.hidden = !self.showPageIndicator;
+
+    [self.reactPageViewController.view addSubview:pageIndicatorView];
+    self.reactPageIndicatorView = pageIndicatorView;
+
+    UIView *pageViewControllerView = self.reactPageViewController.view;
+    pageIndicatorView.translatesAutoresizingMaskIntoConstraints = NO;
+    NSLayoutConstraint *bottomConstraint = [pageIndicatorView.bottomAnchor constraintEqualToAnchor: pageViewControllerView.bottomAnchor constant:0];
+    NSLayoutConstraint *leadingConstraint = [pageIndicatorView.leadingAnchor constraintEqualToAnchor: pageViewControllerView.leadingAnchor constant:0];
+    NSLayoutConstraint *trailingConstraint = [pageIndicatorView.trailingAnchor constraintEqualToAnchor: pageViewControllerView.trailingAnchor constant:0];
+    [NSLayoutConstraint activateConstraints:@[bottomConstraint, leadingConstraint, trailingConstraint]];
+}
+
+- (void)pageControlValueChanged:(UIPageControl *)sender {
+    if (sender.currentPage != self.currentPage) {
+        [self goTo:sender.currentPage animated:YES];
+    }
 }
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
@@ -82,6 +118,9 @@
     if (!controller) {
         return;
     }
+
+    self.reactPageIndicatorView.numberOfPages = self.count;
+    self.reactPageIndicatorView.currentPage = index;
 
     __weak ReactNativePageView *weakSelf = self;
     [self.reactPageViewController setViewControllers:@[controller]
@@ -151,6 +190,7 @@
         return;
     }
     self.currentPage = [pageIndex integerValue];
+    self.reactPageIndicatorView.currentPage = self.currentPage;
 
     if (self.onPageSelected) {
         self.onPageSelected(@{

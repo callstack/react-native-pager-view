@@ -22,6 +22,7 @@ export function BasicViewPagerExample() {
         orientation="horizontal"
         overdrag={navigationPanel.overdragEnabled}
         transitionStyle="scroll"
+        showPageIndicator={navigationPanel.dotsEnabled}
         data={navigationPanel.pages}
         keyExtractor={(page) => `${page.key}`}
         renderItem={({ item }) => (

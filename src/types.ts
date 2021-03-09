@@ -91,6 +91,11 @@ export interface EagerPagerProps {
    */
   scrollEnabled?: boolean;
 
+  /**
+   * Shows the dots indicator at the bottom of the view.
+   */
+  showPageIndicator?: boolean;
+
   style?: ReactNative.StyleProp<ReactNative.ViewStyle>;
 
   /**
