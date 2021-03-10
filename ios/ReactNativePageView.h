@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) BOOL overdrag;
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated;
+- (void)shouldScroll:(BOOL)scrollEnabled;
 
 @end
 

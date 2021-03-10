@@ -142,6 +142,9 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
         if ("setPage".equals(commandId) && args != null) {
             setCurrentItem(view, args.getInt(0), args.getBoolean(1));
             return;
+        } else if ("setScrollEnabled".equals(commandId) && args != null) {
+            view.setUserInputEnabled(args.getBoolean(0));
+            return;
         }
         throw new IllegalArgumentException(String.format(
                 "Unsupported command %s received by %s.",

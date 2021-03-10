@@ -17,6 +17,10 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
     }
   }
 
+  /**
+   * A helper function to scroll to a specific page in the ViewPager.
+   * Default to animated transition between pages.
+   */
   setPage(page: number, animated = true) {
     UIManager.dispatchViewManagerCommand(findNodeHandle(this), 'setPage', [
       page,
@@ -24,8 +28,26 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
     ]);
   }
 
+  /**
+   * A helper function to scroll to a specific page in the ViewPager.
+   * The transition between pages will *not* be animated.
+   */
   setPageWithoutAnimation(page: number) {
     this.setPage(page, false);
+  }
+
+  /**
+   * A helper function to enable/disable scroll imperatively.
+   * The recommended way is using the scrollEnabled prop, however, there might
+   * be a case where an imperative solution is more useful (e.g. for not
+   * blocking an animation)
+   */
+  setScrollEnabled(scrollEnabled: boolean) {
+    UIManager.dispatchViewManagerCommand(
+      findNodeHandle(this),
+      'setScrollEnabled',
+      [scrollEnabled]
+    );
   }
 
   private onMoveShouldSetResponderCapture = () => this.isScrolling;

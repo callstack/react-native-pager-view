@@ -140,6 +140,13 @@
     [self.reactPageViewController.view layoutIfNeeded];
 }
 
+- (void)shouldScroll:(BOOL)scrollEnabled {
+    self.scrollEnabled = scrollEnabled;
+    if (self.reactPageViewController.view) {
+        self.scrollView.scrollEnabled = scrollEnabled;
+    }
+}
+
 - (UIViewController *)getControllerForView:(UIView *)view {
     UIViewController *controller = [self.controllerCache objectForKey:view];
     if (!controller) {
