@@ -7,9 +7,9 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import ViewPager, {
-  ViewPagerOnPageScrollEventData,
-} from '@react-native-community/viewpager';
+import PagerView, {
+  PagerViewOnPageScrollEventData,
+} from 'react-native-pager-view';
 
 import {
   ScalingDot,
@@ -18,7 +18,7 @@ import {
   SlidingDot,
 } from 'react-native-animated-pagination-dots';
 
-const AnimatedViewPager = Animated.createAnimatedComponent(ViewPager);
+const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
 const INTRO_DATA = [
   {
@@ -49,7 +49,7 @@ const INTRO_DATA = [
 
 export default function PaginationDotsExample() {
   const width = Dimensions.get('window').width;
-  const ref = React.useRef<ViewPager>(null);
+  const ref = React.useRef<PagerView>(null);
   const scrollOffsetAnimatedValue = React.useRef(new Animated.Value(0)).current;
   const positionAnimatedValue = React.useRef(new Animated.Value(0)).current;
   const inputRange = [0, INTRO_DATA.length];
@@ -63,7 +63,7 @@ export default function PaginationDotsExample() {
 
   const onPageScroll = React.useMemo(
     () =>
-      Animated.event<ViewPagerOnPageScrollEventData>(
+      Animated.event<PagerViewOnPageScrollEventData>(
         [
           {
             nativeEvent: {
@@ -82,10 +82,10 @@ export default function PaginationDotsExample() {
 
   return (
     <SafeAreaView style={styles.flex}>
-      <AnimatedViewPager
+      <AnimatedPagerView
         initialPage={0}
         ref={ref}
-        style={styles.viewpager}
+        style={styles.PagerView}
         onPageScroll={onPageScroll}
       >
         {INTRO_DATA.map(({ key }) => (
@@ -93,7 +93,7 @@ export default function PaginationDotsExample() {
             <Text style={styles.text}>{`Page Index: ${key}`}</Text>
           </View>
         ))}
-      </AnimatedViewPager>
+      </AnimatedPagerView>
       <View style={styles.dotsContainer}>
         <View style={styles.dotContainer}>
           <Text>Expanding Dot</Text>
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
   },
-  viewpager: {
+  PagerView: {
     flex: 1,
   },
   container: {

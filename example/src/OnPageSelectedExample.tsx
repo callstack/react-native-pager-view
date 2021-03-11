@@ -9,11 +9,11 @@ import {
   Animated,
 } from 'react-native';
 
-import ViewPager from '@react-native-community/viewpager';
+import PagerView from 'react-native-pager-view';
 import { NavigationPanel } from './component/NavigationPanel';
 import { useNavigationPanel } from './hook/useNavigationPanel';
 
-const AnimatedViewPager = Animated.createAnimatedComponent(ViewPager);
+const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
 export const OnPageSelectedExample = () => {
   const callback = React.useCallback((position: number) => {
@@ -23,7 +23,7 @@ export const OnPageSelectedExample = () => {
 
   return (
     <SafeAreaView style={styles.flex}>
-      <AnimatedViewPager
+      <AnimatedPagerView
         {...navigationPanel}
         ref={ref}
         style={styles.flex}
@@ -34,7 +34,7 @@ export const OnPageSelectedExample = () => {
             <Text style={styles.text}>{`Page Index: ${key}`}</Text>
           </View>
         ))}
-      </AnimatedViewPager>
+      </AnimatedPagerView>
       <NavigationPanel {...navigationPanel} />
     </SafeAreaView>
   );

@@ -1,4 +1,4 @@
-# react-native-viewpager <img src="docs/viewpager-logo.png" alt="ViewPager" width="24" height="24">
+# react-native-pager-view <img src="img/viewpager-logo.png" alt="ViewPager" width="24" height="24">
 
 [![CircleCI branch](https://img.shields.io/circleci/build/github/callstack/react-native-viewpager/master.svg)](https://circleci.com/gh/callstack/react-native-viewpager/tree/master)
 [![npm package](https://badge.fury.io/js/%40react-native-community%2Fviewpager.svg)](https://badge.fury.io/js/%40react-native-community%2Fviewpager)
@@ -9,21 +9,25 @@ This component allows the user to swipe left and right through pages of data. Un
 
 <br/>
 <p align="center">
-  <img src="docs/vp-carousel.gif" alt="ViewPager" width="300">
+  <img src="img/vp-carousel.gif" alt="ViewPager" width="300">
 </p>
 
 <br/>
 
 ## Versions
 
-| 3.x                | ~~4.0.x, 4.1.x~~  | >= 4.2.x                                                                                            | 5.x
-| -------------      | -------------     | -------------                                                                                       | -------------       |
-| iOS support        | Deprecated        | iOS support                                                                                         | iOS support         |
-| ViewPager1 support | Deprecated        | [Reverted to 3.3.0](https://github.com/callstack/react-native-viewpager/issues/233#issue-711000654) | ViewPager2 support  |
+| 4.x          | 5.x
+|------------- | -------------|
+| iOS          | iOS support  |
+| ViewPager1   | ViewPager2   |
 
+
+## Migration
+
+`"@react-native-community/viewpager"` library has been changed to `react-native-pager-view`. Here you can find more information, how to migrate pager view to the latest [version](https://github.com/callstack/react-native-pager-view/blob/master/MIGRATION.md) 
 ## Getting started
 
-`yarn add @react-native-community/viewpager`
+`yarn add react-native-pager-view`
 
 ## Linking
 
@@ -35,7 +39,7 @@ Autolinking will just do the job.
 
 #### Mostly automatic
 
-`react-native link @react-native-community/viewpager`
+`react-native link react-native-pager-view`
 
 #### Manual linking
 
@@ -43,10 +47,10 @@ Autolinking will just do the job.
 <summary>Manually link the library on iOS</summary>
 </br>
 
-Follow the [instructions in the React Native documentation](https://facebook.github.io/react-native/docs/linking-libraries-ios#manual-linking) to manually link the framework or link using [Cocoapods](https://cocoapods.org) by adding this to your `Podfile`:
+Follow the [instructions in the React Native documentation](https://facebook.github.io/react-native/img/linking-libraries-ios#manual-linking) to manually link the framework or link using [Cocoapods](https://cocoapods.org) by adding this to your `Podfile`:
 
 ```ruby
-pod 'react-native-viewpager', :path => '../node_modules/@react-native-community/viewpager'
+pod 'react-native-pager-view', :path => '../node_modules/react-native-pager-view'
 ```
 
 </details>
@@ -59,8 +63,8 @@ Make the following changes:
 #### `android/settings.gradle`
 
 ```groovy
-include ':@react-native-community_viewpager'
-project(':@react-native-community_viewpager').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/viewpager/android')
+include ':react-native-pager-view'
+project(':react-native-pager-view').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-pager-view/android')
 ```
 
 #### `android/app/build.gradle`
@@ -68,7 +72,7 @@ project(':@react-native-community_viewpager').projectDir = new File(rootProject.
 ```groovy
 dependencies {
    ...
-   implementation project(':@react-native-community_viewpager')
+   implementation project(':react-native-pager-view')
 }
 ```
 
@@ -76,18 +80,14 @@ dependencies {
 
 On top, where imports are:
 
-```java
-import com.reactnativecommunity.viewpager.RNCViewPagerPackage;
-```
-
-Add the `RNCViewPagerPackage` class to your list of exported packages.
+Add the `RNCPagerViewPackage` class to your list of exported packages.
 
 ```java
 @Override
 protected List<ReactPackage> getPackages() {
   return Arrays.<ReactPackage>asList(
     new MainReactPackage(),
-    new RNCViewPagerPackage()
+    new RNCPagerViewPackage()
   );
 }
 ```
@@ -99,33 +99,34 @@ protected List<ReactPackage> getPackages() {
 ```js
 import React from 'react';
 import {StyleSheet, View, Text} from 'react-native';
-import ViewPager from '@react-native-community/viewpager';
+import PagerView from 'react-native-pager-view';
 
 const MyPager = () => {
   return (
-    <ViewPager style={styles.viewPager} initialPage={0}>
+    <PagerView style={styles.pagerView} initialPage={0}>
       <View key="1">
         <Text>First page</Text>
       </View>
       <View key="2">
         <Text>Second page</Text>
       </View>
-    </ViewPager>
+    </PagerView>
   );
 };
 
 const styles = StyleSheet.create({
-  viewPager: {
+  pagerView: {
     flex: 1,
   },
 });
 ```
 
-**Attention:** Note that you can only use `View` components as children of `ViewPager` (cf. folder */example*)
-. For Android if `View` has own children, set prop `collapsable` to false <https://reactnative.dev/docs/view#collapsable>, otherwise react-native might remove those children views and  and it's children will be rendered as separate pages
+**Attention:** Note that you can only use `View` components as children of `PagerView` (cf. folder */example*)
+. For Android if `View` has own children, set prop `collapsable` to false <https://reactnative.dev/img/view#collapsable>, otherwise react-native might remove those children views and  and it's children will be rendered as separate pages
 
 ## Advanced usage
 
+//TODO
 For advanced usage please take a look into our [example project](https://github.com/callstack/react-native-viewpager/blob/master/example/src/BasicViewPagerExample.tsx)
 
 ## API
@@ -146,34 +147,9 @@ For advanced usage please take a look into our [example project](https://github.
 |`offscreenPageLimit: number`|Set the number of pages that should be retained to either side of the currently visible page(s). Pages beyond this limit will be recreated from the adapter when needed. Defaults to RecyclerView's caching strategy. The given value must either be larger than 0.|Android
 |`overdrag: boolean`|Allows for overscrolling after reaching the end or very beginning or pages|iOS
 
-## Development workflow
+## Contributing
 
-To get started with the project, run `yarn bootstrap` in the root directory to install the required dependencies.
-
-```sh
-yarn bootstrap
-```
-
-While developing, you can run the example to check your changes
-
-```sh
-cd example
-yarn android
-yarn ios
-```
-
-Before sending a pull rquest, make sure your code passes TypeScript and ESLint. Run the following to verify:
-
-```sh
-yarn typescript
-yarn lint
-```
-
-To fix formatting errors, run the following:
-
-```sh
-yarn lint --fix
-```
+See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
 
 ## Known Issues
 
@@ -191,14 +167,19 @@ requestAnimationFrame(() => refViewPager.current?.setPage(index));
 
 horizontal                 |  vertical
 :-------------------------:|:-------------------------:
-<img src="docs/android-viewpager.gif" alt="ViewPager" width="325"> |  <img src="docs/android-viewpager-vertical.gif" alt="ViewPager" width="325">
+<img src="img/android-viewpager.gif" alt="ViewPager" width="325"> |  <img src="img/android-viewpager-vertical.gif" alt="ViewPager" width="325">
 
 ### iOS
 
 horizontal - scroll      |  horizontal - curl
 :-------------------------:|:-------------------------:
-<img src="docs/ios-viewpager-scroll.gif" alt="ViewPager" width="325">  |  <img src="docs/ios-viewpager-curl.gif" alt="ViewPager" width="325">
+<img src="img/ios-viewpager-scroll.gif" alt="ViewPager" width="325">  |  <img src="img/ios-viewpager-curl.gif" alt="ViewPager" width="325">
 
 vertical - scroll        |  vertical - curl
 :-------------------------:|:-------------------------:
-<img src="docs/ios-viewpager-vertical.gif" alt="ViewPager" width="325">  |  <img src="docs/ios-viewpager-vertical-curl.gif" alt="ViewPager" width="325">
+<img src="img/ios-viewpager-vertical.gif" alt="ViewPager" width="325">  |  <img src="img/ios-viewpager-vertical-curl.gif" alt="ViewPager" width="325">
+
+
+## License
+
+MIT

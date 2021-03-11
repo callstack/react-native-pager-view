@@ -6,14 +6,14 @@ export type Orientation = 'horizontal' | 'vertical';
 export type OverScrollMode = 'auto' | 'always' | 'never';
 export type PageScrollState = 'idle' | 'dragging' | 'settling';
 
-export type ViewPagerOnPageScrollEvent = ReactNative.NativeSyntheticEvent<ViewPagerOnPageScrollEventData>;
-export interface ViewPagerOnPageScrollEventData {
+export type PagerViewOnPageScrollEvent = ReactNative.NativeSyntheticEvent<PagerViewOnPageScrollEventData>;
+export interface PagerViewOnPageScrollEventData {
   position: number;
   offset: number;
 }
 
-export type ViewPagerOnPageSelectedEvent = ReactNative.NativeSyntheticEvent<ViewPagerOnPageSelectedEventData>;
-export interface ViewPagerOnPageSelectedEventData {
+export type PagerViewOnPageSelectedEvent = ReactNative.NativeSyntheticEvent<PagerViewOnPageSelectedEventData>;
+export interface PagerViewOnPageSelectedEventData {
   position: number;
 }
 
@@ -22,7 +22,7 @@ export interface PageScrollStateChangedEvent {
   pageScrollState: PageScrollState;
 }
 
-export interface ViewPagerProps {
+export interface PagerViewProps {
   /**
    * Index of initial page that should be selected. Use `setPage` method to
    * update the page, and `onPageSelected` to monitor page changes
@@ -44,15 +44,15 @@ export interface ViewPagerProps {
    *    Value x means that (1 - x) fraction of the page at "position" index is
    *    visible, and x fraction of the next page is visible.
    */
-  onPageScroll?: (event: ViewPagerOnPageScrollEvent) => void;
+  onPageScroll?: (event: PagerViewOnPageScrollEvent) => void;
 
   /**
-   * This callback will be called once ViewPager finish navigating to selected page
+   * This callback will be called once PagerView finish navigating to selected page
    * (when user swipes between pages). The `event.nativeEvent` object passed to this
    * callback will have following fields:
    *  - position - index of page that has been selected
    */
-  onPageSelected?: (event: ViewPagerOnPageSelectedEvent) => void;
+  onPageSelected?: (event: PagerViewOnPageSelectedEvent) => void;
 
   /**
    * Function called when the page scrolling state has changed.

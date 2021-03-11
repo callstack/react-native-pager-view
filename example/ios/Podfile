@@ -3,13 +3,13 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '10.0'
 
-target 'ViewpagerExample' do
+target 'PagerViewExample' do
   config = use_native_modules!
 
   use_react_native!(:path => config["reactNativePath"])
 
-      pod 'react-native-viewpager', :path => '../..'
-  
+  pod 'react-native-pager-view', :path => '../..'
+
   # Enables Flipper.
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and

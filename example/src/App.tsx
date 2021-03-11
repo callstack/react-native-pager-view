@@ -2,31 +2,33 @@ import * as React from 'react';
 import { StyleSheet, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { BasicViewPagerExample } from './BasicViewPagerExample';
+import { BasicPagerViewExample } from './BasicPagerViewExample';
 import { KeyboardExample } from './KeyboardExample';
 import { OnPageScrollExample } from './OnPageScrollExample';
 import { OnPageSelectedExample } from './OnPageSelectedExample';
-import { ScrollableViewPagerExample } from './ScrollableViewPagerExample';
+import { ScrollablePagerViewExample } from './ScrollablePagerViewExample';
 import { ScrollViewInsideExample } from './ScrollViewInsideExample';
 import HeadphonesCarouselExample from './HeadphonesCarouselExample';
 import PaginationDotsExample from './PaginationDotsExample';
 
 const examples = [
-  { component: BasicViewPagerExample, name: 'Basic Example' },
+  { component: BasicPagerViewExample, name: 'Basic Example' },
   { component: KeyboardExample, name: 'Keyboard Example' },
   { component: OnPageScrollExample, name: 'OnPageScroll Example' },
   { component: OnPageSelectedExample, name: 'OnPageSelected Example' },
   { component: HeadphonesCarouselExample, name: 'Headphones Carousel Example' },
   { component: PaginationDotsExample, name: 'Pagination Dots Example' },
   {
-    component: ScrollableViewPagerExample,
-    name: 'Scrollable ViewPager Example',
+    component: ScrollablePagerViewExample,
+    name: 'Scrollable PagerView Example',
   },
   {
     component: ScrollViewInsideExample,
-    name: 'ScrollView inside ViewPager Example',
+    name: 'ScrollView inside PagerView Example',
   },
 ];
+
+// const examples = [{ component: BasicPagerViewExample, name: 'Basic Example' }];
 
 function App() {
   const navigation = useNavigation();
@@ -52,8 +54,8 @@ const Stack = createStackNavigator();
 export function Navigation() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="ViewPager Example">
-        <Stack.Screen name="ViewPager Example" component={App} />
+      <Stack.Navigator initialRouteName="PagerView Example">
+        <Stack.Screen name="PagerView Example" component={App} />
         {examples.map((example, index) => (
           <Stack.Screen
             key={index}
