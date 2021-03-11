@@ -24,7 +24,7 @@ This component allows the user to swipe left and right through pages of data. Un
 
 ## Migration
 
-`"@react-native-community/viewpager"` library has been changed to `react-native-pager-view`. Here you can find more information, how to migrate pager view to the latest version (version)[https://github.com/callstack/react-native-pager-view/blob/master/MIGRATION.md] 
+`"@react-native-community/viewpager"` library has been changed to `react-native-pager-view`. Here you can find more information, how to migrate pager view to the latest [version](https://github.com/callstack/react-native-pager-view/blob/master/MIGRATION.md) 
 ## Getting started
 
 `yarn add react-native-pager-view`
