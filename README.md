@@ -5,7 +5,7 @@
 [![Lean Core Extracted](https://img.shields.io/badge/Lean%20Core-Extracted-brightgreen.svg)](https://github.com/facebook/react-native/issues/23313)
 [![License](https://img.shields.io/github/license/react-native-community/react-native-viewpager?color=blue)](https://github.com/callstack/react-native-viewpager/blob/master/LICENSE)
 
-This component allows the user to swipe left and right through pages of data. Under the hood it is using the native [Android ViewPager](https://developer.android.com/reference/android/support/v4/view/ViewPager) and the [iOS UIPageViewController](https://developer.apple.com/documentation/uikit/uipageviewcontroller) implementations. [See it in action!](https://github.com/react-native-community/react-native-viewpager#preview)
+This component allows the user to swipe left and right through pages of data. Under the hood it is using the native [Android ViewPager](https://developer.android.com/reference/android/support/v4/view/ViewPager) and the [iOS UIPageViewController](https://developer.apple.com/documentation/uikit/uipageviewcontroller) implementations. [See it in action!](https://github.com/callstack/react-native-pager-view#preview)
 
 <br/>
 <p align="center">
@@ -127,14 +127,14 @@ const styles = StyleSheet.create({
 ## Advanced usage
 
 //TODO
-For advanced usage please take a look into our [example project](https://github.com/callstack/react-native-viewpager/blob/master/example/src/BasicViewPagerExample.tsx)
+For advanced usage please take a look into our [example project](https://github.com/callstack/react-native-pager-view/blob/master/example/src/BasicPagerViewExample.tsx)
 
 ## API
 
 |Prop|Description|Platform|
 |-|:-----:|:---:|
 |`initialPage`|Index of initial page that should be selected|both
-|`scrollEnabled: boolean`|Should viewpager scroll, when scroll enabled|both
+|`scrollEnabled: boolean`|Should pager view scroll, when scroll enabled|both
 |`onPageScroll: (e: PageScrollEvent) => void`|Executed when transitioning between pages (ether because the animation for the requested page has changed or when the user is swiping/dragging between pages)|both
 |`onPageScrollStateChanged: (e: PageScrollStateChangedEvent) => void`|Function called when the page scrolling state has changed|both
 |`onPageSelected: (e: PageSelectedEvent) => void`|This callback will be called once the ViewPager finishes navigating to the selected page|both
@@ -153,12 +153,12 @@ See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the 
 
 ## Known Issues
 
-- `flex:1` does not work for child views, please use `width:”100%”, height:”100%” ` [instead](https://github.com/react-native-community/react-native-viewpager/issues/186#issuecomment-675320732)
+- `flex:1` does not work for child views, please use `width:”100%”, height:”100%” ` [instead](https://github.com/callstack/react-native-pager-view/issues/186#issuecomment-675320732)
 
 - [iOS]: In case of `UIViewControllerHierarchyInconsistency` error, please use below fix:
 
 ```
-requestAnimationFrame(() => refViewPager.current?.setPage(index));
+requestAnimationFrame(() => refPagerView.current?.setPage(index));
 ```
 
 ## Preview
