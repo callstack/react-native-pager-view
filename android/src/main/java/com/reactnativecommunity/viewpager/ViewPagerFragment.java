@@ -16,7 +16,7 @@ import java.lang.ref.WeakReference;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 public class ViewPagerFragment extends Fragment {
-    private final int mPosition;
+    private int mPosition;
     private WeakReference<View> mReactViewRef;
 
     public ViewPagerFragment(int position, View child) {
@@ -30,10 +30,7 @@ public class ViewPagerFragment extends Fragment {
         FrameLayout rootView = new FrameLayout(inflater.getContext());
         View reactView = mReactViewRef.get();
         if (reactView != null) {
-            ViewParent previousParent = reactView.getParent();
-            if (previousParent instanceof FrameLayout) {
-                ((FrameLayout) previousParent).removeAllViews();
-            }
+            detachFromParent(reactView);
             rootView.addView(reactView, MATCH_PARENT, MATCH_PARENT);
         }
         return rootView;
@@ -43,7 +40,9 @@ public class ViewPagerFragment extends Fragment {
         return mPosition;
     }
 
-    public boolean onReactViewUpdate(FragmentAdapter adapter) {
+    public boolean onReactViewUpdate(FragmentAdapter adapter, int positionDelta) {
+        mPosition += positionDelta;
+
         View reactView = adapter.getViewAtPosition(mPosition);
         if (reactView == null || reactView == mReactViewRef.get()) {
             return false;
@@ -54,8 +53,16 @@ public class ViewPagerFragment extends Fragment {
             if (rootView.getChildCount() > 0) {
                 rootView.removeAllViews();
             }
+            detachFromParent(reactView);
             rootView.addView(reactView, MATCH_PARENT, MATCH_PARENT);
         }
         return true;
+    }
+
+    private void detachFromParent(View view) {
+        ViewParent parent = view.getParent();
+        if (parent instanceof FrameLayout) {
+            ((FrameLayout) parent).removeView(view);
+        }
     }
 }

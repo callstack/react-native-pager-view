@@ -5,6 +5,7 @@ import type {
   PageScrollStateChangedNativeEvent,
   ViewPagerOnPageScrollEvent,
 } from './types';
+import { getReactStringKeys } from './utils';
 
 import { ViewPagerNative } from './ViewPagerNative';
 
@@ -67,8 +68,11 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
   };
 
   render() {
+    const keys = getReactStringKeys(this.props.children);
+
     return (
       <ViewPagerNative
+        childrenKeys={keys}
         count={React.Children.count(this.props.children)}
         offscreenPageLimit={this.props.offscreenPageLimit}
         offset={0}

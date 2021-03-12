@@ -157,24 +157,31 @@ export class ViewPager<ItemT> extends React.PureComponent<
   };
 
   private renderChildren(offset: number, windowLength: number) {
-    return this.props.data
-      .slice(offset, offset + windowLength)
-      .map((item, index) => (
-        <View
-          collapsable={false}
-          key={this.props.keyExtractor(item, offset + index)}
-          style={styles.pageContainer}
-        >
-          {this.props.renderItem({ item, index: offset + index })}
-        </View>
-      ));
+    const keys: string[] = [];
+    return {
+      children: this.props.data
+        .slice(offset, offset + windowLength)
+        .map((item, index) => {
+          const key = this.props.keyExtractor(item, offset + index);
+          keys.push(key);
+          return (
+            <View collapsable={false} key={key} style={styles.pageContainer}>
+              {this.props.renderItem({ item, index: offset + index })}
+            </View>
+          );
+        }),
+      keys,
+    };
   }
 
   render() {
     const { offset, windowLength } = this.state;
 
+    const { children, keys } = this.renderChildren(offset, windowLength);
+
     return (
       <ViewPagerNative
+        childrenKeys={keys}
         count={this.props.data.length}
         offscreenPageLimit={this.props.offscreenPageLimit}
         offset={offset}
@@ -190,7 +197,7 @@ export class ViewPager<ItemT> extends React.PureComponent<
         style={this.props.style}
         transitionStyle={this.props.transitionStyle}
       >
-        {this.renderChildren(offset, windowLength)}
+        {children}
       </ViewPagerNative>
     );
   }

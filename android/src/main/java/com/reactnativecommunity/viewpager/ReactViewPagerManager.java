@@ -63,6 +63,7 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
             public void onPageSelected(int position) {
                 eventDispatcher.dispatchEvent(
                         new PageSelectedEvent(vp.getId(), position));
+                adapter.onPageSelected(position);
             }
 
             @Override
@@ -92,12 +93,7 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
     public void addView(ViewPager2 parent, View child, int index) {
         final FragmentAdapter adapter = (FragmentAdapter) parent.getAdapter();
         adapter.addReactView(child, index);
-        parent.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.onAfterUpdateTransaction();
-            }
-        });
+        postUpdate(parent, adapter);
     }
 
     @Override
@@ -114,12 +110,7 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
     public void removeViewAt(ViewPager2 parent, int index) {
         final FragmentAdapter adapter = (FragmentAdapter) parent.getAdapter();
         adapter.removeReactViewAt(index);
-        parent.post(new Runnable() {
-            @Override
-            public void run() {
-                adapter.onAfterUpdateTransaction();
-            }
-        });
+        postUpdate(parent, adapter);
     }
 
     @Nullable
@@ -134,7 +125,7 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
     @Override
     protected void onAfterUpdateTransaction(@NonNull ViewPager2 view) {
         super.onAfterUpdateTransaction(view);
-        ((FragmentAdapter) view.getAdapter()).onAfterUpdateTransaction();
+        updatePager(view, ((FragmentAdapter) view.getAdapter()).getTransactionId());
     }
 
     @Override
@@ -150,6 +141,15 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
                 "Unsupported command %s received by %s.",
                 commandId,
                 getClass().getSimpleName()));
+    }
+
+    @ReactProp(name = "childrenKeys")
+    public void setChildrenKeys(ViewPager2 view, ReadableArray childrenKeys) {
+        FragmentAdapter adapter = (FragmentAdapter) view.getAdapter();
+        int numKeys = childrenKeys.size();
+        for (int i = 0; i < numKeys; ++i) {
+            adapter.queueKeyToProcess(childrenKeys.getString(i));
+        }
     }
 
     @ReactProp(name = "count")
@@ -205,6 +205,26 @@ public class ReactViewPagerManager extends ViewGroupManager<ViewPager2> {
     @ReactProp(name = "scrollEnabled", defaultBoolean = true)
     public void setScrollEnabled(ViewPager2 view, boolean enabled) {
         view.setUserInputEnabled(enabled);
+    }
+
+    private void updatePager(ViewPager2 view, int transactionId) {
+        FragmentAdapter adapter = (FragmentAdapter) view.getAdapter();
+        Integer position = adapter.onAfterUpdateTransaction(transactionId);
+        if (position != null) {
+            eventDispatcher.dispatchEvent(
+                    new PageSelectedEvent(view.getId(), position));
+            adapter.onPageSelected(position);
+        }
+    }
+
+    private void postUpdate(final ViewPager2 view, FragmentAdapter adapter) {
+        final int transactionId = adapter.getTransactionId();
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                updatePager(view, transactionId);
+            }
+        });
     }
 
     private void setCurrentItem(final ViewPager2 view, int item, boolean smoothScroll) {

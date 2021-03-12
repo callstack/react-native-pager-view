@@ -8,30 +8,17 @@
  * @flow strict-local
  */
 
-import React, { Children, ReactElement, ReactNode } from 'react';
+import { Children, ReactNode } from 'react';
 
-export const childrenWithOverriddenStyle = (children?: ReactNode) => {
-  // Override styles so that each page will fill the parent. Native component
-  // will handle positioning of elements, so it's not important to offset
-  // them correctly.
-  return Children.map(children, (child) => {
-    const { props, type } = child as ReactElement;
-    const newProps = {
-      ...props,
-      style: [
-        props.style,
-        {
-          position: 'absolute',
-          left: 0,
-          top: 0,
-          right: 0,
-          bottom: 0,
-          width: undefined,
-          height: undefined,
-        },
-      ],
-      collapsable: false,
-    };
-    return React.createElement(type, newProps);
+/**
+ * Get element keys, cast to strings, from the children opaque data structure.
+ */
+export function getReactStringKeys(children: ReactNode | ReactNode[]) {
+  return Children.toArray(children).map((child, index) => {
+    if (typeof child === 'object' && 'key' in child && child.key != null) {
+      return `${child.key}`;
+    } else {
+      return `${index}`;
+    }
   });
-};
+}

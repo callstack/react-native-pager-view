@@ -15,6 +15,7 @@ import type {
 const VIEW_MANAGER_NAME = 'RNCViewPager';
 
 type ViewPagerNativeProps = {
+  childrenKeys: string[];
   count: number;
   offscreenPageLimit?: number;
   offset: number;
