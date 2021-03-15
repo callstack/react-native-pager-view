@@ -1,6 +1,6 @@
-rootProject.name = 'ViewpagerExample'
+rootProject.name = 'PagerViewExample'
 apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
 include ':app'
 
-include ':reactnativeviewpager'
-project(':reactnativeviewpager').projectDir = new File(rootProject.projectDir, '../../android')
+include ':reactnativepagerview'
+project(':reactnativepagerview').projectDir = new File(rootProject.projectDir, '../../android')

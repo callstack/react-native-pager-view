@@ -1,4 +1,3 @@
-
 #import "ReactNativePageView.h"
 
 @interface ReactNativePageView () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>

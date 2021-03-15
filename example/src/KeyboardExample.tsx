@@ -8,10 +8,9 @@ import {
   Image,
   TextInput,
   Button,
-  Animated,
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import ViewPager from '@react-native-community/viewpager';
+import { PagerView } from 'react-native-pager-view';
 import { logoUrl } from './utils';
 
 import { NavigationPanel } from './component/NavigationPanel';
@@ -34,11 +33,8 @@ const Page = ({ title, description, onPress, buttonTitle }: PageProps) => {
   );
 };
 
-class ElementViewPager extends ViewPager<JSX.Element> {}
-const AnimatedViewPager = Animated.createAnimatedComponent(ElementViewPager);
-
 export function KeyboardExample() {
-  const { ref, ...navigationPanel } = useNavigationPanel(2);
+  const { ref, ...navigationPanel } = useNavigationPanel<JSX.Element>(2);
   const { setPage } = navigationPanel;
   const pages = [
     <View style={styles.sectionContainer}>
@@ -70,7 +66,7 @@ export function KeyboardExample() {
           />
         </View>
         <View style={styles.flex}>
-          <AnimatedViewPager
+          <PagerView
             ref={ref}
             style={styles.flex}
             scrollEnabled={false}

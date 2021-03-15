@@ -1,8 +1,7 @@
 {
     "git": {
       "commitMessage": "chore: release v${version}",
-      "tagName": "v${version}",
-      "requireBranch": "next"
+      "tagName": "v${version}"
     },
     "npm": {
       "publish": true
@@ -16,4 +15,4 @@
         "preset": "angular"
       }
     }
-}  
+}

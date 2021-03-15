@@ -1,4 +1,3 @@
-
 #import "ReactViewPagerManager.h"
 
 @implementation ReactViewPagerManager

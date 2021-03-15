@@ -1,7 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { PagerView } from 'react-native-pager-view';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import ViewPager from '@react-native-community/viewpager';
 import { ProgressBar } from './component/ProgressBar';
 import { useNavigationPanel } from './hook/useNavigationPanel';
 import { NavigationPanel } from './component/NavigationPanel';
@@ -40,11 +40,11 @@ export function OnPageScrollExample() {
         </ScrollView>
       </View>
 
-      <ViewPager
+      <PagerView
         onPageScroll={navigationPanel.onPageScroll}
         onPageSelected={navigationPanel.onPageSelected}
         ref={ref}
-        style={styles.viewpager}
+        style={styles.pagerView}
         data={navigationPanel.pages}
         keyExtractor={createPageKeyExtractor}
         renderItem={renderItem}
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
   },
-  viewpager: {
+  pagerView: {
     flex: 1,
   },
   container: {

@@ -1,7 +1,7 @@
+import { PagerView } from 'react-native-pager-view';
 import React from 'react';
 import { useState } from 'react';
-import { View, StyleSheet, Button, ScrollView } from 'react-native';
-import ViewPager from '@react-native-community/viewpager';
+import { Button, ScrollView, StyleSheet, View } from 'react-native';
 import { PAGES, createPage } from './utils';
 
 export const ScrollViewInsideExample = (): JSX.Element => {
@@ -12,7 +12,7 @@ export const ScrollViewInsideExample = (): JSX.Element => {
   );
 
   return (
-    <ViewPager
+    <PagerView
       style={styles.flex}
       data={pages}
       keyExtractor={(page) => `${page.key}`}

@@ -2,12 +2,12 @@ import React from 'react';
 import { findNodeHandle, Keyboard, UIManager } from 'react-native';
 import type {
   EagerPagerProps,
+  PagerViewOnPageScrollEvent,
   PageScrollStateChangedNativeEvent,
-  ViewPagerOnPageScrollEvent,
 } from './types';
 import { getReactStringKeys } from './utils';
 
-import { ViewPagerNative } from './ViewPagerNative';
+import { PagerViewNative } from './PagerViewNative';
 
 export class EagerPager extends React.PureComponent<EagerPagerProps> {
   private isScrolling = false;
@@ -19,7 +19,7 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
   }
 
   /**
-   * A helper function to scroll to a specific page in the ViewPager.
+   * A helper function to scroll to a specific page in the PagerView.
    * Default to animated transition between pages.
    */
   setPage(page: number, animated = true) {
@@ -30,7 +30,7 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
   }
 
   /**
-   * A helper function to scroll to a specific page in the ViewPager.
+   * A helper function to scroll to a specific page in the PagerView.
    * The transition between pages will *not* be animated.
    */
   setPageWithoutAnimation(page: number) {
@@ -53,7 +53,7 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
 
   private onMoveShouldSetResponderCapture = () => this.isScrolling;
 
-  private onPageScroll = (event: ViewPagerOnPageScrollEvent) => {
+  private onPageScroll = (event: PagerViewOnPageScrollEvent) => {
     this.props.onPageScroll?.(event);
     if (this.props.keyboardDismissMode === 'on-drag') {
       Keyboard.dismiss();
@@ -71,7 +71,7 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
     const keys = getReactStringKeys(this.props.children);
 
     return (
-      <ViewPagerNative
+      <PagerViewNative
         childrenKeys={keys}
         count={React.Children.count(this.props.children)}
         offscreenPageLimit={this.props.offscreenPageLimit}
@@ -89,7 +89,7 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
         transitionStyle={this.props.transitionStyle}
       >
         {this.props.children}
-      </ViewPagerNative>
+      </PagerViewNative>
     );
   }
 }

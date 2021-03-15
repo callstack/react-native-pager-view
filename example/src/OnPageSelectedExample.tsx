@@ -1,8 +1,8 @@
 import * as React from 'react';
 
 import { Alert, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import ViewPager from '@react-native-community/viewpager';
 
+import { PagerView } from 'react-native-pager-view';
 import { NavigationPanel } from './component/NavigationPanel';
 import { useNavigationPanel } from './hook/useNavigationPanel';
 import { CreatePage, createPageKeyExtractor } from './utils';
@@ -18,7 +18,7 @@ export const OnPageSelectedExample = () => {
 
   return (
     <SafeAreaView style={styles.flex}>
-      <ViewPager
+      <PagerView
         onPageSelected={navigationPanel.onPageSelected}
         ref={ref}
         style={styles.flex}

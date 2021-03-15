@@ -1,1 +1,1 @@
-{"version":3,"sources":["index.tsx"],"names":["ViewPager"],"mappings":";;;;;;;;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AACA;;eACeA,oB","sourcesContent":["export * from './types';\nimport { ViewPager } from './ViewPager';\nexport default ViewPager;\n"]}
+{"version":3,"sources":["index.tsx"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AACA;;AACA","sourcesContent":["export * from './types';\nexport { EagerPager } from './EagerPager';\nexport { PagerView } from './PagerView';\n"]}

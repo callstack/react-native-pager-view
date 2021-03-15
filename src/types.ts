@@ -5,14 +5,14 @@ export type Orientation = 'horizontal' | 'vertical';
 export type OverScrollMode = 'auto' | 'always' | 'never';
 export type PageScrollState = 'idle' | 'dragging' | 'settling';
 
-export type ViewPagerOnPageScrollEvent = ReactNative.NativeSyntheticEvent<ViewPagerOnPageScrollEventData>;
-export interface ViewPagerOnPageScrollEventData {
+export type PagerViewOnPageScrollEvent = ReactNative.NativeSyntheticEvent<PagerViewOnPageScrollEventData>;
+export interface PagerViewOnPageScrollEventData {
   position: number;
   offset: number;
 }
 
-export type ViewPagerOnPageSelectedEvent = ReactNative.NativeSyntheticEvent<ViewPagerOnPageSelectedEventData>;
-export interface ViewPagerOnPageSelectedEventData {
+export type PagerViewOnPageSelectedEvent = ReactNative.NativeSyntheticEvent<PagerViewOnPageSelectedEventData>;
+export interface PagerViewOnPageSelectedEventData {
   position: number;
 }
 
@@ -55,15 +55,15 @@ export interface EagerPagerProps {
    *    Value x means that (1 - x) fraction of the page at "position" index is
    *    visible, and x fraction of the next page is visible.
    */
-  onPageScroll?: (event: ViewPagerOnPageScrollEvent) => void;
+  onPageScroll?: (event: PagerViewOnPageScrollEvent) => void;
 
   /**
-   * This callback will be called once ViewPager finish navigating to selected page
+   * This callback will be called once PagerView finish navigating to selected page
    * (when user swipes between pages). The `event.nativeEvent` object passed to this
    * callback will have following fields:
    *  - position - index of page that has been selected
    */
-  onPageSelected?: (event: ViewPagerOnPageSelectedEvent) => void;
+  onPageSelected?: (event: PagerViewOnPageSelectedEvent) => void;
 
   /**
    * Function called when the page scrolling state has changed.
@@ -111,7 +111,7 @@ export interface EagerPagerProps {
   transitionStyle?: TransitionStyle;
 }
 
-export interface ViewPagerProps<ItemT> extends EagerPagerProps {
+export interface PagerViewProps<ItemT> extends EagerPagerProps {
   /**
    * Number of pages to render before/after the current page. Minimum 1.
    */
@@ -140,4 +140,4 @@ export interface ViewPagerProps<ItemT> extends EagerPagerProps {
   renderItem: (info: { item: ItemT; index: number }) => React.ReactElement;
 }
 
-export type ViewPagerState = { offset: number; windowLength: number };
+export type PagerViewState = { offset: number; windowLength: number };

@@ -7,9 +7,10 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import ViewPager, {
-  ViewPagerOnPageScrollEventData,
-} from '@react-native-community/viewpager';
+import {
+  PagerView,
+  PagerViewOnPageScrollEventData,
+} from 'react-native-pager-view';
 
 import {
   ScalingDot,
@@ -45,8 +46,8 @@ const INTRO_DATA = [
   },
 ];
 
-class DataViewPager extends ViewPager<typeof INTRO_DATA[number]> {}
-const AnimatedViewPager = Animated.createAnimatedComponent(DataViewPager);
+class DataPagerView extends PagerView<typeof INTRO_DATA[number]> {}
+const AnimatedPagerView = Animated.createAnimatedComponent(DataPagerView);
 
 export default function PaginationDotsExample() {
   const width = Dimensions.get('window').width;
@@ -63,7 +64,7 @@ export default function PaginationDotsExample() {
 
   const onPageScroll = React.useMemo(
     () =>
-      Animated.event<ViewPagerOnPageScrollEventData>(
+      Animated.event<PagerViewOnPageScrollEventData>(
         [
           {
             nativeEvent: {
@@ -82,8 +83,8 @@ export default function PaginationDotsExample() {
 
   return (
     <SafeAreaView style={styles.flex}>
-      <AnimatedViewPager
-        style={styles.viewpager}
+      <AnimatedPagerView
+        style={styles.pagerView}
         onPageScroll={onPageScroll}
         data={INTRO_DATA}
         keyExtractor={(item) => item.key}
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
   flex: {
     flex: 1,
   },
-  viewpager: {
+  pagerView: {
     flex: 1,
   },
   container: {

@@ -1,0 +1,327 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		18F5836F25F79C300073D7CB /* UIViewController+CreateExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F5835F25F79C300073D7CB /* UIViewController+CreateExtension.m */; };
+		18F5837025F79C300073D7CB /* ReactViewPagerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F5836025F79C300073D7CB /* ReactViewPagerManager.m */; };
+		18F5837125F79C300073D7CB /* RCTConvert+UIPageViewControllerNavigationOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F5836125F79C300073D7CB /* RCTConvert+UIPageViewControllerNavigationOrientation.m */; };
+		18F5837225F79C300073D7CB /* ReactNativePageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F5836225F79C300073D7CB /* ReactNativePageView.m */; };
+		18F5837325F79C300073D7CB /* RCTConvert+UIPageViewControllerTransitionStyle.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F5836425F79C300073D7CB /* RCTConvert+UIPageViewControllerTransitionStyle.m */; };
+		18F5837425F79C300073D7CB /* RCTOnPageScrollStateChanged.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F5836625F79C300073D7CB /* RCTOnPageScrollStateChanged.m */; };
+		18F5837525F79C300073D7CB /* RCTOnPageSelected.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F5836C25F79C300073D7CB /* RCTOnPageSelected.m */; };
+		18F5837625F79C300073D7CB /* RCTOnPageScrollEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F5836E25F79C300073D7CB /* RCTOnPageScrollEvent.m */; };
+		F4FF95D7245B92E800C19C63 /* PagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4FF95D6245B92E800C19C63 /* PagerView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		58B511D91A9E6C8500147676 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		134814201AA4EA6300B7C361 /* libPagerView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPagerView.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		18F5835F25F79C300073D7CB /* UIViewController+CreateExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+CreateExtension.m"; sourceTree = "<group>"; };
+		18F5836025F79C300073D7CB /* ReactViewPagerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactViewPagerManager.m; sourceTree = "<group>"; };
+		18F5836125F79C300073D7CB /* RCTConvert+UIPageViewControllerNavigationOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+UIPageViewControllerNavigationOrientation.m"; sourceTree = "<group>"; };
+		18F5836225F79C300073D7CB /* ReactNativePageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactNativePageView.m; sourceTree = "<group>"; };
+		18F5836325F79C300073D7CB /* ReactViewPagerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactViewPagerManager.h; sourceTree = "<group>"; };
+		18F5836425F79C300073D7CB /* RCTConvert+UIPageViewControllerTransitionStyle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+UIPageViewControllerTransitionStyle.m"; sourceTree = "<group>"; };
+		18F5836525F79C300073D7CB /* ReactNativePageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactNativePageView.h; sourceTree = "<group>"; };
+		18F5836625F79C300073D7CB /* RCTOnPageScrollStateChanged.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTOnPageScrollStateChanged.m; sourceTree = "<group>"; };
+		18F5836725F79C300073D7CB /* RCTOnPageSelected.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTOnPageSelected.h; sourceTree = "<group>"; };
+		18F5836825F79C300073D7CB /* RCTOnPageScrollStateChanged.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTOnPageScrollStateChanged.h; sourceTree = "<group>"; };
+		18F5836925F79C300073D7CB /* RCTConvert+UIPageViewControllerNavigationOrientation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RCTConvert+UIPageViewControllerNavigationOrientation.h"; sourceTree = "<group>"; };
+		18F5836A25F79C300073D7CB /* UIViewController+CreateExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIViewController+CreateExtension.h"; sourceTree = "<group>"; };
+		18F5836B25F79C300073D7CB /* RCTOnPageScrollEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RCTOnPageScrollEvent.h; sourceTree = "<group>"; };
+		18F5836C25F79C300073D7CB /* RCTOnPageSelected.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTOnPageSelected.m; sourceTree = "<group>"; };
+		18F5836D25F79C300073D7CB /* RCTConvert+UIPageViewControllerTransitionStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "RCTConvert+UIPageViewControllerTransitionStyle.h"; sourceTree = "<group>"; };
+		18F5836E25F79C300073D7CB /* RCTOnPageScrollEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RCTOnPageScrollEvent.m; sourceTree = "<group>"; };
+		B3E7B5891CC2AC0600A0062D /* PagerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PagerView.m; sourceTree = "<group>"; };
+		F4FF95D5245B92E700C19C63 /* PagerView-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PagerView-Bridging-Header.h"; sourceTree = "<group>"; };
+		F4FF95D6245B92E800C19C63 /* PagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagerView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		58B511D81A9E6C8500147676 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		134814211AA4EA7D00B7C361 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				134814201AA4EA6300B7C361 /* libPagerView.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		58B511D21A9E6C8500147676 = {
+			isa = PBXGroup;
+			children = (
+				18F5836925F79C300073D7CB /* RCTConvert+UIPageViewControllerNavigationOrientation.h */,
+				18F5836125F79C300073D7CB /* RCTConvert+UIPageViewControllerNavigationOrientation.m */,
+				18F5836D25F79C300073D7CB /* RCTConvert+UIPageViewControllerTransitionStyle.h */,
+				18F5836425F79C300073D7CB /* RCTConvert+UIPageViewControllerTransitionStyle.m */,
+				18F5836B25F79C300073D7CB /* RCTOnPageScrollEvent.h */,
+				18F5836E25F79C300073D7CB /* RCTOnPageScrollEvent.m */,
+				18F5836825F79C300073D7CB /* RCTOnPageScrollStateChanged.h */,
+				18F5836625F79C300073D7CB /* RCTOnPageScrollStateChanged.m */,
+				18F5836725F79C300073D7CB /* RCTOnPageSelected.h */,
+				18F5836C25F79C300073D7CB /* RCTOnPageSelected.m */,
+				18F5836525F79C300073D7CB /* ReactNativePageView.h */,
+				18F5836225F79C300073D7CB /* ReactNativePageView.m */,
+				18F5836325F79C300073D7CB /* ReactViewPagerManager.h */,
+				18F5836025F79C300073D7CB /* ReactViewPagerManager.m */,
+				18F5836A25F79C300073D7CB /* UIViewController+CreateExtension.h */,
+				18F5835F25F79C300073D7CB /* UIViewController+CreateExtension.m */,
+				F4FF95D6245B92E800C19C63 /* PagerView.swift */,
+				B3E7B5891CC2AC0600A0062D /* PagerView.m */,
+				F4FF95D5245B92E700C19C63 /* PagerView-Bridging-Header.h */,
+				134814211AA4EA7D00B7C361 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		58B511DA1A9E6C8500147676 /* PagerView */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "PagerView" */;
+			buildPhases = (
+				58B511D71A9E6C8500147676 /* Sources */,
+				58B511D81A9E6C8500147676 /* Frameworks */,
+				58B511D91A9E6C8500147676 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PagerView;
+			productName = RCTDataManager;
+			productReference = 134814201AA4EA6300B7C361 /* libPagerView.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		58B511D31A9E6C8500147676 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0920;
+				ORGANIZATIONNAME = Facebook;
+				TargetAttributes = {
+					58B511DA1A9E6C8500147676 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+				};
+			};
+			buildConfigurationList = 58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "PagerView" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				English,
+				en,
+			);
+			mainGroup = 58B511D21A9E6C8500147676;
+			productRefGroup = 58B511D21A9E6C8500147676;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				58B511DA1A9E6C8500147676 /* PagerView */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		58B511D71A9E6C8500147676 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				18F5837125F79C300073D7CB /* RCTConvert+UIPageViewControllerNavigationOrientation.m in Sources */,
+				18F5836F25F79C300073D7CB /* UIViewController+CreateExtension.m in Sources */,
+				18F5837525F79C300073D7CB /* RCTOnPageSelected.m in Sources */,
+				18F5837225F79C300073D7CB /* ReactNativePageView.m in Sources */,
+				18F5837025F79C300073D7CB /* ReactViewPagerManager.m in Sources */,
+				18F5837325F79C300073D7CB /* RCTConvert+UIPageViewControllerTransitionStyle.m in Sources */,
+				18F5837625F79C300073D7CB /* RCTOnPageScrollEvent.m in Sources */,
+				F4FF95D7245B92E800C19C63 /* PagerView.swift in Sources */,
+				18F5837425F79C300073D7CB /* RCTOnPageScrollStateChanged.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		58B511ED1A9E6C8500147676 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		58B511EE1A9E6C8500147676 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		58B511F01A9E6C8500147676 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../../React/**",
+					"$(SRCROOT)/../../react-native/React/**",
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = PagerView;
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "PagerView-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		58B511F11A9E6C8500147676 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"$(SRCROOT)/../../../React/**",
+					"$(SRCROOT)/../../react-native/React/**",
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = PagerView;
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "PagerView-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		58B511D61A9E6C8500147676 /* Build configuration list for PBXProject "PagerView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				58B511ED1A9E6C8500147676 /* Debug */,
+				58B511EE1A9E6C8500147676 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "PagerView" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				58B511F01A9E6C8500147676 /* Debug */,
+				58B511F11A9E6C8500147676 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 58B511D31A9E6C8500147676 /* Project object */;
+}

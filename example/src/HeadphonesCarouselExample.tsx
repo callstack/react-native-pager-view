@@ -16,8 +16,8 @@ import {
   Animated,
   ImageRequireSource,
 } from 'react-native';
-import type { ViewPagerOnPageScrollEventData } from 'src/types';
-import ViewPager from '@react-native-community/viewpager';
+import type { PagerViewOnPageScrollEventData } from 'src/types';
+import { PagerView } from 'react-native-pager-view';
 
 const data = [
   {
@@ -232,8 +232,8 @@ const Pagination = ({
   );
 };
 
-class DataViewPager extends ViewPager<typeof data[number]> {}
-const AnimatedViewPager = Animated.createAnimatedComponent(DataViewPager);
+class DataPagerView extends PagerView<typeof data[number]> {}
+const AnimatedPagerView = Animated.createAnimatedComponent(DataPagerView);
 
 export default function HeadphonesCarouselExample() {
   const scrollOffsetAnimatedValue = React.useRef(new Animated.Value(0)).current;
@@ -242,9 +242,9 @@ export default function HeadphonesCarouselExample() {
   return (
     <View style={styles.container}>
       <Circle scrollOffsetAnimatedValue={scrollOffsetAnimatedValue} />
-      <AnimatedViewPager
+      <AnimatedPagerView
         style={{ width: '100%', height: '100%' }}
-        onPageScroll={Animated.event<ViewPagerOnPageScrollEventData>(
+        onPageScroll={Animated.event<PagerViewOnPageScrollEventData>(
           [
             {
               nativeEvent: {

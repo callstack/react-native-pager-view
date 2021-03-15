@@ -1,9 +1,9 @@
 import type {
-  default as ViewPager,
+  PagerView,
+  PagerViewOnPageScrollEvent,
+  PagerViewOnPageSelectedEvent,
   PageScrollStateChangedNativeEvent,
-  ViewPagerOnPageScrollEvent,
-  ViewPagerOnPageSelectedEvent,
-} from '@react-native-community/viewpager';
+} from 'react-native-pager-view';
 import { createPage } from '../utils';
 import { useCallback, useRef, useState } from 'react';
 
@@ -30,7 +30,7 @@ export function useNavigationPanel<T>(
   pagesAmount: number = 10,
   onPageSelectedCallback?: (position: number) => void
 ) {
-  const ref = useRef<ViewPager<T>>(null);
+  const ref = useRef<PagerView<T>>(null);
 
   const [activePage, setActivePage] = useState(0);
   const [logs, setLogs] = useState<EventLog[]>([]);
@@ -61,7 +61,7 @@ export function useNavigationPanel<T>(
   );
 
   const onPageScroll = useCallback(
-    ({ nativeEvent }: ViewPagerOnPageScrollEvent) => {
+    ({ nativeEvent }: PagerViewOnPageScrollEvent) => {
       const { offset, position } = nativeEvent;
       addLog({
         event: 'scroll',
@@ -89,7 +89,7 @@ export function useNavigationPanel<T>(
   );
 
   const onPageSelected = useCallback(
-    ({ nativeEvent }: ViewPagerOnPageSelectedEvent) => {
+    ({ nativeEvent }: PagerViewOnPageSelectedEvent) => {
       addLog({
         event: 'select',
         text: `Page: ${nativeEvent.position}`,
