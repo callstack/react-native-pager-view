@@ -31,7 +31,7 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     vp.adapter = adapter
     //https://github.com/callstack/react-native-viewpager/issues/183
     vp.isSaveEnabled = false
-    eventDispatcher = reactContext.getNativeModule(UIManagerModule::class.java).eventDispatcher
+    eventDispatcher = reactContext.getNativeModule(UIManagerModule::class.java)!!.eventDispatcher
     vp.registerOnPageChangeCallback(object : OnPageChangeCallback() {
       override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
         super.onPageScrolled(position, positionOffset, positionOffsetPixels)
