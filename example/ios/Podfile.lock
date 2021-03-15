@@ -236,7 +236,7 @@ PODS:
     - React-cxxreact (= 0.63.4)
     - React-jsi (= 0.63.4)
   - React-jsinspector (0.63.4)
-  - react-native-pager-view (5.1.0):
+  - react-native-pager-view (5.1.1):
     - React-Core
   - react-native-safe-area-context (3.2.0):
     - React-Core
@@ -475,7 +475,7 @@ SPEC CHECKSUMS:
   React-jsi: a0418934cf48f25b485631deb27c64dc40fb4c31
   React-jsiexecutor: 93bd528844ad21dc07aab1c67cb10abae6df6949
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
-  react-native-pager-view: 2ea12e75c1bca5f3345041a012b2e5014ee9dad3
+  react-native-pager-view: 52aed9e0ed93f7fbdf4cfe8ed4254d93c6d12baf
   react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
