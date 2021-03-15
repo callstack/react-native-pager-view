@@ -9,6 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher;
 
+@property(nonatomic, copy) NSArray<NSString *> *childrenKeys;
 @property(nonatomic) NSInteger count;
 @property(nonatomic) NSInteger offset;
 @property(nonatomic) NSInteger pageMargin;

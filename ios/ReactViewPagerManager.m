@@ -7,6 +7,7 @@
 
 RCT_EXPORT_MODULE(RNCViewPager)
 
+RCT_EXPORT_VIEW_PROPERTY(childrenKeys, NSArray<NSString *>)
 RCT_EXPORT_VIEW_PROPERTY(count, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(offset, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(pageMargin, NSInteger)

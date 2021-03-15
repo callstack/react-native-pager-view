@@ -4,6 +4,7 @@
 @interface ReactNativePageView () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
 
 @property(nonatomic, strong) NSMapTable<UIView *, UIViewController *> *controllerCache;
+@property NSString *currentKey;
 @property NSInteger currentPage;
 @property(nonatomic, strong) NSMapTable<UIViewController *, NSNumber *> *pageIndexes;
 @property(nonatomic, strong) UIPageViewController *reactPageViewController;
@@ -39,7 +40,8 @@
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps {
     if (
-        [changedProps containsObject:@"orientation"]
+        [self handleDataMutation:changedProps]
+        || [changedProps containsObject:@"orientation"]
         || [changedProps containsObject:@"pageMargin"]
         || [changedProps containsObject:@"transitionStyle"]) {
         [self embed];
@@ -52,6 +54,29 @@
             self.reactPageIndicatorView.hidden = !self.showPageIndicator;
         }
     }
+}
+
+- (BOOL)handleDataMutation:(NSArray<NSString *> *)changedProps {
+    if (!self.currentKey) {
+        return NO;
+    }
+    NSString *childKey = [self getChildKeyForPage:self.currentPage];
+    if (!childKey || [childKey isEqualToString:self.currentKey]) {
+        return NO;
+    }
+
+    NSUInteger newIndex = [self.childrenKeys indexOfObject:self.currentKey];
+    if (newIndex == NSNotFound) {
+        return NO;
+    }
+
+    self.currentPage = newIndex + self.offset;
+    if (self.onPageSelected) {
+        self.onPageSelected(@{
+            @"position": [NSNumber numberWithInteger:self.currentPage]
+        });
+    }
+    return YES;
 }
 
 - (void)embed {
@@ -114,6 +139,7 @@
 }
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
+    index = MIN(self.count - 1, index);
     UIViewController *controller = [self getControllerAtPosition:index];
     if (!controller) {
         return;
@@ -128,6 +154,7 @@
                                             animated:animated
                                           completion:^(BOOL finished) {
         if (weakSelf && weakSelf.currentPage != index) {
+            weakSelf.currentKey = [weakSelf getChildKeyForPage:index];
             weakSelf.currentPage = index;
             if (weakSelf.onPageSelected) {
                 weakSelf.onPageSelected(@{
@@ -145,6 +172,14 @@
     if (self.reactPageViewController.view) {
         self.scrollView.scrollEnabled = scrollEnabled;
     }
+}
+
+- (NSString *)getChildKeyForPage:(NSInteger)page {
+    NSInteger index = page - self.offset;
+    if (index < 0 || index >= [self.childrenKeys count]) {
+        return nil;
+    }
+    return [self.childrenKeys objectAtIndex:index];
 }
 
 - (UIViewController *)getControllerForView:(UIView *)view {
@@ -197,6 +232,7 @@
         return;
     }
     self.currentPage = [pageIndex integerValue];
+    self.currentKey = [self getChildKeyForPage:self.currentPage];
     self.reactPageIndicatorView.currentPage = self.currentPage;
 
     if (self.onPageSelected) {
