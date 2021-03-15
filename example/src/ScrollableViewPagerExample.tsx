@@ -1,19 +1,20 @@
 import React from 'react';
 import { ScrollView, View, Image, StyleSheet } from 'react-native';
+import ViewPager from '@react-native-community/viewpager';
 import { NavigationPanel } from './component/NavigationPanel';
 import { useNavigationPanel } from './hook/useNavigationPanel';
-import { AnimatedViewPager } from './utils';
+import type { CreatePage } from './utils';
 
 const HEIGHT = 300;
 
 export const ScrollableViewPagerExample = (): JSX.Element => {
-  const { ref, ...navigationPanel } = useNavigationPanel();
+  const { ref, ...navigationPanel } = useNavigationPanel<CreatePage>();
 
   return (
     <>
       <ScrollView style={styles.flex}>
         {navigationPanel.pages.map(({ key }) => (
-          <AnimatedViewPager
+          <ViewPager
             ref={ref}
             data={navigationPanel.pages}
             key={key}

@@ -1,7 +1,8 @@
 import React from 'react';
 import { useState } from 'react';
 import { View, StyleSheet, Button, ScrollView } from 'react-native';
-import { AnimatedViewPager, PAGES, createPage } from './utils';
+import ViewPager from '@react-native-community/viewpager';
+import { PAGES, createPage } from './utils';
 
 export const ScrollViewInsideExample = (): JSX.Element => {
   const [pages] = useState(
@@ -11,7 +12,7 @@ export const ScrollViewInsideExample = (): JSX.Element => {
   );
 
   return (
-    <AnimatedViewPager
+    <ViewPager
       style={styles.flex}
       data={pages}
       keyExtractor={(page) => `${page.key}`}

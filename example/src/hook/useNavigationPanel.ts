@@ -1,12 +1,11 @@
 import type {
   default as ViewPager,
   PageScrollStateChangedNativeEvent,
-  ViewPagerOnPageScrollEventData,
-  ViewPagerOnPageSelectedEventData,
+  ViewPagerOnPageScrollEvent,
+  ViewPagerOnPageSelectedEvent,
 } from '@react-native-community/viewpager';
-import { Animated } from 'react-native';
-import { createPage, CreatePage } from '../utils';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { createPage } from '../utils';
+import { useCallback, useRef, useState } from 'react';
 
 export type UseNavigationPanelProps = ReturnType<typeof useNavigationPanel>;
 
@@ -19,112 +18,62 @@ export interface EventLog {
 const getBasePages = (pages: number) =>
   new Array(pages).fill('').map((_v, index) => createPage(index));
 
+function useToggle(initialState: boolean): [boolean, () => void] {
+  const [state, setState] = useState(initialState);
+  const toggleState = useCallback(() => setState((enabled) => !enabled), [
+    setState,
+  ]);
+  return [state, toggleState];
+}
+
 export function useNavigationPanel<T>(
   pagesAmount: number = 10,
-  onPageSelectedCallback: (position: number) => void = () => {}
+  onPageSelectedCallback?: (position: number) => void
 ) {
   const ref = useRef<ViewPager<T>>(null);
-  const [pages, setPages] = useState<CreatePage[]>(
-    useMemo(() => getBasePages(pagesAmount), [pagesAmount])
-  );
+
   const [activePage, setActivePage] = useState(0);
-  const [isAnimated, setIsAnimated] = useState(true);
-  const [overdragEnabled, setOverdragEnabled] = useState(false);
-  const [scrollEnabled, setScrollEnabled] = useState(true);
-  const [scrollState, setScrollState] = useState('idle');
-  const [dotsEnabled, setDotsEnabled] = useState(false);
   const [logs, setLogs] = useState<EventLog[]>([]);
+  const [pages, setPages] = useState(() => getBasePages(pagesAmount));
   const [progress, setProgress] = useState({ position: 0, offset: 0 });
-  const onPageScrollOffset = useRef(new Animated.Value(0)).current;
-  const onPageScrollPosition = useRef(new Animated.Value(0)).current;
-  const onPageSelectedPosition = useRef(new Animated.Value(0)).current;
+  const [scrollState, setScrollState] = useState('idle');
 
-  const setPage = useCallback(
-    (page: number) =>
-      isAnimated
-        ? ref.current?.setPage(page)
-        : ref.current?.setPageWithoutAnimation(page),
-    [isAnimated]
+  const [dotsEnabled, toggleDots] = useToggle(false);
+  const [isAnimated, toggleAnimation] = useToggle(true);
+  const [overdragEnabled, toggleOverdrag] = useToggle(false);
+  const [scrollEnabled, toggleScroll] = useToggle(true);
+
+  const addLog = useCallback(
+    (log: EventLog) => {
+      setLogs((text) => [log, ...text].slice(0, 100));
+    },
+    [setLogs]
   );
-
-  const addLog = useCallback((log: EventLog) => {
-    setLogs((text) => [log, ...text].slice(0, 100));
-  }, []);
 
   const addPage = useCallback(
     () => setPages((prevPages) => [...prevPages, createPage(prevPages.length)]),
-    []
+    [setPages]
   );
+
   const removePage = useCallback(
     () => setPages((prevPages) => prevPages.slice(0, prevPages.length - 1)),
     []
   );
-  const toggleAnimation = useCallback(
-    () => setIsAnimated((animated) => !animated),
-    []
-  );
-  const toggleScroll = useCallback(
-    () => setScrollEnabled((enabled) => !enabled),
-    []
-  );
-  const toggleDots = useCallback(
-    () => setDotsEnabled((enabled) => !enabled),
-    []
-  );
-  const toggleOverdrag = useCallback(
-    () => setOverdragEnabled((enabled) => !enabled),
-    []
-  );
 
-  const onPageScroll = useMemo(
-    () =>
-      Animated.event<ViewPagerOnPageScrollEventData>(
-        [
-          {
-            nativeEvent: {
-              offset: onPageScrollOffset,
-              position: onPageScrollPosition,
-            },
-          },
-        ],
-        {
-          listener: ({ nativeEvent: { offset, position } }) => {
-            addLog({
-              event: 'scroll',
-              text: `Position: ${position} Offset: ${offset}`,
-              timestamp: new Date(),
-            });
-            setProgress({
-              position,
-              offset,
-            });
-          },
-          useNativeDriver: true,
-        }
-      ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
-  );
-
-  const onPageSelected = useMemo(
-    () =>
-      Animated.event<ViewPagerOnPageSelectedEventData>(
-        [{ nativeEvent: { position: onPageSelectedPosition } }],
-        {
-          listener: ({ nativeEvent: { position } }) => {
-            addLog({
-              event: 'select',
-              text: `Page: ${position}`,
-              timestamp: new Date(),
-            });
-            setActivePage(position);
-            onPageSelectedCallback(position);
-          },
-          useNativeDriver: true,
-        }
-      ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+  const onPageScroll = useCallback(
+    ({ nativeEvent }: ViewPagerOnPageScrollEvent) => {
+      const { offset, position } = nativeEvent;
+      addLog({
+        event: 'scroll',
+        text: `Position: ${position} Offset: ${offset}`,
+        timestamp: new Date(),
+      });
+      setProgress({
+        position,
+        offset,
+      });
+    },
+    [addLog, setProgress]
   );
 
   const onPageScrollStateChanged = useCallback(
@@ -136,8 +85,27 @@ export function useNavigationPanel<T>(
       });
       setScrollState(e.nativeEvent.pageScrollState);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [addLog, setScrollState]
+  );
+
+  const onPageSelected = useCallback(
+    ({ nativeEvent }: ViewPagerOnPageSelectedEvent) => {
+      addLog({
+        event: 'select',
+        text: `Page: ${nativeEvent.position}`,
+        timestamp: new Date(),
+      });
+      setActivePage(nativeEvent.position);
+      if (onPageSelectedCallback != null) {
+        onPageSelectedCallback(nativeEvent.position);
+      }
+    },
+    [addLog, onPageSelectedCallback, setActivePage]
+  );
+
+  const setPage = useCallback(
+    (page: number) => ref.current?.setPage(page, isAnimated),
+    [isAnimated, ref]
   );
 
   return {

@@ -1,17 +1,27 @@
 import React from 'react';
 import { Image, StyleSheet, View, SafeAreaView } from 'react-native';
+import ViewPager from '@react-native-community/viewpager';
 
 import { LikeCount } from './component/LikeCount';
 import { NavigationPanel } from './component/NavigationPanel';
 import { useNavigationPanel } from './hook/useNavigationPanel';
-import { AnimatedViewPager } from './utils';
+import { CreatePage, createPageKeyExtractor } from './utils';
+
+function renderItem({ item }: { item: CreatePage }) {
+  return (
+    <View style={item.style}>
+      <Image style={styles.image} source={item.imgSource} />
+      <LikeCount />
+    </View>
+  );
+}
 
 export function BasicViewPagerExample() {
-  const { ref, ...navigationPanel } = useNavigationPanel();
+  const { ref, ...navigationPanel } = useNavigationPanel<CreatePage>();
 
   return (
     <SafeAreaView style={styles.container}>
-      <AnimatedViewPager
+      <ViewPager
         ref={ref}
         style={styles.viewPager}
         scrollEnabled={navigationPanel.scrollEnabled}
@@ -24,13 +34,8 @@ export function BasicViewPagerExample() {
         transitionStyle="scroll"
         showPageIndicator={navigationPanel.dotsEnabled}
         data={navigationPanel.pages}
-        keyExtractor={(page) => `${page.key}`}
-        renderItem={({ item }) => (
-          <View style={item.style}>
-            <Image style={styles.image} source={item.imgSource} />
-            <LikeCount />
-          </View>
-        )}
+        keyExtractor={createPageKeyExtractor}
+        renderItem={renderItem}
       />
 
       <NavigationPanel {...navigationPanel} />

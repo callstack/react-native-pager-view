@@ -1,13 +1,22 @@
 import React from 'react';
 import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
+import ViewPager from '@react-native-community/viewpager';
 import { ProgressBar } from './component/ProgressBar';
 import { useNavigationPanel } from './hook/useNavigationPanel';
 import { NavigationPanel } from './component/NavigationPanel';
-import { AnimatedViewPager } from './utils';
+import { CreatePage, createPageKeyExtractor } from './utils';
+
+function renderItem({ item, index }: { item: CreatePage; index: number }) {
+  return (
+    <View style={[item.style, styles.center]}>
+      <Text style={styles.text}>{`Page Index: ${index}`}</Text>
+    </View>
+  );
+}
 
 export function OnPageScrollExample() {
-  const { ref, ...navigationPanel } = useNavigationPanel(5);
+  const { ref, ...navigationPanel } = useNavigationPanel<CreatePage>(5);
   const { activePage, setPage, progress, pages } = navigationPanel;
 
   return (
@@ -31,18 +40,14 @@ export function OnPageScrollExample() {
         </ScrollView>
       </View>
 
-      <AnimatedViewPager
+      <ViewPager
         onPageScroll={navigationPanel.onPageScroll}
         onPageSelected={navigationPanel.onPageSelected}
         ref={ref}
         style={styles.viewpager}
         data={navigationPanel.pages}
-        keyExtractor={(page) => `${page.key}`}
-        renderItem={({ item, index }) => (
-          <View style={[item.style, styles.center]}>
-            <Text style={styles.text}>{`Page Index: ${index}`}</Text>
-          </View>
-        )}
+        keyExtractor={createPageKeyExtractor}
+        renderItem={renderItem}
       />
       <View style={styles.progressContainer}>
         <ProgressBar numberOfPages={pages.length} progress={progress} />

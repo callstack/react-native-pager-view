@@ -1,25 +1,29 @@
 import * as React from 'react';
 
 import { Alert, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import ViewPager from '@react-native-community/viewpager';
 
 import { NavigationPanel } from './component/NavigationPanel';
 import { useNavigationPanel } from './hook/useNavigationPanel';
-import { AnimatedViewPager } from './utils';
+import { CreatePage, createPageKeyExtractor } from './utils';
 
 export const OnPageSelectedExample = () => {
   const callback = React.useCallback((position: number) => {
     Alert.alert('Hey', `You are on ${position + 1} page`);
   }, []);
-  const { ref, ...navigationPanel } = useNavigationPanel(10, callback);
+  const { ref, ...navigationPanel } = useNavigationPanel<CreatePage>(
+    10,
+    callback
+  );
 
   return (
     <SafeAreaView style={styles.flex}>
-      <AnimatedViewPager
+      <ViewPager
         onPageSelected={navigationPanel.onPageSelected}
         ref={ref}
         style={styles.flex}
         data={navigationPanel.pages}
-        keyExtractor={(page) => `${page.key}`}
+        keyExtractor={createPageKeyExtractor}
         renderItem={({ item, index }) => (
           <View style={[item.style, styles.center]}>
             <Text style={styles.text}>{`Page Index: ${index}`}</Text>
