@@ -42,7 +42,7 @@ export class PagerView<ItemT> extends React.PureComponent<
   }
 
   componentDidMount() {
-    if (this.props.initialPage != null && this.props.initialPage > 0) {
+    if (this.props.initialPage) {
       // Send command directly; render window already contains destination.
       UIManager.dispatchViewManagerCommand(findNodeHandle(this), 'setPage', [
         this.props.initialPage,
