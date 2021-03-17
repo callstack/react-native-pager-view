@@ -2,6 +2,7 @@ import {
   GestureResponderEvent,
   requireNativeComponent,
   StyleProp,
+  UIManager,
   ViewStyle,
 } from 'react-native';
 import type {
@@ -32,6 +33,10 @@ type PagerViewNativeProps = {
   transitionStyle?: TransitionStyle;
 };
 
-export const PagerViewNative = requireNativeComponent<PagerViewNativeProps>(
+export const PagerViewViewManager = requireNativeComponent<PagerViewNativeProps>(
   VIEW_MANAGER_NAME
 );
+
+export function getViewManagerConfig(viewManagerName = VIEW_MANAGER_NAME) {
+  return UIManager.getViewManagerConfig(viewManagerName);
+}

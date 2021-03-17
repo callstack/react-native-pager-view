@@ -86,16 +86,26 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
         updatePager(view, (view.adapter as FragmentAdapter).getTransactionId())
     }
 
-    override fun receiveCommand(view: ViewPager2, commandId: String, args: ReadableArray?) {
-        if (("setPage" == commandId) && args != null) {
-            setCurrentItem(view, args.getInt(0), args.getBoolean(1))
-            return
-        } else if (("setScrollEnabled" == commandId) && args != null) {
-            view.isUserInputEnabled = args.getBoolean(0)
-            return
+    override fun getCommandsMap() = mapOf(
+            "setPage" to COMMAND_SET_PAGE,
+            "setScrollEnabled" to COMMAND_SET_SCROLL_ENABLED
+    )
+
+    override fun receiveCommand(view: ViewPager2, commandId: Int, args: ReadableArray?) {
+        if (args != null) {
+            when (commandId) {
+                COMMAND_SET_PAGE -> {
+                    setCurrentItem(view, args.getInt(0), args.getBoolean(1))
+                    return
+                }
+                COMMAND_SET_SCROLL_ENABLED -> {
+                    view.isUserInputEnabled = args.getBoolean(0)
+                    return
+                }
+            }
         }
         throw IllegalArgumentException(String.format(
-                "Unsupported command %s received by %s.",
+                "Unsupported command %d received by %s.",
                 commandId,
                 javaClass.simpleName))
     }
@@ -182,5 +192,7 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
 
     companion object {
         private const val REACT_CLASS = "RNCViewPager"
+        private const val COMMAND_SET_PAGE = 1
+        private const val COMMAND_SET_SCROLL_ENABLED = 2
     }
 }

@@ -14,7 +14,7 @@ import type {
   PageScrollStateChangedNativeEvent,
 } from './types';
 
-import { PagerViewNative } from './PagerViewNative';
+import { getViewManagerConfig, PagerViewViewManager } from './PagerViewNative';
 
 type RenderWindowData = {
   buffer: number | undefined;
@@ -44,10 +44,11 @@ export class PagerView<ItemT> extends React.PureComponent<
   componentDidMount() {
     if (this.props.initialPage) {
       // Send command directly; render window already contains destination.
-      UIManager.dispatchViewManagerCommand(findNodeHandle(this), 'setPage', [
-        this.props.initialPage,
-        false,
-      ]);
+      UIManager.dispatchViewManagerCommand(
+        findNodeHandle(this),
+        getViewManagerConfig().Commands.setPage,
+        [this.props.initialPage, false]
+      );
     }
   }
 
@@ -72,10 +73,11 @@ export class PagerView<ItemT> extends React.PureComponent<
     );
     // Send paging command.
     requestAnimationFrame(() => {
-      UIManager.dispatchViewManagerCommand(findNodeHandle(this), 'setPage', [
-        page,
-        animated,
-      ]);
+      UIManager.dispatchViewManagerCommand(
+        findNodeHandle(this),
+        getViewManagerConfig().Commands.setPage,
+        [page, animated]
+      );
     });
   }
 
@@ -96,7 +98,7 @@ export class PagerView<ItemT> extends React.PureComponent<
   setScrollEnabled(scrollEnabled: boolean) {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this),
-      'setScrollEnabled',
+      getViewManagerConfig().Commands.setScrollEnabled,
       [scrollEnabled]
     );
   }
@@ -179,7 +181,7 @@ export class PagerView<ItemT> extends React.PureComponent<
     const { children, keys } = this.renderChildren(offset, windowLength);
 
     return (
-      <PagerViewNative
+      <PagerViewViewManager
         childrenKeys={keys}
         count={this.props.data.length}
         offscreenPageLimit={this.props.offscreenPageLimit}
@@ -197,7 +199,7 @@ export class PagerView<ItemT> extends React.PureComponent<
         transitionStyle={this.props.transitionStyle}
       >
         {children}
-      </PagerViewNative>
+      </PagerViewViewManager>
     );
   }
 }

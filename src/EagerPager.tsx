@@ -7,7 +7,7 @@ import type {
 } from './types';
 import { getReactStringKeys } from './utils';
 
-import { PagerViewNative } from './PagerViewNative';
+import { getViewManagerConfig, PagerViewViewManager } from './PagerViewNative';
 
 export class EagerPager extends React.PureComponent<EagerPagerProps> {
   private isScrolling = false;
@@ -23,10 +23,11 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
    * Default to animated transition between pages.
    */
   setPage(page: number, animated = true) {
-    UIManager.dispatchViewManagerCommand(findNodeHandle(this), 'setPage', [
-      page,
-      animated,
-    ]);
+    UIManager.dispatchViewManagerCommand(
+      findNodeHandle(this),
+      getViewManagerConfig().Commands.setPage,
+      [page, animated]
+    );
   }
 
   /**
@@ -46,7 +47,7 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
   setScrollEnabled(scrollEnabled: boolean) {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this),
-      'setScrollEnabled',
+      getViewManagerConfig().Commands.setScrollEnabled,
       [scrollEnabled]
     );
   }
@@ -71,7 +72,7 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
     const keys = getReactStringKeys(this.props.children);
 
     return (
-      <PagerViewNative
+      <PagerViewViewManager
         childrenKeys={keys}
         count={React.Children.count(this.props.children)}
         offscreenPageLimit={this.props.offscreenPageLimit}
@@ -89,7 +90,7 @@ export class EagerPager extends React.PureComponent<EagerPagerProps> {
         transitionStyle={this.props.transitionStyle}
       >
         {this.props.children}
-      </PagerViewNative>
+      </PagerViewViewManager>
     );
   }
 }
