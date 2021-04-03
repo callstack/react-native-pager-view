@@ -4,8 +4,8 @@
   "apps": {
     "ios.debug": {
       "type": "ios.app",
-      "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/PagerViewExample.app",
-      "build": "xcodebuild -workspace ios/PagerViewExample.xcworkspace -scheme PagerViewExample -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build"
+      "binaryPath": "./ios/build/Build/Products/Debug-iphonesimulator/PagerViewExample.app",
+      "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/PagerViewExample.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 11' -scheme PagerViewExample -configuration Debug -derivedDataPath ios/build -UseModernBuildSystem=YES"
     },
     "ios.release": {
       "type": "ios.app",
