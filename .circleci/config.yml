@@ -69,13 +69,15 @@ jobs:
       - rn/ios_simulator_start:
           device: 'iPhone 11'
       - rn/yarn_install
-      - rn/pod_install:
-          pod_install_directory: 'example/ios'
       - run:
-          command: cd exmaple && yarn detox:ios:build:release && cd ..
+          command: cd example
+      - rn/pod_install:
+          pod_install_directory: 'ios'
+      - run:
+          command: yarn detox:ios:build:release
           name: build for detox
       - run:
-          command:  cd exmaple && yarn detox:ios:test:release && cd ..
+          command: yarn detox:ios:test:release
           name: test detox
       - store_artifacts:
           path: ./artifacts
@@ -99,7 +101,7 @@ workflows:
       - e2e_release_ios:
           requires:
             - analyse_js
-            
+
       # Build the Android app in debug mode
       - rn/android_build:
           name: build_android
