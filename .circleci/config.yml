@@ -107,3 +107,6 @@ workflows:
       - typescript:
           requires:
             - install-dependencies
+      - e2e_release_ios:
+          requires:
+            - install-dependencies
