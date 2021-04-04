@@ -11,17 +11,17 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		20FD35D3AFB74454B69E3261 /* urbanears_grey.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A6D181FDC314B08B9B8FF0D /* urbanears_grey.png */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* PagerViewExampleTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* PagerViewExampleTests.m */; };
 		4C39C56BAD484C67AA576FFA /* libPods-PagerViewExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CA3E69C5B9553B26FBA2DF04 /* libPods-PagerViewExample.a */; };
-		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		7E4FC8AC7DBA43699D041B06 /* ue_black_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 845CB3EAA4B947E6BC87FF9F /* ue_black_logo.png */; };
-		CAF9E8C28FD44543B4DD199D /* urbanears_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A2CC649FBD34DFD8B398A47 /* urbanears_blue.png */; };
-		20FD35D3AFB74454B69E3261 /* urbanears_grey.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A6D181FDC314B08B9B8FF0D /* urbanears_grey.png */; };
 		6663D9863D6D4F23B34D8E59 /* urbanears_mint.png in Resources */ = {isa = PBXBuildFile; fileRef = C05516F540944C2BB8947A3C /* urbanears_mint.png */; };
+		7E4FC8AC7DBA43699D041B06 /* ue_black_logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 845CB3EAA4B947E6BC87FF9F /* ue_black_logo.png */; };
+		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		CA2E65949E77476C92AA34A9 /* urbanears_pink.png in Resources */ = {isa = PBXBuildFile; fileRef = FAAB4C2EC72E4E20B7A1ED3B /* urbanears_pink.png */; };
+		CAF9E8C28FD44543B4DD199D /* urbanears_blue.png in Resources */ = {isa = PBXBuildFile; fileRef = 9A2CC649FBD34DFD8B398A47 /* urbanears_blue.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,15 +56,15 @@
 		2D02E4901E0B4A5D006451C7 /* PagerViewExample-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "PagerViewExample-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		47F7ED3B7971BE374F7B8635 /* Pods-PagerViewExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PagerViewExample.debug.xcconfig"; path = "Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = PagerViewExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		845CB3EAA4B947E6BC87FF9F /* ue_black_logo.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = ue_black_logo.png; path = ../assets/ue_black_logo.png; sourceTree = "<group>"; };
+		9A2CC649FBD34DFD8B398A47 /* urbanears_blue.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = urbanears_blue.png; path = ../assets/urbanears_blue.png; sourceTree = "<group>"; };
+		9A6D181FDC314B08B9B8FF0D /* urbanears_grey.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = urbanears_grey.png; path = ../assets/urbanears_grey.png; sourceTree = "<group>"; };
+		C05516F540944C2BB8947A3C /* urbanears_mint.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = urbanears_mint.png; path = ../assets/urbanears_mint.png; sourceTree = "<group>"; };
 		CA3E69C5B9553B26FBA2DF04 /* libPods-PagerViewExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PagerViewExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E00ACF0FDA8BF921659E2F9A /* Pods-PagerViewExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PagerViewExample.release.xcconfig"; path = "Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		845CB3EAA4B947E6BC87FF9F /* ue_black_logo.png */ = {isa = PBXFileReference; name = "ue_black_logo.png"; path = "../assets/ue_black_logo.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		9A2CC649FBD34DFD8B398A47 /* urbanears_blue.png */ = {isa = PBXFileReference; name = "urbanears_blue.png"; path = "../assets/urbanears_blue.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		9A6D181FDC314B08B9B8FF0D /* urbanears_grey.png */ = {isa = PBXFileReference; name = "urbanears_grey.png"; path = "../assets/urbanears_grey.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		C05516F540944C2BB8947A3C /* urbanears_mint.png */ = {isa = PBXFileReference; name = "urbanears_mint.png"; path = "../assets/urbanears_mint.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		FAAB4C2EC72E4E20B7A1ED3B /* urbanears_pink.png */ = {isa = PBXFileReference; name = "urbanears_pink.png"; path = "../assets/urbanears_pink.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		FAAB4C2EC72E4E20B7A1ED3B /* urbanears_pink.png */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = urbanears_pink.png; path = ../assets/urbanears_pink.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,13 +141,24 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		67405345065A4676AE5DDFA8 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				845CB3EAA4B947E6BC87FF9F /* ue_black_logo.png */,
+				9A2CC649FBD34DFD8B398A47 /* urbanears_blue.png */,
+				9A6D181FDC314B08B9B8FF0D /* urbanears_grey.png */,
+				C05516F540944C2BB8947A3C /* urbanears_mint.png */,
+				FAAB4C2EC72E4E20B7A1ED3B /* urbanears_pink.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		6B9684456A2045ADE5A6E47E /* Pods */ = {
 			isa = PBXGroup;
 			children = (
 				47F7ED3B7971BE374F7B8635 /* Pods-PagerViewExample.debug.xcconfig */,
 				E00ACF0FDA8BF921659E2F9A /* Pods-PagerViewExample.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -184,19 +195,6 @@
 			);
 			name = Products;
 			sourceTree = "<group>";
-		};
-		67405345065A4676AE5DDFA8 /* Resources */ = {
-			isa = "PBXGroup";
-			children = (
-				845CB3EAA4B947E6BC87FF9F /* ue_black_logo.png */,
-				9A2CC649FBD34DFD8B398A47 /* urbanears_blue.png */,
-				9A6D181FDC314B08B9B8FF0D /* urbanears_grey.png */,
-				C05516F540944C2BB8947A3C /* urbanears_mint.png */,
-				FAAB4C2EC72E4E20B7A1ED3B /* urbanears_pink.png */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-			path = "";
 		};
 /* End PBXGroup section */
 
@@ -376,7 +374,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
+			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
 		2D02E4CB1E0B4B27006451C7 /* Bundle React Native Code And Images */ = {
 			isa = PBXShellScriptBuildPhase;

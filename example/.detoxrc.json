@@ -5,13 +5,13 @@
     "ios.debug": {
       "type": "ios.app",
       "binaryPath": "./ios/build/Build/Products/Debug-iphonesimulator/PagerViewExample.app",
-      "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/PagerViewExample.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 11' -scheme PagerViewExample -configuration Debug -derivedDataPath ios/build -UseModernBuildSystem=YES"
-    },
+      "build": "xcodebuild -workspace ios/PagerViewExample.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 11' -scheme PagerViewExample -configuration Debug -derivedDataPath ios/build -UseModernBuildSystem=YES"
+     },
     "ios.release": {
       "type": "ios.app",
-      "binaryPath": "./ios/build/Build/Products/Debug-iphonesimulator/PagerViewExample.app",
-      "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ./ios/PagerViewExample.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 11' -scheme PagerViewExample -configuration Release -derivedDataPath ios/build -UseModernBuildSystem=YES"
-    },
+      "binaryPath": "ios/build/Build/Products/Release-iphonesimulator/PagerViewExample.app",
+      "build": "export RCT_NO_LAUNCH_PACKAGER=true && xcodebuild -workspace ios/PagerViewExample.xcworkspace -configuration release -scheme PagerViewExample -sdk iphonesimulator -derivedDataPath ios/build"
+     },
     "android.debug": {
       "binaryPath": "android/app/build/outputs/apk/debug/app-debug.apk",
       "testBinaryPath": "android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
