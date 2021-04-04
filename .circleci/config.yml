@@ -124,15 +124,15 @@ workflows:
   build-and-test:
     jobs:
       - install-dependencies
-      # - lint:
-      #     requires:
-      #       - install-dependencies
-      # - typescript:
-      #     requires:
-      #       - install-dependencies
-      # - e2e_release_ios:
-      #     requires:
-      #       - install-dependencies
+      - lint:
+          requires:
+            - install-dependencies
+      - typescript:
+          requires:
+            - install-dependencies
+      - e2e_release_ios:
+          requires:
+            - install-dependencies
       - e2e_release_android:
           requires:
             - install-dependencies
