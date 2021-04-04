@@ -66,9 +66,10 @@ jobs:
       xcode_version: '11.4.0'
     steps:
       - attach_project
+      - working_directory: ~/project/example
       - run:
-          name: ls
-          command: ls
+          name: pwd
+          command: pwd
       # - rn/setup_macos_executor:
       #     node_version: '12.10.0'
       # - rn/ios_simulator_start:
