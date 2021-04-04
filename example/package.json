@@ -6,7 +6,9 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "start": "react-native start"
+    "start": "react-native start",
+    "detox:ios:build:release": "detox build -c ios.sim.release",
+    "detox:ios:test:release": "detox test -c ios.sim.release"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",

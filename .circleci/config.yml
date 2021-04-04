@@ -66,25 +66,20 @@ jobs:
       xcode_version: '11.4.0'
     steps:
       - attach_project
-      - working_directory: ~/project/example
+      - rn/setup_macos_executor:
+          node_version: '12.10.0'
+      - rn/ios_simulator_start:
+          device: 'iPhone 11'
+      - rn/pod_install:
+          pod_install_directory: 'example/ios'
       - run:
-          name: pwd
-          command: pwd
-      # - rn/setup_macos_executor:
-      #     node_version: '12.10.0'
-      # - rn/ios_simulator_start:
-      #     device: 'iPhone 11'
-      # - rn/pod_install:
-      #     pod_install_directory: 'example/ios'
-
-      # - run:
-      #     command: yarn detox:ios:build:release
-      #     name: build for detox
-      # - run:
-      #     command: yarn detox:ios:test:release
-      #     name: test detox
-      # - store_artifacts:
-      #     path: ./artifacts
+          command: yarn --cwd example detox:ios:build:release
+          name: build for detox
+      - run:
+          command: yarn --cwd example detox:ios:test:release
+          name: test detox
+      - store_artifacts:
+          path: ./artifacts
   unit-tests:
     executor: default
     steps:
