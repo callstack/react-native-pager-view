@@ -34,7 +34,7 @@
     "emulator": {
       "type": "android.emulator",
       "device": {
-        "avdName": "Pixel_3_API_Q"
+        "avdName": "TestingAVD"
       }
     }
   },
