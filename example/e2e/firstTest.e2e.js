@@ -19,9 +19,11 @@ describe('Example', () => {
   });
 
   it('should have all examples titles', async () => {
-    await Promise.all(examples.map(async (example) => {
-      await expect(element(by.text(example))).toBeVisible();
-    }));
+    await Promise.all(
+      examples.map(async (example) => {
+        await expect(element(by.text(example))).toBeVisible();
+      })
+    );
   });
 
   // it('should show hello screen after tap', async () => {
@@ -34,4 +36,3 @@ describe('Example', () => {
   //   await expect(element(by.text('World!!!'))).toBeVisible();
   // });
 });
-
