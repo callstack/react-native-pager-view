@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  rn: react-native-community/react-native@4.4.2
+
 executors:
   default:
     docker:
