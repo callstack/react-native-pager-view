@@ -80,6 +80,26 @@ jobs:
           name: test detox
       - store_artifacts:
           path: ./artifacts
+  e2e_release_android:
+    # we need to use mac to run emulator with acceleration
+    # see https://support.circleci.com/hc/en-us/articles/360000028928-Testing-with-Android-emulator-on-CircleCI-2-0
+    executor:
+      name: rn/macos
+      xcode_version: '11.4.0'
+    steps:
+      - attach_project
+      - rn/setup_macos_executor:
+          node_version: '12.10.0'
+      - rn/android_emulator_start:
+          logcat_grep: 'com.example.reactnativepagerview'
+      - run:
+          command: yarn --cwd example detox:android:build:release
+          name: build for detox
+      - run:
+          command: yarn --cwd example detox:android:test:release
+          name: test detox
+      - store_artifacts:
+          path: ./artifacts
   unit-tests:
     executor: default
     steps:
@@ -110,6 +130,9 @@ workflows:
       # - typescript:
       #     requires:
       #       - install-dependencies
-      - e2e_release_ios:
+      # - e2e_release_ios:
+      #     requires:
+      #       - install-dependencies
+      - e2e_release_android:
           requires:
             - install-dependencies
