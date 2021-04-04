@@ -57,6 +57,28 @@ jobs:
       - run:
           name: Typescript
           command: yarn typescript
+  e2e_release_ios:
+    executor:
+      name: rn/macos
+      xcode_version: '11.4.0'
+    steps:
+      - attach_workspace:
+          at: .
+      - rn/setup_macos_executor:
+          node_version: '12.10.0'
+      - rn/ios_simulator_start:
+          device: 'iPhone 11'
+      - rn/yarn_install
+      - rn/pod_install:
+          pod_install_directory: 'example/ios'
+      - run:
+          command: cd exmaple && yarn detox:ios:build:release && cd ..
+          name: build for detox
+      - run:
+          command:  cd exmaple && yarn detox:ios:test:release && cd ..
+          name: test detox
+      - store_artifacts:
+          path: ./artifacts
 
 workflows:
   test:
@@ -74,6 +96,10 @@ workflows:
           requires:
             - install-dependencies
 
+      - e2e_release_ios:
+          requires:
+            - analyse_js
+            
       # Build the Android app in debug mode
       - rn/android_build:
           name: build_android
