@@ -68,7 +68,10 @@ jobs:
           node_version: '12.10.0'
       - rn/ios_simulator_start:
           device: 'iPhone 11'
-      - rn/yarn_install
+      # - rn/yarn_install
+      - run:
+          command: yarn install --frozen-lockfile
+          name: yarn install
       - run:
           command: cd example
       - rn/pod_install:
@@ -103,9 +106,9 @@ workflows:
             - analyse_js
 
       # Build the Android app in debug mode
-      - rn/android_build:
-          name: build_android
-          project_path: "example/android"
-          build_type: debug
-          requires:
-            - analyse_js
+      # - rn/android_build:
+      #     name: build_android
+      #     project_path: "example/android"
+      #     build_type: debug
+      #     requires:
+      #       - analyse_js
