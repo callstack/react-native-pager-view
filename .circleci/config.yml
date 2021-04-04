@@ -76,7 +76,7 @@ jobs:
           command: yarn --cwd example detox:ios:build:release
           name: build for detox
       - run:
-          command: yarn --cwd example detox:ios:test:release
+          command: detox clean-framework-cache && detox build-framework-cache && yarn --cwd example detox:ios:test:release
           name: test detox
       - store_artifacts:
           path: ./artifacts
