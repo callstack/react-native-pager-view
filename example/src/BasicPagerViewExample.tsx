@@ -22,6 +22,7 @@ export function BasicPagerViewExample() {
   return (
     <SafeAreaView style={styles.container}>
       <AnimatedPagerView
+        //@ts-ignore
         testID="pager-view"
         ref={ref}
         style={styles.PagerView}
@@ -44,7 +45,9 @@ export function BasicPagerViewExample() {
               <View key={page.key} style={page.style} collapsable={false}>
                 <Image style={styles.image} source={page.imgSource} />
                 <LikeCount />
-                <Text testID={`pageNumber${index}`}>{`page number ${index}`}</Text>
+                <Text
+                  testID={`pageNumber${index}`}
+                >{`page number ${index}`}</Text>
               </View>
             )),
           [navigationPanel.pages]
