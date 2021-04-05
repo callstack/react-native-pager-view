@@ -1,14 +1,3 @@
-const examples = [
-  'Basic Example',
-  'Keyboard Example',
-  'OnPageScroll Example',
-  'OnPageSelected Example',
-  'Headphones Carousel Example',
-  'Pagination Dots Example',
-  'Scrollable PagerView Example',
-  'ScrollView inside PagerView Example',
-];
-
 describe('Example', () => {
   beforeAll(async () => {
     await device.launchApp();
@@ -18,21 +7,12 @@ describe('Example', () => {
     await device.reloadReactNative();
   });
 
-  it('should have all examples titles', async () => {
-    await Promise.all(
-      examples.map(async (example) => {
-        await expect(element(by.text(example))).toBeVisible();
-      })
-    );
+  it('swipes to the next page', async () => {
+    await element(by.text('Basic Example')).tap();
+    await expect(element(by.id("pageNumber0"))).toBeVisible();
+    await element(by.id('pager-view')).swipe("left","fast");
+    await expect(element(by.id("pageNumber1"))).toBeVisible();
   });
 
-  // it('should show hello screen after tap', async () => {
-  //   await element(by.id('hello_button')).tap();
-  //   await expect(element(by.text('Hello!!!'))).toBeVisible();
-  // });
-
-  // it('should show world screen after tap', async () => {
-  //   await element(by.id('world_button')).tap();
-  //   await expect(element(by.text('World!!!'))).toBeVisible();
-  // });
 });
+

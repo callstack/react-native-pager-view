@@ -10,7 +10,9 @@
     "detox:ios:build:release": "detox build -c ios.sim.release",
     "detox:ios:test:release": "detox test -c ios.sim.release",
     "detox:android:build:release": "detox build -c android.emu.release",
-    "detox:android:test:release": "detox test -c android.emu.release"
+    "detox:android:test:release": "detox test -c android.emu.release",
+    "detox:android:build:debug": "detox build -c android.emu.debug",
+    "detox:android:test:debug": "detox test -c android.emu.debug"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
