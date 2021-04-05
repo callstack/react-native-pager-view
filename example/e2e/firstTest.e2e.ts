@@ -11,6 +11,9 @@ describe('Example', () => {
 
   it('swipes to the next page', async () => {
     await element(by.text('Basic Example')).tap();
+    await waitFor(element(by.id('pageNumber0')))
+      .toBeVisible()
+      .withTimeout(1000);
     await expect(element(by.id('pageNumber0'))).toBeVisible();
     await element(by.id('pager-view')).swipe('left', 'fast');
     await expect(element(by.id('pageNumber1'))).toBeVisible();
