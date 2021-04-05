@@ -39,6 +39,7 @@ export function ControlsPanel({
     <>
       <View style={styles.buttons}>
         <Button
+          testID="scroll-enabled-button"
           text={scrollEnabled ? 'Scroll Enabled' : 'Scroll Disabled'}
           onPress={toggleScroll}
         />
@@ -55,12 +56,21 @@ export function ControlsPanel({
       </View>
       {!disablePagesAmountManagement ? (
         <View style={styles.buttons}>
-          <Button text="Add new page" onPress={addPage} />
-          <Button text="Remove last page" onPress={removePage} />
+          <Button
+            testID="add-page-button"
+            text="Add new page"
+            onPress={addPage}
+          />
+          <Button
+            testID="remove-page-button"
+            text="Remove last page"
+            onPress={removePage}
+          />
         </View>
       ) : null}
       <View style={styles.buttons}>
         <Button
+          testID="add-page-button"
           text={isAnimated ? 'Turn off animations' : 'Turn animations back on'}
           onPress={toggleAnimation}
         />
@@ -71,14 +81,26 @@ export function ControlsPanel({
         </View>
       </View>
       <View style={styles.buttons}>
-        <Button text="Start" disabled={activePage === 0} onPress={firstPage} />
-        <Button text="Prev" disabled={activePage === 0} onPress={prevPage} />
         <Button
+          testID="start-page-button"
+          text="Start"
+          disabled={activePage === 0}
+          onPress={firstPage}
+        />
+        <Button
+          testID="prev-page-button"
+          text="Prev"
+          disabled={activePage === 0}
+          onPress={prevPage}
+        />
+        <Button
+          testID="next-page-button"
           text="Next"
           disabled={activePage === pages.length - 1}
           onPress={nextPage}
         />
         <Button
+          testID="last-page-button"
           text="Last"
           disabled={activePage === pages.length - 1}
           onPress={lastPage}

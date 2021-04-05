@@ -1,13 +1,13 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ViewProps } from 'react-native';
 
-type Props = {
+interface Props extends ViewProps {
   progress: {
     position: number;
     offset: number;
   };
   numberOfPages: number;
-};
+}
 
 export class ProgressBar extends React.Component<Props> {
   render() {
