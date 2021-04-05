@@ -39,4 +39,17 @@ describe('Example', () => {
     await element(by.text('Last')).tap();
     await expect(element(by.id('pageNumber8'))).toBeVisible();
   });
+
+  it('goes to the desired page programmatically', async () => {
+    await element(by.text('Basic Example')).tap();
+    await expect(element(by.id('pageNumber0'))).toBeVisible();
+    await element(by.text('Next')).tap();
+    await expect(element(by.id('pageNumber1'))).toBeVisible();
+    await element(by.text('Prev')).tap();
+    await expect(element(by.id('pageNumber0'))).toBeVisible();
+    await element(by.text('Last')).tap();
+    await expect(element(by.id('pageNumber9'))).toBeVisible();
+    await element(by.text('Start')).tap();
+    await expect(element(by.id('pageNumber0'))).toBeVisible();
+  });
 });
