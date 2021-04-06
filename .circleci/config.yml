@@ -92,6 +92,7 @@ jobs:
           node_version: '12.10.0'
       - rn/android_emulator_start:
           logcat_grep: 'com.example.reactnativepagerview'
+          platform_version: 'android-29'
       - run:
           command: yarn --cwd example detox:android:build:release
           name: build for detox
