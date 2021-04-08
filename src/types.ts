@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react';
 import type * as ReactNative from 'react-native';
 
 export type TransitionStyle = 'scroll' | 'curl';
@@ -89,21 +88,6 @@ export interface PagerViewProps {
    */
   offscreenPageLimit?: number;
 
-  children: ReactNode;
-
-  /**
-   * If a parent `View` wants to prevent a child `View` from becoming responder
-   * on a move, it should have this handler which returns `true`.
-   *
-   * `View.props.onMoveShouldSetResponderCapture: (event) => [true | false]`,
-   * where `event` is a synthetic touch event as described above.
-   *
-   * See http://facebook.github.io/react-native/docs/view.html#onMoveShouldsetrespondercapture
-   */
-  onMoveShouldSetResponderCapture?: (
-    event: ReactNative.GestureResponderEvent
-  ) => boolean;
-
   /**
    * iOS only
    */
@@ -119,4 +103,35 @@ export interface PagerViewProps {
    * after reaching end or very beginning of pages.
    */
   overdrag?: boolean;
+}
+
+export interface LazyPagerViewProps<ItemT> extends PagerViewProps {
+  /**
+   * Number of pages to render before/after the current page. Minimum 1.
+   */
+  buffer?: number;
+
+  /**
+   * Array of data to be rendered as pages.
+   */
+  data: ItemT[];
+
+  /**
+   * Compute a unique key for the given item at the specified index.
+   */
+  keyExtractor: (item: ItemT, index: number) => string;
+
+  /**
+   * Note: not currently implemented.
+   *
+   * Maximum number of pages allowed to stay rendered. Set to 0 for unlimited.
+   *
+   * Default unlimited. Will always render at least `1 + 2 * buffer` pages.
+   */
+  maxRenderWindow?: number;
+
+  /**
+   * Render an item from `data` into a page.
+   */
+  renderItem: (info: { item: ItemT; index: number }) => React.ReactElement;
 }

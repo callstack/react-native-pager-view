@@ -1,4 +1,4 @@
-import PagerView from 'react-native-pager-view';
+import { PagerView } from 'react-native-pager-view';
 import React from 'react';
 import { ScrollView, View, Image, StyleSheet, Animated } from 'react-native';
 import { NavigationPanel } from './component/NavigationPanel';

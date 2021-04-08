@@ -1,5 +1,5 @@
 import type {
-  default as PagerView,
+  PagerView,
   PageScrollStateChangedNativeEvent,
   PagerViewOnPageScrollEventData,
   PagerViewOnPageSelectedEventData,

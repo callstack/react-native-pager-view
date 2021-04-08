@@ -7,7 +7,8 @@ import {
   Animated,
   Dimensions,
 } from 'react-native';
-import PagerView, {
+import {
+  PagerView,
   PagerViewOnPageScrollEventData,
 } from 'react-native-pager-view';
 

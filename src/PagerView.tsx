@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import { Platform, UIManager, Keyboard } from 'react-native';
 import ReactNative from 'react-native';
 import type {
@@ -55,7 +55,6 @@ import { getViewManagerConfig, PagerViewViewManager } from './PagerViewNative';
 
 export class PagerView extends React.Component<PagerViewProps> {
   private isScrolling = false;
-  private PagerView = React.createRef<typeof PagerViewViewManager>();
 
   componentDidMount() {
     // On iOS we do it directly on the native side
@@ -67,10 +66,6 @@ export class PagerView extends React.Component<PagerViewProps> {
       });
     }
   }
-
-  public getInnerViewNode = (): ReactElement => {
-    return this.PagerView.current!.getInnerViewNode();
-  };
 
   private _onPageScroll = (e: PagerViewOnPageScrollEvent) => {
     if (this.props.onPageScroll) {
@@ -144,7 +139,6 @@ export class PagerView extends React.Component<PagerViewProps> {
     return (
       <PagerViewViewManager
         {...this.props}
-        ref={this.PagerView as any /** TODO: Fix ref type */}
         style={this.props.style}
         onPageScroll={this._onPageScroll}
         onPageScrollStateChanged={this._onPageScrollStateChanged}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View, SafeAreaView, Animated } from 'react-native';
-import PagerView from 'react-native-pager-view';
+import { PagerView } from 'react-native-pager-view';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { ProgressBar } from './component/ProgressBar';
 import { useNavigationPanel } from './hook/useNavigationPanel';

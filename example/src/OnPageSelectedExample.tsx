@@ -9,7 +9,7 @@ import {
   Animated,
 } from 'react-native';
 
-import PagerView from 'react-native-pager-view';
+import { PagerView } from 'react-native-pager-view';
 import { NavigationPanel } from './component/NavigationPanel';
 import { useNavigationPanel } from './hook/useNavigationPanel';
 
