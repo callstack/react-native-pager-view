@@ -33,6 +33,7 @@
     },
     "emulator": {
       "type": "android.emulator",
+      "utilBinaryPaths": ["./test-butler-app.apk"],
       "device": {
         "avdName": "TestingAVD"
       }

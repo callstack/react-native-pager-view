@@ -57,3 +57,4 @@ buck-out/
 
 example/ios/Pods/
 !debug.keystore
+test-butler-app.apk
