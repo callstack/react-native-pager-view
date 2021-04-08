@@ -59,10 +59,12 @@ export class PagerView extends React.Component<PagerViewProps> {
 
   componentDidMount() {
     // On iOS we do it directly on the native side
-    if (Platform.OS === 'android') {
-      if (this.props.initialPage != null) {
-        this.setPageWithoutAnimation(this.props.initialPage);
-      }
+    if (Platform.OS === 'android' && this.props.initialPage !== undefined) {
+      requestAnimationFrame(() => {
+        if (this.props.initialPage !== undefined) {
+          this.setPageWithoutAnimation(this.props.initialPage);
+        }
+      });
     }
   }
 
