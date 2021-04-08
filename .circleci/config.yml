@@ -87,7 +87,8 @@ jobs:
       name: rn/macos
       xcode_version: '11.4.0'
     steps:
-      - attach_project
+      - attach_workspace:
+          at: .
       - rn/setup_macos_executor:
           node_version: '12.10.0'
       - rn/android_emulator_start:
@@ -100,7 +101,7 @@ jobs:
           command: yarn --cwd example detox:android:test:release
           name: test detox
       - store_artifacts:
-          path: ~/project/artifacts
+          path: ./artifacts
   unit-tests:
     executor: default
     steps:
@@ -131,9 +132,9 @@ workflows:
       - typescript:
           requires:
             - install-dependencies
-      - e2e_release_ios:
-          requires:
-            - install-dependencies
+      # - e2e_release_ios:
+      #     requires:
+      #       - install-dependencies
       - e2e_release_android:
           requires:
             - install-dependencies
