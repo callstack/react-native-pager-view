@@ -101,7 +101,7 @@ jobs:
           command: yarn --cwd example detox:android:test:release
           name: test detox
       - store_artifacts:
-          path: ./artifacts
+          path: ./example/artifacts
   unit-tests:
     executor: default
     steps:
