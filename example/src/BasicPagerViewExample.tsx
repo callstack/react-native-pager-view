@@ -43,7 +43,7 @@ export function BasicPagerViewExample() {
           () =>
             navigationPanel.pages.map((page, index) => (
               <View key={page.key} style={page.style} collapsable={false}>
-                <Image style={styles.image} source={page.imgSource} />
+                {/* <Image style={styles.image} source={page.imgSource} /> */}
                 <LikeCount />
                 <Text
                   testID={`pageNumber${index}`}
