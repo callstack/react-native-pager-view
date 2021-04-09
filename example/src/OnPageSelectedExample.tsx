@@ -19,7 +19,10 @@ export const OnPageSelectedExample = () => {
   const callback = React.useCallback((position: number) => {
     Alert.alert('Hey', `You are on ${position + 1} page`);
   }, []);
-  const { ref, ...navigationPanel } = useNavigationPanel(10, callback);
+  const { ref, ...navigationPanel } = useNavigationPanel<PagerView>(
+    10,
+    callback
+  );
 
   return (
     <SafeAreaView style={styles.flex}>

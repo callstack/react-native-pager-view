@@ -2,6 +2,7 @@ import React from 'react';
 import { Platform, UIManager, Keyboard } from 'react-native';
 import ReactNative from 'react-native';
 import type {
+  Pageable,
   PagerViewOnPageScrollEvent,
   PagerViewOnPageSelectedEvent,
   PageScrollStateChangedNativeEvent,
@@ -53,7 +54,9 @@ import { getViewManagerConfig, PagerViewViewManager } from './PagerViewNative';
  * ```
  */
 
-export class PagerView extends React.Component<PagerViewProps> {
+export class PagerView
+  extends React.Component<PagerViewProps>
+  implements Pageable {
   private isScrolling = false;
 
   componentDidMount() {

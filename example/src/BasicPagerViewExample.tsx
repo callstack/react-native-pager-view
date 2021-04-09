@@ -10,7 +10,7 @@ import { useNavigationPanel } from './hook/useNavigationPanel';
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
 export function BasicPagerViewExample() {
-  const { ref, ...navigationPanel } = useNavigationPanel();
+  const { ref, ...navigationPanel } = useNavigationPanel<PagerView>();
 
   return (
     <SafeAreaView style={styles.container}>

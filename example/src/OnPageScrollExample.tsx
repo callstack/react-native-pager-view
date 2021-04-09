@@ -9,7 +9,7 @@ import { NavigationPanel } from './component/NavigationPanel';
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
 export function OnPageScrollExample() {
-  const { ref, ...navigationPanel } = useNavigationPanel(5);
+  const { ref, ...navigationPanel } = useNavigationPanel<PagerView>(5);
   const { activePage, setPage, progress, pages } = navigationPanel;
 
   return (

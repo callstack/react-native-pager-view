@@ -37,7 +37,7 @@ const Page = ({ title, description, onPress, buttonTitle }: PageProps) => {
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
 export function KeyboardExample() {
-  const { ref, ...navigationPanel } = useNavigationPanel(2);
+  const { ref, ...navigationPanel } = useNavigationPanel<PagerView>(2);
   const { setPage } = navigationPanel;
   return (
     <SafeAreaView style={styles.flex}>

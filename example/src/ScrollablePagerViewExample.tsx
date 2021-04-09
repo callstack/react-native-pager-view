@@ -9,7 +9,7 @@ const HEIGHT = 300;
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
 export const ScrollablePagerViewExample = (): JSX.Element => {
-  const { ref, ...navigationPanel } = useNavigationPanel();
+  const { ref, ...navigationPanel } = useNavigationPanel<PagerView>();
 
   return (
     <>

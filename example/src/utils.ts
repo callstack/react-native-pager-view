@@ -25,6 +25,7 @@ export const createPage = (key: number): CreatePage => {
     style: {
       backgroundColor: BGCOLOR[key % BGCOLOR.length],
       alignItems: 'center',
+      flex: 1,
       padding: 20,
     },
     imgSource: { uri: IMAGE_URIS[key % BGCOLOR.length] },

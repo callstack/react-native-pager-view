@@ -1,5 +1,5 @@
 import type {
-  PagerView,
+  Pageable,
   PageScrollStateChangedNativeEvent,
   PagerViewOnPageScrollEventData,
   PagerViewOnPageSelectedEventData,
@@ -19,11 +19,11 @@ export interface EventLog {
 const getBasePages = (pages: number) =>
   new Array(pages).fill('').map((_v, index) => createPage(index));
 
-export function useNavigationPanel(
+export function useNavigationPanel<T extends Pageable>(
   pagesAmount: number = 10,
   onPageSelectedCallback: (position: number) => void = () => {}
 ) {
-  const ref = useRef<PagerView>(null);
+  const ref = useRef<T>(null);
   const [pages, setPages] = useState<CreatePage[]>(
     useMemo(() => getBasePages(pagesAmount), [pagesAmount])
   );

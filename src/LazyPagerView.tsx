@@ -10,12 +10,14 @@ import {
 import { getViewManagerConfig, PagerViewViewManager } from './PagerViewNative';
 import type {
   LazyPagerViewProps,
+  Pageable,
   PagerViewOnPageScrollEvent,
   PagerViewOnPageSelectedEvent,
   PageScrollStateChangedNativeEvent,
 } from './types';
 
-type LazyPagerViewState = { offset: number; windowLength: number };
+type LazyPagerViewImplProps<ItemT> = Omit<LazyPagerViewProps<ItemT>, 'style'>;
+type LazyPagerViewImplState = { offset: number; windowLength: number };
 
 type RenderWindowData = {
   buffer: number | undefined;
@@ -31,13 +33,41 @@ type RenderWindowData = {
  * Note: under current implementation, pages are never unloaded. Also, all
  * pages before the visible page are rendered.
  */
-export class LazyPagerView<ItemT> extends React.PureComponent<
-  LazyPagerViewProps<ItemT>,
-  LazyPagerViewState
+export class LazyPagerView<ItemT>
+  extends React.PureComponent<LazyPagerViewProps<ItemT>>
+  implements Pageable {
+  private pagerImplRef = React.createRef<LazyPagerViewImpl<ItemT>>();
+
+  setPage(page: number): void {
+    this.pagerImplRef.current?.setPage(page, true);
+  }
+
+  setPageWithoutAnimation(page: number): void {
+    this.pagerImplRef.current?.setPage(page, false);
+  }
+
+  setScrollEnabled(scrollEnabled: boolean): void {
+    this.pagerImplRef.current?.setScrollEnabled(scrollEnabled);
+  }
+
+  render() {
+    const { style, ...implProps } = this.props;
+
+    return (
+      <View style={style}>
+        <LazyPagerViewImpl {...implProps} ref={this.pagerImplRef} />
+      </View>
+    );
+  }
+}
+
+class LazyPagerViewImpl<ItemT> extends React.Component<
+  LazyPagerViewImplProps<ItemT>,
+  LazyPagerViewImplState
 > {
   private isScrolling = false;
 
-  constructor(props: LazyPagerViewProps<ItemT>) {
+  constructor(props: LazyPagerViewImplProps<ItemT>) {
     super(props);
     this.state = this.computeRenderWindow({
       buffer: props.buffer,
@@ -51,20 +81,57 @@ export class LazyPagerView<ItemT> extends React.PureComponent<
   componentDidMount() {
     const initialPage = this.props.initialPage;
     if (initialPage != null && initialPage > 0) {
-      // Send command directly; render window already contains destination.
-      UIManager.dispatchViewManagerCommand(
-        findNodeHandle(this),
-        getViewManagerConfig().Commands.setPageWithoutAnimation,
-        [initialPage]
-      );
+      requestAnimationFrame(() => {
+        // Send command directly; render window already contains destination.
+        UIManager.dispatchViewManagerCommand(
+          findNodeHandle(this),
+          getViewManagerConfig().Commands.setPageWithoutAnimation,
+          [initialPage]
+        );
+      });
     }
+  }
+
+  shouldComponentUpdate(
+    nextProps: LazyPagerViewImplProps<ItemT>,
+    nextState: LazyPagerViewImplState
+  ) {
+    const stateKeys: (keyof LazyPagerViewImplState)[] = [
+      'offset',
+      'windowLength',
+    ];
+    for (const stateKey of stateKeys) {
+      if (this.state[stateKey] !== nextState[stateKey]) {
+        return true;
+      }
+    }
+
+    const propKeys: (keyof LazyPagerViewImplProps<ItemT>)[] = [
+      'data',
+      'keyExtractor',
+      'offscreenPageLimit',
+      'orientation',
+      'overdrag',
+      'overScrollMode',
+      'pageMargin',
+      'renderItem',
+      'scrollEnabled',
+      'showPageIndicator',
+      'transitionStyle',
+    ];
+    for (const propKey of propKeys) {
+      if (this.props[propKey] !== nextProps[propKey]) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
    * A helper function to scroll to a specific page in the PagerView.
-   * Default to animated transition between pages.
    */
-  setPage(page: number, animated = true) {
+  setPage(page: number, animated: boolean) {
     if (page < 0 || page >= this.props.data.length) {
       return;
     }
@@ -92,14 +159,6 @@ export class LazyPagerView<ItemT> extends React.PureComponent<
   }
 
   /**
-   * A helper function to scroll to a specific page in the PagerView.
-   * The transition between pages will *not* be animated.
-   */
-  setPageWithoutAnimation(page: number) {
-    this.setPage(page, false);
-  }
-
-  /**
    * A helper function to enable/disable scroll imperatively.
    * The recommended way is using the scrollEnabled prop, however, there might
    * be a case where an imperative solution is more useful (e.g. for not
@@ -121,7 +180,7 @@ export class LazyPagerView<ItemT> extends React.PureComponent<
    *
    * Currently will always yield `offset` of `0`.
    */
-  private computeRenderWindow(data: RenderWindowData): LazyPagerViewState {
+  private computeRenderWindow(data: RenderWindowData): LazyPagerViewImplState {
     if (data.maxRenderWindow != null && data.maxRenderWindow !== 0) {
       console.warn('`maxRenderWindow` is not currently implemented.');
     }
@@ -213,7 +272,7 @@ export class LazyPagerView<ItemT> extends React.PureComponent<
         pageMargin={this.props.pageMargin}
         scrollEnabled={this.props.scrollEnabled}
         showPageIndicator={this.props.showPageIndicator}
-        style={this.props.style}
+        style={styles.nativeView}
         transitionStyle={this.props.transitionStyle}
       >
         {children}
@@ -223,5 +282,6 @@ export class LazyPagerView<ItemT> extends React.PureComponent<
 }
 
 const styles = StyleSheet.create({
+  nativeView: { flex: 1 },
   pageContainer: { height: '100%', position: 'absolute', width: '100%' },
 });

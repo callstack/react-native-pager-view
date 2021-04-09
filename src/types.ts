@@ -21,6 +21,30 @@ export interface PageScrollStateChangedEvent {
   pageScrollState: PageScrollState;
 }
 
+/**
+ * Supports imperative paging commands.
+ */
+export interface Pageable {
+  /**
+   * A helper function to scroll to a specific page in the PagerView.
+   * The transition between pages will be animated.
+   */
+  setPage(page: number): void;
+
+  /**
+   * A helper function to scroll to a specific page in the PagerView.
+   * The transition between pages will *not* be animated.
+   */
+  setPageWithoutAnimation(page: number): void;
+
+  /**
+   * A helper function to enable/disable scroll imperatively
+   * The recommended way is using the scrollEnabled prop, however, there might be a case where a
+   * imperative solution is more useful (e.g. for not blocking an animation)
+   */
+  setScrollEnabled(scrollEnabled: boolean): void;
+}
+
 export interface PagerViewProps {
   /**
    * Index of initial page that should be selected. Use `setPage` method to
