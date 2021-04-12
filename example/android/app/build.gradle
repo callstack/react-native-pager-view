@@ -77,7 +77,7 @@ import com.android.build.OutputFile
 
 project.ext.react = [
     enableHermes: false,  // clean and rebuild if changing
-    entryFile: "index.tsx",
+    entryFile: "index.js",
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -133,6 +133,9 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        testBuildType System.getProperty('testBuildType', 'debug')  // This will later be used to control the test apk build type
+//        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunner 'com.example.reactnativepagerview.DetoxTestAppJUnitRunner'
     }
     splits {
         abi {
@@ -159,7 +162,8 @@ android {
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+//            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            proguardFile "${rootProject.projectDir}/../node_modules/detox/android/detox/proguard-rules-app.pro"
         }
     }
     // applicationVariants are e.g. debug, release
@@ -205,6 +209,9 @@ dependencies {
     }
 
     implementation project(':reactnativepagerview')
+    androidTestImplementation('com.wix:detox:+')
+    androidTestImplementation 'com.linkedin.testbutler:test-butler-library:2.2.1'
+    androidTestUtil 'com.linkedin.testbutler:test-butler-app:2.2.1'
 }
 
 task downloadDependencies() {

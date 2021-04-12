@@ -5,15 +5,16 @@ import {
   Text,
   TouchableWithoutFeedback,
   View,
+  ViewProps,
   ViewStyle,
 } from 'react-native';
 
-type Props = {
+interface Props extends ViewProps {
   disabled?: boolean;
   onPress: () => void;
   text: string;
   style?: StyleProp<ViewStyle>;
-};
+}
 
 export class Button extends React.Component<Props> {
   _handlePress = () => {

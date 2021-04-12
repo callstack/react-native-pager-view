@@ -6,7 +6,14 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "start": "react-native start"
+    "start": "react-native start",
+    "get:testbutler": "curl -f -o ./test-butler-app.apk https://linkedin.bintray.com/maven/com/linkedin/testbutler/test-butler-app/2.1.0/test-butler-app-2.1.0.apk",
+    "detox:ios:build:release": "detox build -c ios.sim.release",
+    "detox:ios:test:release": "detox test -c ios.sim.release",
+    "detox:android:build:release": "detox build -c android.emu.release",
+    "detox:android:test:release": "yarn get:testbutler && detox test --configuration android.emu.release --loglevel trace --headless --take-screenshots failing",
+    "detox:android:build:debug": "detox build -c android.emu.debug",
+    "detox:android:test:debug": "detox test -c android.emu.debug"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
@@ -23,7 +30,13 @@
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/runtime": "^7.12.5",
+    "@types/detox": "^17.14.0",
+    "@types/jest": "^26.0.22",
     "babel-plugin-module-resolver": "^4.0.0",
-    "metro-react-native-babel-preset": "^0.64.0"
+    "detox": "^18.9.0",
+    "jest": "^26.6.3",
+    "jest-circus": "^26.6.3",
+    "metro-react-native-babel-preset": "^0.64.0",
+    "ts-jest": "^26.5.4"
   }
 }

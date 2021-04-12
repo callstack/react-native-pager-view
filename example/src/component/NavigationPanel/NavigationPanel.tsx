@@ -12,7 +12,7 @@ enum VisibleTab {
 }
 
 export function NavigationPanel(props: NavigationPanelProps) {
-  const [visible, setVisible] = useState(VisibleTab.None);
+  const [visible, setVisible] = useState(VisibleTab.Controls);
 
   return (
     <View>

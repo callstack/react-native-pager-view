@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Image, StyleSheet, View, SafeAreaView, Animated } from 'react-native';
+import { StyleSheet, View, SafeAreaView, Animated, Text } from 'react-native';
 
 import PagerView from 'react-native-pager-view';
 
@@ -15,6 +15,8 @@ export function BasicPagerViewExample() {
   return (
     <SafeAreaView style={styles.container}>
       <AnimatedPagerView
+        //@ts-ignore
+        testID="pager-view"
         ref={ref}
         style={styles.PagerView}
         initialPage={0}
@@ -32,10 +34,12 @@ export function BasicPagerViewExample() {
       >
         {useMemo(
           () =>
-            navigationPanel.pages.map((page) => (
+            navigationPanel.pages.map((page, index) => (
               <View key={page.key} style={page.style} collapsable={false}>
-                <Image style={styles.image} source={page.imgSource} />
                 <LikeCount />
+                <Text
+                  testID={`pageNumber${index}`}
+                >{`page number ${index}`}</Text>
               </View>
             )),
           [navigationPanel.pages]

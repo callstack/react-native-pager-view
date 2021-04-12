@@ -1,8 +1,14 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewProps,
+} from 'react-native';
 import { thumbsUp } from '../utils';
 
-type Props = {};
+interface Props extends ViewProps {}
 type State = { likes: number };
 
 export class LikeCount extends React.Component<Props, State> {
