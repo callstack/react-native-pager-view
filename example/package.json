@@ -7,7 +7,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "get:testbutler": "curl -f -o ./test-butler-app.apk https://linkedin.bintray.com/maven/com/linkedin/testbutler/test-butler-app/2.1.0/test-butler-app-2.1.0.apk",
+    "get:testbutler": "curl -f -o ./test-butler-app.apk https://repo1.maven.org/maven2/com/linkedin/testbutler/test-butler-app/2.2.1/test-butler-app-2.2.1.apk",
     "detox:ios:build:release": "detox build -c ios.sim.release",
     "detox:ios:test:release": "detox test -c ios.sim.release",
     "detox:android:build:release": "detox build -c android.emu.release",
