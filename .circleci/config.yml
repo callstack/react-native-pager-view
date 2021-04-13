@@ -84,8 +84,7 @@ jobs:
           path: ./example/artifacts
   e2e_release_android:
     executor:
-      name: android/android-machine
-      resource-class: large
+      name: rn/linux_android
     steps:
       - attach_project
       - android/create-avd:
