@@ -2,6 +2,7 @@ version: 2.1
 
 orbs:
   rn: react-native-community/react-native@4.4.2
+  android: circleci/android@1.0
 
 executors:
   default:
@@ -82,19 +83,19 @@ jobs:
       - store_artifacts:
           path: ./example/artifacts
   e2e_release_android:
-    # we need to use mac to run emulator with acceleration
-    # see https://support.circleci.com/hc/en-us/articles/360000028928-Testing-with-Android-emulator-on-CircleCI-2-0
     executor:
-      name: rn/macos
-      xcode_version: '11.4.0'
+      name: android/android-machine
+      resource-class: large
     steps:
-      - attach_workspace:
-          at: .
-      - rn/setup_macos_executor:
-          node_version: '12.10.0'
-      - rn/android_emulator_start:
-          logcat_grep: 'com.example.reactnativepagerview'
-          platform_version: 'android-29'
+      - attach_project
+      - android/create-avd:
+          avd-name: TestingAVD
+          install: true
+          system-image: system-images;android-29;default;x86
+      - android/start-emulator:
+          avd-name: TestingAVD
+          no-window: true
+          restore-gradle-cache-prefix: v1a
       - run:
           command: yarn --cwd example detox:android:build:release
           name: build for detox
@@ -103,6 +104,9 @@ jobs:
           name: test detox
       - store_artifacts:
           path: ./example/artifacts
+      - android/save-gradle-cache:
+          cache-prefix: v1a
+
   unit-tests:
     executor: default
     steps:
@@ -127,15 +131,15 @@ workflows:
   build-and-test:
     jobs:
       - install-dependencies
-      - lint:
-          requires:
-            - install-dependencies
-      - typescript:
-          requires:
-            - install-dependencies
-      - e2e_release_ios:
-          requires:
-            - install-dependencies
+      # - lint:
+      #     requires:
+      #       - install-dependencies
+      # - typescript:
+      #     requires:
+      #       - install-dependencies
+      # - e2e_release_ios:
+      #     requires:
+      #       - install-dependencies
       - e2e_release_android:
           requires:
             - install-dependencies
