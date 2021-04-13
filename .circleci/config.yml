@@ -96,6 +96,7 @@ jobs:
           avd-name: TestingAVD
           no-window: true
           restore-gradle-cache-prefix: v1a
+          post-emulator-launch-assemble-command: ''
       - run:
           command: yarn --cwd example detox:android:build:release
           name: build for detox
