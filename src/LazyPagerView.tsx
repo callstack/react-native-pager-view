@@ -222,16 +222,20 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
   };
 
   private onPageSelected = (event: PagerViewOnPageSelectedEvent) => {
+    // Queue renders for next needed pages (if not already available).
     const currentPage = event.nativeEvent.position;
-    this.setState((prevState) =>
-      this.computeRenderWindow({
-        buffer: this.props.buffer,
-        currentPage,
-        maxRenderWindow: this.props.maxRenderWindow,
-        offset: prevState.offset,
-        windowLength: prevState.windowLength,
-      })
-    );
+    requestAnimationFrame(() => {
+      this.setState((prevState) =>
+        this.computeRenderWindow({
+          buffer: this.props.buffer,
+          currentPage,
+          maxRenderWindow: this.props.maxRenderWindow,
+          offset: prevState.offset,
+          windowLength: prevState.windowLength,
+        })
+      );
+    });
+
     this.props.onPageSelected?.(event);
   };
 
