@@ -65,6 +65,7 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
   LazyPagerViewImplProps<ItemT>,
   LazyPagerViewImplState
 > {
+  private isNavigatingToPage: number | null = null;
   private isScrolling = false;
 
   constructor(props: LazyPagerViewImplProps<ItemT>) {
@@ -81,6 +82,7 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
   componentDidMount() {
     const initialPage = this.props.initialPage;
     if (initialPage != null && initialPage > 0) {
+      this.isNavigatingToPage = initialPage;
       requestAnimationFrame(() => {
         // Send command directly; render window already contains destination.
         UIManager.dispatchViewManagerCommand(
@@ -222,8 +224,20 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
   };
 
   private onPageSelected = (event: PagerViewOnPageSelectedEvent) => {
-    // Queue renders for next needed pages (if not already available).
     const currentPage = event.nativeEvent.position;
+
+    // Ignore spurious events that can occur on mount with `initialPage`.
+    // TODO: Is there a way to avoid triggering the events at all?
+    if (this.isNavigatingToPage !== null) {
+      if (this.isNavigatingToPage === currentPage) {
+        this.isNavigatingToPage = null;
+      } else {
+        // Ignore event.
+        return;
+      }
+    }
+
+    // Queue renders for next needed pages (if not already available).
     requestAnimationFrame(() => {
       this.setState((prevState) =>
         this.computeRenderWindow({
