@@ -228,7 +228,7 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
 
     // Ignore spurious events that can occur on mount with `initialPage`.
     // TODO: Is there a way to avoid triggering the events at all?
-    if (this.isNavigatingToPage !== null) {
+    if (this.isNavigatingToPage != null) {
       if (this.isNavigatingToPage === currentPage) {
         this.isNavigatingToPage = null;
       } else {
