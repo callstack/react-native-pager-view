@@ -181,21 +181,21 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
    * Currently will always yield `offset` of `0`.
    */
   private computeRenderWindow(data: RenderWindowData): LazyPagerViewImplState {
-    if (data.maxRenderWindow != null && data.maxRenderWindow !== 0) {
-      console.warn('`maxRenderWindow` is not currently implemented.');
-    }
-
     const buffer = Math.max(data.buffer ?? 1, 1);
-    // let offset = Math.max(Math.min(data.offset, data.currentPage - buffer), 0);
-    let offset = 0;
+    const maxRenderWindowLowerBound = 1 + 2 * buffer;
+    let offset = Math.max(Math.min(data.offset, data.currentPage - buffer), 0);
     let windowLength =
       Math.max(data.offset + data.windowLength, data.currentPage + buffer + 1) -
       offset;
 
-    // let maxRenderWindow = data.maxRenderWindow ?? 0;
-    let maxRenderWindow = 0;
+    let maxRenderWindow = data.maxRenderWindow ?? 0;
     if (maxRenderWindow !== 0) {
-      maxRenderWindow = Math.max(maxRenderWindow, 1 + 2 * buffer);
+      if (maxRenderWindow < maxRenderWindowLowerBound) {
+        console.warn(
+          `maxRenderWindow too small. Increasing to ${maxRenderWindowLowerBound}`
+        );
+        maxRenderWindow = maxRenderWindowLowerBound;
+      }
       if (windowLength > maxRenderWindow) {
         offset = data.currentPage - Math.floor(maxRenderWindow / 2);
         windowLength = maxRenderWindow;
@@ -258,14 +258,14 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
   }
 
   render() {
-    // Note: current implementation does not support unmounting, so `offset`
-    // is always `0`.
     const { offset, windowLength } = this.state;
     const { children } = this.renderChildren(offset, windowLength);
 
     return (
       <PagerViewViewManager
+        count={this.props.data.length}
         offscreenPageLimit={this.props.offscreenPageLimit}
+        offset={offset}
         onMoveShouldSetResponderCapture={this.onMoveShouldSetResponderCapture}
         onPageScroll={this.onPageScroll}
         onPageScrollStateChanged={this.onPageScrollStateChanged}

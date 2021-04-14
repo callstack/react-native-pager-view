@@ -34,19 +34,16 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     eventDispatcher = reactContext.getNativeModule(UIManagerModule::class.java)!!.eventDispatcher
     vp.registerOnPageChangeCallback(object : OnPageChangeCallback() {
       override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        super.onPageScrolled(position, positionOffset, positionOffsetPixels)
         eventDispatcher.dispatchEvent(
           PageScrollEvent(vp.id, position, positionOffset))
       }
 
       override fun onPageSelected(position: Int) {
-        super.onPageSelected(position)
         eventDispatcher.dispatchEvent(
           PageSelectedEvent(vp.id, position))
       }
 
       override fun onPageScrollStateChanged(state: Int) {
-        super.onPageScrollStateChanged(state)
         val pageScrollState: String = when (state) {
           ViewPager2.SCROLL_STATE_IDLE -> "idle"
           ViewPager2.SCROLL_STATE_DRAGGING -> "dragging"
@@ -61,47 +58,45 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   }
 
   private fun setCurrentItem(view: ViewPager2, selectedTab: Int, scrollSmooth: Boolean) {
-    view.post {
-      view.measure(
-        View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY),
-        View.MeasureSpec.makeMeasureSpec(view.height, View.MeasureSpec.EXACTLY))
-      view.layout(view.left, view.top, view.right, view.bottom)
-    }
+    view.post { reLayoutView(view) }
     view.setCurrentItem(selectedTab, scrollSmooth)
   }
 
   override fun addView(parent: ViewPager2, child: View, index: Int) {
-    if (child == null) {
-      return
+    val adapter = parent.adapter as FragmentAdapter
+    adapter.addReactView(child, index)
+    parent.post {
+      if (adapter.applyChanges()) {
+        reLayoutView(parent)
+      }
     }
-    (parent.adapter as FragmentAdapter?)!!.addFragment(child, index)
   }
 
   override fun getChildCount(parent: ViewPager2): Int {
-    return parent.adapter!!.itemCount
+    return (parent.adapter as FragmentAdapter).getReactChildCount()
   }
 
   override fun getChildAt(parent: ViewPager2, index: Int): View {
-    return (parent.adapter as FragmentAdapter?)!!.getChildViewAt(index)
-  }
-
-  override fun removeView(parent: ViewPager2, view: View) {
-    (parent.adapter as FragmentAdapter?)!!.removeFragment(view)
-  }
-
-  override fun removeAllViews(parent: ViewPager2) {
-    parent.isUserInputEnabled = false
-    val adapter = parent.adapter as FragmentAdapter?
-    adapter!!.removeAll()
+    return (parent.adapter as FragmentAdapter).getReactChildAt(index)
   }
 
   override fun removeViewAt(parent: ViewPager2, index: Int) {
-    val adapter = parent.adapter as FragmentAdapter?
-    adapter!!.removeFragmentAt(index)
+    val adapter = parent.adapter as FragmentAdapter
+    adapter.removeReactViewAt(index)
+    parent.post {
+      if (adapter.applyChanges()) {
+        reLayoutView(parent)
+      }
+    }
   }
 
   override fun needsCustomLayoutForChildren(): Boolean {
     return true
+  }
+
+  @ReactProp(name = "count")
+  fun setCount(view: ViewPager2, count: Int) {
+    (view.adapter as FragmentAdapter).setCount(count)
   }
 
   @ReactProp(name = "scrollEnabled", defaultBoolean = true)
@@ -119,6 +114,11 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     viewPager.offscreenPageLimit = value
   }
 
+  @ReactProp(name = "offset")
+  fun setOffset(view: ViewPager2, offset: Int) {
+    (view.adapter as FragmentAdapter).setOffset(offset)
+  }
+
   @ReactProp(name = "overScrollMode")
   fun setOverScrollMode(viewPager: ViewPager2, value: String) {
     val child = viewPager.getChildAt(0)
@@ -132,6 +132,13 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
         else -> {
           child.overScrollMode = ViewPager2.OVER_SCROLL_IF_CONTENT_SCROLLS
         }
+    }
+  }
+
+  override fun onAfterUpdateTransaction(view: ViewPager2) {
+    super.onAfterUpdateTransaction(view)
+    if ((view.adapter as FragmentAdapter).applyChanges()) {
+      view.post { reLayoutView(view) }
     }
   }
 
@@ -193,6 +200,16 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
         page.translationY = offset
       }
     }
+  }
+
+  /**
+   * Helper to trigger ViewPager2 to update.
+   */
+  private fun reLayoutView(view: View) {
+    view.measure(
+      View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY),
+      View.MeasureSpec.makeMeasureSpec(view.height, View.MeasureSpec.EXACTLY))
+    view.layout(view.left, view.top, view.right, view.bottom)
   }
 
   companion object {

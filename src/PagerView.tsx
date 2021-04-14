@@ -142,6 +142,8 @@ export class PagerView
     return (
       <PagerViewViewManager
         {...this.props}
+        count={React.Children.count(this.props.children)}
+        offset={0}
         style={this.props.style}
         onPageScroll={this._onPageScroll}
         onPageScrollStateChanged={this._onPageScrollStateChanged}
