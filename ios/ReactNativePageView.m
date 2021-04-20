@@ -36,7 +36,7 @@
     if (self = [super init]) {
         _scrollEnabled = YES;
         _pageMargin = 0;
-        _previousIndex = -1;
+        _lastReportedIndex = -1;
         _transitionStyle = UIPageViewControllerTransitionStyleScroll;
         _orientation = UIPageViewControllerNavigationOrientationHorizontal;
         _currentIndex = 0;
@@ -169,17 +169,16 @@
                                            direction:direction
                                             animated:animated
                                           completion:^(BOOL finished) {
+        __strong typeof(self) strongSelf = weakSelf;
+        strongSelf.currentIndex = index;
+        strongSelf.currentView = controller.view;
         
-        weakSelf.currentIndex = index;
-        weakSelf.currentView = controller.view;
-        
-        if (weakSelf.eventDispatcher) {
-            if(_previousIndex != _currentIndex){
-                [weakSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:weakSelf.reactTag position:@(index) coalescingKey:coalescingKey]];
+        if (strongSelf.eventDispatcher) {
+            if (strongSelf.lastReportedIndex != strongSelf.currentIndex) {
+                [strongSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:strongSelf.reactTag position:@(index) coalescingKey:coalescingKey]];
+                strongSelf.lastReportedIndex = strongSelf.currentIndex;
             }
-            _previousIndex = _currentIndex;
         }
-        
     }];
 }
 
@@ -284,12 +283,12 @@
         NSUInteger currentIndex = [self.reactSubviews indexOfObject:currentVC.view];
         
         self.currentIndex = currentIndex;
-        self.previousIndex = currentIndex - 1;
         self.currentView = currentVC.view;
         self.reactPageIndicatorView.currentPage = currentIndex;
         
         [self.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:@(currentIndex) coalescingKey:_coalescingKey++]];
         [self.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:@(currentIndex) offset:@(0.0)]];
+        self.lastReportedIndex = currentIndex;
     }
 }
 
