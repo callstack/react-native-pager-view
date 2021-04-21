@@ -16,15 +16,15 @@ This component allows the user to swipe left and right through pages of data. Un
 
 ## Versions
 
-| 4.x          | 5.x
-|------------- | -------------|
-| iOS          | iOS support  |
-| ViewPager1   | ViewPager2   |
-
+| 4.x        | 5.x         |
+| ---------- | ----------- |
+| iOS        | iOS support |
+| ViewPager1 | ViewPager2  |
 
 ## Migration
 
-`"@react-native-community/viewpager"` library has been changed to `react-native-pager-view`. Here you can find more information, how to migrate pager view to the latest [version](https://github.com/callstack/react-native-pager-view/blob/master/MIGRATION.md) 
+`"@react-native-community/viewpager"` library has been changed to `react-native-pager-view`. Here you can find more information, how to migrate pager view to the latest [version](https://github.com/callstack/react-native-pager-view/blob/master/MIGRATION.md)
+
 ## Getting started
 
 `yarn add react-native-pager-view`
@@ -98,7 +98,7 @@ protected List<ReactPackage> getPackages() {
 
 ```js
 import React from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
 const MyPager = () => {
@@ -121,8 +121,8 @@ const styles = StyleSheet.create({
 });
 ```
 
-**Attention:** Note that you can only use `View` components as children of `PagerView` (cf. folder */example*)
-. For Android if `View` has own children, set prop `collapsable` to false <https://reactnative.dev/img/view#collapsable>, otherwise react-native might remove those children views and  and it's children will be rendered as separate pages
+**Attention:** Note that you can only use `View` components as children of `PagerView` (cf. folder _/example_)
+. For Android if `View` has own children, set prop `collapsable` to false <https://reactnative.dev/img/view#collapsable>, otherwise react-native might remove those children views and and it's children will be rendered as separate pages
 
 ## Advanced usage
 
@@ -131,21 +131,27 @@ For advanced usage please take a look into our [example project](https://github.
 
 ## API
 
-|Prop|Description|Platform|
-|-|:-----:|:---:|
-|`initialPage`|Index of initial page that should be selected|both
-|`scrollEnabled: boolean`|Should pager view scroll, when scroll enabled|both
-|`onPageScroll: (e: PageScrollEvent) => void`|Executed when transitioning between pages (ether because the animation for the requested page has changed or when the user is swiping/dragging between pages)|both
-|`onPageScrollStateChanged: (e: PageScrollStateChangedEvent) => void`|Function called when the page scrolling state has changed|both
-|`onPageSelected: (e: PageSelectedEvent) => void`|This callback will be called once the ViewPager finishes navigating to the selected page|both
-|`pageMargin: number`|Blank space to be shown between pages|both
-|`keyboardDismissMode: ('none' / 'on-drag')`| Determines whether the keyboard gets dismissed in response to a drag|both
-|`orientation: Orientation`|Set `horizontal` or `vertical` scrolling orientation (it does **not** work dynamically)|both
-|`transitionStyle: TransitionStyle`|Use `scroll` or `curl` to change transition style (it does **not** work dynamically)|iOS
-|`showPageIndicator: boolean`|Shows the dots indicator at the bottom of the view|iOS
-|`overScrollMode: OverScollMode`|Used to override default value of overScroll mode. Can be `auto`, `always` or `never`. Defaults to `auto`|Android
-|`offscreenPageLimit: number`|Set the number of pages that should be retained to either side of the currently visible page(s). Pages beyond this limit will be recreated from the adapter when needed. Defaults to RecyclerView's caching strategy. The given value must either be larger than 0.|Android
-|`overdrag: boolean`|Allows for overscrolling after reaching the end or very beginning or pages|iOS
+| Prop                                                                 |                                                                                                                             Description                                                                                                                             | Platform |
+| -------------------------------------------------------------------- | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------: |
+| `initialPage`                                                        |                                                                                                            Index of initial page that should be selected                                                                                                            |   both   |
+| `scrollEnabled: boolean`                                             |                                                                                                            Should pager view scroll, when scroll enabled                                                                                                            |   both   |
+| `onPageScroll: (e: PageScrollEvent) => void`                         |                                                    Executed when transitioning between pages (ether because the animation for the requested page has changed or when the user is swiping/dragging between pages)                                                    |   both   |
+| `onPageScrollStateChanged: (e: PageScrollStateChangedEvent) => void` |                                                                                                      Function called when the page scrolling state has changed                                                                                                      |   both   |
+| `onPageSelected: (e: PageSelectedEvent) => void`                     |                                                                                      This callback will be called once the ViewPager finishes navigating to the selected page                                                                                       |   both   |
+| `pageMargin: number`                                                 |                                                                                                                Blank space to be shown between pages                                                                                                                |   both   |
+| `keyboardDismissMode: ('none' / 'on-drag')`                          |                                                                                                Determines whether the keyboard gets dismissed in response to a drag                                                                                                 |   both   |
+| `orientation: Orientation`                                           |                                                                                       Set `horizontal` or `vertical` scrolling orientation (it does **not** work dynamically)                                                                                       |   both   |
+| `transitionStyle: TransitionStyle`                                   |                                                                                        Use `scroll` or `curl` to change transition style (it does **not** work dynamically)                                                                                         |   iOS    |
+| `showPageIndicator: boolean`                                         |                                                                                                         Shows the dots indicator at the bottom of the view                                                                                                          |   iOS    |
+| `overScrollMode: OverScollMode`                                      |                                                                              Used to override default value of overScroll mode. Can be `auto`, `always` or `never`. Defaults to `auto`                                                                              | Android  |
+| `offscreenPageLimit: number`                                         | Set the number of pages that should be retained to either side of the currently visible page(s). Pages beyond this limit will be recreated from the adapter when needed. Defaults to RecyclerView's caching strategy. The given value must either be larger than 0. | Android  |
+| `overdrag: boolean`                                                  |                                                                                             Allows for overscrolling after reaching the end or very beginning or pages                                                                                              |   iOS    |
+
+| Method                                     |                                                                                                         Description                                                                                                          | Platform |
+| ------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------: |
+| `setPage(index: number)`                   |                                                                      Function to scroll to a specific page in the PagerView. Invalid index is ignored.                                                                       |   both   |
+| `setPageWithoutAnimation(index: number)`   |                                                                      Function to scroll to a specific page in the PagerView. Invalid index is ignored.                                                                       |   both   |
+| `setScrollEnabled(scrollEnabled: boolean)` | A helper function to enable/disable scroll imperatively. The recommended way is using the scrollEnabled prop, however, there might be a case where a imperative solution is more useful (e.g. for not blocking an animation) |   both   |
 
 ## Contributing
 
@@ -165,20 +171,19 @@ requestAnimationFrame(() => refPagerView.current?.setPage(index));
 
 ### Android
 
-horizontal                 |  vertical
-:-------------------------:|:-------------------------:
-<img src="img/android-viewpager.gif" alt="ViewPager" width="325"> |  <img src="img/android-viewpager-vertical.gif" alt="ViewPager" width="325">
+|                            horizontal                             |                                  vertical                                  |
+| :---------------------------------------------------------------: | :------------------------------------------------------------------------: |
+| <img src="img/android-viewpager.gif" alt="ViewPager" width="325"> | <img src="img/android-viewpager-vertical.gif" alt="ViewPager" width="325"> |
 
 ### iOS
 
-horizontal - scroll      |  horizontal - curl
-:-------------------------:|:-------------------------:
-<img src="img/ios-viewpager-scroll.gif" alt="ViewPager" width="325">  |  <img src="img/ios-viewpager-curl.gif" alt="ViewPager" width="325">
+|                         horizontal - scroll                          |                         horizontal - curl                          |
+| :------------------------------------------------------------------: | :----------------------------------------------------------------: |
+| <img src="img/ios-viewpager-scroll.gif" alt="ViewPager" width="325"> | <img src="img/ios-viewpager-curl.gif" alt="ViewPager" width="325"> |
 
-vertical - scroll        |  vertical - curl
-:-------------------------:|:-------------------------:
-<img src="img/ios-viewpager-vertical.gif" alt="ViewPager" width="325">  |  <img src="img/ios-viewpager-vertical-curl.gif" alt="ViewPager" width="325">
-
+|                           vertical - scroll                            |                               vertical - curl                               |
+| :--------------------------------------------------------------------: | :-------------------------------------------------------------------------: |
+| <img src="img/ios-viewpager-vertical.gif" alt="ViewPager" width="325"> | <img src="img/ios-viewpager-vertical-curl.gif" alt="ViewPager" width="325"> |
 
 ## License
 
