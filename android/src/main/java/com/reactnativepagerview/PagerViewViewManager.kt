@@ -122,12 +122,16 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   @ReactProp(name = "overScrollMode")
   fun setOverScrollMode(viewPager: ViewPager2, value: String) {
     val child = viewPager.getChildAt(0)
-    if (value == "never") {
-      child.overScrollMode = ViewPager2.OVER_SCROLL_NEVER
-    } else if (value == "always") {
-      child.overScrollMode = ViewPager2.OVER_SCROLL_ALWAYS
-    } else {
-      child.overScrollMode = ViewPager2.OVER_SCROLL_IF_CONTENT_SCROLLS
+    when (value) {
+        "never" -> {
+          child.overScrollMode = ViewPager2.OVER_SCROLL_NEVER
+        }
+        "always" -> {
+          child.overScrollMode = ViewPager2.OVER_SCROLL_ALWAYS
+        }
+        else -> {
+          child.overScrollMode = ViewPager2.OVER_SCROLL_IF_CONTENT_SCROLLS
+        }
     }
   }
 
@@ -152,20 +156,20 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     super.receiveCommand(root, commandId, args)
     Assertions.assertNotNull(root)
     Assertions.assertNotNull(args)
+    val childCount = root.adapter?.itemCount
+
     when (commandId) {
-      COMMAND_SET_PAGE -> {
-        setCurrentItem(root, args!!.getInt(0), true)
-        eventDispatcher!!.dispatchEvent(PageSelectedEvent(root.id, args.getInt(0)))
-        return
-      }
-      COMMAND_SET_PAGE_WITHOUT_ANIMATION -> {
-        setCurrentItem(root, args!!.getInt(0), false)
-        eventDispatcher!!.dispatchEvent(PageSelectedEvent(root.id, args.getInt(0)))
-        return
+      COMMAND_SET_PAGE, COMMAND_SET_PAGE_WITHOUT_ANIMATION -> {
+        val pageIndex = args!!.getInt(0)
+        val canScroll = childCount != null && childCount > 0 && pageIndex >= 0 && pageIndex < childCount
+        if (canScroll) {
+          val scrollWithAnimation = commandId == COMMAND_SET_PAGE
+          setCurrentItem(root, pageIndex, scrollWithAnimation)
+          eventDispatcher.dispatchEvent(PageSelectedEvent(root.id, pageIndex))
+        }
       }
       COMMAND_SET_SCROLL_ENABLED -> {
         root.isUserInputEnabled = args!!.getBoolean(0)
-        return
       }
       else -> throw IllegalArgumentException(String.format(
         "Unsupported command %d received by %s.",

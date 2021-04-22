@@ -213,13 +213,13 @@
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     NSInteger numberOfPages = self.reactSubviews.count;
     
-    if (numberOfPages == 0 || index < 0) {
+    if (numberOfPages == 0 || index < 0 || index > numberOfPages - 1) {
         return;
     }
     
     UIPageViewControllerNavigationDirection direction = (index > self.currentIndex) ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
     
-    NSInteger indexToDisplay = index < numberOfPages ? index : numberOfPages - 1;
+    NSInteger indexToDisplay = index;
     
     UIView *viewToDisplay = self.reactSubviews[indexToDisplay];
     UIViewController *controllerToDisplay = [self findAndCacheControllerForView:viewToDisplay];
