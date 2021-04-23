@@ -11,9 +11,8 @@ class PagerDiffCallback(private val oldList: List<Long>, private val adapter: Fr
   override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
     val oldId = oldList[oldItemPosition]
     val newId = adapter.getItemId(newItemPosition)
-    if (UNRENDERED_ID_OFFSET in (newId + 1)..oldId) {
-      // When the old item is not rendered but the new item is rendered,
-      // consider the same if the items are in the same position.
+    if (oldId >= UNRENDERED_ID_OFFSET || newId >= UNRENDERED_ID_OFFSET) {
+      // An unrendered item is assumed the same as any item in the same position.
       return oldItemPosition == newItemPosition
     }
     return oldId == newId
