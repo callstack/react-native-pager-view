@@ -29,9 +29,6 @@ type RenderWindowData = {
 
 /**
  * PagerView implementation that renders pages when needed (lazy loading)
- *
- * Note: under current implementation, pages are never unloaded. Also, all
- * pages before the visible page are rendered.
  */
 export class LazyPagerView<ItemT>
   extends React.PureComponent<LazyPagerViewProps<ItemT>>
@@ -179,8 +176,6 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
    *
    * Returns `offset` and `windowLength` unmodified, unless in conflict with
    * restrictions from `buffer` or `maxRenderWindow`.
-   *
-   * Currently will always yield `offset` of `0`.
    */
   private computeRenderWindow(data: RenderWindowData): LazyPagerViewImplState {
     const buffer = Math.max(data.buffer ?? 1, 1);
