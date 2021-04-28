@@ -55,12 +55,19 @@ import { getViewManagerConfig, PagerViewViewManager } from './PagerViewNative';
 
 export class PagerView extends React.Component<PagerViewProps> {
   private isScrolling = false;
+  private animationFrameRequestId = 0;
   private PagerView = React.createRef<typeof PagerViewViewManager>();
+
+  componentWillUnmount() {
+    if (this.animationFrameRequestId > 0) {
+      cancelAnimationFrame(this.animationFrameRequestId);
+    }
+  }
 
   componentDidMount() {
     // On iOS we do it directly on the native side
     if (Platform.OS === 'android' && this.props.initialPage !== undefined) {
-      requestAnimationFrame(() => {
+      this.animationFrameRequestId = requestAnimationFrame(() => {
         if (this.props.initialPage !== undefined) {
           this.setPageWithoutAnimation(this.props.initialPage);
         }
