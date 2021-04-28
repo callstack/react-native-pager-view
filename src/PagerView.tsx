@@ -55,11 +55,11 @@ import { getViewManagerConfig, PagerViewViewManager } from './PagerViewNative';
 
 export class PagerView extends React.Component<PagerViewProps> {
   private isScrolling = false;
-  private animationFrameRequestId = 0;
+  private animationFrameRequestId?: number;
   private PagerView = React.createRef<typeof PagerViewViewManager>();
 
   componentWillUnmount() {
-    if (this.animationFrameRequestId > 0) {
+    if (this.animationFrameRequestId !== undefined) {
       cancelAnimationFrame(this.animationFrameRequestId);
     }
   }
