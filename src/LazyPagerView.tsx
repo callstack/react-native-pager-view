@@ -28,7 +28,7 @@ type RenderWindowData = {
 };
 
 /**
- * PagerView implementation that renders pages on demand.
+ * PagerView implementation that renders pages when needed (lazy loading)
  *
  * Note: under current implementation, pages are never unloaded. Also, all
  * pages before the visible page are rendered.
