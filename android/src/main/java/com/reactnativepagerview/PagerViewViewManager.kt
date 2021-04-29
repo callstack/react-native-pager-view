@@ -58,18 +58,14 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   }
 
   private fun setCurrentItem(view: ViewPager2, selectedTab: Int, scrollSmooth: Boolean) {
-    view.post { reLayoutView(view) }
+    view.post { updateLayoutView(view) }
     view.setCurrentItem(selectedTab, scrollSmooth)
   }
 
   override fun addView(parent: ViewPager2, child: View, index: Int) {
     val adapter = parent.adapter as FragmentAdapter
     adapter.addReactView(child, index)
-    parent.post {
-      if (adapter.applyChanges()) {
-        reLayoutView(parent)
-      }
-    }
+    postNewChanges(parent)
   }
 
   override fun getChildCount(parent: ViewPager2): Int {
@@ -83,11 +79,7 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   override fun removeViewAt(parent: ViewPager2, index: Int) {
     val adapter = parent.adapter as FragmentAdapter
     adapter.removeReactViewAt(index)
-    parent.post {
-      if (adapter.applyChanges()) {
-        reLayoutView(parent)
-      }
-    }
+    postNewChanges(parent)
   }
 
   override fun needsCustomLayoutForChildren(): Boolean {
@@ -137,8 +129,8 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
 
   override fun onAfterUpdateTransaction(view: ViewPager2) {
     super.onAfterUpdateTransaction(view)
-    if ((view.adapter as FragmentAdapter).applyChanges()) {
-      view.post { reLayoutView(view) }
+    if ((view.adapter as FragmentAdapter).notifyAboutChanges()) {
+      view.post { updateLayoutView(view) }
     }
   }
 
@@ -202,10 +194,18 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     }
   }
 
+  private fun postNewChanges(view: ViewPager2) {
+    view.post {
+      if ((view.adapter as FragmentAdapter).notifyAboutChanges()) {
+        updateLayoutView(view)
+      }
+    }
+  }
+
   /**
    * Helper to trigger ViewPager2 to update.
    */
-  private fun reLayoutView(view: View) {
+  private fun updateLayoutView(view: View) {
     view.measure(
       View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY),
       View.MeasureSpec.makeMeasureSpec(view.height, View.MeasureSpec.EXACTLY))

@@ -36,7 +36,7 @@ class FragmentAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter
   /**
    * Returns true if any changes were applied.
    */
-  fun applyChanges(): Boolean {
+  fun notifyAboutChanges(): Boolean {
     if (!isDirty) {
       return false
     }
@@ -95,6 +95,10 @@ class FragmentAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter
   }
 
   companion object {
-     const val UNRENDERED_ID_OFFSET = 0xffffffffL
+    /**
+     * If an id is `UNRENDERED_ID_OFFSET` or higher, it represents a view
+     * that is not currently rendered.
+     */
+    const val UNRENDERED_ID_OFFSET = 0xffffffffL
   }
 }
