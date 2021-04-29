@@ -88,6 +88,12 @@ export interface PagerViewProps {
      */
     onMoveShouldSetResponderCapture?: (event: ReactNative.GestureResponderEvent) => boolean;
     /**
+     * Does this view want to become responder on the start of a touch?
+     *
+     * See https://reactnative.dev/docs/view#onstartshouldsetrespondercapture
+     */
+    onStartShouldSetResponder?: (event: ReactNative.GestureResponderEvent) => boolean;
+    /**
      * iOS only
      */
     orientation?: Orientation;
