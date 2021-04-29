@@ -4,6 +4,7 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { BasicPagerViewExample } from './BasicPagerViewExample';
 import { KeyboardExample } from './KeyboardExample';
+import { LazyPagerViewExample } from './LazyPagerViewExample';
 import { OnPageScrollExample } from './OnPageScrollExample';
 import { OnPageSelectedExample } from './OnPageSelectedExample';
 import { ScrollablePagerViewExample } from './ScrollablePagerViewExample';
@@ -14,6 +15,7 @@ import PaginationDotsExample from './PaginationDotsExample';
 const examples = [
   { component: BasicPagerViewExample, name: 'Basic Example' },
   { component: KeyboardExample, name: 'Keyboard Example' },
+  { component: LazyPagerViewExample, name: 'Lazy Render Example' },
   { component: OnPageScrollExample, name: 'OnPageScroll Example' },
   { component: OnPageSelectedExample, name: 'OnPageSelected Example' },
   { component: HeadphonesCarouselExample, name: 'Headphones Carousel Example' },

@@ -11,7 +11,7 @@ import {
   Animated,
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
-import PagerView from 'react-native-pager-view';
+import { PagerView } from 'react-native-pager-view';
 import { logoUrl } from './utils';
 
 import { NavigationPanel } from './component/NavigationPanel';
@@ -37,7 +37,7 @@ const Page = ({ title, description, onPress, buttonTitle }: PageProps) => {
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
 export function KeyboardExample() {
-  const { ref, ...navigationPanel } = useNavigationPanel(2);
+  const { ref, ...navigationPanel } = useNavigationPanel<PagerView>(2);
   const { setPage } = navigationPanel;
   return (
     <SafeAreaView style={styles.flex}>

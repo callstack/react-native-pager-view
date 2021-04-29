@@ -1,4 +1,4 @@
-import PagerView from 'react-native-pager-view';
+import { PagerView } from 'react-native-pager-view';
 import React from 'react';
 import { ScrollView, View, Image, StyleSheet, Animated } from 'react-native';
 import { NavigationPanel } from './component/NavigationPanel';
@@ -9,7 +9,7 @@ const HEIGHT = 300;
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
 export const ScrollablePagerViewExample = (): JSX.Element => {
-  const { ref, ...navigationPanel } = useNavigationPanel();
+  const { ref, ...navigationPanel } = useNavigationPanel<PagerView>();
 
   return (
     <>
