@@ -61,12 +61,7 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   }
 
   private fun setCurrentItem(view: ViewPager2, selectedTab: Int, scrollSmooth: Boolean) {
-    view.post {
-      view.measure(
-        View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY),
-        View.MeasureSpec.makeMeasureSpec(view.height, View.MeasureSpec.EXACTLY))
-      view.layout(view.left, view.top, view.right, view.bottom)
-    }
+    refreshViewChildrenLayout(view)
     view.setCurrentItem(selectedTab, scrollSmooth)
   }
 
@@ -206,10 +201,12 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   }
 
   private fun refreshViewChildrenLayout(view: View) {
-    view.measure(
-            View.MeasureSpec.makeMeasureSpec(view.measuredWidth, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(view.measuredHeight, View.MeasureSpec.EXACTLY))
-    view.layout(view.left, view.top, view.right, view.bottom)
+    view.post {
+      view.measure(
+              View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY),
+              View.MeasureSpec.makeMeasureSpec(view.height, View.MeasureSpec.EXACTLY))
+      view.layout(view.left, view.top, view.right, view.bottom)
+    }
   }
 
   companion object {
