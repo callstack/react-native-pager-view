@@ -61,12 +61,7 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   }
 
   private fun setCurrentItem(view: ViewPager2, selectedTab: Int, scrollSmooth: Boolean) {
-    view.post {
-      view.measure(
-        View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY),
-        View.MeasureSpec.makeMeasureSpec(view.height, View.MeasureSpec.EXACTLY))
-      view.layout(view.left, view.top, view.right, view.bottom)
-    }
+    refreshViewChildrenLayout(view)
     view.setCurrentItem(selectedTab, scrollSmooth)
   }
 
@@ -87,6 +82,11 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
 
   override fun removeView(parent: ViewPager2, view: View) {
     (parent.adapter as FragmentAdapter?)!!.removeFragment(view)
+
+    // Required so ViewPager actually animates the removed view right away (otherwise 
+    // a white screen is shown until the next user interaction).
+    // https://github.com/facebook/react-native/issues/17968#issuecomment-697136929
+    refreshViewChildrenLayout(parent)
   }
 
   override fun removeAllViews(parent: ViewPager2) {
@@ -98,6 +98,11 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   override fun removeViewAt(parent: ViewPager2, index: Int) {
     val adapter = parent.adapter as FragmentAdapter?
     adapter!!.removeFragmentAt(index)
+
+    // Required so ViewPager actually animates the removed view right away (otherwise 
+    // a white screen is shown until the next user interaction).
+    // https://github.com/facebook/react-native/issues/17968#issuecomment-697136929
+    refreshViewChildrenLayout(parent)
   }
 
   override fun needsCustomLayoutForChildren(): Boolean {
@@ -192,6 +197,15 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
       } else {
         page.translationY = offset
       }
+    }
+  }
+
+  private fun refreshViewChildrenLayout(view: View) {
+    view.post {
+      view.measure(
+              View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY),
+              View.MeasureSpec.makeMeasureSpec(view.height, View.MeasureSpec.EXACTLY))
+      view.layout(view.left, view.top, view.right, view.bottom)
     }
   }
 
