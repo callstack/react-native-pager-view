@@ -12,7 +12,19 @@ import type {
 const VIEW_MANAGER_NAME = 'RNCViewPager';
 
 type PagerViewNativeProps = {
+  /**
+   * Total number of pages. When lazy rendering, number of rendered react
+   * children elements will be smaller.
+   */
+  count: number;
   offscreenPageLimit?: number;
+
+  /**
+   * Page position offset of the first rendered react child. I.e., the first
+   * `offset` number of pages are not currently rendered on JS-side (so native
+   * code should act accordingly).
+   */
+  offset: number;
 
   /**
    * If a parent `View` wants to prevent a child `View` from becoming responder

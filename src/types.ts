@@ -146,8 +146,6 @@ export interface LazyPagerViewProps<ItemT> extends PagerViewProps {
   keyExtractor: (item: ItemT, index: number) => string;
 
   /**
-   * Note: not currently implemented.
-   *
    * Maximum number of pages allowed to stay rendered. Set to 0 for unlimited.
    *
    * Default unlimited. Will always render at least `1 + 2 * buffer` pages.
