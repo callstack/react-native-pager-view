@@ -382,19 +382,13 @@
     }
 
     float absoluteOffset = fabs(offset);
-    if(absoluteOffset > 1) {
-        absoluteOffset = 1.0;
-    }
     
-    NSString *scrollDirection = [self determineScrollDirection:scrollView];
-    NSString *oppositeDirection = self.isHorizontal ? @"left" : @"up";
     NSInteger position = self.currentIndex;
-
-    if(absoluteOffset > 0) {
-        position = [scrollDirection  isEqual: oppositeDirection] ? self.currentIndex - 1 : self.currentIndex;
-        absoluteOffset =  [scrollDirection  isEqual: oppositeDirection] ? 1 - absoluteOffset : absoluteOffset;
+    
+    if(offset<0 && position>0){
+        position =  self.currentIndex - 1;
+        absoluteOffset =  1 - absoluteOffset;
     }
-   
     
     self.lastContentOffset = scrollView.contentOffset;
     [self.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:@(position) offset:@(absoluteOffset)]];
