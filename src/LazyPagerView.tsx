@@ -71,7 +71,7 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
       buffer: props.buffer,
       currentPage: props.initialPage ?? 0,
       maxRenderWindow: props.maxRenderWindow,
-      offset: 0,
+      offset: props.initialPage ?? 0,
       windowLength: 0,
     });
   }
