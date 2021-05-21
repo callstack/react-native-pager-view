@@ -7,6 +7,7 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.facebook.infer.annotation.Assertions
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.common.MapBuilder
+import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerModule
@@ -25,10 +26,24 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     return REACT_CLASS
   }
 
+  fun createFragmentAdapter(reactContext: ThemedReactContext): FragmentAdapter {
+    return FragmentAdapter((reactContext.currentActivity as FragmentActivity?)!!)
+  }
+
   override fun createViewInstance(reactContext: ThemedReactContext): ViewPager2 {
     val vp = ViewPager2(reactContext)
-    val adapter = FragmentAdapter((reactContext.currentActivity as FragmentActivity?)!!)
-    vp.adapter = adapter
+    if(reactContext.hasCurrentActivity()) {
+      vp.adapter = createFragmentAdapter(reactContext);
+    }
+    reactContext.addLifecycleEventListener(object : LifecycleEventListener {
+      override fun onHostResume() {
+        if(vp.adapter == null && reactContext.hasCurrentActivity()) {
+          vp.adapter = createFragmentAdapter(reactContext)
+        }
+      }
+      override fun onHostPause() {}
+      override fun onHostDestroy() {}
+    });
     //https://github.com/callstack/react-native-viewpager/issues/183
     vp.isSaveEnabled = false
     eventDispatcher = reactContext.getNativeModule(UIManagerModule::class.java)!!.eventDispatcher
