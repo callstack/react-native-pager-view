@@ -84,11 +84,11 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     if (child == null) {
       return
     }
-    (parent.adapter as FragmentAdapter?)!!.addFragment(child, index)
+    (parent.adapter as FragmentAdapter?)?.addFragment(child, index)
   }
 
   override fun getChildCount(parent: ViewPager2): Int {
-    return parent.adapter!!.itemCount
+    return parent.adapter?.itemCount ?: 0;
   }
 
   override fun getChildAt(parent: ViewPager2, index: Int): View {
@@ -96,7 +96,7 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   }
 
   override fun removeView(parent: ViewPager2, view: View) {
-    (parent.adapter as FragmentAdapter?)!!.removeFragment(view)
+    (parent.adapter as FragmentAdapter?)?.removeFragment(view)
 
     // Required so ViewPager actually animates the removed view right away (otherwise 
     // a white screen is shown until the next user interaction).
@@ -107,12 +107,12 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   override fun removeAllViews(parent: ViewPager2) {
     parent.isUserInputEnabled = false
     val adapter = parent.adapter as FragmentAdapter?
-    adapter!!.removeAll()
+    adapter?.removeAll()
   }
 
   override fun removeViewAt(parent: ViewPager2, index: Int) {
     val adapter = parent.adapter as FragmentAdapter?
-    adapter!!.removeFragmentAt(index)
+    adapter?.removeFragmentAt(index)
 
     // Required so ViewPager actually animates the removed view right away (otherwise 
     // a white screen is shown until the next user interaction).
