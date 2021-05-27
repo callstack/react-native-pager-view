@@ -363,14 +363,6 @@
 
     float offset = 0;
     
-    if (!_overdrag) {
-        if (_currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width) {
-            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
-        } else if (_currentIndex == _reactPageIndicatorView.numberOfPages - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width) {
-            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
-        }
-    }
-    
     if (self.isHorizontal) {
         if (self.frame.size.width != 0) {
             offset = (point.x - self.frame.size.width)/self.frame.size.width;
@@ -388,6 +380,16 @@
     if(offset<0 && position>0){
         position =  self.currentIndex - 1;
         absoluteOffset =  1 - absoluteOffset;
+    }
+    
+    if (!_overdrag) {
+        if (_currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width) {
+            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+            absoluteOffset=0;
+        } else if (_currentIndex == _reactPageIndicatorView.numberOfPages - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width) {
+            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+            absoluteOffset=0;
+        }
     }
     
     self.lastContentOffset = scrollView.contentOffset;
