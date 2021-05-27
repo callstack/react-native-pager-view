@@ -125,7 +125,7 @@ export interface PagerViewProps {
   overScrollMode?: OverScrollMode;
   /**
    * Determines whether it's possible to overscroll a bit
-   * after reaching end or very beginning of pages.
+   * after reaching end or very beginning of pages. The default value is false.
    */
   overdrag?: boolean;
 }

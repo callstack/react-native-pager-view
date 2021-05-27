@@ -44,7 +44,7 @@
         _coalescingKey = 0;
         _eventDispatcher = eventDispatcher;
         _cachedControllers = [NSHashTable weakObjectsHashTable];
-        _overdrag = YES;
+        _overdrag = NO;
     }
     return self;
 }
