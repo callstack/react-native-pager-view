@@ -9,6 +9,8 @@ import java.util.*
 
 class FragmentAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity) {
   private val childrenViews: MutableList<View> = ArrayList()
+  var initialPageinited = false
+
   override fun createFragment(position: Int): Fragment {
     return ViewPagerFragment(childrenViews[position])
   }

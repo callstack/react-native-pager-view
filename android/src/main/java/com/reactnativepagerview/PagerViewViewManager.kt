@@ -32,31 +32,34 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     //https://github.com/callstack/react-native-viewpager/issues/183
     vp.isSaveEnabled = false
     eventDispatcher = reactContext.getNativeModule(UIManagerModule::class.java)!!.eventDispatcher
-    vp.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-      override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-        eventDispatcher.dispatchEvent(
-          PageScrollEvent(vp.id, position, positionOffset))
-      }
 
-      override fun onPageSelected(position: Int) {
-        super.onPageSelected(position)
-        eventDispatcher.dispatchEvent(
-          PageSelectedEvent(vp.id, position))
-      }
-
-      override fun onPageScrollStateChanged(state: Int) {
-        super.onPageScrollStateChanged(state)
-        val pageScrollState: String = when (state) {
-          ViewPager2.SCROLL_STATE_IDLE -> "idle"
-          ViewPager2.SCROLL_STATE_DRAGGING -> "dragging"
-          ViewPager2.SCROLL_STATE_SETTLING -> "settling"
-          else -> throw IllegalStateException("Unsupported pageScrollState")
+    vp.post {
+      vp.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+          super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+          eventDispatcher.dispatchEvent(
+            PageScrollEvent(vp.id, position, positionOffset))
         }
-        eventDispatcher.dispatchEvent(
-          PageScrollStateChangedEvent(vp.id, pageScrollState))
-      }
-    })
+
+        override fun onPageSelected(position: Int) {
+          super.onPageSelected(position)
+          eventDispatcher.dispatchEvent(
+            PageSelectedEvent(vp.id, position))
+        }
+
+        override fun onPageScrollStateChanged(state: Int) {
+          super.onPageScrollStateChanged(state)
+          val pageScrollState: String = when (state) {
+            ViewPager2.SCROLL_STATE_IDLE -> "idle"
+            ViewPager2.SCROLL_STATE_DRAGGING -> "dragging"
+            ViewPager2.SCROLL_STATE_SETTLING -> "settling"
+            else -> throw IllegalStateException("Unsupported pageScrollState")
+          }
+          eventDispatcher.dispatchEvent(
+            PageScrollStateChangedEvent(vp.id, pageScrollState))
+        }
+      })
+    }
     return vp
   }
 
@@ -196,6 +199,17 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
         page.translationX = if (isRTL) -offset else offset
       } else {
         page.translationY = offset
+      }
+    }
+  }
+
+
+  @ReactProp(name = "initialPage", defaultInt = 0)
+  fun setInitialPage(viewPager: ViewPager2, value: Int) {
+    viewPager.post {
+      if (!(viewPager.adapter as FragmentAdapter).initialPageinited) {
+        (viewPager.adapter as FragmentAdapter).initialPageinited = true
+        setCurrentItem(viewPager, value, false)
       }
     }
   }
