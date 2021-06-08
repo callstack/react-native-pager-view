@@ -67,11 +67,12 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
 
   constructor(props: LazyPagerViewImplProps<ItemT>) {
     super(props);
+    const initialPage = Math.max(this.props.initialPage ?? 0, 0);
     this.state = this.computeRenderWindow({
       buffer: props.buffer,
-      currentPage: props.initialPage ?? 0,
+      currentPage: initialPage,
       maxRenderWindow: props.maxRenderWindow,
-      offset: props.initialPage ?? 0,
+      offset: initialPage,
       windowLength: 0,
     });
   }

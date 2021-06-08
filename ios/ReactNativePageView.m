@@ -41,6 +41,13 @@
     }
 }
 
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    if (_reactPageViewController) {
+        [self goTo:_currentPage animated:NO];
+    }
+}
+
 - (void)didUpdateReactSubviews {
     NSInteger targetPage = _currentPage;
     NSInteger reactIndex = [self getReactIndexOfView:_currentReactTag];

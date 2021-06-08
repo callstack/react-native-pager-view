@@ -60,8 +60,7 @@ export class PagerView
   private isScrolling = false;
 
   componentDidMount() {
-    // On iOS we do it directly on the native side
-    if (Platform.OS === 'android' && this.props.initialPage !== undefined) {
+    if (this.props.initialPage !== undefined) {
       requestAnimationFrame(() => {
         if (this.props.initialPage !== undefined) {
           this.setPageWithoutAnimation(this.props.initialPage);
