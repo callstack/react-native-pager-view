@@ -64,6 +64,7 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
 > {
   private isNavigatingToPage: number | null = null;
   private isScrolling = false;
+  private animationFrameRequestId?: number;
 
   constructor(props: LazyPagerViewImplProps<ItemT>) {
     super(props);
@@ -77,11 +78,17 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
     });
   }
 
+  componentWillUnmount() {
+    if (this.animationFrameRequestId !== undefined) {
+      cancelAnimationFrame(this.animationFrameRequestId);
+    }
+  }
+
   componentDidMount() {
     const initialPage = this.props.initialPage;
     if (initialPage != null && initialPage > 0) {
       this.isNavigatingToPage = initialPage;
-      requestAnimationFrame(() => {
+      this.animationFrameRequestId = requestAnimationFrame(() => {
         // Send command directly; render window already contains destination.
         UIManager.dispatchViewManagerCommand(
           findNodeHandle(this),

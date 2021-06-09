@@ -43,7 +43,9 @@ import type { PagerViewProps } from './types';
  */
 export declare class PagerView extends React.Component<PagerViewProps> {
     private isScrolling;
+    private animationFrameRequestId?;
     private PagerView;
+    componentWillUnmount(): void;
     componentDidMount(): void;
     getInnerViewNode: () => ReactElement;
     private _onPageScroll;

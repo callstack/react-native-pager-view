@@ -28,7 +28,7 @@
         _currentPage = 0;
         _currentReactTag = nil;
         _orientation = UIPageViewControllerNavigationOrientationHorizontal;
-        _overdrag = YES;
+        _overdrag = NO;
         _pageMargin = 0;
         _placeholderPageIndexes = [NSMapTable weakToStrongObjectsMapTable];
         _scrollEnabled = YES;

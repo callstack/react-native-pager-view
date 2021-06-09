@@ -80,14 +80,16 @@ dependencies {
 
 On top, where imports are:
 
-Add the `RNCPagerViewPackage` class to your list of exported packages.
+Add `import com.reactnativepagerview.PagerViewPackage;`
+
+Add the `PagerViewPackage` class to your list of exported packages.
 
 ```java
 @Override
 protected List<ReactPackage> getPackages() {
   return Arrays.<ReactPackage>asList(
     new MainReactPackage(),
-    new RNCPagerViewPackage()
+    new PagerViewPackage()
   );
 }
 ```
@@ -145,7 +147,7 @@ For advanced usage please take a look into our [example project](https://github.
 | `showPageIndicator: boolean`                                         |                                                                                                         Shows the dots indicator at the bottom of the view                                                                                                          |   iOS    |
 | `overScrollMode: OverScollMode`                                      |                                                                              Used to override default value of overScroll mode. Can be `auto`, `always` or `never`. Defaults to `auto`                                                                              | Android  |
 | `offscreenPageLimit: number`                                         | Set the number of pages that should be retained to either side of the currently visible page(s). Pages beyond this limit will be recreated from the adapter when needed. Defaults to RecyclerView's caching strategy. The given value must either be larger than 0. | Android  |
-| `overdrag: boolean`                                                  |                                                                                             Allows for overscrolling after reaching the end or very beginning or pages                                                                                              |   iOS    |
+| `overdrag: boolean`                                                  |                                                                                       Allows for overscrolling after reaching the end or very beginning or pages. Defaults to `false`                                                                               |   iOS    |
 
 | Method                                     |                                                                                                         Description                                                                                                          | Platform |
 | ------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------: |
