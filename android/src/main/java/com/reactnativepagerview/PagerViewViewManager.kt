@@ -12,6 +12,7 @@ import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.ViewGroupManager
+import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.reactnativepagerview.event.PageScrollEvent
@@ -35,7 +36,7 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     if(reactContext.hasCurrentActivity()) {
       vp.adapter = createFragmentAdapter(reactContext);
     }
-    reactContext.addLifecycleEventListener(object : LifecycleEventListener {
+    lifecycleEventListener = object : LifecycleEventListener {
       override fun onHostResume() {
         if(vp.adapter == null && reactContext.hasCurrentActivity()) {
           vp.adapter = createFragmentAdapter(reactContext)
@@ -43,7 +44,8 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
       }
       override fun onHostPause() {}
       override fun onHostDestroy() {}
-    });
+    }
+    reactContext.addLifecycleEventListener(lifecycleEventListener);
     //https://github.com/callstack/react-native-viewpager/issues/183
     vp.isSaveEnabled = false
     eventDispatcher = reactContext.getNativeModule(UIManagerModule::class.java)!!.eventDispatcher
@@ -75,6 +77,11 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     return vp
   }
 
+  override fun onDropViewInstance(view: ViewPager2) {
+    super.onDropViewInstance(view)
+    UIManagerHelper.getReactContext(view).removeLifecycleEventListener(lifecycleEventListener);
+  }
+
   private fun setCurrentItem(view: ViewPager2, selectedTab: Int, scrollSmooth: Boolean) {
     refreshViewChildrenLayout(view)
     view.setCurrentItem(selectedTab, scrollSmooth)
@@ -88,7 +95,7 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   }
 
   override fun getChildCount(parent: ViewPager2): Int {
-    return parent.adapter?.itemCount ?: 0;
+    return parent?.adapter?.itemCount ?: 0;
   }
 
   override fun getChildAt(parent: ViewPager2, index: Int): View {
