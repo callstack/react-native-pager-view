@@ -29,9 +29,6 @@ type RenderWindowData = {
 
 /**
  * PagerView implementation that renders pages when needed (lazy loading)
- *
- * Note: under current implementation, pages are never unloaded. Also, all
- * pages before the visible page are rendered.
  */
 export class LazyPagerView<ItemT>
   extends React.PureComponent<LazyPagerViewProps<ItemT>>
@@ -70,11 +67,12 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
 
   constructor(props: LazyPagerViewImplProps<ItemT>) {
     super(props);
+    const initialPage = Math.max(this.props.initialPage ?? 0, 0);
     this.state = this.computeRenderWindow({
       buffer: props.buffer,
-      currentPage: props.initialPage ?? 0,
+      currentPage: initialPage,
       maxRenderWindow: props.maxRenderWindow,
-      offset: 0,
+      offset: initialPage,
       windowLength: 0,
     });
   }
@@ -179,8 +177,6 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
    *
    * Returns `offset` and `windowLength` unmodified, unless in conflict with
    * restrictions from `buffer` or `maxRenderWindow`.
-   *
-   * Currently will always yield `offset` of `0`.
    */
   private computeRenderWindow(data: RenderWindowData): LazyPagerViewImplState {
     const buffer = Math.max(data.buffer ?? 1, 1);
@@ -228,7 +224,7 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
 
     // Ignore spurious events that can occur on mount with `initialPage`.
     // TODO: Is there a way to avoid triggering the events at all?
-    if (this.isNavigatingToPage !== null) {
+    if (this.isNavigatingToPage != null) {
       if (this.isNavigatingToPage === currentPage) {
         this.isNavigatingToPage = null;
       } else {

@@ -1,4 +1,3 @@
-
 #import "ReactViewPagerManager.h"
 
 @implementation ReactViewPagerManager
@@ -7,24 +6,23 @@
 
 RCT_EXPORT_MODULE(RNCViewPager)
 
-RCT_EXPORT_VIEW_PROPERTY(initialPage, NSInteger)
-RCT_EXPORT_VIEW_PROPERTY(pageMargin, NSInteger)
-
-RCT_EXPORT_VIEW_PROPERTY(transitionStyle, UIPageViewControllerTransitionStyle)
+RCT_EXPORT_VIEW_PROPERTY(count, NSInteger)
+RCT_EXPORT_VIEW_PROPERTY(offset, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(orientation, UIPageViewControllerNavigationOrientation)
+RCT_EXPORT_VIEW_PROPERTY(overdrag, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(pageMargin, NSInteger)
+RCT_EXPORT_VIEW_PROPERTY(scrollEnabled, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(showPageIndicator, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(transitionStyle, UIPageViewControllerTransitionStyle)
+
 RCT_EXPORT_VIEW_PROPERTY(onPageSelected, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPageScroll, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPageScrollStateChanged, RCTDirectEventBlock)
-RCT_EXPORT_VIEW_PROPERTY(overdrag, BOOL)
 
-
-- (void) goToPage
-                  : (nonnull NSNumber *)reactTag index
-                  : (nonnull NSNumber *)index animated
-                  : (BOOL)animated {
-    [self.bridge.uiManager addUIBlock:^(
-                                        RCTUIManager *uiManager,
-                                        NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+-(void) goToPage:(nonnull NSNumber *)reactTag
+           index:(nonnull NSNumber *)index
+        animated:(BOOL)animated {
+    [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
         ReactNativePageView *view = (ReactNativePageView *)viewRegistry[reactTag];
         if (!view || ![view isKindOfClass:[ReactNativePageView class]]) {
             RCTLogError(@"Cannot find ReactNativePageView with tag #%@", reactTag);
@@ -34,54 +32,30 @@ RCT_EXPORT_VIEW_PROPERTY(overdrag, BOOL)
     }];
 }
 
-- (void) changeScrollEnabled
-: (nonnull NSNumber *)reactTag enabled
-: (BOOL)enabled {
-    [self.bridge.uiManager addUIBlock:^(
-                                        RCTUIManager *uiManager,
-                                        NSDictionary<NSNumber *, UIView *> *viewRegistry) {
+RCT_EXPORT_METHOD(setPage:(nonnull NSNumber *)reactTag
+                    index:(nonnull NSNumber *)index) {
+    [self goToPage:reactTag index:index animated:true];
+}
+
+RCT_EXPORT_METHOD(setPageWithoutAnimation:(nonnull NSNumber *)reactTag
+                                    index:(nonnull NSNumber *)index) {
+    [self goToPage:reactTag index:index animated:false];
+}
+
+RCT_EXPORT_METHOD(setScrollEnabled:(nonnull NSNumber *)reactTag
+                     scrollEnabled:(BOOL)scrollEnabled) {
+    [self.bridge.uiManager addUIBlock:^(RCTUIManager *uiManager, NSDictionary<NSNumber *,UIView *> *viewRegistry) {
         ReactNativePageView *view = (ReactNativePageView *)viewRegistry[reactTag];
         if (!view || ![view isKindOfClass:[ReactNativePageView class]]) {
             RCTLogError(@"Cannot find ReactNativePageView with tag #%@", reactTag);
             return;
         }
-        [view shouldScroll:enabled];
+        [view shouldScroll:scrollEnabled];
     }];
 }
 
-RCT_EXPORT_METHOD(setPage
-                  : (nonnull NSNumber *)reactTag index
-                  : (nonnull NSNumber *)index) {
-    [self goToPage:reactTag index:index animated:true];
-}
-
-RCT_EXPORT_METHOD(setPageWithoutAnimation
-                  : (nonnull NSNumber *)reactTag index
-                  : (nonnull NSNumber *)index) {
-    [self goToPage:reactTag index:index animated:false];
-}
-
-RCT_EXPORT_METHOD(setScrollEnabled
-                  : (nonnull NSNumber *)reactTag enabled
-                  : (nonnull NSNumber *)enabled) {
-    BOOL isEnabled = [enabled boolValue];
-    [self changeScrollEnabled:reactTag enabled:isEnabled];
-}
-
-RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView) {
-    [view shouldScroll:[RCTConvert BOOL:json]];
-}
-
-RCT_CUSTOM_VIEW_PROPERTY(keyboardDismissMode, NSString, ReactNativePageView) {
-    [view shouldDismissKeyboard:[RCTConvert NSString:json]];
-}
-
-RCT_CUSTOM_VIEW_PROPERTY(showPageIndicator, BOOL, ReactNativePageView) {
-    [view shouldShowPageIndicator:[RCTConvert BOOL:json]];
-}
-
 - (UIView *)view {
-    return [[ReactNativePageView alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
+    return [[ReactNativePageView alloc] init];
 }
 
 @end
