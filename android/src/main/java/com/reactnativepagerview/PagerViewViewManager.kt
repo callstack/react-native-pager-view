@@ -22,6 +22,7 @@ import com.reactnativepagerview.event.PageSelectedEvent
 
 class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   private lateinit var eventDispatcher: EventDispatcher
+  private lateinit var lifecycleEventListener: LifecycleEventListener
 
   override fun getName(): String {
     return REACT_CLASS
