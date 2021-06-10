@@ -1,1 +1,1 @@
-{"version":3,"sources":["index.tsx"],"names":["PagerView"],"mappings":";;;;;;;;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AACA;;eACeA,oB","sourcesContent":["export * from './types';\nimport { PagerView } from './PagerView';\nexport default PagerView;\n"]}
+{"version":3,"sources":["index.tsx"],"names":[],"mappings":";;;;;;;;;;;;;;;;;;;;;;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AACA;;AACA","sourcesContent":["export * from './types';\nexport { LazyPagerView } from './LazyPagerView';\nexport { PagerView } from './PagerView';\n"]}
