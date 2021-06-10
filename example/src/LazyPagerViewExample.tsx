@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Image, StyleSheet, View, SafeAreaView, Animated } from 'react-native';
 
 import { LazyPagerView } from 'react-native-pager-view';
@@ -14,7 +14,13 @@ function keyExtractor(page: CreatePage) {
   return `${page.key}`;
 }
 
-function renderItem({ item }: { item: CreatePage }) {
+function ExampleLazyView({ item }: { item: CreatePage }) {
+  useEffect(() => {
+    console.log(`didmout ${item.key}`);
+    return () => {
+      console.log(`didunmout ${item.key}`);
+    };
+  }, [item.key]);
   return (
     <View style={item.style}>
       <Image style={styles.image} source={item.imgSource} />
@@ -23,10 +29,14 @@ function renderItem({ item }: { item: CreatePage }) {
   );
 }
 
+function renderItem({ item }: { item: CreatePage }) {
+  return <ExampleLazyView item={item} />;
+}
+
 export function LazyPagerViewExample() {
   const { ref, ...navigationPanel } = useNavigationPanel<
     LazyPagerView<unknown>
-  >();
+  >(10000);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -34,6 +44,8 @@ export function LazyPagerViewExample() {
         ref={ref}
         style={styles.PagerView}
         initialPage={0}
+        buffer={2}
+        maxRenderWindow={20}
         overdrag={navigationPanel.overdragEnabled}
         scrollEnabled={navigationPanel.scrollEnabled}
         onPageScroll={navigationPanel.onPageScroll}
