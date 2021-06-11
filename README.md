@@ -21,6 +21,12 @@ This component allows the user to swipe left and right through pages of data. Un
 | iOS        | iOS support |
 | ViewPager1 | ViewPager2  |
 
+## Next version
+
+Lazy page loading has been added to the `next` version. If you would like to test lazy apporach in your app, you can try next version using below command:
+
+`yarn add @react-native-community/viewpager@next`
+
 ## Migration
 
 `"@react-native-community/viewpager"` library has been changed to `react-native-pager-view`. Here you can find more information, how to migrate pager view to the latest [version](https://github.com/callstack/react-native-pager-view/blob/master/MIGRATION.md)
@@ -128,7 +134,6 @@ const styles = StyleSheet.create({
 
 ## Advanced usage
 
-//TODO
 For advanced usage please take a look into our [example project](https://github.com/callstack/react-native-pager-view/blob/master/example/src/BasicPagerViewExample.tsx)
 
 ## API
@@ -161,7 +166,7 @@ See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the 
 
 ## Known Issues
 
-- `flex:1` does not work for child views, please use `width:”100%”, height:”100%” ` [instead](https://github.com/callstack/react-native-pager-view/issues/186#issuecomment-675320732)
+- `flex:1` does not work for child views, please use `width:”100%”, height:”100%”` [instead](https://github.com/callstack/react-native-pager-view/issues/186#issuecomment-675320732)
 
 - [iOS]: In case of `UIViewControllerHierarchyInconsistency` error, please use below fix:
 
