@@ -7,10 +7,12 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.facebook.infer.annotation.Assertions
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.common.MapBuilder
+import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.ViewGroupManager
+import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.uimanager.events.EventDispatcher
 import com.reactnativepagerview.event.PageScrollEvent
@@ -20,15 +22,32 @@ import com.reactnativepagerview.event.PageSelectedEvent
 
 class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   private lateinit var eventDispatcher: EventDispatcher
+  private lateinit var lifecycleEventListener: LifecycleEventListener
+
 
   override fun getName(): String {
     return REACT_CLASS
   }
 
+  fun createFragmentAdapter(reactContext: ThemedReactContext): FragmentAdapter {
+    return FragmentAdapter((reactContext.currentActivity as FragmentActivity?)!!)
+  }
+
   override fun createViewInstance(reactContext: ThemedReactContext): ViewPager2 {
     val vp = ViewPager2(reactContext)
-    val adapter = FragmentAdapter((reactContext.currentActivity as FragmentActivity?)!!)
-    vp.adapter = adapter
+    if(reactContext.hasCurrentActivity()) {
+      vp.adapter = createFragmentAdapter(reactContext);
+    }
+    lifecycleEventListener = object : LifecycleEventListener {
+      override fun onHostResume() {
+        if(vp.adapter == null && reactContext.hasCurrentActivity()) {
+          vp.adapter = createFragmentAdapter(reactContext)
+        }
+      }
+      override fun onHostPause() {}
+      override fun onHostDestroy() {}
+    }
+    reactContext.addLifecycleEventListener(lifecycleEventListener);
     //https://github.com/callstack/react-native-viewpager/issues/183
     vp.isSaveEnabled = false
     eventDispatcher = reactContext.getNativeModule(UIManagerModule::class.java)!!.eventDispatcher
@@ -60,6 +79,11 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     return vp
   }
 
+  override fun onDropViewInstance(view: ViewPager2) {
+    super.onDropViewInstance(view)
+    UIManagerHelper.getReactContext(view).removeLifecycleEventListener(lifecycleEventListener);
+  }
+
   private fun setCurrentItem(view: ViewPager2, selectedTab: Int, scrollSmooth: Boolean) {
     refreshViewChildrenLayout(view)
     view.setCurrentItem(selectedTab, scrollSmooth)
@@ -69,11 +93,11 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     if (child == null) {
       return
     }
-    (parent.adapter as FragmentAdapter?)!!.addFragment(child, index)
+    (parent.adapter as FragmentAdapter?)?.addFragment(child, index)
   }
 
   override fun getChildCount(parent: ViewPager2): Int {
-    return parent.adapter!!.itemCount
+    return parent?.adapter?.itemCount ?: 0;
   }
 
   override fun getChildAt(parent: ViewPager2, index: Int): View {
@@ -81,7 +105,7 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   }
 
   override fun removeView(parent: ViewPager2, view: View) {
-    (parent.adapter as FragmentAdapter?)!!.removeFragment(view)
+    (parent.adapter as FragmentAdapter?)?.removeFragment(view)
 
     // Required so ViewPager actually animates the removed view right away (otherwise 
     // a white screen is shown until the next user interaction).
@@ -92,12 +116,12 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   override fun removeAllViews(parent: ViewPager2) {
     parent.isUserInputEnabled = false
     val adapter = parent.adapter as FragmentAdapter?
-    adapter!!.removeAll()
+    adapter?.removeAll()
   }
 
   override fun removeViewAt(parent: ViewPager2, index: Int) {
     val adapter = parent.adapter as FragmentAdapter?
-    adapter!!.removeFragmentAt(index)
+    adapter?.removeFragmentAt(index)
 
     // Required so ViewPager actually animates the removed view right away (otherwise 
     // a white screen is shown until the next user interaction).
