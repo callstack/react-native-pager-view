@@ -20,6 +20,7 @@ export function BasicPagerViewExample() {
         ref={ref}
         style={styles.PagerView}
         initialPage={0}
+        layoutDirection="ltr"
         overdrag={navigationPanel.overdragEnabled}
         scrollEnabled={navigationPanel.scrollEnabled}
         onPageScroll={navigationPanel.onPageScroll}

@@ -72,6 +72,15 @@ export interface PagerViewProps {
   keyboardDismissMode?: 'none' | 'on-drag';
 
   /**
+   * A class for defining layout directions. A layout direction can be left-to-right (LTR) or right-to-left (RTL).
+   * It can also be deduced from the default language script of a locale.
+   *   - 'rtl' right to left
+   *   - 'ltr', left to right
+   *   - 'locale', default language script of a locale
+   */
+  layoutDirection?: 'rtl' | 'ltr' | 'locale';
+
+  /**
    * Blank space to show between pages. This is only visible while scrolling, pages are still
    * edge-to-edge.
    */
