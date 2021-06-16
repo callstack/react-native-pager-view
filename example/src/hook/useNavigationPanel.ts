@@ -32,7 +32,7 @@ export function useNavigationPanel(
   const [overdragEnabled, setOverdragEnabled] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [scrollState, setScrollState] = useState('idle');
-  const [dotsEnabled, setDotsEnabled] = useState(false);
+  const [dotsEnabled, setDotsEnabled] = useState(true);
   const [logs, setLogs] = useState<EventLog[]>([]);
   const [progress, setProgress] = useState({ position: 0, offset: 0 });
   const onPageScrollOffset = useRef(new Animated.Value(0)).current;

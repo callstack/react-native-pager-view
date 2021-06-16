@@ -79,6 +79,19 @@ RCT_CUSTOM_VIEW_PROPERTY(keyboardDismissMode, NSString, ReactNativePageView) {
 RCT_CUSTOM_VIEW_PROPERTY(showPageIndicator, BOOL, ReactNativePageView) {
     [view shouldShowPageIndicator:[RCTConvert BOOL:json]];
 }
+RCT_CUSTOM_VIEW_PROPERTY(pageIndicatorProps, NSDictionary, ReactNativePageView) {
+    NSDictionary *pageIndicatorProps = [RCTConvert NSDictionary:json];
+    if (pageIndicatorProps) {
+        NSString *active = [pageIndicatorProps objectForKey:@"activeDotColor"];
+        NSString *inactive = [pageIndicatorProps objectForKey:@"inactiveDotColor"];
+        if (active != nil) {
+            [view setActiveDot:active];
+        }
+        if (inactive != nil) {
+            [view setInactiveDot:inactive];
+        }
+    }
+}
 
 - (UIView *)view {
     return [[ReactNativePageView alloc] initWithEventDispatcher:self.bridge.eventDispatcher];

@@ -25,6 +25,10 @@ export function BasicPagerViewExample() {
         onPageScroll={navigationPanel.onPageScroll}
         onPageSelected={navigationPanel.onPageSelected}
         onPageScrollStateChanged={navigationPanel.onPageScrollStateChanged}
+        pageIndicatorProps={{
+          activeDotColor: 'red',
+          inactiveDotColor: 'blue',
+        }}
         pageMargin={10}
         // Lib does not support dynamically orientation change
         orientation="horizontal"

@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) NSInteger pageMargin;
 @property(nonatomic, readonly) BOOL scrollEnabled;
 @property(nonatomic, readonly) BOOL showPageIndicator;
+@property(nonatomic) UIColor* activeDotColor;
+@property(nonatomic) UIColor* inactiveDotColor;
 @property(nonatomic, readonly) UIScrollViewKeyboardDismissMode dismissKeyboard;
 @property(nonatomic) UIPageViewControllerTransitionStyle transitionStyle;
 @property(nonatomic) UIPageViewControllerNavigationOrientation orientation;
@@ -28,6 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)shouldScroll:(BOOL)scrollEnabled;
 - (void)shouldShowPageIndicator:(BOOL)showPageIndicator;
 - (void)shouldDismissKeyboard:(NSString *)dismissKeyboard;
+- (void)setActiveDot:(NSString *)hexColor;
+- (void)setInactiveDot:(NSString *)hexColor;
 
 @end
 

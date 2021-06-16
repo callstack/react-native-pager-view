@@ -17,6 +17,10 @@ export declare type PageScrollStateChangedNativeEvent = ReactNative.NativeSynthe
 export interface PageScrollStateChangedEvent {
     pageScrollState: PageScrollState;
 }
+export interface PageIndicatorProps {
+    activeDotColor?: string;
+    inactiveDotColor?: string;
+}
 export interface PagerViewProps {
     /**
      * Index of initial page that should be selected. Use `setPage` method to
@@ -99,6 +103,7 @@ export interface PagerViewProps {
     orientation?: Orientation;
     transitionStyle?: TransitionStyle;
     showPageIndicator?: boolean;
+    pageIndicatorProps?: PageIndicatorProps;
     /**
      * Android only
      */

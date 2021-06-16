@@ -9,6 +9,8 @@
  */
 
 import React, { Children, ReactNode, ReactElement } from 'react';
+import { processColor } from 'react-native';
+import type { PageIndicatorProps } from './types';
 
 export const childrenWithOverriddenStyle = (children?: ReactNode) => {
   // Override styles so that each page will fill the parent. Native component
@@ -34,4 +36,15 @@ export const childrenWithOverriddenStyle = (children?: ReactNode) => {
     };
     return React.cloneElement(child as ReactElement, newProps);
   });
+};
+
+export const transformPagerProps = (options?: PageIndicatorProps) => {
+  if (!options) {
+    return undefined;
+  }
+  const { activeDotColor = '#000', inactiveDotColor = '#fff' } = options;
+  return {
+    activeDotColor: `#${processColor(activeDotColor).toString(16)}`,
+    inactiveDotColor: `#${processColor(inactiveDotColor).toString(16)}`,
+  };
 };

@@ -8,7 +8,7 @@ import type {
   PagerViewProps,
 } from './types';
 
-import { childrenWithOverriddenStyle } from './utils';
+import { childrenWithOverriddenStyle, transformPagerProps } from './utils';
 import { getViewManagerConfig, PagerViewViewManager } from './PagerViewNative';
 
 /**
@@ -153,6 +153,7 @@ export class PagerView extends React.Component<PagerViewProps> {
         {...this.props}
         ref={this.PagerView as any /** TODO: Fix ref type */}
         style={this.props.style}
+        pageIndicatorProps={transformPagerProps(this.props.pageIndicatorProps)}
         onPageScroll={this._onPageScroll}
         onPageScrollStateChanged={this._onPageScrollStateChanged}
         onPageSelected={this._onPageSelected}
