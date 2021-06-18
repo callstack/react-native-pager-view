@@ -1,3 +1,3 @@
 export * from './types';
-import { PagerView } from './PagerView';
-export default PagerView;
+export { LazyPagerView } from './LazyPagerView';
+export { PagerView } from './PagerView';

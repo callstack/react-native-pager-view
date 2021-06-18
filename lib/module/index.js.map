@@ -1,1 +1,1 @@
-{"version":3,"sources":["index.tsx"],"names":["PagerView"],"mappings":"AAAA,cAAc,SAAd;AACA,SAASA,SAAT,QAA0B,aAA1B;AACA,eAAeA,SAAf","sourcesContent":["export * from './types';\nimport { PagerView } from './PagerView';\nexport default PagerView;\n"]}
+{"version":3,"sources":["index.tsx"],"names":["LazyPagerView","PagerView"],"mappings":"AAAA,cAAc,SAAd;AACA,SAASA,aAAT,QAA8B,iBAA9B;AACA,SAASC,SAAT,QAA0B,aAA1B","sourcesContent":["export * from './types';\nexport { LazyPagerView } from './LazyPagerView';\nexport { PagerView } from './PagerView';\n"]}

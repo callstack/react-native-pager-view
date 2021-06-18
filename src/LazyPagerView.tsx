@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   findNodeHandle,
+  InteractionManager,
   Keyboard,
   StyleSheet,
   UIManager,
@@ -19,6 +20,8 @@ import type {
 type LazyPagerViewImplProps<ItemT> = Omit<LazyPagerViewProps<ItemT>, 'style'>;
 type LazyPagerViewImplState = { offset: number; windowLength: number };
 
+type TaskHandle = ReturnType<typeof InteractionManager.runAfterInteractions>;
+
 type RenderWindowData = {
   buffer: number | undefined;
   currentPage: number;
@@ -29,9 +32,6 @@ type RenderWindowData = {
 
 /**
  * PagerView implementation that renders pages when needed (lazy loading)
- *
- * Note: under current implementation, pages are never unloaded. Also, all
- * pages before the visible page are rendered.
  */
 export class LazyPagerView<ItemT>
   extends React.PureComponent<LazyPagerViewProps<ItemT>>
@@ -67,23 +67,36 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
 > {
   private isNavigatingToPage: number | null = null;
   private isScrolling = false;
+  private animationFrameRequestId?: number;
+  private renderRequestHandle?: TaskHandle;
+  private currentPage?: number;
 
   constructor(props: LazyPagerViewImplProps<ItemT>) {
     super(props);
+    const initialPage = Math.max(this.props.initialPage ?? 0, 0);
     this.state = this.computeRenderWindow({
       buffer: props.buffer,
-      currentPage: props.initialPage ?? 0,
+      currentPage: initialPage,
       maxRenderWindow: props.maxRenderWindow,
-      offset: 0,
+      offset: initialPage,
       windowLength: 0,
     });
+  }
+
+  componentWillUnmount() {
+    if (this.animationFrameRequestId !== undefined) {
+      cancelAnimationFrame(this.animationFrameRequestId);
+    }
+    if (this.renderRequestHandle != null) {
+      this.renderRequestHandle.cancel();
+    }
   }
 
   componentDidMount() {
     const initialPage = this.props.initialPage;
     if (initialPage != null && initialPage > 0) {
       this.isNavigatingToPage = initialPage;
-      requestAnimationFrame(() => {
+      this.animationFrameRequestId = requestAnimationFrame(() => {
         // Send command directly; render window already contains destination.
         UIManager.dispatchViewManagerCommand(
           findNodeHandle(this),
@@ -179,8 +192,6 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
    *
    * Returns `offset` and `windowLength` unmodified, unless in conflict with
    * restrictions from `buffer` or `maxRenderWindow`.
-   *
-   * Currently will always yield `offset` of `0`.
    */
   private computeRenderWindow(data: RenderWindowData): LazyPagerViewImplState {
     const buffer = Math.max(data.buffer ?? 1, 1);
@@ -221,6 +232,30 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
   ) => {
     this.props.onPageScrollStateChanged?.(event);
     this.isScrolling = event.nativeEvent.pageScrollState === 'dragging';
+
+    // rendering new pages if the scroll is idle, this way it doesn't block the UI thread
+    if (
+      event.nativeEvent.pageScrollState === 'idle' &&
+      typeof this.currentPage === 'number'
+    ) {
+      // Queue renders for next needed pages (if not already available).
+      if (this.renderRequestHandle != null) {
+        this.renderRequestHandle.cancel();
+      }
+
+      this.renderRequestHandle = InteractionManager.runAfterInteractions(() => {
+        this.renderRequestHandle = undefined;
+        this.setState((prevState) =>
+          this.computeRenderWindow({
+            buffer: this.props.buffer,
+            currentPage: this.currentPage as number,
+            maxRenderWindow: this.props.maxRenderWindow,
+            offset: prevState.offset,
+            windowLength: prevState.windowLength,
+          })
+        );
+      });
+    }
   };
 
   private onPageSelected = (event: PagerViewOnPageSelectedEvent) => {
@@ -228,7 +263,7 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
 
     // Ignore spurious events that can occur on mount with `initialPage`.
     // TODO: Is there a way to avoid triggering the events at all?
-    if (this.isNavigatingToPage !== null) {
+    if (this.isNavigatingToPage != null) {
       if (this.isNavigatingToPage === currentPage) {
         this.isNavigatingToPage = null;
       } else {
@@ -237,18 +272,7 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
       }
     }
 
-    // Queue renders for next needed pages (if not already available).
-    requestAnimationFrame(() => {
-      this.setState((prevState) =>
-        this.computeRenderWindow({
-          buffer: this.props.buffer,
-          currentPage,
-          maxRenderWindow: this.props.maxRenderWindow,
-          offset: prevState.offset,
-          windowLength: prevState.windowLength,
-        })
-      );
-    });
+    this.currentPage = currentPage;
 
     this.props.onPageSelected?.(event);
   };

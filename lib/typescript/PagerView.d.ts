@@ -1,5 +1,5 @@
-import React, { ReactElement } from 'react';
-import type { PagerViewProps } from './types';
+import React from 'react';
+import type { Pageable, PagerViewProps } from './types';
 /**
  * Container that allows to flip left and right between child views. Each
  * child view of the `PagerView` will be treated as a separate page
@@ -41,11 +41,9 @@ import type { PagerViewProps } from './types';
  * }
  * ```
  */
-export declare class PagerView extends React.Component<PagerViewProps> {
+export declare class PagerView extends React.Component<PagerViewProps> implements Pageable {
     private isScrolling;
-    private PagerView;
     componentDidMount(): void;
-    getInnerViewNode: () => ReactElement;
     private _onPageScroll;
     private _onPageScrollStateChanged;
     private _onPageSelected;
