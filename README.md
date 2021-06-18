@@ -25,7 +25,7 @@ This component allows the user to swipe left and right through pages of data. Un
 
 Lazy page loading has been added to the `next` version. If you would like to test lazy apporach in your app, you can try next version using below command:
 
-`yarn add @react-native-community/viewpager@next`
+`yarn add react-native-pager-view@next`
 
 ## Migration
 
