@@ -26,9 +26,7 @@ export function BasicPagerViewExample() {
         onPageSelected={navigationPanel.onPageSelected}
         onPageScrollStateChanged={navigationPanel.onPageScrollStateChanged}
         pageMargin={10}
-        // Lib does not support dynamically orientation change
         orientation="horizontal"
-        // Lib does not support dynamically transitionStyle change
         transitionStyle="scroll"
         showPageIndicator={navigationPanel.dotsEnabled}
       >

@@ -43,6 +43,8 @@ import type { Pageable, PagerViewProps } from './types';
  */
 export declare class PagerView extends React.Component<PagerViewProps> implements Pageable {
     private isScrolling;
+    private animationFrameRequestId?;
+    componentWillUnmount(): void;
     componentDidMount(): void;
     private _onPageScroll;
     private _onPageScrollStateChanged;

@@ -219,4 +219,3 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     private const val COMMAND_SET_SCROLL_ENABLED = 3
   }
 }
-

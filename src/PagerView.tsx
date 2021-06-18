@@ -58,11 +58,17 @@ export class PagerView
   extends React.Component<PagerViewProps>
   implements Pageable {
   private isScrolling = false;
+  private animationFrameRequestId?: number;
+
+  componentWillUnmount() {
+    if (this.animationFrameRequestId !== undefined) {
+      cancelAnimationFrame(this.animationFrameRequestId);
+    }
+  }
 
   componentDidMount() {
-    // On iOS we do it directly on the native side
-    if (Platform.OS === 'android' && this.props.initialPage !== undefined) {
-      requestAnimationFrame(() => {
+    if (this.props.initialPage !== undefined) {
+      this.animationFrameRequestId = requestAnimationFrame(() => {
         if (this.props.initialPage !== undefined) {
           this.setPageWithoutAnimation(this.props.initialPage);
         }
