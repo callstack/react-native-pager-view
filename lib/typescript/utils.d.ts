@@ -8,9 +8,4 @@
  * @flow strict-local
  */
 import React, { ReactNode } from 'react';
-import type { PageIndicatorProps } from './types';
 export declare const childrenWithOverriddenStyle: (children?: ReactNode) => React.ReactElement<any, string | React.JSXElementConstructor<any>>[] | null | undefined;
-export declare const transformPagerProps: (options?: PageIndicatorProps | undefined) => {
-    activeDotColor: string;
-    inactiveDotColor: string;
-} | undefined;
