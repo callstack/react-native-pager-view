@@ -7,6 +7,7 @@
 #import "RCTOnPageScrollEvent.h"
 #import "RCTOnPageScrollStateChanged.h"
 #import "RCTOnPageSelected.h"
+#import <math.h>
 
 @interface ReactNativePageView () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
 
@@ -386,9 +387,11 @@
     
     NSInteger position = self.currentIndex;
     
-    if(offset<0 && position>0){
+
+    BOOL isAnimatingBackwards = ([self isLtrLayout] && offset<0) || (![self isLtrLayout] && offset > 0.05f);
+    if(isAnimatingBackwards && position > 0){
         position =  self.currentIndex - 1;
-        absoluteOffset =  1 - absoluteOffset;
+        absoluteOffset =  fmax(0, 1 - absoluteOffset);
     }
     
     if (!_overdrag) {
