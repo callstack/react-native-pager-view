@@ -342,10 +342,14 @@
     [self.eventDispatcher sendEvent:[[RCTOnPageScrollStateChanged alloc] initWithReactTag:self.reactTag state:@"settling" coalescingKey:_coalescingKey++]];
     
     if (!_overdrag) {
-        if (_currentIndex == 0 && scrollView.contentOffset.x <= scrollView.bounds.size.width) {
-            *targetContentOffset = CGPointMake(scrollView.bounds.size.width, 0);
-        } else if (_currentIndex == _reactPageIndicatorView.numberOfPages -1 && scrollView.contentOffset.x >= scrollView.bounds.size.width) {
-            *targetContentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+        BOOL isFirstPage = _currentIndex == 0;
+        BOOL isLastPage = _currentIndex == _reactPageIndicatorView.numberOfPages - 1;
+        CGFloat contentOffset =[self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;
+        CGFloat topBound = [self isHorizontal] ? scrollView.bounds.size.width : scrollView.bounds.size.height;
+        
+        if ((isFirstPage && contentOffset <= topBound) || (isLastPage && contentOffset >= topBound)) {
+            CGPoint croppedOffset = [self isHorizontal] ? CGPointMake(topBound, 0) : CGPointMake(0, topBound);
+            *targetContentOffset = croppedOffset;
         }
     }
 }
@@ -383,11 +387,14 @@
     }
     
     if (!_overdrag) {
-        if (_currentIndex == 0 && scrollView.contentOffset.x < scrollView.bounds.size.width) {
-            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
-            absoluteOffset=0;
-        } else if (_currentIndex == _reactPageIndicatorView.numberOfPages - 1 && scrollView.contentOffset.x > scrollView.bounds.size.width) {
-            scrollView.contentOffset = CGPointMake(scrollView.bounds.size.width, 0);
+        BOOL isFirstPage = _currentIndex == 0;
+        BOOL isLastPage = _currentIndex == _reactPageIndicatorView.numberOfPages - 1;
+        CGFloat contentOffset =[self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;
+        CGFloat topBound = [self isHorizontal] ? scrollView.bounds.size.width : scrollView.bounds.size.height;
+
+        if ((isFirstPage && contentOffset <= topBound) || (isLastPage && contentOffset >= topBound)) {
+            CGPoint croppedOffset = [self isHorizontal] ? CGPointMake(topBound, 0) : CGPointMake(0, topBound);
+            scrollView.contentOffset = croppedOffset;
             absoluteOffset=0;
         }
     }
