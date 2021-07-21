@@ -392,15 +392,17 @@
     
 
     BOOL isAnimatingBackwards = ([self isLtrLayout] && offset<0) || (![self isLtrLayout] && offset > 0.05f);
-    if(isAnimatingBackwards && position > 0){
+    if(isAnimatingBackwards){
         position =  self.currentIndex - 1;
         absoluteOffset =  fmax(0, 1 - absoluteOffset);
     }
     
     if (!_overdrag) {
         NSInteger maxIndex = _reactPageIndicatorView.numberOfPages - 1;
-        BOOL isFirstPage = [self isLtrLayout] ? _currentIndex == 0 : _currentIndex == maxIndex;
-        BOOL isLastPage = [self isLtrLayout] ? _currentIndex == maxIndex : _currentIndex == 0;
+        NSInteger firstPageIndex = [self isLtrLayout] ?  0 :  maxIndex;
+        NSInteger lastPageIndex = [self isLtrLayout] ?  maxIndex :  0;
+        BOOL isFirstPage = _currentIndex == firstPageIndex;
+        BOOL isLastPage = _currentIndex == lastPageIndex;
         CGFloat contentOffset =[self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;
         CGFloat topBound = [self isHorizontal] ? scrollView.bounds.size.width : scrollView.bounds.size.height;
 
@@ -408,6 +410,7 @@
             CGPoint croppedOffset = [self isHorizontal] ? CGPointMake(topBound, 0) : CGPointMake(0, topBound);
             scrollView.contentOffset = croppedOffset;
             absoluteOffset=0;
+            position = isLastPage ? lastPageIndex : firstPageIndex;
         }
     }
     

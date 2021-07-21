@@ -13,12 +13,13 @@ export class ProgressBar extends React.Component<Props> {
   render() {
     const fractionalPosition =
       this.props.progress.position + this.props.progress.offset;
-
     const size = fractionalPosition / (this.props.numberOfPages - 1);
-    console.log(size);
+    const clampedSize = Math.max(0, Math.min(1, size));
     return (
       <View style={styles.progressBarContainer}>
-        <View style={[styles.progressBar, { width: `${size * 100}%` }]} />
+        <View
+          style={[styles.progressBar, { width: `${clampedSize * 100}%` }]}
+        />
       </View>
     );
   }
