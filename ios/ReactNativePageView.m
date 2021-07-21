@@ -7,6 +7,7 @@
 #import "RCTOnPageScrollEvent.h"
 #import "RCTOnPageScrollStateChanged.h"
 #import "RCTOnPageSelected.h"
+#import <math.h>
 
 @interface ReactNativePageView () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
 
@@ -45,6 +46,7 @@
         _eventDispatcher = eventDispatcher;
         _cachedControllers = [NSHashTable weakObjectsHashTable];
         _overdrag = NO;
+        _layoutDirection = @"ltr";
     }
     return self;
 }
@@ -217,7 +219,8 @@
         return;
     }
     
-    UIPageViewControllerNavigationDirection direction = (index > self.currentIndex) ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
+    BOOL isForward = (index > self.currentIndex && [self isLtrLayout]) || (index < self.currentIndex && ![self isLtrLayout]);
+    UIPageViewControllerNavigationDirection direction = isForward ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
     
     NSInteger indexToDisplay = index;
     
@@ -296,12 +299,14 @@
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController
        viewControllerAfterViewController:(UIViewController *)viewController {
-    return [self nextControllerForController:viewController inDirection:UIPageViewControllerNavigationDirectionForward];
+    UIPageViewControllerNavigationDirection direction = [self isLtrLayout] ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
+    return [self nextControllerForController:viewController inDirection:direction];
 }
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController
       viewControllerBeforeViewController:(UIViewController *)viewController {
-    return [self nextControllerForController:viewController inDirection:UIPageViewControllerNavigationDirectionReverse];
+    UIPageViewControllerNavigationDirection direction = [self isLtrLayout] ? UIPageViewControllerNavigationDirectionReverse : UIPageViewControllerNavigationDirectionForward;
+    return [self nextControllerForController:viewController inDirection:direction];
 }
 
 #pragma mark - UIPageControlDelegate
@@ -342,8 +347,9 @@
     [self.eventDispatcher sendEvent:[[RCTOnPageScrollStateChanged alloc] initWithReactTag:self.reactTag state:@"settling" coalescingKey:_coalescingKey++]];
     
     if (!_overdrag) {
-        BOOL isFirstPage = _currentIndex == 0;
-        BOOL isLastPage = _currentIndex == _reactPageIndicatorView.numberOfPages - 1;
+        NSInteger maxIndex = _reactPageIndicatorView.numberOfPages - 1;
+        BOOL isFirstPage = [self isLtrLayout] ? _currentIndex == 0 : _currentIndex == maxIndex;
+        BOOL isLastPage = [self isLtrLayout] ? _currentIndex == maxIndex : _currentIndex == 0;
         CGFloat contentOffset =[self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;
         CGFloat topBound = [self isHorizontal] ? scrollView.bounds.size.width : scrollView.bounds.size.height;
         
@@ -381,14 +387,17 @@
     
     NSInteger position = self.currentIndex;
     
-    if(offset<0 && position>0){
+
+    BOOL isAnimatingBackwards = ([self isLtrLayout] && offset<0) || (![self isLtrLayout] && offset > 0.05f);
+    if(isAnimatingBackwards && position > 0){
         position =  self.currentIndex - 1;
-        absoluteOffset =  1 - absoluteOffset;
+        absoluteOffset =  fmax(0, 1 - absoluteOffset);
     }
     
     if (!_overdrag) {
-        BOOL isFirstPage = _currentIndex == 0;
-        BOOL isLastPage = _currentIndex == _reactPageIndicatorView.numberOfPages - 1;
+        NSInteger maxIndex = _reactPageIndicatorView.numberOfPages - 1;
+        BOOL isFirstPage = [self isLtrLayout] ? _currentIndex == 0 : _currentIndex == maxIndex;
+        BOOL isLastPage = [self isLtrLayout] ? _currentIndex == maxIndex : _currentIndex == 0;
         CGFloat contentOffset =[self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;
         CGFloat topBound = [self isHorizontal] ? scrollView.bounds.size.width : scrollView.bounds.size.height;
 
@@ -419,5 +428,13 @@
         }
     }
     return scrollDirection;
+}
+
+- (BOOL)isLtrLayout {
+    if ([_layoutDirection isEqualToString:@"locale"]) {
+        return [UIApplication sharedApplication].userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionLeftToRight;
+    } else {
+        return [_layoutDirection isEqualToString:@"ltr"];
+    }
 }
 @end

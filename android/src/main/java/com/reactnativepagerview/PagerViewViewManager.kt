@@ -1,5 +1,6 @@
 package com.reactnativepagerview
 
+import android.util.LayoutDirection
 import android.view.View
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.widget.ViewPager2
@@ -161,6 +162,24 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
         else -> {
           child.overScrollMode = ViewPager2.OVER_SCROLL_IF_CONTENT_SCROLLS
         }
+    }
+  }
+  
+  @ReactProp(name = "layoutDirection")
+  fun setLayoutDirection(viewPager: ViewPager2, value: String) {
+    when (value) {
+      "rtl" -> {
+        viewPager.layoutDirection = View.LAYOUT_DIRECTION_RTL
+      }
+      "ltr" -> {
+        viewPager.layoutDirection = View.LAYOUT_DIRECTION_LTR
+      }
+      "locale" -> {
+        viewPager.layoutDirection = View.LAYOUT_DIRECTION_LOCALE
+      }
+      else -> {
+        viewPager.layoutDirection = View.LAYOUT_DIRECTION_INHERIT
+      }
     }
   }
 
