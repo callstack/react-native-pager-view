@@ -206,7 +206,10 @@
     
     if (newIndex == NSNotFound) {
         // Current view was removed
-        [self goTo:self.currentIndex animated:NO];
+        NSInteger maxPage = self.reactSubviews.count - 1;
+        NSInteger fallbackIndex = self.currentIndex >= maxPage ? maxPage : self.currentIndex;
+        
+        [self goTo:fallbackIndex animated:NO];
     } else {
         [self goTo:newIndex animated:NO];
     }
