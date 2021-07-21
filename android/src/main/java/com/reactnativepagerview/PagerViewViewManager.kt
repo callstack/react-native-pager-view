@@ -13,9 +13,9 @@ import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.ViewGroupManager
-import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.uimanager.events.EventDispatcher
+import com.reactnativepagerview.Helper.Companion.getReactContext
 import com.reactnativepagerview.event.PageScrollEvent
 import com.reactnativepagerview.event.PageScrollStateChangedEvent
 import com.reactnativepagerview.event.PageSelectedEvent
@@ -82,7 +82,7 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
 
   override fun onDropViewInstance(view: ViewPager2) {
     super.onDropViewInstance(view)
-    UIManagerHelper.getReactContext(view).removeLifecycleEventListener(lifecycleEventListener);
+    getReactContext(view)?.removeLifecycleEventListener(lifecycleEventListener)
   }
 
   private fun setCurrentItem(view: ViewPager2, selectedTab: Int, scrollSmooth: Boolean) {
