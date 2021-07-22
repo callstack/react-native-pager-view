@@ -1,1 +1,0 @@
-{"version":3,"sources":["index.tsx"],"names":["PagerView"],"mappings":";;;;;;;;AAAA;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;;AACA;;eACeA,oB","sourcesContent":["export * from './types';\nimport { PagerView } from './PagerView';\nexport default PagerView;\n"]}
