@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  rn: react-native-community/react-native@4.4.2
+  rn: react-native-community/react-native@5.4.0
 
 executors:
   default:
