@@ -437,10 +437,6 @@
 }
 
 - (BOOL)isLtrLayout {
-    if ([_layoutDirection isEqualToString:@"locale"]) {
-        return [UIApplication sharedApplication].userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionLeftToRight;
-    } else {
-        return [_layoutDirection isEqualToString:@"ltr"];
-    }
+    return [_layoutDirection isEqualToString:@"ltr"];
 }
 @end

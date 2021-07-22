@@ -171,14 +171,8 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
       "rtl" -> {
         viewPager.layoutDirection = View.LAYOUT_DIRECTION_RTL
       }
-      "ltr" -> {
-        viewPager.layoutDirection = View.LAYOUT_DIRECTION_LTR
-      }
-      "locale" -> {
-        viewPager.layoutDirection = View.LAYOUT_DIRECTION_LOCALE
-      }
       else -> {
-        viewPager.layoutDirection = View.LAYOUT_DIRECTION_INHERIT
+        viewPager.layoutDirection = View.LAYOUT_DIRECTION_LTR
       }
     }
   }
