@@ -11,7 +11,7 @@ export const IMAGE_URIS = [
 ];
 export const thumbsUp = '\uD83D\uDC4D';
 export const logoUrl =
-  'https://raw.githubusercontent.com/react-native-community/react-native-viewpager/master/docs/viewpager-logo.png';
+  'https://raw.githubusercontent.com/callstack/react-native-pager-view/master/img/viewpager-logo.png';
 
 export type CreatePage = {
   key: number;
