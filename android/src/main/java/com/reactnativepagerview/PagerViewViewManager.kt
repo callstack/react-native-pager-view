@@ -101,6 +101,14 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
       return
     }
     (parent.adapter as FragmentAdapter?)?.addFragment(child, index)
+
+    if (parent.currentItem == index) {
+      // Solves https://github.com/callstack/react-native-pager-view/issues/219
+      // Required so ViewPager actually displays first dynamically added child
+      // (otherwise a white screen is shown until the next user interaction).
+      // https://github.com/facebook/react-native/issues/17968#issuecomment-697136929
+      refreshViewChildrenLayout(parent)
+    }
   }
 
   override fun getChildCount(parent: ViewPager2): Int {
