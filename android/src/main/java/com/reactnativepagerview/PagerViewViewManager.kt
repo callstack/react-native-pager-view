@@ -1,21 +1,17 @@
 package com.reactnativepagerview
 
-import android.util.LayoutDirection
 import android.view.View
-import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.facebook.infer.annotation.Assertions
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.common.MapBuilder
-import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.uimanager.PixelUtil
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.uimanager.events.EventDispatcher
-import com.reactnativepagerview.Helper.Companion.getReactContext
 import com.reactnativepagerview.event.PageScrollEvent
 import com.reactnativepagerview.event.PageScrollStateChangedEvent
 import com.reactnativepagerview.event.PageSelectedEvent
@@ -23,32 +19,14 @@ import com.reactnativepagerview.event.PageSelectedEvent
 
 class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   private lateinit var eventDispatcher: EventDispatcher
-  private lateinit var lifecycleEventListener: LifecycleEventListener
-
 
   override fun getName(): String {
     return REACT_CLASS
   }
 
-  fun createFragmentAdapter(reactContext: ThemedReactContext): FragmentAdapter {
-    return FragmentAdapter((reactContext.currentActivity as FragmentActivity?)!!)
-  }
-
   override fun createViewInstance(reactContext: ThemedReactContext): ViewPager2 {
     val vp = ViewPager2(reactContext)
-    if(reactContext.hasCurrentActivity()) {
-      vp.adapter = createFragmentAdapter(reactContext);
-    }
-    lifecycleEventListener = object : LifecycleEventListener {
-      override fun onHostResume() {
-        if(vp.adapter == null && reactContext.hasCurrentActivity()) {
-          vp.adapter = createFragmentAdapter(reactContext)
-        }
-      }
-      override fun onHostPause() {}
-      override fun onHostDestroy() {}
-    }
-    reactContext.addLifecycleEventListener(lifecycleEventListener);
+    vp.adapter = ViewPagerAdapter()
     //https://github.com/callstack/react-native-viewpager/issues/183
     vp.isSaveEnabled = false
     eventDispatcher = reactContext.getNativeModule(UIManagerModule::class.java)!!.eventDispatcher
@@ -86,21 +64,17 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     return vp
   }
 
-  override fun onDropViewInstance(view: ViewPager2) {
-    super.onDropViewInstance(view)
-    getReactContext(view)?.removeLifecycleEventListener(lifecycleEventListener)
-  }
-
   private fun setCurrentItem(view: ViewPager2, selectedTab: Int, scrollSmooth: Boolean) {
     refreshViewChildrenLayout(view)
     view.setCurrentItem(selectedTab, scrollSmooth)
   }
 
-  override fun addView(parent: ViewPager2, child: View, index: Int) {
+  override fun addView(parent: ViewPager2, child: View?, index: Int) {
     if (child == null) {
       return
     }
-    (parent.adapter as FragmentAdapter?)?.addFragment(child, index)
+
+    (parent.adapter as ViewPagerAdapter?)?.addChild(child, index);
 
     if (parent.currentItem == index) {
       // Solves https://github.com/callstack/react-native-pager-view/issues/219
@@ -112,15 +86,15 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
   }
 
   override fun getChildCount(parent: ViewPager2): Int {
-    return parent?.adapter?.itemCount ?: 0;
+    return parent.adapter?.itemCount ?: 0;
   }
 
   override fun getChildAt(parent: ViewPager2, index: Int): View {
-    return (parent.adapter as FragmentAdapter?)!!.getChildViewAt(index)
+    return (parent.adapter as ViewPagerAdapter?)!!.getChildAt(index)
   }
 
   override fun removeView(parent: ViewPager2, view: View) {
-    (parent.adapter as FragmentAdapter?)?.removeFragment(view)
+    (parent.adapter as ViewPagerAdapter?)?.removeChild(view)
 
     // Required so ViewPager actually animates the removed view right away (otherwise 
     // a white screen is shown until the next user interaction).
@@ -130,13 +104,13 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
 
   override fun removeAllViews(parent: ViewPager2) {
     parent.isUserInputEnabled = false
-    val adapter = parent.adapter as FragmentAdapter?
+    val adapter = parent.adapter as ViewPagerAdapter?
     adapter?.removeAll()
   }
 
   override fun removeViewAt(parent: ViewPager2, index: Int) {
-    val adapter = parent.adapter as FragmentAdapter?
-    adapter?.removeFragmentAt(index)
+    val adapter = parent.adapter as ViewPagerAdapter?
+    adapter?.removeChildAt(index)
 
     // Required so ViewPager actually animates the removed view right away (otherwise 
     // a white screen is shown until the next user interaction).
