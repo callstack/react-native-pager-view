@@ -198,11 +198,11 @@
 }
 
 - (void)updateDataSource {
-    if (!self.currentView) {
+    if (!self.currentView && self.reactSubviews.count == 0) {
         return;
     }
     
-    NSInteger newIndex = [self.reactSubviews indexOfObject:self.currentView];
+    NSInteger newIndex = self.currentView ? [self.reactSubviews indexOfObject:self.currentView] : 0;
     
     if (newIndex == NSNotFound) {
         // Current view was removed
@@ -437,10 +437,6 @@
 }
 
 - (BOOL)isLtrLayout {
-    if ([_layoutDirection isEqualToString:@"locale"]) {
-        return [UIApplication sharedApplication].userInterfaceLayoutDirection == UIUserInterfaceLayoutDirectionLeftToRight;
-    } else {
-        return [_layoutDirection isEqualToString:@"ltr"];
-    }
+    return [_layoutDirection isEqualToString:@"ltr"];
 }
 @end

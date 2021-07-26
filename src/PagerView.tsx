@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Platform, UIManager, Keyboard } from 'react-native';
-import ReactNative from 'react-native';
+import ReactNative, { I18nManager } from 'react-native';
 import type {
   PagerViewOnPageScrollEvent,
   PagerViewOnPageSelectedEvent,
@@ -55,25 +55,7 @@ import { getViewManagerConfig, PagerViewViewManager } from './PagerViewNative';
 
 export class PagerView extends React.Component<PagerViewProps> {
   private isScrolling = false;
-  private animationFrameRequestId?: number;
   private PagerView = React.createRef<typeof PagerViewViewManager>();
-
-  componentWillUnmount() {
-    if (this.animationFrameRequestId !== undefined) {
-      cancelAnimationFrame(this.animationFrameRequestId);
-    }
-  }
-
-  componentDidMount() {
-    // On iOS we do it directly on the native side
-    if (Platform.OS === 'android' && this.props.initialPage !== undefined) {
-      this.animationFrameRequestId = requestAnimationFrame(() => {
-        if (this.props.initialPage !== undefined) {
-          this.setPageWithoutAnimation(this.props.initialPage);
-        }
-      });
-    }
-  }
 
   public getInnerViewNode = (): ReactElement => {
     return this.PagerView.current!.getInnerViewNode();
@@ -147,12 +129,24 @@ export class PagerView extends React.Component<PagerViewProps> {
     return this.isScrolling;
   };
 
+  private get deducedLayoutDirection() {
+    const shouldUseDeviceRtlSetup =
+      !this.props.layoutDirection || this.props.layoutDirection === 'locale';
+
+    if (shouldUseDeviceRtlSetup) {
+      return I18nManager.isRTL ? 'rtl' : 'ltr';
+    } else {
+      return this.props.layoutDirection;
+    }
+  }
+
   render() {
     return (
       <PagerViewViewManager
         {...this.props}
         ref={this.PagerView as any /** TODO: Fix ref type */}
         style={this.props.style}
+        layoutDirection={this.deducedLayoutDirection}
         onPageScroll={this._onPageScroll}
         onPageScrollStateChanged={this._onPageScrollStateChanged}
         onPageSelected={this._onPageSelected}

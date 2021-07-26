@@ -30,31 +30,37 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     //https://github.com/callstack/react-native-viewpager/issues/183
     vp.isSaveEnabled = false
     eventDispatcher = reactContext.getNativeModule(UIManagerModule::class.java)!!.eventDispatcher
-    vp.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-      override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-        super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-        eventDispatcher.dispatchEvent(
-          PageScrollEvent(vp.id, position, positionOffset))
-      }
 
-      override fun onPageSelected(position: Int) {
-        super.onPageSelected(position)
-        eventDispatcher.dispatchEvent(
-          PageSelectedEvent(vp.id, position))
-      }
-
-      override fun onPageScrollStateChanged(state: Int) {
-        super.onPageScrollStateChanged(state)
-        val pageScrollState: String = when (state) {
-          ViewPager2.SCROLL_STATE_IDLE -> "idle"
-          ViewPager2.SCROLL_STATE_DRAGGING -> "dragging"
-          ViewPager2.SCROLL_STATE_SETTLING -> "settling"
-          else -> throw IllegalStateException("Unsupported pageScrollState")
+    vp.post {
+      vp.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+        override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+          super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+          eventDispatcher.dispatchEvent(
+                  PageScrollEvent(vp.id, position, positionOffset))
         }
-        eventDispatcher.dispatchEvent(
-          PageScrollStateChangedEvent(vp.id, pageScrollState))
-      }
-    })
+
+        override fun onPageSelected(position: Int) {
+          super.onPageSelected(position)
+          eventDispatcher.dispatchEvent(
+                  PageSelectedEvent(vp.id, position))
+        }
+
+        override fun onPageScrollStateChanged(state: Int) {
+          super.onPageScrollStateChanged(state)
+          val pageScrollState: String = when (state) {
+            ViewPager2.SCROLL_STATE_IDLE -> "idle"
+            ViewPager2.SCROLL_STATE_DRAGGING -> "dragging"
+            ViewPager2.SCROLL_STATE_SETTLING -> "settling"
+            else -> throw IllegalStateException("Unsupported pageScrollState")
+          }
+          eventDispatcher.dispatchEvent(
+                  PageScrollStateChangedEvent(vp.id, pageScrollState))
+        }
+      })
+
+      eventDispatcher.dispatchEvent(PageSelectedEvent(vp.id, vp.currentItem))
+    }
+
     return vp
   }
 
@@ -67,7 +73,16 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     if (child == null) {
       return
     }
+
     (parent.adapter as ViewPagerAdapter?)?.addChild(child, index);
+
+    if (parent.currentItem == index) {
+      // Solves https://github.com/callstack/react-native-pager-view/issues/219
+      // Required so ViewPager actually displays first dynamically added child
+      // (otherwise a white screen is shown until the next user interaction).
+      // https://github.com/facebook/react-native/issues/17968#issuecomment-697136929
+      refreshViewChildrenLayout(parent)
+    }
   }
 
   override fun getChildCount(parent: ViewPager2): Int {
@@ -112,6 +127,13 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
     viewPager.isUserInputEnabled = value
   }
 
+  @ReactProp(name = "initialPage", defaultInt = 0)
+  fun setInitialPage(viewPager: ViewPager2, value: Int) {
+    viewPager.post {
+      setCurrentItem(viewPager, value, false)
+    }
+  }
+
   @ReactProp(name = "orientation")
   fun setOrientation(viewPager: ViewPager2, value: String) {
     viewPager.orientation = if (value == "vertical") ViewPager2.ORIENTATION_VERTICAL else ViewPager2.ORIENTATION_HORIZONTAL
@@ -144,14 +166,8 @@ class PagerViewViewManager : ViewGroupManager<ViewPager2>() {
       "rtl" -> {
         viewPager.layoutDirection = View.LAYOUT_DIRECTION_RTL
       }
-      "ltr" -> {
-        viewPager.layoutDirection = View.LAYOUT_DIRECTION_LTR
-      }
-      "locale" -> {
-        viewPager.layoutDirection = View.LAYOUT_DIRECTION_LOCALE
-      }
       else -> {
-        viewPager.layoutDirection = View.LAYOUT_DIRECTION_INHERIT
+        viewPager.layoutDirection = View.LAYOUT_DIRECTION_LTR
       }
     }
   }
