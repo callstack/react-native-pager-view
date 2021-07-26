@@ -23,7 +23,7 @@ class ViewPagerAdapter() : Adapter<ViewPagerViewHolder>() {
     }
 
     if (child.parent != null) {
-      (child.parent as ViewGroup).removeView(child)
+      (child.parent as FrameLayout).removeView(child)
     }
 
     container.addView(child)
@@ -48,7 +48,9 @@ class ViewPagerAdapter() : Adapter<ViewPagerViewHolder>() {
   }
 
   fun removeAll() {
+    val removedChildrenCount = childrenViews.size
     childrenViews.clear()
+    notifyItemRangeRemoved(0, removedChildrenCount)
   }
 
   fun removeChildAt(index: Int) {
