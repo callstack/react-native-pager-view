@@ -33,6 +33,16 @@ class ViewPagerAdapter() : Adapter<ViewPagerViewHolder>() {
     return childrenViews.size
   }
 
+  fun forceRefreshViews() {
+    val mChildrenViews: ArrayList<View> = ArrayList();
+    mChildrenViews.addAll(childrenViews.toList());
+
+    childrenViews.clear();
+    childrenViews.addAll(mChildrenViews);
+
+    notifyDataSetChanged();
+  }
+
   fun addChild(child: View, index: Int) {
     childrenViews.add(index, child)
     notifyItemInserted(index)
