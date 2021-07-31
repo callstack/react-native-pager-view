@@ -154,7 +154,7 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
       })
     );
     // Send paging command.
-    setTimeout(() => {
+    setImmediate(() => {
       UIManager.dispatchViewManagerCommand(
         findNodeHandle(this),
         animated
@@ -162,7 +162,7 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
           : getViewManagerConfig().Commands.setPageWithoutAnimation,
         [page]
       );
-    }, 0);
+    });
   }
 
   /**
