@@ -154,7 +154,7 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
       })
     );
     // Send paging command.
-    requestAnimationFrame(() => {
+    setImmediate(() => {
       UIManager.dispatchViewManagerCommand(
         findNodeHandle(this),
         animated
