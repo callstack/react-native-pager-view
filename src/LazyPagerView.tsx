@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   findNodeHandle,
+  InteractionManager,
   Keyboard,
   StyleSheet,
   UIManager,
@@ -18,6 +19,8 @@ import type {
 
 type LazyPagerViewImplProps<ItemT> = Omit<LazyPagerViewProps<ItemT>, 'style'>;
 type LazyPagerViewImplState = { offset: number; windowLength: number };
+
+type TaskHandle = ReturnType<typeof InteractionManager.runAfterInteractions>;
 
 type RenderWindowData = {
   buffer: number | undefined;
@@ -65,6 +68,7 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
   private isNavigatingToPage: number | null = null;
   private isScrolling = false;
   private animationFrameRequestId?: number;
+  private renderRequestHandle?: TaskHandle;
 
   constructor(props: LazyPagerViewImplProps<ItemT>) {
     super(props);
@@ -81,6 +85,9 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
   componentWillUnmount() {
     if (this.animationFrameRequestId !== undefined) {
       cancelAnimationFrame(this.animationFrameRequestId);
+    }
+    if (this.renderRequestHandle != null) {
+      this.renderRequestHandle.cancel();
     }
   }
 
@@ -240,8 +247,14 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
       }
     }
 
+    this.props.onPageSelected?.(event);
+
     // Queue renders for next needed pages (if not already available).
-    requestAnimationFrame(() => {
+    if (this.renderRequestHandle != null) {
+      this.renderRequestHandle.cancel();
+    }
+    this.renderRequestHandle = InteractionManager.runAfterInteractions(() => {
+      this.renderRequestHandle = undefined;
       this.setState((prevState) =>
         this.computeRenderWindow({
           buffer: this.props.buffer,
@@ -252,8 +265,6 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
         })
       );
     });
-
-    this.props.onPageSelected?.(event);
   };
 
   private renderChildren(offset: number, windowLength: number) {
