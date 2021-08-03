@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   findNodeHandle,
+  InteractionManager,
   Keyboard,
   StyleSheet,
   UIManager,
@@ -18,6 +19,8 @@ import type {
 
 type LazyPagerViewImplProps<ItemT> = Omit<LazyPagerViewProps<ItemT>, 'style'>;
 type LazyPagerViewImplState = { offset: number; windowLength: number };
+
+type TaskHandle = ReturnType<typeof InteractionManager.runAfterInteractions>;
 
 type RenderWindowData = {
   buffer: number | undefined;
@@ -65,6 +68,8 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
   private isNavigatingToPage: number | null = null;
   private isScrolling = false;
   private animationFrameRequestId?: number;
+  private renderRequestHandle?: TaskHandle;
+  private currentPage?: number;
 
   constructor(props: LazyPagerViewImplProps<ItemT>) {
     super(props);
@@ -81,6 +86,9 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
   componentWillUnmount() {
     if (this.animationFrameRequestId !== undefined) {
       cancelAnimationFrame(this.animationFrameRequestId);
+    }
+    if (this.renderRequestHandle != null) {
+      this.renderRequestHandle.cancel();
     }
   }
 
@@ -224,6 +232,30 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
   ) => {
     this.props.onPageScrollStateChanged?.(event);
     this.isScrolling = event.nativeEvent.pageScrollState === 'dragging';
+
+    // rendering new pages if the scroll is idle, this way it doesn't block the UI thread
+    if (
+      event.nativeEvent.pageScrollState === 'idle' &&
+      typeof this.currentPage === 'number'
+    ) {
+      // Queue renders for next needed pages (if not already available).
+      if (this.renderRequestHandle != null) {
+        this.renderRequestHandle.cancel();
+      }
+
+      this.renderRequestHandle = InteractionManager.runAfterInteractions(() => {
+        this.renderRequestHandle = undefined;
+        this.setState((prevState) =>
+          this.computeRenderWindow({
+            buffer: this.props.buffer,
+            currentPage: this.currentPage as number,
+            maxRenderWindow: this.props.maxRenderWindow,
+            offset: prevState.offset,
+            windowLength: prevState.windowLength,
+          })
+        );
+      });
+    }
   };
 
   private onPageSelected = (event: PagerViewOnPageSelectedEvent) => {
@@ -240,18 +272,7 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
       }
     }
 
-    // Queue renders for next needed pages (if not already available).
-    requestAnimationFrame(() => {
-      this.setState((prevState) =>
-        this.computeRenderWindow({
-          buffer: this.props.buffer,
-          currentPage,
-          maxRenderWindow: this.props.maxRenderWindow,
-          offset: prevState.offset,
-          windowLength: prevState.windowLength,
-        })
-      );
-    });
+    this.currentPage = currentPage;
 
     this.props.onPageSelected?.(event);
   };
