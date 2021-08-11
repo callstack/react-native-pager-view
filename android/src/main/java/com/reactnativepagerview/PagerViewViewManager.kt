@@ -1,6 +1,7 @@
 package com.reactnativepagerview
 
 import android.view.View
+import android.view.ViewGroup
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.facebook.infer.annotation.Assertions
@@ -26,6 +27,8 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
 
   override fun createViewInstance(reactContext: ThemedReactContext): NestedScrollableHost {
     val host = NestedScrollableHost(reactContext)
+    host.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+    host.isSaveEnabled = false
     val vp = ViewPager2(reactContext)
     vp.adapter = ViewPagerAdapter()
     //https://github.com/callstack/react-native-viewpager/issues/183
@@ -65,7 +68,13 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
     return host
   }
 
-  private fun getViewPager(view: NestedScrollableHost) = view.getChildAt(0) as ViewPager2
+  private fun getViewPager(view: NestedScrollableHost): ViewPager2 {
+    if (view.getChildAt(0) is ViewPager2) {
+      return view.getChildAt(0) as ViewPager2
+    } else {
+      throw ClassNotFoundException("Could not retrieve ViewPager2 instance")
+    }
+  }
 
   private fun setCurrentItem(view: ViewPager2, selectedTab: Int, scrollSmooth: Boolean) {
     refreshViewChildrenLayout(view)
@@ -89,10 +98,7 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
     }
   }
 
-  override fun getChildCount(parent: NestedScrollableHost): Int {
-    val view = getViewPager(parent)
-    return view.adapter?.itemCount ?: 0;
-  }
+  override fun getChildCount(parent: NestedScrollableHost) = getViewPager(parent).adapter?.itemCount ?: 0
 
   override fun getChildAt(parent: NestedScrollableHost, index: Int): View {
     val view = getViewPager(parent)
@@ -133,8 +139,7 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
 
   @ReactProp(name = "scrollEnabled", defaultBoolean = true)
   fun setScrollEnabled(host: NestedScrollableHost, value: Boolean) {
-    val view = getViewPager(host)
-    view.isUserInputEnabled = value
+    getViewPager(host).isUserInputEnabled = value
   }
 
   @ReactProp(name = "initialPage", defaultInt = 0)
@@ -147,20 +152,17 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
 
   @ReactProp(name = "orientation")
   fun setOrientation(host: NestedScrollableHost, value: String) {
-    val view = getViewPager(host)
-    view.orientation = if (value == "vertical") ViewPager2.ORIENTATION_VERTICAL else ViewPager2.ORIENTATION_HORIZONTAL
+    getViewPager(host).orientation = if (value == "vertical") ViewPager2.ORIENTATION_VERTICAL else ViewPager2.ORIENTATION_HORIZONTAL
   }
 
   @ReactProp(name = "offscreenPageLimit", defaultInt = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT)
   operator fun set(host: NestedScrollableHost, value: Int) {
-    val view = getViewPager(host)
-    view.offscreenPageLimit = value
+    getViewPager(host).offscreenPageLimit = value
   }
 
   @ReactProp(name = "overScrollMode")
   fun setOverScrollMode(host: NestedScrollableHost, value: String) {
-    val view = getViewPager(host)
-    val child = view.getChildAt(0)
+    val child = getViewPager(host).getChildAt(0)
     when (value) {
         "never" -> {
           child.overScrollMode = ViewPager2.OVER_SCROLL_NEVER
