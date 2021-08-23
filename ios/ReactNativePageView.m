@@ -147,7 +147,8 @@
 - (void)setupInitialController {
     UIView *initialView = self.reactSubviews[self.initialPage];
     if (initialView) {
-        UIViewController *initialController = [[UIViewController alloc] initWithView:initialView];
+        UIViewController *initialController = [[UIViewController alloc] init];
+        [initialController.view addSubview: initialView];
         [self.cachedControllers addObject:initialController];
         
         [self setReactViewControllers:self.initialPage
@@ -250,7 +251,9 @@
         controllerToDisplay = current;
     }
     if (!controllerToDisplay) {
-        controllerToDisplay = [[UIViewController alloc] initWithView:viewToDisplay];
+        UIViewController *initialController = [[UIViewController alloc] init];
+        [initialController.view addSubview: viewToDisplay];
+        controllerToDisplay = initialController;
     }
     [self.cachedControllers addObject:controllerToDisplay];
     
