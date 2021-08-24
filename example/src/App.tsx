@@ -10,6 +10,7 @@ import { ScrollablePagerViewExample } from './ScrollablePagerViewExample';
 import { ScrollViewInsideExample } from './ScrollViewInsideExample';
 import HeadphonesCarouselExample from './HeadphonesCarouselExample';
 import PaginationDotsExample from './PaginationDotsExample';
+import { NestPagerView } from './NestPagerView';
 
 const examples = [
   { component: BasicPagerViewExample, name: 'Basic Example' },
@@ -25,6 +26,10 @@ const examples = [
   {
     component: ScrollViewInsideExample,
     name: 'ScrollView inside PagerView Example',
+  },
+  {
+    component: NestPagerView,
+    name: 'Nest PagerView Example',
   },
 ];
 
