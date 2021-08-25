@@ -15,6 +15,10 @@ export const childrenWithOverriddenStyle = (children?: ReactNode) => {
   // will handle positioning of elements, so it's not important to offset
   // them correctly.
   return Children.map(children, (child) => {
+    if (!child) {
+      return null;
+    }
+
     const { props } = child as ReactElement;
     const newProps = {
       ...props,
