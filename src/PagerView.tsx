@@ -140,6 +140,16 @@ export class PagerView extends React.Component<PagerViewProps> {
     }
   }
 
+  public componentDidMount() {
+    if (Platform.OS === 'android') {
+      UIManager.dispatchViewManagerCommand(
+        ReactNative.findNodeHandle(this),
+        getViewManagerConfig().Commands.forceRefresh,
+        []
+      );
+    }
+  }
+
   render() {
     return (
       <PagerViewViewManager
