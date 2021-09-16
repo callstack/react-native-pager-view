@@ -5,7 +5,8 @@
     <application
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
-        tools:targetApi="28" />
-
+        tools:targetApi="28">
+        <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
+    </application>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 </manifest>
