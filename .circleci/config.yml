@@ -63,7 +63,7 @@ jobs:
   e2e_release_ios:
     executor:
       name: rn/macos
-      xcode_version: '12.0.0'
+      xcode_version: '12.5.0'
     steps:
       - attach_workspace:
           at: .
@@ -86,15 +86,18 @@ jobs:
     # see https://support.circleci.com/hc/en-us/articles/360000028928-Testing-with-Android-emulator-on-CircleCI-2-0
     executor:
       name: rn/macos
-      xcode_version: '12.0.0'
+      xcode_version: '12.5.0' 
     steps:
       - attach_workspace:
-          at: .
+          at: .    
       - rn/setup_macos_executor:
-          node_version: '12.10.0'
+          node_version: '12.10.0'  
       - rn/android_emulator_start:
           logcat_grep: 'com.example.reactnativepagerview'
-          platform_version: 'android-29'
+          platform_version: 'android-30'
+      - run:
+          command: HOMEBREW_NO_AUTO_UPDATE=1 brew tap adoptopenjdk/openjdk && HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask adoptopenjdk/openjdk/adoptopenjdk8 && echo 'export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)' >> $BASH_ENV 
+          name: android test workaround    
       - run:
           command: yarn --cwd example detox:android:build:release
           name: build for detox
@@ -139,3 +142,4 @@ workflows:
       - e2e_release_android:
           requires:
             - install-dependencies
+               
