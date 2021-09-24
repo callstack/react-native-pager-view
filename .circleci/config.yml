@@ -92,12 +92,13 @@ jobs:
           at: .    
       - rn/setup_macos_executor:
           node_version: '12.10.0'  
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '11'    
       - rn/android_emulator_start:
           logcat_grep: 'com.example.reactnativepagerview'
-          platform_version: 'android-30'
-      - run:
-          command: HOMEBREW_NO_AUTO_UPDATE=1 brew tap adoptopenjdk/openjdk && HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask adoptopenjdk/openjdk/adoptopenjdk8 && echo 'export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)' >> $BASH_ENV 
-          name: android test workaround    
+          platform_version: 'android-30' 
       - run:
           command: yarn --cwd example detox:android:build:release
           name: build for detox
