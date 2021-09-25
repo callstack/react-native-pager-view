@@ -92,12 +92,12 @@ jobs:
           at: .    
       - rn/setup_macos_executor:
           node_version: '12.10.0'  
+      - run:
+          command: HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask adoptopenjdk && java -version
+          name: android test workaround        
       - rn/android_emulator_start:
           logcat_grep: 'com.example.reactnativepagerview'
           platform_version: 'android-30'
-      - run:
-          command: HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask adoptopenjdk 
-          name: android test workaround    
       - run:
           command: yarn --cwd example detox:android:build:release
           name: build for detox
