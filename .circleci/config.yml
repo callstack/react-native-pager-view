@@ -87,14 +87,17 @@ jobs:
     executor:
       name: rn/macos
       xcode_version: '12.5.0' 
-    steps:  
+    steps:
       - attach_workspace:
           at: .    
       - rn/setup_macos_executor:
           node_version: '12.10.0'  
       - rn/android_emulator_start:
           logcat_grep: 'com.example.reactnativepagerview'
-          platform_version: 'android-30' 
+          platform_version: 'android-30'
+      - run:
+          command: HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask adoptopenjdk 
+          name: android test workaround    
       - run:
           command: yarn --cwd example detox:android:build:release
           name: build for detox
@@ -137,10 +140,6 @@ workflows:
           requires:
             - install-dependencies
       - e2e_release_android:
-          uses: actions/setup-java@v2
-          with:
-            distribution: 'temurin'
-            java-version: '11'  
           requires:
-              - install-dependencies
+            - install-dependencies
                
