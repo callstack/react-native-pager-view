@@ -54,6 +54,7 @@ function App() {
           key={example.name}
           style={styles.exampleTouchable}
           onPress={() => {
+            //@ts-ignore
             navigation.navigate(example.name);
           }}
         >
