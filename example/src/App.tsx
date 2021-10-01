@@ -11,6 +11,12 @@ import { ScrollViewInsideExample } from './ScrollViewInsideExample';
 import HeadphonesCarouselExample from './HeadphonesCarouselExample';
 import PaginationDotsExample from './PaginationDotsExample';
 import { NestPagerView } from './NestPagerView';
+import ScrollableTabBarExample from './tabView/ScrollableTabBarExample';
+import AutoWidthTabBarExample from './tabView/AutoWidthTabBarExample';
+import TabBarIconExample from './tabView/TabBarIconExample';
+import CustomIndicatorExample from './tabView/CustomIndicatorExample';
+import CustomTabBarExample from './tabView/CustomTabBarExample';
+import CoverflowExample from './tabView/CoverflowExample';
 
 const examples = [
   { component: BasicPagerViewExample, name: 'Basic Example' },
@@ -31,9 +37,13 @@ const examples = [
     component: NestPagerView,
     name: 'Nest PagerView Example',
   },
+  { component: ScrollableTabBarExample, name: 'ScrollableTabBarExample' },
+  { component: AutoWidthTabBarExample, name: 'AutoWidthTabBarExample' },
+  { component: TabBarIconExample, name: 'TabBarIconExample' },
+  { component: CustomIndicatorExample, name: 'CustomIndicatorExample' },
+  { component: CustomTabBarExample, name: 'CustomTabBarExample' },
+  { component: CoverflowExample, name: 'CoverflowExample' },
 ];
-
-// const examples = [{ component: BasicPagerViewExample, name: 'Basic Example' }];
 
 function App() {
   const navigation = useNavigation();
