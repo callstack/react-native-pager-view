@@ -47,6 +47,7 @@
         _cachedControllers = [NSHashTable weakObjectsHashTable];
         _overdrag = NO;
         _layoutDirection = @"ltr";
+        _previousBounds = CGRectMake(0, 0, 0, 0);
     }
     return self;
 }
@@ -55,8 +56,13 @@
     [super layoutSubviews];
     if (self.reactPageViewController) {
         [self shouldScroll:self.scrollEnabled];
-        //Below line fix bug, where the view does not update after orientation changed.
-        [self updateDataSource];
+
+        if (!CGRectEqualToRect(self.previousBounds, CGRectMake(0, 0, 0, 0)) && !CGRectEqualToRect(self.bounds, self.previousBounds)) {
+            // Below line fix bug, where the view does not update after orientation changed.
+            [self updateDataSource];
+        }
+
+        self.previousBounds = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
     }
 }
 
