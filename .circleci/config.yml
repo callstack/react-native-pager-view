@@ -63,7 +63,7 @@ jobs:
   e2e_release_ios:
     executor:
       name: rn/macos
-      xcode_version: '12.5.0'
+      xcode_version: '13.0.0'
     steps:
       - attach_workspace:
           at: .
@@ -86,7 +86,7 @@ jobs:
     # see https://support.circleci.com/hc/en-us/articles/360000028928-Testing-with-Android-emulator-on-CircleCI-2-0
     executor:
       name: rn/macos
-      xcode_version: '12.5.0' 
+      xcode_version: '13.0.0' 
     steps:
       - attach_workspace:
           at: .    
