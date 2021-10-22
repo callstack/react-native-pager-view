@@ -256,7 +256,7 @@
     
     if (!isForward && diff > 0) {
         for (NSInteger i=_currentIndex; i>=index; i--) {
-            if (index == _currentIndex) {
+            if (index == _currentIndex || i == numberOfPages) {
                 continue;
             }
             [self goToViewController:i direction:direction animated:animated shouldCallOnPageSelected: i == index];
