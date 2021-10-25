@@ -174,7 +174,8 @@
     }
     __weak ReactNativePageView *weakSelf = self;
     uint16_t coalescingKey = _coalescingKey++;
-    animated = animated && self.reactPageViewController.viewControllers.firstObject != controller && shouldCallOnPageSelected; 
+    // fix(ios) : when called multiple times in a row, the competion callback is not called.
+    animated = animated && shouldCallOnPageSelected; 
     [self.reactPageViewController setViewControllers:@[controller]
                                            direction:direction
                                             animated:animated
