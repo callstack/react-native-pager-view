@@ -1,13 +1,20 @@
 version: 2.1
 
-orbs:
-  rn: react-native-community/react-native@5.5.0
-
 executors:
-  default:
+  linux_js:
     docker:
-      - image: circleci/node:12
-    working_directory: ~/project
+      - image: circleci/node:12.13.0
+    resource_class: medium
+    environment:
+      PATH: '/opt/yarn/yarn-v1.5.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+
+  macos_custom:
+    parameters:
+      xcode_version:
+        type: string
+        default: '12.4.0'
+    macos:
+      xcode: <<parameters.xcode_version>>
 
 commands:
   attach_project:
@@ -15,9 +22,148 @@ commands:
       - attach_workspace:
           at: ~/project
 
+  ios_simulator_start:
+    steps:
+      - run:
+          name: Start iOS simulator (background)
+          background: true
+          command: xcrun simctl boot "11" || true
+
+  pod_install:
+    parameters:
+      pod_install_directory:
+        type: string
+        default: 'example/ios'
+
+    steps:
+      - restore_cache:
+          keys:
+            - cache-pods-{{ checksum "<<parameters.pod_install_directory>>/Podfile.lock" }}-v1
+            - cache-pods-
+      - run:
+          name: Install CocoaPods
+          command: |
+            cd <<parameters.pod_install_directory>> && pod install && cd -
+
+      - save_cache:
+          paths:
+            - <<parameters.pod_install_directory>>/Pods
+          key: cache-pods-{{ checksum "<<parameters.pod_install_directory>>/Podfile.lock" }}-v1
+
+  setup_macos_executor:
+    parameters:
+      node_version:
+        type: string
+        default: '12.13.0'
+    steps:
+      - attach_workspace:
+          at: .
+      - run:
+          name: Configure Environment Variables
+          command: |
+            echo 'export PATH="$PATH:/usr/local/opt/node@<<parameters.node_version>>/bin:~/.yarn/bin:~/project/node_modules/.bin:~/project/example/node_modules/.bin"' >> $BASH_ENV
+            echo 'export ANDROID_HOME="/usr/local/share/android-commandlinetools"' >> $BASH_ENV
+            echo 'export ANDROID_SDK_ROOT="/usr/local/share/android-commandlinetools"' >> $BASH_ENV
+            echo 'export PATH="$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/platform-tools:$PATH"' >> $BASH_ENV
+            echo 'export QEMU_AUDIO_DRV=none' >> $BASH_ENV
+            echo 'export JAVA_HOME=$(/usr/libexec/java_home)' >> $BASH_ENV
+            source $BASH_ENV
+
+      - restore_cache:
+          key: |
+            brew-cache-{{ arch }}-v1
+
+      - run:
+          name: Install node@<<parameters.node_version>>
+          command: |
+            set +e
+            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.3/install.sh | bash
+            echo 'export NVM_DIR=$HOME/.nvm' >> $BASH_ENV
+            echo 'source $NVM_DIR/nvm.sh' >> $BASH_ENV
+            source ~/.bashrc
+            command -v nvm
+            nvm install <<parameters.node_version>>
+            nvm alias default <<parameters.node_version>>
+
+      - run:
+          name: Configure Detox Environment
+          command: |
+            brew update >/dev/null
+            HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew >/dev/null
+            HOMEBREW_NO_AUTO_UPDATE=1 brew tap homebrew/cask >/dev/null
+            HOMEBREW_NO_AUTO_UPDATE=1 brew install applesimutils >/dev/null
+            HOMEBREW_NO_AUTO_UPDATE=1 brew install android-commandlinetools >/dev/null
+            touch .watchmanconfig
+            node -v
+
+  android_emulator_start:
+    parameters:
+      device_name:
+        type: string
+        default: 'TestingAVD'
+      platform_version:
+        type: string
+        default: 'android-28'
+      build_tools_version:
+        type: string
+        default: '28.0.3'
+      logcat_grep:
+        type: string
+        default: 'com.example.reactnativepagerview'
+
+    steps:
+      - run:
+          name: Install Android Emulator
+          shell: /bin/bash -e
+          command: |
+            yes | sdkmanager "platform-tools" "tools" >/dev/null
+            yes | sdkmanager "platforms;<<parameters.platform_version>>" "system-images;<<parameters.platform_version>>;default;x86_64" >/dev/null
+            yes | sdkmanager "emulator" --channel=3 >/dev/null
+            yes | sdkmanager "build-tools;<<parameters.build_tools_version>>" >/dev/null
+            yes | sdkmanager --licenses >/dev/null
+            yes | sdkmanager --list
+
+      - run:
+          name: ADB Start Stop
+          command: |
+            adb start-server
+            adb devices
+            adb kill-server
+            ls -la ~/.android
+      - run:
+          name: Create Android Emulator
+          command:
+            avdmanager create avd --force --name <<parameters.device_name>> --package
+            "system-images;<<parameters.platform_version>>;default;x86_64" --tag
+            default --device pixel
+
+      - run:
+          name: Start Android Emulator (background)
+          command: |
+            $ANDROID_HOME/emulator/emulator @<<parameters.device_name>> -version
+            $ANDROID_HOME/emulator/emulator @<<parameters.device_name>> -cores 2 -gpu auto -accel on -memory 2048 -no-audio -no-snapshot -no-boot-anim -no-window -logcat *:W | grep -i 'ReactNative\|<<parameters.logcat_grep>>'
+          background: true
+
+      - run:
+          name: Wait for AVD to be ready
+          no_output_timeout: '5m'
+          command: |
+            export BOOT=""
+            echo "Waiting for AVD to finish booting"
+            export PATH=$(dirname $(dirname $(command -v android)))/platform-tools:$PATH
+            until [[ "$BOOT" =~ "1" ]]; do
+              sleep 5
+              export BOOT=$(adb -e shell getprop sys.boot_completed 2>&1)
+            done
+            sleep 15
+            adb shell settings put global window_animation_scale 0
+            adb shell settings put global transition_animation_scale 0
+            adb shell settings put global animator_duration_scale 0
+            echo "Android Virtual Device is now ready."
+
 jobs:
   install-dependencies:
-    executor: default
+    executor: linux_js
     steps:
       - checkout
       - attach_project
@@ -36,96 +182,87 @@ jobs:
             yarn install --frozen-lockfile
       - save_cache:
           key: dependencies-{{ checksum "package.json" }}
-          paths: node_modules
+          paths: [node_modules]
       - save_cache:
           key: dependencies-example-{{ checksum "example/package.json" }}
-          paths: example/node_modules
+          paths: [example/node_modules]
       - persist_to_workspace:
           root: .
-          paths: .
+          paths: [.]
 
   lint:
-    executor: default
+    executor: linux_js
     steps:
       - attach_project
       - run:
           name: Lint files
           command: |
             yarn lint
+
   typescript:
-    executor: default
+    executor: linux_js
     steps:
       - attach_project
       - run:
           name: Typecheck files
           command: |
             yarn typescript
-  e2e_release_ios:
-    executor:
-      name: rn/macos
-      xcode_version: '12.5.0'
+  test:
+    executor: linux_js
+    steps:
+      - attach_project
+      - run:
+          name: Integration tests
+          command: |
+            yarn test
+  e2e-ios:
+    executor: macos_custom
+
     steps:
       - attach_workspace:
           at: .
-      - rn/setup_macos_executor:
-          node_version: '12.10.0'
-      - rn/ios_simulator_start:
-          device: 'iPhone 11'
-      - rn/pod_install:
-          pod_install_directory: 'example/ios'
+
+      - setup_macos_executor
+
+      - ios_simulator_start
+
       - run:
-          command: yarn --cwd example detox:ios:build:release
+          command: yarn install --frozen-lockfile
+          name: yarn install
+
+      - pod_install
+
+      - run:
+          command: yarn e2e:build:ios:release
           name: build for detox
       - run:
-          command: detox clean-framework-cache && detox build-framework-cache && yarn --cwd example detox:ios:test:release
+          command: yarn e2e:test:ios:release
           name: test detox
       - store_artifacts:
-          path: ./example/artifacts
-  e2e_release_android:
-    # we need to use mac to run emulator with acceleration
-    # see https://support.circleci.com/hc/en-us/articles/360000028928-Testing-with-Android-emulator-on-CircleCI-2-0
+          path: ./artifacts
+
+  e2e-android:
     executor:
-      name: rn/macos
-      xcode_version: '12.5.0' 
+      name: macos_custom
     steps:
       - attach_workspace:
-          at: .    
-      - rn/setup_macos_executor:
-          node_version: '12.10.0'  
+          at: .
+      - setup_macos_executor
+
       - run:
-          command: HOMEBREW_NO_AUTO_UPDATE=1 brew install --cask adoptopenjdk && java -version
-          name: android test workaround        
-      - rn/android_emulator_start:
-          logcat_grep: 'com.example.reactnativepagerview'
-          platform_version: 'android-29'
+          command: yarn install --frozen-lockfile
+          name: yarn install
+      - android_emulator_start
       - run:
-          command: yarn --cwd example detox:android:build:release
+          command: yarn e2e:build:android:release
           name: build for detox
       - run:
-          command: yarn --cwd example detox:android:test:release
+          no_output_timeout: 60m
+          command: yarn e2e:test:android:release
           name: test detox
       - store_artifacts:
-          path: ./example/artifacts
-  unit-tests:
-    executor: default
-    steps:
-      - attach_project
-      - run:
-          name: Run unit tests
-          command: |
-            yarn test --coverage
-      - store_artifacts:
-          path: coverage
-          destination: coverage
+          path: ./artifacts
 
-  build-package:
-    executor: default
-    steps:
-      - attach_project
-      - run:
-          name: Build package
-          command: |
-            yarn prepare
 workflows:
   build-and-test:
     jobs:
@@ -136,10 +273,12 @@ workflows:
       - typescript:
           requires:
             - install-dependencies
-      - e2e_release_ios:
+      - test:
           requires:
             - install-dependencies
-      - e2e_release_android:
-          requires:
-            - install-dependencies
-               
+      # - e2e-android:
+      #     requires:
+      #       - install-dependencies
+      # - e2e-ios:
+      #     requires:
+      #       - install-dependencies
