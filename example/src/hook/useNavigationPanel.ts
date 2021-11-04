@@ -20,7 +20,7 @@ const getBasePages = (pages: number) =>
   new Array(pages).fill('').map((_v, index) => createPage(index));
 
 export function useNavigationPanel(
-  pagesAmount: number = 10,
+  pagesAmount: number = 20,
   onPageSelectedCallback: (position: number) => void = () => {}
 ) {
   const ref = useRef<PagerView>(null);
@@ -57,6 +57,10 @@ export function useNavigationPanel(
   );
   const removePage = useCallback(
     () => setPages((prevPages) => prevPages.slice(0, prevPages.length - 1)),
+    []
+  );
+  const removeMostPage = useCallback(
+    () => setPages((prevPages) => prevPages.slice(0, 1)),
     []
   );
   const toggleAnimation = useCallback(
@@ -153,6 +157,7 @@ export function useNavigationPanel(
     setPage,
     addPage,
     removePage,
+    removeMostPage,
     toggleScroll,
     toggleDots,
     toggleAnimation,

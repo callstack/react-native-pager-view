@@ -17,6 +17,7 @@ export function ControlsPanel({
   setPage,
   addPage,
   removePage,
+  removeMostPage,
   toggleScroll,
   toggleDots,
   toggleAnimation,
@@ -65,6 +66,11 @@ export function ControlsPanel({
             testID="remove-page-button"
             text="Remove last page"
             onPress={removePage}
+          />
+          <Button
+            testID="remove-most-page-button"
+            text="Remove most page"
+            onPress={() => removeMostPage()}
           />
         </View>
       ) : null}
