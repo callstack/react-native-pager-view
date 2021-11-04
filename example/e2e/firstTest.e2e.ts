@@ -54,7 +54,7 @@ describe('Example', () => {
     await element(by.text('Prev')).tap();
     await expect(element(by.id('pageNumber0'))).toBeVisible();
     await element(by.text('Last')).tap();
-    await expect(element(by.id('pageNumber9'))).toBeVisible();
+    await expect(element(by.id('pageNumber19'))).toBeVisible();
     await element(by.text('Start')).tap();
     await expect(element(by.id('pageNumber0'))).toBeVisible();
   });
