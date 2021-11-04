@@ -31,13 +31,19 @@ describe('Example', () => {
     await element(by.text('Basic Example')).tap();
     await element(by.text('Add new page')).tap();
     await element(by.text('Last')).tap();
-    await expect(element(by.id('pageNumber10'))).toBeVisible();
+    await expect(element(by.id('pageNumber20'))).toBeVisible();
   });
   it('removes the last page', async () => {
     await element(by.text('Basic Example')).tap();
     await element(by.text('Remove last page')).tap();
     await element(by.text('Last')).tap();
-    await expect(element(by.id('pageNumber8'))).toBeVisible();
+    await expect(element(by.id('pageNumber18'))).toBeVisible();
+  });
+  it('removes most page', async () => {
+    await element(by.text('Basic Example')).tap();
+    await element(by.text('Remove most page')).tap();
+    await element(by.text('Last')).tap();
+    await expect(element(by.id('pageNumber0'))).toBeVisible();
   });
 
   it('goes to the desired page programmatically', async () => {
