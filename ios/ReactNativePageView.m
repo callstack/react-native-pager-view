@@ -245,7 +245,7 @@
     self.reactPageIndicatorView.currentPage = index;
     long diff = labs(index - _currentIndex);
     
-    if (isForward && diff > 0) {
+    if (diff > 0) {
         for (NSInteger i=_currentIndex; i<=index; i++) {
             if (i == _currentIndex) {
                 continue;
@@ -254,7 +254,7 @@
         }
     }
     
-    if (!isForward && diff > 0) {
+    if (diff > 0) {
         for (NSInteger i=_currentIndex; i>=index; i--) {
             // Prevent removal of one or many pages at a time
             if (index == _currentIndex || i >= numberOfPages) {
