@@ -227,7 +227,7 @@
         
         [self goTo:fallbackIndex animated:NO];
     } else {
-        [self goTo:newIndex animated:NO];
+//         [self goTo:newIndex animated:NO];
     }
 }
 
