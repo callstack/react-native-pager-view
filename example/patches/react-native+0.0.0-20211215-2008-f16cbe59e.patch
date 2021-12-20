@@ -1,0 +1,22 @@
+diff --git a/node_modules/react-native/scripts/react_native_pods.rb b/node_modules/react-native/scripts/react_native_pods.rb
+index a89ee6c..dc179b9 100644
+--- a/node_modules/react-native/scripts/react_native_pods.rb
++++ b/node_modules/react-native/scripts/react_native_pods.rb
+@@ -403,7 +403,7 @@ RN_DIR=$(cd "$POD_INSTALLATION_ROOT/#{react_native_path}" && pwd)
+ GENERATED_SRCS_DIR="$\{DERIVED_FILE_DIR\}/generated/source/codegen-discovery"
+ TEMP_OUTPUT_DIR="$GENERATED_SRCS_DIR/out"
+ 
+-APP_PATH="$POD_INSTALLATION_ROOT/#{$relative_app_root}"
++APP_PATH="$POD_INSTALLATION_ROOT/#{relative_app_root}"
+ CONFIG_FILE_DIR="#{relative_config_file_dir ? "$POD_INSTALLATION_ROOT/#{relative_config_file_dir}" : ''}"
+ OUTPUT_DIR="$POD_INSTALLATION_ROOT"
+ FABRIC_ENABLED="#{fabric_enabled}"
+@@ -457,7 +457,7 @@ buildCodegenCLI () {
+ generateArtifacts () {
+   describe "Generating codegen artifacts"
+   pushd "$RN_DIR" >/dev/null || exit 1
+-CONFIG_FILE_DIR="$POD_INSTALLATION_ROOT/#{$relative_config_file_dir}"
++CONFIG_FILE_DIR="$POD_INSTALLATION_ROOT/#{relative_config_file_dir}"
+     "$NODE_BINARY" "scripts/generate-artifacts.js" --path "$APP_PATH" --outputPath "$OUTPUT_DIR" --fabricEnabled "$FABRIC_ENABLED" --configFileDir "$CONFIG_FILE_DIR"
+   popd >/dev/null || exit 1
+ }

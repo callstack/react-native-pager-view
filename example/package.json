@@ -13,31 +13,42 @@
     "detox:android:build:release": "detox build -c android.emu.release",
     "detox:android:test:release": "yarn get:testbutler && detox test --configuration android.emu.release --loglevel trace --headless --take-screenshots failing",
     "detox:android:build:debug": "detox build -c android.emu.debug",
-    "detox:android:test:debug": "detox test -c android.emu.debug"
+    "detox:android:test:debug": "detox test -c android.emu.debug",
+    "preinstall": "cp ../package.json ./codegenConfig/react-native-pager-view && cp -R ../src ./codegenConfig/react-native-pager-view",
+    "postinstall": "rm -rf node_modules/react-native-pager-view && patch-package"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
     "@react-navigation/native": "^5.8.10",
     "@react-navigation/stack": "^5.12.8",
-    "react": "16.13.1",
-    "react-native": "0.63.4",
+    "react": "17.0.2",
+    "react-native": "0.0.0-20211215-2008-f16cbe59e",
     "react-native-animated-pagination-dots": "^0.1.51",
     "react-native-gesture-handler": "^1.9.0",
+    "react-native-pager-view": "../",
     "react-native-reanimated": "^1.13.2",
     "react-native-safe-area-context": "^3.1.9",
     "react-native-screens": "^2.16.1",
     "react-native-tab-view": "^3.1.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
+    "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
+    "@react-native-community/eslint-config": "^2.0.0",
     "@types/detox": "^17.14.0",
     "@types/jest": "^26.0.22",
+    "babel-jest": "^26.6.3",
     "babel-plugin-module-resolver": "^4.0.0",
     "detox": "^18.9.0",
+    "eslint": "7.14.0",
     "jest": "^26.6.3",
     "jest-circus": "^26.6.3",
-    "metro-react-native-babel-preset": "^0.64.0",
+    "metro-react-native-babel-preset": "^0.66.2",
+    "patch-package": "^6.4.7",
+    "react-native-codegen": "0.0.12",
     "ts-jest": "^26.5.4"
+  },
+  "codegenConfig": {
+    "libraries": []
   }
 }

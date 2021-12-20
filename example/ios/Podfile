@@ -1,29 +1,34 @@
+
+# Add the following line at the top of Podfile.
+# Codegen produces files/classes that share names, and it will show the warning.
+# deterministic_uuids option surpresses the warning.
+install! 'cocoapods', :deterministic_uuids => false
+
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '10.0'
+platform :ios, '11.0'
+
+ENV['USE_CODEGEN_DISCOVERY'] = '1'
 
 target 'PagerViewExample' do
   config = use_native_modules!
-
-  use_react_native!(:path => config["reactNativePath"])
-
   pod 'react-native-pager-view', :path => '../..'
 
-  # Enables Flipper.
-  #
-  # Note that if you have use_frameworks! enabled, Flipper will not work and
-  # you should disable these next few lines.
-  # use_flipper!
-  # post_install do |installer|
-  #   flipper_post_install(installer)
-  # end
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # to enable hermes on iOS, change `false` to `true` and then install pods
+    :hermes_enabled => true,
+    :fabric_enabled => true,
+    :app_path => "#{__dir__}/..",
+    :config_file_dir => "#{__dir__}/../codegenConfig",
+  )
+
+  use_flipper!()
 
   post_install do |installer|
-    installer.pods_project.targets.each do |target|
-      target.build_configurations.each do |config|
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '10.0'
-      end
-    end
-    end
+    react_native_post_install(installer)
+    __apply_Xcode_12_5_M1_post_install_workaround(installer)
+  end
 end
+

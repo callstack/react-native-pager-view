@@ -1,94 +1,54 @@
-import * as React from 'react';
-import { StyleSheet, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { BasicPagerViewExample } from './BasicPagerViewExample';
-import { KeyboardExample } from './KeyboardExample';
-import { OnPageScrollExample } from './OnPageScrollExample';
-import { OnPageSelectedExample } from './OnPageSelectedExample';
-import { ScrollablePagerViewExample } from './ScrollablePagerViewExample';
-import { ScrollViewInsideExample } from './ScrollViewInsideExample';
-import HeadphonesCarouselExample from './HeadphonesCarouselExample';
-import PaginationDotsExample from './PaginationDotsExample';
-import { NestPagerView } from './NestPagerView';
-import ScrollableTabBarExample from './tabView/ScrollableTabBarExample';
-import AutoWidthTabBarExample from './tabView/AutoWidthTabBarExample';
-import TabBarIconExample from './tabView/TabBarIconExample';
-import CustomIndicatorExample from './tabView/CustomIndicatorExample';
-import CustomTabBarExample from './tabView/CustomTabBarExample';
-import CoverflowExample from './tabView/CoverflowExample';
+import React, { useMemo } from 'react';
+import { StyleSheet, View, SafeAreaView, Image } from 'react-native';
 
-const examples = [
-  { component: BasicPagerViewExample, name: 'Basic Example' },
-  { component: KeyboardExample, name: 'Keyboard Example' },
-  { component: OnPageScrollExample, name: 'OnPageScroll Example' },
-  { component: OnPageSelectedExample, name: 'OnPageSelected Example' },
-  { component: HeadphonesCarouselExample, name: 'Headphones Carousel Example' },
-  { component: PaginationDotsExample, name: 'Pagination Dots Example' },
-  {
-    component: ScrollablePagerViewExample,
-    name: 'Scrollable PagerView Example',
-  },
-  {
-    component: ScrollViewInsideExample,
-    name: 'ScrollView inside PagerView Example',
-  },
-  {
-    component: NestPagerView,
-    name: 'Nest PagerView Example',
-  },
-  { component: ScrollableTabBarExample, name: 'ScrollableTabBarExample' },
-  { component: AutoWidthTabBarExample, name: 'AutoWidthTabBarExample' },
-  { component: TabBarIconExample, name: 'TabBarIconExample' },
-  { component: CustomIndicatorExample, name: 'CustomIndicatorExample' },
-  { component: CustomTabBarExample, name: 'CustomTabBarExample' },
-  { component: CoverflowExample, name: 'CoverflowExample' },
-];
+import PagerView from 'react-native-pager-view';
 
-function App() {
-  const navigation = useNavigation();
+import { LikeCount } from './component/LikeCount';
+import { createPage } from './utils';
+
+const pages = [createPage(0), createPage(1), createPage(2)];
+
+export function BasicPagerViewExample() {
+  function renderPage(page: any) {
+    return (
+      <View key={page.key} style={page.style} collapsable={false}>
+        <Image style={styles.image} source={page.imgSource} />
+        <LikeCount />
+      </View>
+    );
+  }
   return (
-    <ScrollView>
-      {examples.map((example) => (
-        <TouchableOpacity
-          key={example.name}
-          style={styles.exampleTouchable}
-          onPress={() => {
-            //@ts-ignore
-            navigation.navigate(example.name);
-          }}
-        >
-          <Text style={styles.exampleText}>{example.name}</Text>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
-  );
-}
-
-const Stack = createStackNavigator();
-
-export function Navigation() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="PagerView Example">
-        <Stack.Screen name="PagerView Example" component={App} />
-        {examples.map((example, index) => (
-          <Stack.Screen
-            key={index}
-            name={example.name}
-            component={example.component}
-          />
-        ))}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaView style={styles.container}>
+      <PagerView
+        //@ts-ignore
+        testID="pager-view"
+        style={styles.PagerView}
+        initialPage={0}
+        layoutDirection="ltr"
+        pageMargin={10}
+        // Lib does not support dynamically orientation change
+        orientation="horizontal"
+        // Lib does not support dynamically transitionStyle change
+        transitionStyle="scroll"
+        showPageIndicator={false}
+      >
+        {pages.map((p) => renderPage(p))}
+      </PagerView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  exampleTouchable: {
-    padding: 16,
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
   },
-  exampleText: {
-    fontSize: 16,
+  image: {
+    width: 300,
+    height: 200,
+    padding: 20,
+  },
+  PagerView: {
+    flex: 1,
   },
 });

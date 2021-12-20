@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1849C8FD27736BDB0052330D /* RNCPagerViewComponentView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1849C8FC27736BDB0052330D /* RNCPagerViewComponentView.mm */; };
 		18F5836F25F79C300073D7CB /* UIViewController+CreateExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F5835F25F79C300073D7CB /* UIViewController+CreateExtension.m */; };
 		18F5837025F79C300073D7CB /* ReactViewPagerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F5836025F79C300073D7CB /* ReactViewPagerManager.m */; };
 		18F5837125F79C300073D7CB /* RCTConvert+UIPageViewControllerNavigationOrientation.m in Sources */ = {isa = PBXBuildFile; fileRef = 18F5836125F79C300073D7CB /* RCTConvert+UIPageViewControllerNavigationOrientation.m */; };
@@ -32,6 +33,8 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libPagerView.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPagerView.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1849C8FB27736BC20052330D /* RNCPagerViewComponentView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNCPagerViewComponentView.h; sourceTree = "<group>"; };
+		1849C8FC27736BDB0052330D /* RNCPagerViewComponentView.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RNCPagerViewComponentView.mm; sourceTree = "<group>"; };
 		18F5835F25F79C300073D7CB /* UIViewController+CreateExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIViewController+CreateExtension.m"; sourceTree = "<group>"; };
 		18F5836025F79C300073D7CB /* ReactViewPagerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ReactViewPagerManager.m; sourceTree = "<group>"; };
 		18F5836125F79C300073D7CB /* RCTConvert+UIPageViewControllerNavigationOrientation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "RCTConvert+UIPageViewControllerNavigationOrientation.m"; sourceTree = "<group>"; };
@@ -72,9 +75,19 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		1849C8FA27736B960052330D /* Fabric */ = {
+			isa = PBXGroup;
+			children = (
+				1849C8FB27736BC20052330D /* RNCPagerViewComponentView.h */,
+				1849C8FC27736BDB0052330D /* RNCPagerViewComponentView.mm */,
+			);
+			path = Fabric;
+			sourceTree = "<group>";
+		};
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				1849C8FA27736B960052330D /* Fabric */,
 				18F5836925F79C300073D7CB /* RCTConvert+UIPageViewControllerNavigationOrientation.h */,
 				18F5836125F79C300073D7CB /* RCTConvert+UIPageViewControllerNavigationOrientation.m */,
 				18F5836D25F79C300073D7CB /* RCTConvert+UIPageViewControllerTransitionStyle.h */,
@@ -160,6 +173,7 @@
 				18F5837525F79C300073D7CB /* RCTOnPageSelected.m in Sources */,
 				18F5837225F79C300073D7CB /* ReactNativePageView.m in Sources */,
 				18F5837025F79C300073D7CB /* ReactViewPagerManager.m in Sources */,
+				1849C8FD27736BDB0052330D /* RNCPagerViewComponentView.mm in Sources */,
 				18F5837325F79C300073D7CB /* RCTConvert+UIPageViewControllerTransitionStyle.m in Sources */,
 				18F5837625F79C300073D7CB /* RCTOnPageScrollEvent.m in Sources */,
 				F4FF95D7245B92E800C19C63 /* PagerView.swift in Sources */,

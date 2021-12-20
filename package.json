@@ -61,8 +61,8 @@
     "jest": "^26.0.1",
     "pod-install": "^0.1.0",
     "prettier": "^2.0.5",
-    "react": "16.13.1",
-    "react-native": "0.63.4",
+    "react": "17.0.2",
+    "react-native": "0.0.0-20211215-2008-f16cbe59e",
     "react-native-builder-bob": "^",
     "release-it": "^14.2.2",
     "typescript": "^4.1.3"
@@ -130,6 +130,15 @@
           "project": "tsconfig.build.json"
         }
       ]
+    ]
+  },
+  "codegenConfig": {
+    "libraries": [
+      {
+        "name": "PagerView",
+        "type": "components",
+        "jsSrcsDir": "./src"
+      }
     ]
   }
 }

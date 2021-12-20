@@ -7,11 +7,12 @@ module.exports = {
     [
       'module-resolver',
       {
-        extensions: ['.tsx', '.ts', '.js', '.json'],
         alias: {
           [pak.name]: path.join(__dirname, '..', pak.source),
         },
       },
     ],
+    '@babel/plugin-proposal-class-properties',
+    '@react-native/babel-plugin-codegen',
   ],
 };
