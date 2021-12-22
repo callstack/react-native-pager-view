@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) BOOL overdrag;
 @property(nonatomic) NSString* layoutDirection;
 @property(nonatomic) CGRect previousBounds;
-
+@property(nonatomic) NSInteger numberOfAction;
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated;
 - (void)shouldScroll:(BOOL)scrollEnabled;

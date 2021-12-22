@@ -48,6 +48,7 @@
         _overdrag = NO;
         _layoutDirection = @"ltr";
         _previousBounds = CGRectMake(0, 0, 0, 0);
+        _numberOfAction = 0;
     }
     return self;
 }
@@ -88,6 +89,11 @@
     if (!self.reactPageViewController && self.reactViewController != nil) {
         [self embed];
         [self setupInitialController];
+    }
+    
+    if (self.numberOfAction > 0) {
+        self.numberOfAction = 0;
+        [self updateDataSource];
     }
 }
 
@@ -189,12 +195,18 @@
         strongSelf.currentIndex = index;
         strongSelf.currentView = controller.view;
         
-        if (strongSelf.eventDispatcher) {
-            if (strongSelf.lastReportedIndex != strongSelf.currentIndex) {
-                if (shouldCallOnPageSelected) {
-                    [strongSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:strongSelf.reactTag position:@(index) coalescingKey:coalescingKey]];
+        if (finished == YES) {
+            if (self.numberOfAction > 0) {
+                self.numberOfAction -= 1;
+            }
+                        
+            if (strongSelf.eventDispatcher) {
+                if (strongSelf.lastReportedIndex != strongSelf.currentIndex) {
+                    if (shouldCallOnPageSelected) {
+                        [strongSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:strongSelf.reactTag position:@(index) coalescingKey:coalescingKey]];
+                    }
+                    strongSelf.lastReportedIndex = strongSelf.currentIndex;
                 }
-                strongSelf.lastReportedIndex = strongSelf.currentIndex;
             }
         }
     }];
@@ -233,11 +245,9 @@
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     NSInteger numberOfPages = self.reactSubviews.count;
-    
-    if (numberOfPages == 0 || index < 0 || index > numberOfPages - 1) {
+    if (numberOfPages == 0 || index < 0 || index > numberOfPages - 1 || self.numberOfAction > 0) {
         return;
     }
-    
     BOOL isForward = (index > self.currentIndex && [self isLtrLayout]) || (index < self.currentIndex && ![self isLtrLayout]);
     UIPageViewControllerNavigationDirection direction = isForward ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
     
@@ -250,6 +260,7 @@
             if (i == _currentIndex) {
                 continue;
             }
+            _numberOfAction += 1;
             [self goToViewController:i direction:direction animated:animated shouldCallOnPageSelected: i == index];
         }
     }
@@ -257,9 +268,10 @@
     if (!isForward && diff > 0) {
         for (NSInteger i=_currentIndex; i>=index; i--) {
             // Prevent removal of one or many pages at a time
-            if (index == _currentIndex || i >= numberOfPages) {
+            if (i == _currentIndex || i >= numberOfPages) {
                 continue;
             }
+            _numberOfAction += 1;
             [self goToViewController:i direction:direction animated:animated shouldCallOnPageSelected: i == index];
         }
     }
@@ -267,6 +279,7 @@
     if (diff == 0) {
         [self goToViewController:index direction:direction animated:animated shouldCallOnPageSelected:YES];
     }
+    
 }
 
 - (void)goToViewController:(NSInteger)index
