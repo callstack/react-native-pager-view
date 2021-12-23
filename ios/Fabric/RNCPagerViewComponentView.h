@@ -12,7 +12,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNCPagerViewComponentView : RCTViewComponentView
+@interface RNCPagerViewComponentView : RCTViewComponentView <UIPageViewControllerDataSource, UIPageViewControllerDelegate,UIScrollViewDelegate>
+
+@property(strong, nonatomic, readonly) UIPageViewController *reactPageViewController;
+@property(nonatomic, strong) NSMutableArray<UIViewController *> *childrenViewControllers;
+@property(nonatomic) NSInteger initialPage;
+@property(nonatomic) NSInteger currentIndex;
+@property(nonatomic) NSInteger pageMargin;
+@property(nonatomic, readonly) BOOL scrollEnabled;
 
 @end
 

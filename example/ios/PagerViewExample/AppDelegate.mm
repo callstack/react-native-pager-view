@@ -17,6 +17,7 @@
 #import <reacthermes/HermesExecutorFactory.h>
 
 #import <ReactCommon/RCTTurboModuleManager.h>
+#import <React/RCTAppSetupUtils.h>
 
 #ifdef RN_FABRIC_ENABLED
 #import <React/RCTFabricSurfaceHostingProxyRootView.h>
@@ -41,7 +42,8 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   RCTEnableTurboModule(YES);
-
+  [RCTAppSetupUtils prepareApp:application];
+  
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
 
 #ifdef RN_FABRIC_ENABLED
