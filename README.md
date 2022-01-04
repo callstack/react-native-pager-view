@@ -193,8 +193,13 @@ requestAnimationFrame(() => refPagerView.current?.setPage(index));
 | :--------------------------------------------------------------------: | :-------------------------------------------------------------------------: |
 | <img src="img/ios-viewpager-vertical.gif" alt="ViewPager" width="325"> | <img src="img/ios-viewpager-vertical-curl.gif" alt="ViewPager" width="325"> |
 
-## Reanimated
-- You can attach `onPageScroll` with reanimated event handler.
+## Reanimated onPageScroll handler
+
+An example can be found [here](https://github.com/callstack/react-native-pager-view/blob/master/example/src/ReanimatedOnPageScrollExample.tsx)
+
+#### Instructions
+
+To attach reanimated handler with `onPageScroll` follow the below steps.
 
 ```jsx
 // 1. Define the handler
