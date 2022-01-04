@@ -193,6 +193,48 @@ requestAnimationFrame(() => refPagerView.current?.setPage(index));
 | :--------------------------------------------------------------------: | :-------------------------------------------------------------------------: |
 | <img src="img/ios-viewpager-vertical.gif" alt="ViewPager" width="325"> | <img src="img/ios-viewpager-vertical-curl.gif" alt="ViewPager" width="325"> |
 
+## Reanimated onPageScroll handler
+
+An example can be found [here](https://github.com/callstack/react-native-pager-view/blob/master/example/src/ReanimatedOnPageScrollExample.tsx)
+
+#### Instructions
+
+To attach reanimated handler with `onPageScroll` follow the below steps.
+
+```jsx
+// 1. Define the handler
+function usePageScrollHandler(handlers, dependencies) {
+  const {context, doDependenciesDiffer} = useHandler(handlers, dependencies);
+  const subscribeForEvents = ['onPageScroll'];
+
+  return useEvent(
+    event => {
+      'worklet';
+      const {onPageScroll} = handlers;
+      if (onPageScroll && event.eventName.endsWith('onPageScroll')) {
+        onPageScroll(event, context);
+      }
+    },
+    subscribeForEvents,
+    doDependenciesDiffer,
+  );
+}
+  
+// 2. Attach the event handler
+import { PagerView } from "react-native-pager-view";
+import Animated from "react-native-reanimated";
+const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
+
+const pageScrollHandler = usePageScrollHandler({
+    onPageScroll: e => {
+      'worklet';
+      offset.value = e.offset;
+      console.log(e.offset, e.position);
+    },
+});
+
+<AnimatedPagerView onPageScroll={pageScrollHandler}/>
+```
 ## License
 
 MIT
