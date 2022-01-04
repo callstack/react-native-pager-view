@@ -17,6 +17,7 @@ import TabBarIconExample from './tabView/TabBarIconExample';
 import CustomIndicatorExample from './tabView/CustomIndicatorExample';
 import CustomTabBarExample from './tabView/CustomTabBarExample';
 import CoverflowExample from './tabView/CoverflowExample';
+import ReanimatedOnPageScrollExample from './ReanimatedOnPageScrollExample';
 
 const examples = [
   { component: BasicPagerViewExample, name: 'Basic Example' },
@@ -42,6 +43,10 @@ const examples = [
   { component: TabBarIconExample, name: 'TabBarIconExample' },
   { component: CustomIndicatorExample, name: 'CustomIndicatorExample' },
   { component: CustomTabBarExample, name: 'CustomTabBarExample' },
+  {
+    component: ReanimatedOnPageScrollExample,
+    name: 'Reanimated onPageScroll example',
+  },
   { component: CoverflowExample, name: 'CoverflowExample' },
 ];
 
