@@ -167,6 +167,11 @@
                             direction:UIPageViewControllerNavigationDirectionForward
                              animated:YES
              shouldCallOnPageSelected:YES];
+
+              
+        if (self.reactViewController.navigationController != nil && self.reactViewController.navigationController.interactivePopGestureRecognizer != nil) {
+            [self.scrollView.panGestureRecognizer requireGestureRecognizerToFail:self.reactViewController.navigationController.interactivePopGestureRecognizer];
+        }
     }
 }
 
