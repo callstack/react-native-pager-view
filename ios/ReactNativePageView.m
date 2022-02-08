@@ -19,7 +19,7 @@
 @property(nonatomic, weak) UIView *currentView;
 
 @property(nonatomic, strong) NSHashTable<UIViewController *> *cachedControllers;
-@property (nonatomic, assign) CGPoint lastContentOffset;
+@property(nonatomic, assign) CGPoint lastContentOffset;
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated;
 - (void)shouldScroll:(BOOL)scrollEnabled;
@@ -181,6 +181,10 @@
     __weak ReactNativePageView *weakSelf = self;
     uint16_t coalescingKey = _coalescingKey++;
     
+    if (animated == YES) {
+        self.animating = YES;
+    }
+    
     [self.reactPageViewController setViewControllers:@[controller]
                                            direction:direction
                                             animated:animated
@@ -188,6 +192,10 @@
         __strong typeof(self) strongSelf = weakSelf;
         strongSelf.currentIndex = index;
         strongSelf.currentView = controller.view;
+        
+        if (finished) {
+            strongSelf.animating = NO;
+        }
         
         if (strongSelf.eventDispatcher) {
             if (strongSelf.lastReportedIndex != strongSelf.currentIndex) {
