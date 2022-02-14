@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
 ```
 
 **Attention:** Note that you can only use `View` components as children of `PagerView` (cf. folder _/example_)
-. For Android if `View` has own children, set prop `collapsable` to false <https://reactnative.dev/docs/view#collapsable-android>, otherwise react-native might remove those children views and and it's children will be rendered as separate pages
+. For Android if `View` has own children, set prop `collapsable` to false <https://reactnative.dev/docs/view#collapsable-android>, otherwise react-native might remove those children views and and its children will be rendered as separate pages
 
 ## Advanced usage
 
@@ -167,7 +167,7 @@ See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the 
 
 ## Known Issues
 
-- `flex:1` does not work for child views, please use `width:”100%”, height:”100%”` [instead](https://github.com/callstack/react-native-pager-view/issues/186#issuecomment-675320732)
+- `flex:1` does not work for child views, please use `width: '100%', height: '100%'` [instead](https://github.com/callstack/react-native-pager-view/issues/186#issuecomment-675320732)
 
 - [iOS]: In case of `UIViewControllerHierarchyInconsistency` error, please use below fix:
 
