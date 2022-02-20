@@ -73,6 +73,10 @@ class FragmentAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter
 
   fun getReactChildCount() = childrenViews.size
 
+  fun removeAll() {
+    childrenViews.clear()
+  }
+
   fun removeReactViewAt(index: Int) {
     markDirty()
     childrenViews.removeAt(index)
