@@ -2,6 +2,7 @@ package com.reactnativepagerview
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.doOnLayout
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.facebook.infer.annotation.Assertions
@@ -148,7 +149,7 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
     //https://github.com/callstack/react-native-pager-view/issues/456
     //Initial index should be set only once. 
     if (host.initialIndex === null) {
-      view.post {
+      view.doOnLayout {
         setCurrentItem(view, value, false)
         host.initialIndex = value
       }
