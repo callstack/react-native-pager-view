@@ -185,13 +185,13 @@
         self.animating = YES;
     }
     
+    self.currentIndex = index;
+    self.currentView = controller.view;
     [self.reactPageViewController setViewControllers:@[controller]
                                            direction:direction
                                             animated:animated
                                           completion:^(BOOL finished) {
         __strong typeof(self) strongSelf = weakSelf;
-        strongSelf.currentIndex = index;
-        strongSelf.currentView = controller.view;
         
         if (finished) {
             strongSelf.animating = NO;
