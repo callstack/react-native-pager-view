@@ -12,6 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) NSInteger initialPage;
 @property(nonatomic) NSInteger lastReportedIndex;
 @property(nonatomic) NSInteger currentIndex;
+@property(nonatomic) NSInteger destinationIndex;
 @property(nonatomic) NSInteger pageMargin;
 @property(nonatomic, readonly) BOOL scrollEnabled;
 @property(nonatomic, readonly) BOOL showPageIndicator;
@@ -24,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) BOOL overdrag;
 @property(nonatomic) NSString* layoutDirection;
 @property(nonatomic) CGRect previousBounds;
-@property(nonatomic, assign) BOOL animating;
+@property(nonatomic, assign) BOOL inTransition;
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated;
 - (void)shouldScroll:(BOOL)scrollEnabled;

@@ -52,6 +52,10 @@
     return self;
 }
 
+- (BOOL) inTransition {
+  return self.currentIndex != self.destinationIndex;
+}
+
 - (void)layoutSubviews {
     [super layoutSubviews];
     if (self.reactPageViewController) {
@@ -181,21 +185,18 @@
     __weak ReactNativePageView *weakSelf = self;
     uint16_t coalescingKey = _coalescingKey++;
     
-    if (animated == YES) {
-        self.animating = YES;
-    }
+    self.destinationIndex = index;
+    // If animated is YES and the current controller is already shown, the completion will not be called.
+    // Thus, in this case set animated to NO and the completion handler will be called.
+    BOOL isAnimatedAndDifferentController = animated && (controller != self.currentlyDisplayed);
     
-    self.currentIndex = index;
-    self.currentView = controller.view;
     [self.reactPageViewController setViewControllers:@[controller]
                                            direction:direction
-                                            animated:animated
+                                            animated:isAnimatedAndDifferentController
                                           completion:^(BOOL finished) {
         __strong typeof(self) strongSelf = weakSelf;
-        
-        if (finished) {
-            strongSelf.animating = NO;
-        }
+        strongSelf.currentIndex = index;
+        strongSelf.currentView = controller.view;
         
         if (strongSelf.eventDispatcher) {
             if (strongSelf.lastReportedIndex != strongSelf.currentIndex) {
@@ -226,6 +227,12 @@
         return;
     }
     
+    // If a new page is being transitionted to, ignore changes resulting from
+    // different layout sizes
+    if (self.inTransition) {
+      return;
+    }
+  
     NSInteger newIndex = self.currentView ? [self.reactSubviews indexOfObject:self.currentView] : 0;
     
     if (newIndex == NSNotFound) {
