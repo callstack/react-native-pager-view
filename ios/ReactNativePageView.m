@@ -166,7 +166,8 @@
                                  with:initialController
                             direction:UIPageViewControllerNavigationDirectionForward
                              animated:YES
-             shouldCallOnPageSelected:YES];
+             shouldCallOnPageSelected:YES
+                          forceRedraw:YES];
     }
 }
 
@@ -174,10 +175,17 @@
                            with:(UIViewController *)controller
                       direction:(UIPageViewControllerNavigationDirection)direction
                        animated:(BOOL)animated
-                       shouldCallOnPageSelected:(BOOL)shouldCallOnPageSelected {
+                       shouldCallOnPageSelected:(BOOL)shouldCallOnPageSelected
+                    forceRedraw:(BOOL)forceRedraw {
     if (self.reactPageViewController == nil) {
         return;
     }
+  
+    // Don't redraw the currently displayed view controller unless forced
+    if (!forceRedraw && controller == self.currentlyDisplayed) {
+        return;
+    }
+  
     __weak ReactNativePageView *weakSelf = self;
     uint16_t coalescingKey = _coalescingKey++;
     
@@ -235,11 +243,15 @@
         
         [self goTo:fallbackIndex animated:NO];
     } else {
-        [self goTo:newIndex animated:NO];
+        [self goTo:newIndex animated:NO forceRedraw: YES];
     }
 }
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
+    [self goTo:index animated:animated forceRedraw:false];
+}
+
+- (void)goTo:(NSInteger)index animated:(BOOL)animated forceRedraw:(BOOL)forceRedraw {
     NSInteger numberOfPages = self.reactSubviews.count;
     
     if (numberOfPages == 0 || index < 0 || index > numberOfPages - 1) {
@@ -258,7 +270,7 @@
             if (i == _currentIndex) {
                 continue;
             }
-            [self goToViewController:i direction:direction animated:animated shouldCallOnPageSelected: i == index];
+            [self goToViewController:i direction:direction animated:animated shouldCallOnPageSelected: i == index forceRedraw:NO];
         }
     }
     
@@ -268,26 +280,28 @@
             if (i == _currentIndex || i >= numberOfPages) {
                 continue;
             }
-            [self goToViewController:i direction:direction animated:animated shouldCallOnPageSelected: i == index];
+            [self goToViewController:i direction:direction animated:animated shouldCallOnPageSelected: i == index forceRedraw:NO];
         }
     }
     
     if (diff == 0) {
-        [self goToViewController:index direction:direction animated:animated shouldCallOnPageSelected:YES];
+        [self goToViewController:index direction:direction animated:animated shouldCallOnPageSelected:YES forceRedraw: forceRedraw];
     }
 }
 
 - (void)goToViewController:(NSInteger)index
                             direction:(UIPageViewControllerNavigationDirection)direction
                             animated:(BOOL)animated
-                            shouldCallOnPageSelected:(BOOL)shouldCallOnPageSelected {
+                            shouldCallOnPageSelected:(BOOL)shouldCallOnPageSelected
+                            forceRedraw:(BOOL)forceRedraw{
     UIView *viewToDisplay = self.reactSubviews[index];
     UIViewController *controllerToDisplay = [self findAndCacheControllerForView:viewToDisplay];
     [self setReactViewControllers:index
                              with:controllerToDisplay
                         direction:direction
                          animated:animated
-                        shouldCallOnPageSelected:shouldCallOnPageSelected];
+                        shouldCallOnPageSelected:shouldCallOnPageSelected
+                      forceRedraw:forceRedraw];
 }
     
 - (UIViewController *)findAndCacheControllerForView:(UIView *)viewToDisplay {
