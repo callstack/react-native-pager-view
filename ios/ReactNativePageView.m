@@ -44,7 +44,7 @@
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
         _coalescingKey = 0;
         _eventDispatcher = eventDispatcher;
-        _cachedControllers = [NSHashTable weakObjectsHashTable];
+        _cachedControllers = [NSHashTable hashTableWithOptions:NSHashTableStrongMemory];
         _overdrag = NO;
         _layoutDirection = @"ltr";
         _previousBounds = CGRectMake(0, 0, 0, 0);
