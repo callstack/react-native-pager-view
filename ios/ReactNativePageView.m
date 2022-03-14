@@ -178,6 +178,12 @@
     if (self.reactPageViewController == nil) {
         return;
     }
+
+    NSArray *currentVCs = self.reactPageViewController.viewControllers;
+    if (currentVCs.count == 1 && [currentVCs.firstObject isEqual:controller]) {
+        return;
+    }
+
     __weak ReactNativePageView *weakSelf = self;
     uint16_t coalescingKey = _coalescingKey++;
     
