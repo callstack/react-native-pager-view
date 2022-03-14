@@ -184,10 +184,17 @@
     if (animated == YES) {
         self.animating = YES;
     }
+
+    //
+    // If 'controller' is the current visible controller and the 'animated' flag is set to YES,
+    // then 'setViewControllers' is called without invoking the completion handler. This can block the navigation from working.
+    // So we need to check if that would be the case, and if so, we will not perform animation.
+    //
+    BOOL canAnimate = (controller != [[self.reactPageViewController viewControllers] firstObject] );
     
     [self.reactPageViewController setViewControllers:@[controller]
                                            direction:direction
-                                            animated:animated
+                                            animated:canAnimate?animated:NO
                                           completion:^(BOOL finished) {
         __strong typeof(self) strongSelf = weakSelf;
         strongSelf.currentIndex = index;
