@@ -12,7 +12,7 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		DAB2A1581691A61114A48850 /* libPods-PagerViewExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD22B818C32338586F752B2E /* libPods-PagerViewExample.a */; };
+		8E2FD4B8A7CB537EAF3C931E /* libPods-PagerViewExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DDDACF99449D5DDF3DC6308 /* libPods-PagerViewExample.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -35,10 +35,10 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = PagerViewExample/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = PagerViewExample/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = PagerViewExample/main.m; sourceTree = "<group>"; };
-		188F3479E9DA77C0A5382499 /* Pods-PagerViewExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PagerViewExample.release.xcconfig"; path = "Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample.release.xcconfig"; sourceTree = "<group>"; };
-		7AE874C7C59FE5E221632AB5 /* Pods-PagerViewExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PagerViewExample.debug.xcconfig"; path = "Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample.debug.xcconfig"; sourceTree = "<group>"; };
+		17C1C9D152FA767FF2F25678 /* Pods-PagerViewExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PagerViewExample.release.xcconfig"; path = "Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample.release.xcconfig"; sourceTree = "<group>"; };
+		5DDDACF99449D5DDF3DC6308 /* libPods-PagerViewExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PagerViewExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7D3EE509BCA4F6D8256647F3 /* Pods-PagerViewExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PagerViewExample.debug.xcconfig"; path = "Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = PagerViewExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		CD22B818C32338586F752B2E /* libPods-PagerViewExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PagerViewExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -54,7 +54,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DAB2A1581691A61114A48850 /* libPods-PagerViewExample.a in Frameworks */,
+				8E2FD4B8A7CB537EAF3C931E /* libPods-PagerViewExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -95,7 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				CD22B818C32338586F752B2E /* libPods-PagerViewExample.a */,
+				5DDDACF99449D5DDF3DC6308 /* libPods-PagerViewExample.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -134,8 +134,8 @@
 		E303C5114C7D2CBEE00BF1BC /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				7AE874C7C59FE5E221632AB5 /* Pods-PagerViewExample.debug.xcconfig */,
-				188F3479E9DA77C0A5382499 /* Pods-PagerViewExample.release.xcconfig */,
+				7D3EE509BCA4F6D8256647F3 /* Pods-PagerViewExample.debug.xcconfig */,
+				17C1C9D152FA767FF2F25678 /* Pods-PagerViewExample.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -165,14 +165,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "PagerViewExample" */;
 			buildPhases = (
-				DD650BECE49F26170016D55D /* [CP] Check Pods Manifest.lock */,
+				1BA17D3B691BFEA57FC55183 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				D7DD510F8BDB946EF7F1894B /* [CP] Embed Pods Frameworks */,
-				84D78AC21E564EC4AF270EB5 /* [CP] Copy Pods Resources */,
+				82F567E3EAFAB80EEF0276A0 /* [CP] Embed Pods Frameworks */,
+				833B91BBD3504757B31F9EAD /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -253,41 +253,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nexport NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		84D78AC21E564EC4AF270EB5 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		D7DD510F8BDB946EF7F1894B /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		DD650BECE49F26170016D55D /* [CP] Check Pods Manifest.lock */ = {
+		1BA17D3B691BFEA57FC55183 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -307,6 +273,40 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		82F567E3EAFAB80EEF0276A0 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		833B91BBD3504757B31F9EAD /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PagerViewExample/Pods-PagerViewExample-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -410,7 +410,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AE874C7C59FE5E221632AB5 /* Pods-PagerViewExample.debug.xcconfig */;
+			baseConfigurationReference = 7D3EE509BCA4F6D8256647F3 /* Pods-PagerViewExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
@@ -438,7 +438,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 188F3479E9DA77C0A5382499 /* Pods-PagerViewExample.release.xcconfig */;
+			baseConfigurationReference = 17C1C9D152FA767FF2F25678 /* Pods-PagerViewExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
@@ -495,7 +495,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "i386 arm64";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -560,7 +560,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "i386 arm64";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

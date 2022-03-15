@@ -14,8 +14,9 @@
     "detox:android:test:release": "yarn get:testbutler && detox test --configuration android.emu.release --loglevel trace --headless --take-screenshots failing",
     "detox:android:build:debug": "detox build -c android.emu.debug",
     "detox:android:test:debug": "detox test -c android.emu.debug",
-    "preinstall": "cp ../package.json ./codegenConfig/react-native-pager-view && cp -R ../src ./codegenConfig/react-native-pager-view",
-    "postinstall": "rm -rf node_modules/react-native-pager-view && patch-package"
+    "js2schema": "node node_modules/react-native-codegen/lib/cli/combine/combine-js-to-schema-cli.js schema.json ../src",
+    "generateSpec": "node node_modules/react-native/scripts/generate-specs-cli.js --platform ios --schemaPath schema.json --outputDir ./codegenFiles --libraryName PagerView --libraryType components",
+    "checkGeneratedFiles":"ls ios/build/generated/ios/react/renderer/PagerView"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
@@ -45,10 +46,7 @@
     "jest-circus": "^26.6.3",
     "metro-react-native-babel-preset": "^0.66.2",
     "patch-package": "^6.4.7",
-    "react-native-codegen": "0.0.12",
+    "react-native-codegen": "0.0.13",
     "ts-jest": "^26.5.4"
-  },
-  "codegenConfig": {
-    "libraries": []
   }
 }

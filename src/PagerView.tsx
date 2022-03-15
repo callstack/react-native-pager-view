@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
-import { Platform, UIManager, Keyboard } from 'react-native';
-import ReactNative, { I18nManager } from 'react-native';
+import { Platform, Keyboard } from 'react-native';
+import { I18nManager } from 'react-native';
 import type {
   PagerViewOnPageScrollEvent,
   PagerViewOnPageSelectedEvent,
@@ -58,6 +58,7 @@ export class PagerView extends React.Component<PagerViewProps> {
   private PagerView = React.createRef<typeof NativePagerView>();
 
   public getInnerViewNode = (): ReactElement => {
+    //@ts-ignore
     return this.PagerView.current!.getInnerViewNode();
   };
 
@@ -92,7 +93,7 @@ export class PagerView extends React.Component<PagerViewProps> {
    * A helper function to scroll to a specific page in the PagerView.
    * The transition between pages will be animated.
    */
-  public setPage = (selectedPage: number) => {
+  public setPage = (_: number) => {
     // UIManager.dispatchViewManagerCommand(
     //   ReactNative.findNodeHandle(this),
     //   getViewManagerConfig().Commands.setPage,
@@ -104,7 +105,7 @@ export class PagerView extends React.Component<PagerViewProps> {
    * A helper function to scroll to a specific page in the PagerView.
    * The transition between pages will *not* be animated.
    */
-  public setPageWithoutAnimation = (selectedPage: number) => {
+  public setPageWithoutAnimation = (_: number) => {
     // UIManager.dispatchViewManagerCommand(
     //   ReactNative.findNodeHandle(this),
     //   getViewManagerConfig().Commands.setPageWithoutAnimation,
@@ -117,7 +118,7 @@ export class PagerView extends React.Component<PagerViewProps> {
    * The recommended way is using the scrollEnabled prop, however, there might be a case where a
    * imperative solution is more useful (e.g. for not blocking an animation)
    */
-  public setScrollEnabled = (scrollEnabled: boolean) => {
+  public setScrollEnabled = (_: boolean) => {
     // UIManager.dispatchViewManagerCommand(
     //   ReactNative.findNodeHandle(this),
     //   getViewManagerConfig().Commands.setScrollEnabled,
