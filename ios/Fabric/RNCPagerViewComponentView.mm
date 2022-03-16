@@ -44,14 +44,15 @@ using namespace facebook::react;
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    [_nativePageViewController.view layoutSubviews];
-    //THIS WORKAROUND DOES NOT WORK
-//    if (_currentIndex != -1) {
-//        [_nativePageViewController setViewControllers:
-//         @[[_nativeChildrenViewControllers objectAtIndex:_currentIndex]] direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:^(BOOL finished) {
-//
-//        }];
-//    }
+    //Workaround to fix incorrect frame issue
+    [_nativePageViewController
+                setViewControllers:@[[_nativeChildrenViewControllers
+                objectAtIndex:_currentIndex]]
+                direction:UIPageViewControllerNavigationDirectionForward
+                animated:NO
+                completion:^(BOOL finished) {
+
+        }];
 }
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
