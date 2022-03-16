@@ -31,13 +31,7 @@ using namespace facebook::react;
     _scrollEnabled = YES;
     _pageMargin = 0;
     _currentIndex = -1;
-    _nativePageViewController = [[UIPageViewController alloc]
-                                   initWithTransitionStyle: UIPageViewControllerTransitionStyleScroll
-                                   navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal
-                                   options:nil];
-    _nativePageViewController.dataSource = self;
-    _nativePageViewController.delegate = self;
-    [self addSubview:_nativePageViewController.view];
+
   }
   return self;
 }
@@ -45,24 +39,38 @@ using namespace facebook::react;
 - (void)layoutSubviews {
     [super layoutSubviews];
     //Workaround to fix incorrect frame issue
-    [_nativePageViewController
-                setViewControllers:@[[_nativeChildrenViewControllers
-                objectAtIndex:_currentIndex]]
-                direction:UIPageViewControllerNavigationDirectionForward
-                animated:NO
-                completion:^(BOOL finished) {
-
-        }];
+    if (!_currentIndex) {
+        UIViewController *controller = [_nativeChildrenViewControllers objectAtIndex:_currentIndex];
+        [_nativePageViewController
+            setViewControllers:@[controller]
+            direction:UIPageViewControllerNavigationDirectionForward
+            animated:NO
+            completion:^(BOOL finished) { }];
+    }
 }
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
+    if(!_nativePageViewController){
+        _nativePageViewController = [[UIPageViewController alloc]
+                                       initWithTransitionStyle: UIPageViewControllerTransitionStyleScroll
+                                       navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal
+                                       options:nil];
+        _nativePageViewController.dataSource = self;
+        _nativePageViewController.delegate = self;
+        [self addSubview:_nativePageViewController.view];
+    }
     UIViewController *wrapper = [[UIViewController alloc] initWithView:childComponentView];
     [_nativeChildrenViewControllers insertObject:wrapper atIndex:index];
     NSLog(@"mountChildComponentView");
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
+    [[_nativeChildrenViewControllers objectAtIndex:index].view removeFromSuperview];
+    [_nativeChildrenViewControllers objectAtIndex:index].view = nil;
     [_nativeChildrenViewControllers removeObjectAtIndex:index];
+    [_nativePageViewController.view removeFromSuperview];
+    _nativePageViewController = nil;
+    NSLog(@"unmountChildComponentView");
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props oldProps:(const facebook::react::Props::Shared &)oldProps{
@@ -118,7 +126,9 @@ using namespace facebook::react;
         didFinishAnimating:(BOOL)finished
    previousViewControllers:(nonnull NSArray<UIViewController *> *)previousViewControllers
        transitionCompleted:(BOOL)completed {
-    
+    if(finished){
+        NSLog(@"_currentIndex %ld",(long)_currentIndex);
+    }
     if (completed) {
         UIViewController* currentVC = [self currentlyDisplayed];
         NSUInteger currentIndex = [_nativeChildrenViewControllers indexOfObject:currentVC];

@@ -28,7 +28,6 @@ export function BasicPagerViewExample() {
         pageMargin={10}
         // Lib does not support dynamically orientation change
         orientation="horizontal"
-        showPageIndicator={false}
       >
         {pages.map((p) => renderPage(p))}
       </PagerView>
