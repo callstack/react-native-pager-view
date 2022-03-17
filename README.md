@@ -221,7 +221,7 @@ function usePageScrollHandler(handlers, dependencies) {
 }
   
 // 2. Attach the event handler
-import { PagerView } from "react-native-pager-view";
+import PagerView from "react-native-pager-view";
 import Animated from "react-native-reanimated";
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
