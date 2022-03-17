@@ -17,6 +17,7 @@ type NativeProps = $ReadOnly<{|
   keyboardDismissMode?: WithDefault<'none' | 'on-drag', 'none'>,
   orientation?: WithDefault<'horizontal' | 'vertical', 'horizontal'>,
   overdrag?: boolean,
+  scrollEnabled?: boolean,
 |}>;
 
 export default (codegenNativeComponent<NativeProps>(

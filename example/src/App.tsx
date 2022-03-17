@@ -1,37 +1,43 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, View, SafeAreaView, Image } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 
 import PagerView from 'react-native-pager-view';
 
 import { LikeCount } from './component/LikeCount';
-import { createPage } from './utils';
-
-const pages = [createPage(0), createPage(1), createPage(2)];
+import { useNavigationPanel } from './hook/useNavigationPanel';
 
 export function BasicPagerViewExample() {
-  function renderPage(page: any) {
-    return (
-      <View key={page.key} style={page.style} collapsable={false}>
-        <Image style={styles.image} source={page.imgSource} />
-        <LikeCount />
-      </View>
-    );
-  }
+  const { ref, ...navigationPanel } = useNavigationPanel();
+
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <PagerView
         //@ts-ignore
         testID="pager-view"
+        ref={ref}
         style={styles.PagerView}
         initialPage={0}
         layoutDirection="ltr"
-        pageMargin={10}
+        overdrag={false}
+        scrollEnabled={true}
+        pageMargin={0}
         // Lib does not support dynamically orientation change
         orientation="horizontal"
       >
-        {pages.map((p) => renderPage(p))}
+        {useMemo(
+          () =>
+            navigationPanel.pages.map((page, index) => (
+              <View key={page.key} style={page.style} collapsable={false}>
+                <LikeCount />
+                <Text
+                  testID={`pageNumber${index}`}
+                >{`page number ${index}`}</Text>
+              </View>
+            )),
+          [navigationPanel.pages]
+        )}
       </PagerView>
-    </SafeAreaView>
+    </View>
   );
 }
 

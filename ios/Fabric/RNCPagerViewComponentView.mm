@@ -20,18 +20,17 @@ using namespace facebook::react;
 @interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
 @end
 
-@implementation RNCPagerViewComponentView
+@implementation RNCPagerViewComponentView {
+    UIScrollView *scrollView;
+}
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const RNCViewPagerProps>();
     _props = defaultProps;
-      _nativeChildrenViewControllers = [[NSMutableArray alloc] init];
-    _scrollEnabled = YES;
-    _pageMargin = 0;
+    _nativeChildrenViewControllers = [[NSMutableArray alloc] init];
     _currentIndex = -1;
-
   }
   return self;
 }
@@ -39,29 +38,38 @@ using namespace facebook::react;
 - (void)layoutSubviews {
     [super layoutSubviews];
     //Workaround to fix incorrect frame issue
-    if (!_currentIndex) {
-        UIViewController *controller = [_nativeChildrenViewControllers objectAtIndex:_currentIndex];
-        [_nativePageViewController
-            setViewControllers:@[controller]
-            direction:UIPageViewControllerNavigationDirectionForward
-            animated:NO
-            completion:^(BOOL finished) { }];
-    }
+    UIViewController *controller = [_nativeChildrenViewControllers objectAtIndex:_currentIndex];
+    [_nativePageViewController
+        setViewControllers:@[controller]
+        direction:UIPageViewControllerNavigationDirectionForward
+        animated:NO
+        completion:^(BOOL finished) { }];
+
 }
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
-    if(!_nativePageViewController){
+    if (!_nativePageViewController) {
+        const auto &viewProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
+        NSDictionary *options = @{ UIPageViewControllerOptionInterPageSpacingKey: @(viewProps.pageMargin) };
+        UIPageViewControllerNavigationOrientation orientation = UIPageViewControllerNavigationOrientationHorizontal;
+        switch (viewProps.orientation) {
+            case RNCViewPagerOrientation::Horizontal:
+                orientation = UIPageViewControllerNavigationOrientationHorizontal;
+                break;
+            case RNCViewPagerOrientation::Vertical:
+                orientation = UIPageViewControllerNavigationOrientationVertical;
+                break;
+        }
         _nativePageViewController = [[UIPageViewController alloc]
                                        initWithTransitionStyle: UIPageViewControllerTransitionStyleScroll
-                                       navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal
-                                       options:nil];
+                                       navigationOrientation:orientation
+                                       options:options];
         _nativePageViewController.dataSource = self;
         _nativePageViewController.delegate = self;
         [self addSubview:_nativePageViewController.view];
     }
     UIViewController *wrapper = [[UIViewController alloc] initWithView:childComponentView];
     [_nativeChildrenViewControllers insertObject:wrapper atIndex:index];
-    NSLog(@"mountChildComponentView");
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
@@ -70,32 +78,50 @@ using namespace facebook::react;
     [_nativeChildrenViewControllers removeObjectAtIndex:index];
     [_nativePageViewController.view removeFromSuperview];
     _nativePageViewController = nil;
-    NSLog(@"unmountChildComponentView");
+}
+
+- (void)shouldDismissKeyboard:(RNCViewPagerKeyboardDismissMode)dismissKeyboard {
+    UIScrollViewKeyboardDismissMode dismissKeyboardMode = UIScrollViewKeyboardDismissModeNone;
+    switch (dismissKeyboard) {
+      case RNCViewPagerKeyboardDismissMode::None:
+            dismissKeyboardMode = UIScrollViewKeyboardDismissModeNone;
+            break;
+      case RNCViewPagerKeyboardDismissMode::OnDrag:
+            dismissKeyboardMode = UIScrollViewKeyboardDismissModeOnDrag;
+            break;
+    }
+    scrollView.keyboardDismissMode = dismissKeyboardMode;
 }
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props oldProps:(const facebook::react::Props::Shared &)oldProps{
     const auto &oldScreenProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
     const auto &newScreenProps = *std::static_pointer_cast<const RNCViewPagerProps>(props);
-    NSLog(@"updateProps");
-    if(_currentIndex == -1) {
+    if (_currentIndex == -1) {
         _currentIndex = newScreenProps.initialPage;
-        [_nativePageViewController setViewControllers:
-         @[[_nativeChildrenViewControllers objectAtIndex:_currentIndex]] direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:^(BOOL finished) {
-            
-        }];
+        [_nativePageViewController
+            setViewControllers: @[[_nativeChildrenViewControllers objectAtIndex:_currentIndex]]
+            direction:UIPageViewControllerNavigationDirectionForward
+            animated:YES
+            completion:^(BOOL finished) { }];
+        for (UIView *subview in _nativePageViewController.view.subviews) {
+             if([subview isKindOfClass:UIScrollView.class]){
+                 ((UIScrollView *)subview).delegate = self;
+                 ((UIScrollView *)subview).delaysContentTouches = NO;
+                 scrollView = (UIScrollView *)subview;
+                 [self shouldDismissKeyboard: newScreenProps.keyboardDismissMode];
+             }
+         }
     }
+    
+    if (oldScreenProps.keyboardDismissMode != newScreenProps.keyboardDismissMode) {
+        [self shouldDismissKeyboard: newScreenProps.keyboardDismissMode];
+    }
+    
+    if (newScreenProps.scrollEnabled != scrollView.scrollEnabled) {
+        scrollView.scrollEnabled = newScreenProps.scrollEnabled;
+    }
+    
     [super updateProps:props oldProps:oldProps];
-}
-
-- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask{
-    [super finalizeUpdates:updateMask];
-    NSLog(@"finalizeUpdates");
-}
-
-- (void)updateState:(facebook::react::State::Shared const &)state
-           oldState:(facebook::react::State::Shared const &)oldState {
-    [super updateState: state oldState:oldState];
-    NSLog(@"updateState");
 }
 
 - (UIViewController *)nextControllerForController:(UIViewController *)controller

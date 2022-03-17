@@ -19,8 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) NSMutableArray<UIViewController *> *nativeChildrenViewControllers;
 @property(nonatomic) NSInteger initialPage;
 @property(nonatomic) NSInteger currentIndex;
-@property(nonatomic) NSInteger pageMargin;
-@property(nonatomic, readonly) BOOL scrollEnabled;
 
 @end
 

@@ -13,6 +13,7 @@ RCT_EXPORT_VIEW_PROPERTY(onPageSelected, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPageScroll, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPageScrollStateChanged, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(overdrag, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(scrollEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(layoutDirection, NSString)
 
 - (UIView *)view
