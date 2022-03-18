@@ -1,4 +1,4 @@
-import React, { ReactElement } from 'react';
+import React from 'react';
 import { Platform, Keyboard } from 'react-native';
 import { I18nManager } from 'react-native';
 import type {
@@ -10,7 +10,8 @@ import type {
 
 import { childrenWithOverriddenStyle } from './utils';
 import NativePagerView from './spec/NativePagerView';
-
+//@ts-ignore
+import Commands from './spec/NativePagerViewCommands';
 /**
  * Container that allows to flip left and right between child views. Each
  * child view of the `PagerView` will be treated as a separate page
@@ -55,12 +56,7 @@ import NativePagerView from './spec/NativePagerView';
 
 export class PagerView extends React.Component<PagerViewProps> {
   private isScrolling = false;
-  private PagerView = React.createRef<typeof NativePagerView>();
-
-  public getInnerViewNode = (): ReactElement => {
-    //@ts-ignore
-    return this.PagerView.current!.getInnerViewNode();
-  };
+  _ref: any;
 
   private _onPageScroll = (e: PagerViewOnPageScrollEvent) => {
     if (this.props.onPageScroll) {
@@ -93,24 +89,20 @@ export class PagerView extends React.Component<PagerViewProps> {
    * A helper function to scroll to a specific page in the PagerView.
    * The transition between pages will be animated.
    */
-  public setPage = (_: number) => {
-    // UIManager.dispatchViewManagerCommand(
-    //   ReactNative.findNodeHandle(this),
-    //   getViewManagerConfig().Commands.setPage,
-    //   [selectedPage]
-    // );
+  public setPage = (selectedPage: number) => {
+    if (this._ref != null) {
+      Commands.setPage(this._ref, selectedPage);
+    }
   };
 
   /**
    * A helper function to scroll to a specific page in the PagerView.
    * The transition between pages will *not* be animated.
    */
-  public setPageWithoutAnimation = (_: number) => {
-    // UIManager.dispatchViewManagerCommand(
-    //   ReactNative.findNodeHandle(this),
-    //   getViewManagerConfig().Commands.setPageWithoutAnimation,
-    //   [selectedPage]
-    // );
+  public setPageWithoutAnimation = (selectedPage: number) => {
+    if (this._ref != null) {
+      Commands.setPageWithoutAnimation(this._ref, selectedPage);
+    }
   };
 
   /**
@@ -119,6 +111,7 @@ export class PagerView extends React.Component<PagerViewProps> {
    * imperative solution is more useful (e.g. for not blocking an animation)
    */
   public setScrollEnabled = (_: boolean) => {
+    //TODO check, if this is still needed
     // UIManager.dispatchViewManagerCommand(
     //   ReactNative.findNodeHandle(this),
     //   getViewManagerConfig().Commands.setScrollEnabled,
@@ -141,11 +134,15 @@ export class PagerView extends React.Component<PagerViewProps> {
     }
   }
 
+  _captureRef = (ref: any) => {
+    this._ref = ref;
+  };
+
   render() {
     return (
       <NativePagerView
         {...this.props}
-        ref={this.PagerView as any /** TODO: Fix ref type */}
+        ref={this._captureRef}
         style={this.props.style}
         layoutDirection={this.deducedLayoutDirection}
         onPageScroll={this._onPageScroll}

@@ -13,6 +13,7 @@
 #import <react/renderer/components/PagerView/RCTComponentViewHelpers.h>
 
 #import "RCTFabricComponentsPlugins.h"
+#import "RNCPagerViewCommands.h"
 
 
 using namespace facebook::react;
@@ -38,14 +39,11 @@ using namespace facebook::react;
 - (void)layoutSubviews {
     [super layoutSubviews];
     //Workaround to fix incorrect frame issue
-    UIViewController *controller = [_nativeChildrenViewControllers objectAtIndex:_currentIndex];
-    [_nativePageViewController
-        setViewControllers:@[controller]
-        direction:UIPageViewControllerNavigationDirectionForward
-        animated:NO
-        completion:^(BOOL finished) { }];
+    [self goTo:_currentIndex animated:NO];
 
 }
+
+#pragma mark - React API
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
     if (!_nativePageViewController) {
@@ -96,13 +94,9 @@ using namespace facebook::react;
 - (void)updateProps:(const facebook::react::Props::Shared &)props oldProps:(const facebook::react::Props::Shared &)oldProps{
     const auto &oldScreenProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
     const auto &newScreenProps = *std::static_pointer_cast<const RNCViewPagerProps>(props);
+    // change index only once
     if (_currentIndex == -1) {
         _currentIndex = newScreenProps.initialPage;
-        [_nativePageViewController
-            setViewControllers: @[[_nativeChildrenViewControllers objectAtIndex:_currentIndex]]
-            direction:UIPageViewControllerNavigationDirectionForward
-            animated:YES
-            completion:^(BOOL finished) { }];
         for (UIView *subview in _nativePageViewController.view.subviews) {
              if([subview isKindOfClass:UIScrollView.class]){
                  ((UIScrollView *)subview).delegate = self;
@@ -123,6 +117,92 @@ using namespace facebook::react;
     
     [super updateProps:props oldProps:oldProps];
 }
+
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args {
+    RNCPagerViewCommands(self, commandName, args);
+}
+
+#pragma mark - Internal methods
+
+- (void)goTo:(NSInteger)index animated:(BOOL)animated {
+    NSInteger numberOfPages = _nativeChildrenViewControllers.count;
+    
+    if (numberOfPages == 0 || index < 0 || index > numberOfPages - 1) {
+        return;
+    }
+  //TODO
+//    BOOL isForward = (index > self.currentIndex && [self isLtrLayout]) || (index < self.currentIndex && ![self isLtrLayout]);
+//    UIPageViewControllerNavigationDirection direction = isForward ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
+    
+    BOOL isForward = (index > self.currentIndex) || (index < self.currentIndex);
+    UIPageViewControllerNavigationDirection direction = isForward ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
+    
+    long diff = labs(index - _currentIndex);
+    
+    if (isForward && diff > 0) {
+        for (NSInteger i=_currentIndex; i<=index; i++) {
+            if (i == _currentIndex) {
+                continue;
+            }
+            [self goToViewController:i direction:direction animated:animated shouldCallOnPageSelected: i == index];
+        }
+    }
+    
+    if (!isForward && diff > 0) {
+        for (NSInteger i=_currentIndex; i>=index; i--) {
+            // Prevent removal of one or many pages at a time
+            if (index == _currentIndex || i >= numberOfPages) {
+                continue;
+            }
+            [self goToViewController:i direction:direction animated:animated shouldCallOnPageSelected: i == index];
+        }
+    }
+    
+    if (diff == 0) {
+        [self goToViewController:index direction:direction animated:animated shouldCallOnPageSelected:YES];
+    }
+}
+
+- (void)goToViewController:(NSInteger)index
+                            direction:(UIPageViewControllerNavigationDirection)direction
+                            animated:(BOOL)animated
+                            shouldCallOnPageSelected:(BOOL)shouldCallOnPageSelected {
+    [self setPagerViewControllers:index
+                        direction:direction
+                         animated:animated
+                        shouldCallOnPageSelected:shouldCallOnPageSelected];
+}
+
+- (void)setPagerViewControllers:(NSInteger)index
+                      direction:(UIPageViewControllerNavigationDirection)direction
+                       animated:(BOOL)animated
+                       shouldCallOnPageSelected:(BOOL)shouldCallOnPageSelected {
+    if (_nativePageViewController == nil) {
+        return;
+    }
+    __weak RNCPagerViewComponentView *weakSelf = self;
+//    uint16_t coalescingKey = _coalescingKey++;
+    
+    [_nativePageViewController setViewControllers:@[[_nativeChildrenViewControllers objectAtIndex:index]]
+                                           direction:direction
+                                            animated:animated
+                                          completion:^(BOOL finished) {
+        //TODO
+//        __strong typeof(self) strongSelf = weakSelf;
+//        strongSelf.currentIndex = index;
+//        strongSelf.currentView = controller.view;
+//
+//        if (strongSelf.eventDispatcher) {
+//            if (strongSelf.lastReportedIndex != strongSelf.currentIndex) {
+//                if (shouldCallOnPageSelected) {
+//                    [strongSelf.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:strongSelf.reactTag position:@(index) coalescingKey:coalescingKey]];
+//                }
+//                strongSelf.lastReportedIndex = strongSelf.currentIndex;
+//            }
+//        }
+    }];
+}
+
 
 - (UIViewController *)nextControllerForController:(UIViewController *)controller
                                       inDirection:(UIPageViewControllerNavigationDirection)direction {
@@ -167,12 +247,14 @@ using namespace facebook::react;
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController
        viewControllerAfterViewController:(UIViewController *)viewController {
+    //TODO
 //    UIPageViewControllerNavigationDirection direction = [self isLtrLayout] ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
     return [self nextControllerForController:viewController inDirection:UIPageViewControllerNavigationDirectionForward];
 }
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController
       viewControllerBeforeViewController:(UIViewController *)viewController {
+    //TODO
 //    UIPageViewControllerNavigationDirection direction = [self isLtrLayout] ? UIPageViewControllerNavigationDirectionReverse : UIPageViewControllerNavigationDirectionForward;
     return [self nextControllerForController:viewController inDirection:UIPageViewControllerNavigationDirectionReverse];
 }

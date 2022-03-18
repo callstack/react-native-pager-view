@@ -14,7 +14,7 @@
     "detox:android:test:release": "yarn get:testbutler && detox test --configuration android.emu.release --loglevel trace --headless --take-screenshots failing",
     "detox:android:build:debug": "detox build -c android.emu.debug",
     "detox:android:test:debug": "detox test -c android.emu.debug",
-    "js2schema": "node node_modules/react-native-codegen/lib/cli/combine/combine-js-to-schema-cli.js schema.json ../src",
+    "js2schema": "node node_modules/react-native-codegen/lib/cli/combine/combine-js-to-schema-cli.js schema.json ../src/spec",
     "generateSpec": "node node_modules/react-native/scripts/generate-specs-cli.js --platform ios --schemaPath schema.json --outputDir ./codegenFiles --libraryName PagerView --libraryType components",
     "checkGeneratedFiles":"ls ios/build/generated/ios/react/renderer/PagerView"
   },
