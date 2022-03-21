@@ -20,9 +20,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) NSInteger initialPage;
 @property(nonatomic) NSInteger currentIndex;
 
-//- (void)setPage:(NSInteger)index;
-//- (void)setPageWithoutAnimation:(NSInteger)index;
-- (void)goTo:(NSInteger)index animated:(BOOL)animated;
+- (void)setPage:(NSInteger)number;
+- (void)setPageWithoutAnimation:(NSInteger)number;
+//- (void)goTo:(NSInteger)index animated:(BOOL)animated;
 
 @end
 

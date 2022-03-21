@@ -13,8 +13,6 @@
 #import <react/renderer/components/PagerView/RCTComponentViewHelpers.h>
 
 #import "RCTFabricComponentsPlugins.h"
-#import "RNCPagerViewCommands.h"
-
 
 using namespace facebook::react;
 
@@ -119,10 +117,18 @@ using namespace facebook::react;
 }
 
 - (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args {
-    RNCPagerViewCommands(self, commandName, args);
+    RCTRNCViewPagerHandleCommand(self, commandName, args);
 }
 
 #pragma mark - Internal methods
+
+- (void)setPage:(NSInteger)index {
+    [self goTo:index animated:YES];
+}
+
+- (void)setPageWithoutAnimation:(NSInteger)index {
+    [self goTo:index animated:NO];
+}
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     NSInteger numberOfPages = _nativeChildrenViewControllers.count;

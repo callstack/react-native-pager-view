@@ -1,7 +1,7 @@
 /**
  * @flow strict-local
  */
-
+ import * as React from 'react';
  import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
  import type {
    WithDefault,
@@ -38,6 +38,27 @@ type PageScrollStateChangedEvent = $ReadOnly<{|
   scrollEnabled?: boolean,
  |}>;
  
+
+  import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
+
+ type PagerViewNativeComponentType = HostComponent<NativeProps>;
+ 
+ interface NativeCommands {
+   +setPage: (
+     viewRef: React.ElementRef<PagerViewNativeComponentType>,
+     number: Int32
+   ) => void;
+   +setPageWithoutAnimation: (
+     viewRef: React.ElementRef<PagerViewNativeComponentType>,
+     number: Int32
+   ) => void;
+ }
+
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: ['setPage', 'setPageWithoutAnimation'],
+});
+
+
  export default (codegenNativeComponent<NativeProps>(
    'RNCViewPager'
  ): HostComponent<NativeProps>);

@@ -9,9 +9,7 @@ import type {
 } from './types';
 
 import { childrenWithOverriddenStyle } from './utils';
-import NativePagerView from './spec/NativePagerView';
-//@ts-ignore
-import Commands from './spec/NativePagerViewCommands';
+import NativePagerView, { Commands } from './spec/NativePagerView';
 /**
  * Container that allows to flip left and right between child views. Each
  * child view of the `PagerView` will be treated as a separate page
