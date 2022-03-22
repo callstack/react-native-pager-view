@@ -22,7 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)setPage:(NSInteger)number;
 - (void)setPageWithoutAnimation:(NSInteger)number;
-//- (void)goTo:(NSInteger)index animated:(BOOL)animated;
 
 @end
 

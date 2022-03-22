@@ -62,6 +62,7 @@ using namespace facebook::react;
                                        options:options];
         _nativePageViewController.dataSource = self;
         _nativePageViewController.delegate = self;
+        _nativePageViewController.view.frame = self.frame;
         [self addSubview:_nativePageViewController.view];
     }
     UIViewController *wrapper = [[UIViewController alloc] initWithView:childComponentView];
@@ -136,47 +137,15 @@ using namespace facebook::react;
     if (numberOfPages == 0 || index < 0 || index > numberOfPages - 1) {
         return;
     }
-  //TODO
-//    BOOL isForward = (index > self.currentIndex && [self isLtrLayout]) || (index < self.currentIndex && ![self isLtrLayout]);
-//    UIPageViewControllerNavigationDirection direction = isForward ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
     
-    BOOL isForward = (index > self.currentIndex) || (index < self.currentIndex);
+    BOOL isForward = (index > self.currentIndex);
     UIPageViewControllerNavigationDirection direction = isForward ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
     
-    long diff = labs(index - _currentIndex);
-    
-    if (isForward && diff > 0) {
-        for (NSInteger i=_currentIndex; i<=index; i++) {
-            if (i == _currentIndex) {
-                continue;
-            }
-            [self goToViewController:i direction:direction animated:animated shouldCallOnPageSelected: i == index];
-        }
-    }
-    
-    if (!isForward && diff > 0) {
-        for (NSInteger i=_currentIndex; i>=index; i--) {
-            // Prevent removal of one or many pages at a time
-            if (index == _currentIndex || i >= numberOfPages) {
-                continue;
-            }
-            [self goToViewController:i direction:direction animated:animated shouldCallOnPageSelected: i == index];
-        }
-    }
-    
-    if (diff == 0) {
-        [self goToViewController:index direction:direction animated:animated shouldCallOnPageSelected:YES];
-    }
-}
-
-- (void)goToViewController:(NSInteger)index
-                            direction:(UIPageViewControllerNavigationDirection)direction
-                            animated:(BOOL)animated
-                            shouldCallOnPageSelected:(BOOL)shouldCallOnPageSelected {
     [self setPagerViewControllers:index
                         direction:direction
                          animated:animated
-                        shouldCallOnPageSelected:shouldCallOnPageSelected];
+                        shouldCallOnPageSelected:YES];
+    
 }
 
 - (void)setPagerViewControllers:(NSInteger)index
@@ -197,6 +166,7 @@ using namespace facebook::react;
             const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(strongSelf->_eventEmitter);
             int position = (int) index;
             strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{position : position});
+            strongSelf->_currentIndex = index;
         }
     }];
 }
@@ -234,19 +204,6 @@ using namespace facebook::react;
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
     const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
     strongEventEmitter.onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{pageScrollState: RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Settling });
-// TODO
-//    if (!_overdrag) {
-//        NSInteger maxIndex = _reactPageIndicatorView.numberOfPages - 1;
-//        BOOL isFirstPage = [self isLtrLayout] ? _currentIndex == 0 : _currentIndex == maxIndex;
-//        BOOL isLastPage = [self isLtrLayout] ? _currentIndex == maxIndex : _currentIndex == 0;
-//        CGFloat contentOffset =[self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;
-//        CGFloat topBound = [self isHorizontal] ? scrollView.bounds.size.width : scrollView.bounds.size.height;
-//
-//        if ((isFirstPage && contentOffset <= topBound) || (isLastPage && contentOffset >= topBound)) {
-//            CGPoint croppedOffset = [self isHorizontal] ? CGPointMake(topBound, 0) : CGPointMake(0, topBound);
-//            *targetContentOffset = croppedOffset;
-//        }
-//    }
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -260,7 +217,9 @@ using namespace facebook::react;
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     CGPoint point = scrollView.contentOffset;
+    
     float offset = 0;
+    
     if (self.isHorizontal) {
         if (self.frame.size.width != 0) {
             offset = (point.x - self.frame.size.width)/self.frame.size.width;
@@ -272,11 +231,20 @@ using namespace facebook::react;
     }
     
     float absoluteOffset = fabs(offset);
+    
     NSInteger position = self.currentIndex;
+    
+    BOOL isAnimatingBackwards = offset<0;
+    if (isAnimatingBackwards) {
+        position =  self.currentIndex - 1;
+        absoluteOffset =  fmax(0, 1 - absoluteOffset);
+    }
+    
     const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
     int eventPosition = (int) position;
     strongEventEmitter.onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{position: eventPosition, offset: absoluteOffset});
 }
+
 
 #pragma mark - UIPageViewControllerDelegate
 
