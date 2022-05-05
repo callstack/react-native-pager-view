@@ -1,5 +1,16 @@
+import { enableScreens } from 'react-native-screens';
+// run this before any screen render(usually in App.js)
+enableScreens();
+
 import * as React from 'react';
-import { StyleSheet, Text, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Button,
+  Alert,
+} from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { BasicPagerViewExample } from './BasicPagerViewExample';
@@ -18,6 +29,8 @@ import CustomIndicatorExample from './tabView/CustomIndicatorExample';
 import CustomTabBarExample from './tabView/CustomTabBarExample';
 import CoverflowExample from './tabView/CoverflowExample';
 import ReanimatedOnPageScrollExample from './ReanimatedOnPageScrollExample';
+import NativeStackExample from './NativeStackExample';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const examples = [
   { component: BasicPagerViewExample, name: 'Basic Example' },
@@ -37,6 +50,10 @@ const examples = [
   {
     component: NestPagerView,
     name: 'Nest PagerView Example',
+  },
+  {
+    component: NativeStackExample,
+    name: 'NativeStackExample',
   },
   { component: ScrollableTabBarExample, name: 'ScrollableTabBarExample' },
   { component: AutoWidthTabBarExample, name: 'AutoWidthTabBarExample' },
@@ -72,19 +89,51 @@ function App() {
 
 const Stack = createStackNavigator();
 
+const NativeStack = createNativeStackNavigator();
+
 export function Navigation() {
+  const [mode, setMode] = React.useState<'native' | 'js'>('native');
+  const NavigationStack = mode === 'js' ? Stack : NativeStack;
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="PagerView Example">
-        <Stack.Screen name="PagerView Example" component={App} />
+      <NavigationStack.Navigator initialRouteName="PagerView Example">
+        <NavigationStack.Screen
+          name="PagerView Example"
+          component={App}
+          options={{
+            headerRight: () => (
+              <Button
+                onPress={() =>
+                  Alert.alert(
+                    'Alert',
+                    `Do you want to change to the ${
+                      mode === 'js' ? 'native stack' : 'js stack'
+                    } ?`,
+                    [
+                      { text: 'No', onPress: () => {} },
+                      {
+                        text: 'Yes',
+                        onPress: () => {
+                          setMode(mode === 'js' ? 'native' : 'js');
+                        },
+                      },
+                    ]
+                  )
+                }
+                title={mode === 'js' ? 'JS' : 'NATIVE'}
+                color="orange"
+              />
+            ),
+          }}
+        />
         {examples.map((example, index) => (
-          <Stack.Screen
+          <NavigationStack.Screen
             key={index}
             name={example.name}
             component={example.component}
           />
         ))}
-      </Stack.Navigator>
+      </NavigationStack.Navigator>
     </NavigationContainer>
   );
 }
