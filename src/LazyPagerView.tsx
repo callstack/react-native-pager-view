@@ -143,6 +143,17 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
       return;
     }
 
+    // Send paging command.
+    setTimeout(() => {
+      UIManager.dispatchViewManagerCommand(
+        findNodeHandle(this),
+        animated
+          ? getViewManagerConfig().Commands.setPage
+          : getViewManagerConfig().Commands.setPageWithoutAnimation,
+        [page]
+      );
+    }, 0);
+
     // Start rendering the destination.
     this.setState((prevState) =>
       this.computeRenderWindow({
@@ -153,16 +164,6 @@ class LazyPagerViewImpl<ItemT> extends React.Component<
         windowLength: prevState.windowLength,
       })
     );
-    // Send paging command.
-    setImmediate(() => {
-      UIManager.dispatchViewManagerCommand(
-        findNodeHandle(this),
-        animated
-          ? getViewManagerConfig().Commands.setPage
-          : getViewManagerConfig().Commands.setPageWithoutAnimation,
-        [page]
-      );
-    });
   }
 
   /**
