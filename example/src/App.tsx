@@ -29,7 +29,6 @@ import CustomIndicatorExample from './tabView/CustomIndicatorExample';
 import CustomTabBarExample from './tabView/CustomTabBarExample';
 import CoverflowExample from './tabView/CoverflowExample';
 import ReanimatedOnPageScrollExample from './ReanimatedOnPageScrollExample';
-import NativeStackExample from './NativeStackExample';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const examples = [
@@ -50,10 +49,6 @@ const examples = [
   {
     component: NestPagerView,
     name: 'Nest PagerView Example',
-  },
-  {
-    component: NativeStackExample,
-    name: 'NativeStackExample',
   },
   { component: ScrollableTabBarExample, name: 'ScrollableTabBarExample' },
   { component: AutoWidthTabBarExample, name: 'AutoWidthTabBarExample' },
