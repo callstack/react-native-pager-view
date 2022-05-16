@@ -264,7 +264,7 @@
             if (i == _currentIndex) {
                 continue;
             }
-            [self goToViewController:i direction:direction animated:animated shouldCallOnPageSelected: i == index];
+            [self goToViewController:i direction:direction animated:(!self.animating && i == index) shouldCallOnPageSelected: i == index];
         }
     }
     
@@ -274,12 +274,12 @@
             if (i == _currentIndex || i >= numberOfPages) {
                 continue;
             }
-            [self goToViewController:i direction:direction animated:animated shouldCallOnPageSelected: i == index];
+            [self goToViewController:i direction:direction animated:(!self.animating && i == index) shouldCallOnPageSelected: i == index];
         }
     }
     
     if (diff == 0) {
-        [self goToViewController:index direction:direction animated:animated shouldCallOnPageSelected:YES];
+        [self goToViewController:index direction:direction animated:NO shouldCallOnPageSelected:YES];
     }
 }
 
