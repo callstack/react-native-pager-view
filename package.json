@@ -1,6 +1,6 @@
 {
   "name": "react-native-pager-view",
-  "version": "5.4.15",
+  "version": "5.4.16",
   "description": "React Native wrapper for Android and iOS ViewPager",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
