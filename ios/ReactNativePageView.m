@@ -103,7 +103,7 @@
         if([subview isKindOfClass:UIScrollView.class]){
             ((UIScrollView *)subview).delegate = self;
             ((UIScrollView *)subview).keyboardDismissMode = _dismissKeyboard;
-            ((UIScrollView *)subview).delaysContentTouches = NO;
+            ((UIScrollView *)subview).delaysContentTouches = YES;
             self.scrollView = (UIScrollView *)subview;
         }
     }
