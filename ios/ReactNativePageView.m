@@ -89,6 +89,10 @@
         [self embed];
         [self setupInitialController];
     }
+
+    if (self.reactViewController.navigationController != nil && self.reactViewController.navigationController.interactivePopGestureRecognizer != nil) {
+        [self.scrollView.panGestureRecognizer requireGestureRecognizerToFail:self.reactViewController.navigationController.interactivePopGestureRecognizer];
+    }
 }
 
 - (void)embed {
