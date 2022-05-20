@@ -185,6 +185,10 @@
 
     NSArray *currentVCs = self.reactPageViewController.viewControllers;
     if (currentVCs.count == 1 && [currentVCs.firstObject isEqual:controller]) {
+        [self.reactPageViewController setViewControllers:@[controller]
+                                               direction:direction
+                                                animated:NO
+                                              completion:nil];
         return;
     }
 
