@@ -185,9 +185,12 @@
 
     NSArray *currentVCs = self.reactPageViewController.viewControllers;
     if (currentVCs.count == 1 && [currentVCs.firstObject isEqual:controller]) {
+        // see: 
+        // 1) https://github.com/callstack/react-native-pager-view/pull/462
+        // 2) https://github.com/callstack/react-native-pager-view/issues/566
         [self.reactPageViewController setViewControllers:@[controller]
                                                direction:direction
-                                                animated:NO
+                                                animated:YES
                                               completion:nil];
         return;
     }
