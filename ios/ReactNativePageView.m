@@ -275,7 +275,7 @@
             if (i == _currentIndex) {
                 continue;
             }
-            [self goToViewController:i direction:direction animated:(!self.animating && i == index) shouldCallOnPageSelected: i == index];
+            [self goToViewController:i direction:direction animated:(!self.animating && i == index && animated) shouldCallOnPageSelected: i == index];
         }
     }
     
@@ -285,7 +285,7 @@
             if (i == _currentIndex || i >= numberOfPages) {
                 continue;
             }
-            [self goToViewController:i direction:direction animated:(!self.animating && i == index) shouldCallOnPageSelected: i == index];
+            [self goToViewController:i direction:direction animated:(!self.animating && i == index && animated) shouldCallOnPageSelected: i == index];
         }
     }
     
