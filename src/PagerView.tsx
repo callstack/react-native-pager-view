@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Platform, UIManager, Keyboard } from 'react-native';
-import ReactNative, { I18nManager } from 'react-native';
+import { findNodeHandle, I18nManager } from 'react-native';
 import type {
   PagerViewOnPageScrollEvent,
   PagerViewOnPageSelectedEvent,
@@ -94,7 +94,7 @@ export class PagerView extends React.Component<PagerViewProps> {
    */
   public setPage = (selectedPage: number) => {
     UIManager.dispatchViewManagerCommand(
-      ReactNative.findNodeHandle(this),
+      findNodeHandle(this),
       getViewManagerConfig().Commands.setPage,
       [selectedPage]
     );
@@ -106,7 +106,7 @@ export class PagerView extends React.Component<PagerViewProps> {
    */
   public setPageWithoutAnimation = (selectedPage: number) => {
     UIManager.dispatchViewManagerCommand(
-      ReactNative.findNodeHandle(this),
+      findNodeHandle(this),
       getViewManagerConfig().Commands.setPageWithoutAnimation,
       [selectedPage]
     );
@@ -119,7 +119,7 @@ export class PagerView extends React.Component<PagerViewProps> {
    */
   public setScrollEnabled = (scrollEnabled: boolean) => {
     UIManager.dispatchViewManagerCommand(
-      ReactNative.findNodeHandle(this),
+      findNodeHandle(this),
       getViewManagerConfig().Commands.setScrollEnabled,
       [scrollEnabled]
     );
