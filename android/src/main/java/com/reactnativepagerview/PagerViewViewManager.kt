@@ -96,6 +96,11 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
       // https://github.com/facebook/react-native/issues/17968#issuecomment-697136929
       refreshViewChildrenLayout(parent)
     }
+
+    if (!host.didSetInitialIndex && host.initialIndex == index) {
+      host.didSetInitialIndex = true
+      setCurrentItem(parent, index, false)
+    }
   }
 
   override fun getChildCount(parent: NestedScrollableHost) = getViewPager(parent).adapter?.itemCount ?: 0
@@ -145,8 +150,13 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
   @ReactProp(name = "initialPage", defaultInt = 0)
   fun setInitialPage(host: NestedScrollableHost, value: Int) {
     val view = getViewPager(host)
-    view.post {
-      setCurrentItem(view, value, false)
+    //https://github.com/callstack/react-native-pager-view/issues/456
+    //Initial index should be set only once. 
+    if (host.initialIndex === null) {
+      host.initialIndex = value
+      view.post {
+        host.didSetInitialIndex = true
+      }
     }
   }
 
