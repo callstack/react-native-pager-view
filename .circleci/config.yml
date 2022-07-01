@@ -4,65 +4,96 @@ orbs:
   rn: react-native-community/react-native@5.6.2
   android: circleci/android@1.0.3
 
-# - rn/yarn_install
-# fails with Error untarring cache: Error extracting tarball /var/folders/bq/mjrgbpkx5h1g_b22fpv0tlzc0000gn/T/cache376822577 : tmp/yarn/: Cannot extract through symlink tmp/yarn tmp/yarn/v6/: Cannot extract through symlink tmp/yarn/v6 tmp/yarn/v6/.tmp/: Cannot extract through symlink tmp/yarn/v6/.tmp tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/: Cannot extract through symlink tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/: Cannot extract through symlink tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/@babel/: Cannot extract through symlink tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/@babel tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/@babel/code-frame/: Cannot extract: exit status 1
-# that is why we use yarn install --frozen-lockfile but that is SLOW! help us to fix this!
+executors:
+  default:
+    docker:
+      - image: circleci/node:10
+    working_directory: ~/project
+
+commands:
+  attach_project:
+    steps:
+      - attach_workspace:
+          at: ~/project
 
 jobs:
-  analyse_js:
-    executor:
-      name: rn/linux_js
-      node_version: '14.17.0'
+  install-dependencies:
+    executor: default
     steps:
       - checkout
-      # - rn/yarn_install
-      # fails with Error untarring cache: Error extracting tarball /var/folders/bq/mjrgbpkx5h1g_b22fpv0tlzc0000gn/T/cache376822577 : tmp/yarn/: Cannot extract through symlink tmp/yarn tmp/yarn/v6/: Cannot extract through symlink tmp/yarn/v6 tmp/yarn/v6/.tmp/: Cannot extract through symlink tmp/yarn/v6/.tmp tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/: Cannot extract through symlink tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/: Cannot extract through symlink tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/@babel/: Cannot extract through symlink tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/@babel tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/@babel/code-frame/: Cannot extract: exit status 1
+      - attach_project
+      - restore_cache:
+          keys:
+            - dependencies-{{ checksum "package.json" }}
+            - dependencies-
+      - restore_cache:
+          keys:
+            - dependencies-example-{{ checksum "example/package.json" }}
+            - dependencies-example-
       - run:
-          command: yarn install --frozen-lockfile
-          name: yarn install
-      - run:
-          command: yarn lint
-          name: Run ESLint
-      - run:
-          command: yarn typescript
-          name: Typescript
+          name: Install dependencies
+          command: |
+            yarn install --cwd example --frozen-lockfile
+            yarn install --frozen-lockfile
+      - save_cache:
+          key: dependencies-{{ checksum "package.json" }}
+          paths: node_modules
+      - save_cache:
+          key: dependencies-example-{{ checksum "example/package.json" }}
+          paths: example/node_modules
+      - persist_to_workspace:
+          root: .
+          paths: .
 
+  lint:
+    executor: default
+    steps:
+      - attach_project
+      - run:
+          name: Lint files
+          command: |
+            yarn lint
+  typescript:
+    executor: default
+    steps:
+      - attach_project
+      - run:
+          name: Typecheck files
+          command: |
+            yarn typescript
   e2e_release_ios:
     executor:
       name: rn/macos
       xcode_version: '13.1.0'
     steps:
-      - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: install applesimutils
           command: |
             HOMEBREW_NO_INSTALL_CLEANUP=1 HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew >/dev/null
             HOMEBREW_NO_INSTALL_CLEANUP=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install applesimutils >/dev/null
+      - rn/setup_macos_executor:
+          node_version: '14.17.0'
       - rn/ios_simulator_start:
           device: 'iPhone 11'
-      - run:
-          command: yarn install --frozen-lockfile
-          name: yarn install
       - rn/pod_install:
           pod_install_directory: 'example/ios'
       - run:
-          command: curl https://raw.githubusercontent.com/facebook/react-native/6334ac35ac3cbc2c84b2d46d46ec118bf9bf714d/scripts/find-node.sh > node_modules/react-native/scripts/find-node.sh
-          name: fix issue with nvm # will be fixed in RN 67 (https://github.com/react-native-community/upgrade-support/issues/138)
-      - run:
           command: yarn --cwd example detox:ios:build:release
-          name: build app for e2e tests
+          name: build for detox
       - run:
           command: detox clean-framework-cache && detox build-framework-cache && yarn --cwd example detox:ios:test:release
-          name: run e2e tests
+          name: test detox
       - store_artifacts:
           path: ./example/artifacts
-
   e2e_release_android:
     executor:
       name: android/android-machine
       resource-class: large
     steps:
-      - checkout
+      - attach_workspace:
+          at: .
       - run:
           name: change default node version
           command: |
@@ -81,23 +112,34 @@ jobs:
           post-emulator-launch-assemble-command: 'pwd'
       - android/disable-animations
       - run:
-          command: npm install --global yarn
-          name: install yarn
-      - run:
-          command: yarn install --frozen-lockfile
-          name: yarn install
-      - run:
           command: yarn --cwd example detox:android:build:release
-          name: build app for e2e tests
+          name: build for detox
       - run:
           command: yarn --cwd example detox:android:test:release
-          name: run e2e tests
+          name: test detox
       - store_artifacts:
           path: ./example/artifacts
-
+  build-package:
+    executor: default
+    steps:
+      - attach_project
+      - run:
+          name: Build package
+          command: |
+            yarn prepare
 workflows:
   build-and-test:
     jobs:
-      - analyse_js
-      - e2e_release_ios
-      - e2e_release_android
+      - install-dependencies
+      - lint:
+          requires:
+            - install-dependencies
+      - typescript:
+          requires:
+            - install-dependencies
+      - e2e_release_ios:
+          requires:
+            - install-dependencies
+      - e2e_release_android:
+          requires:
+            - install-dependencies
