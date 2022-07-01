@@ -1,284 +1,103 @@
 version: 2.1
 
-executors:
-  linux_js:
-    docker:
-      - image: circleci/node:12.13.0
-    resource_class: medium
-    environment:
-      PATH: '/opt/yarn/yarn-v1.5.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+orbs:
+  rn: react-native-community/react-native@5.6.2
+  android: circleci/android@1.0.3
 
-  macos_custom:
-    parameters:
-      xcode_version:
-        type: string
-        default: '12.4.0'
-    macos:
-      xcode: <<parameters.xcode_version>>
-
-commands:
-  attach_project:
-    steps:
-      - attach_workspace:
-          at: ~/project
-
-  ios_simulator_start:
-    steps:
-      - run:
-          name: Start iOS simulator (background)
-          background: true
-          command: xcrun simctl boot "11" || true
-
-  pod_install:
-    parameters:
-      pod_install_directory:
-        type: string
-        default: 'example/ios'
-
-    steps:
-      - restore_cache:
-          keys:
-            - cache-pods-{{ checksum "<<parameters.pod_install_directory>>/Podfile.lock" }}-v1
-            - cache-pods-
-      - run:
-          name: Install CocoaPods
-          command: |
-            cd <<parameters.pod_install_directory>> && pod install && cd -
-
-      - save_cache:
-          paths:
-            - <<parameters.pod_install_directory>>/Pods
-          key: cache-pods-{{ checksum "<<parameters.pod_install_directory>>/Podfile.lock" }}-v1
-
-  setup_macos_executor:
-    parameters:
-      node_version:
-        type: string
-        default: '12.13.0'
-    steps:
-      - attach_workspace:
-          at: .
-      - run:
-          name: Configure Environment Variables
-          command: |
-            echo 'export PATH="$PATH:/usr/local/opt/node@<<parameters.node_version>>/bin:~/.yarn/bin:~/project/node_modules/.bin:~/project/example/node_modules/.bin"' >> $BASH_ENV
-            echo 'export ANDROID_HOME="/usr/local/share/android-commandlinetools"' >> $BASH_ENV
-            echo 'export ANDROID_SDK_ROOT="/usr/local/share/android-commandlinetools"' >> $BASH_ENV
-            echo 'export PATH="$ANDROID_SDK_ROOT/emulator:$ANDROID_SDK_ROOT/tools:$ANDROID_SDK_ROOT/platform-tools:$PATH"' >> $BASH_ENV
-            echo 'export QEMU_AUDIO_DRV=none' >> $BASH_ENV
-            echo 'export JAVA_HOME=$(/usr/libexec/java_home)' >> $BASH_ENV
-            source $BASH_ENV
-
-      - restore_cache:
-          key: |
-            brew-cache-{{ arch }}-v1
-
-      - run:
-          name: Install node@<<parameters.node_version>>
-          command: |
-            set +e
-            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.3/install.sh | bash
-            echo 'export NVM_DIR=$HOME/.nvm' >> $BASH_ENV
-            echo 'source $NVM_DIR/nvm.sh' >> $BASH_ENV
-            source ~/.bashrc
-            command -v nvm
-            nvm install <<parameters.node_version>>
-            nvm alias default <<parameters.node_version>>
-
-      - run:
-          name: Configure Detox Environment
-          command: |
-            brew update >/dev/null
-            HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew >/dev/null
-            HOMEBREW_NO_AUTO_UPDATE=1 brew tap homebrew/cask >/dev/null
-            HOMEBREW_NO_AUTO_UPDATE=1 brew install applesimutils >/dev/null
-            HOMEBREW_NO_AUTO_UPDATE=1 brew install android-commandlinetools >/dev/null
-            touch .watchmanconfig
-            node -v
-
-  android_emulator_start:
-    parameters:
-      device_name:
-        type: string
-        default: 'TestingAVD'
-      platform_version:
-        type: string
-        default: 'android-28'
-      build_tools_version:
-        type: string
-        default: '28.0.3'
-      logcat_grep:
-        type: string
-        default: 'com.example.reactnativepagerview'
-
-    steps:
-      - run:
-          name: Install Android Emulator
-          shell: /bin/bash -e
-          command: |
-            yes | sdkmanager "platform-tools" "tools" >/dev/null
-            yes | sdkmanager "platforms;<<parameters.platform_version>>" "system-images;<<parameters.platform_version>>;default;x86_64" >/dev/null
-            yes | sdkmanager "emulator" --channel=3 >/dev/null
-            yes | sdkmanager "build-tools;<<parameters.build_tools_version>>" >/dev/null
-            yes | sdkmanager --licenses >/dev/null
-            yes | sdkmanager --list
-
-      - run:
-          name: ADB Start Stop
-          command: |
-            adb start-server
-            adb devices
-            adb kill-server
-            ls -la ~/.android
-      - run:
-          name: Create Android Emulator
-          command:
-            avdmanager create avd --force --name <<parameters.device_name>> --package
-            "system-images;<<parameters.platform_version>>;default;x86_64" --tag
-            default --device pixel
-
-      - run:
-          name: Start Android Emulator (background)
-          command: |
-            $ANDROID_HOME/emulator/emulator @<<parameters.device_name>> -version
-            $ANDROID_HOME/emulator/emulator @<<parameters.device_name>> -cores 2 -gpu auto -accel on -memory 2048 -no-audio -no-snapshot -no-boot-anim -no-window -logcat *:W | grep -i 'ReactNative\|<<parameters.logcat_grep>>'
-          background: true
-
-      - run:
-          name: Wait for AVD to be ready
-          no_output_timeout: '5m'
-          command: |
-            export BOOT=""
-            echo "Waiting for AVD to finish booting"
-            export PATH=$(dirname $(dirname $(command -v android)))/platform-tools:$PATH
-            until [[ "$BOOT" =~ "1" ]]; do
-              sleep 5
-              export BOOT=$(adb -e shell getprop sys.boot_completed 2>&1)
-            done
-            sleep 15
-            adb shell settings put global window_animation_scale 0
-            adb shell settings put global transition_animation_scale 0
-            adb shell settings put global animator_duration_scale 0
-            echo "Android Virtual Device is now ready."
+# - rn/yarn_install
+# fails with Error untarring cache: Error extracting tarball /var/folders/bq/mjrgbpkx5h1g_b22fpv0tlzc0000gn/T/cache376822577 : tmp/yarn/: Cannot extract through symlink tmp/yarn tmp/yarn/v6/: Cannot extract through symlink tmp/yarn/v6 tmp/yarn/v6/.tmp/: Cannot extract through symlink tmp/yarn/v6/.tmp tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/: Cannot extract through symlink tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/: Cannot extract through symlink tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/@babel/: Cannot extract through symlink tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/@babel tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/@babel/code-frame/: Cannot extract: exit status 1
+# that is why we use yarn install --frozen-lockfile but that is SLOW! help us to fix this!
 
 jobs:
-  install-dependencies:
-    executor: linux_js
+  analyse_js:
+    executor:
+      name: rn/linux_js
+      node_version: '14.17.0'
     steps:
       - checkout
-      - attach_project
-      - restore_cache:
-          keys:
-            - dependencies-{{ checksum "package.json" }}
-            - dependencies-
-      - restore_cache:
-          keys:
-            - dependencies-example-{{ checksum "example/package.json" }}
-            - dependencies-example-
-      - run:
-          name: Install dependencies
-          command: |
-            yarn install --cwd example --frozen-lockfile
-            yarn install --frozen-lockfile
-      - save_cache:
-          key: dependencies-{{ checksum "package.json" }}
-          paths: [node_modules]
-      - save_cache:
-          key: dependencies-example-{{ checksum "example/package.json" }}
-          paths: [example/node_modules]
-      - persist_to_workspace:
-          root: .
-          paths: [.]
-
-  lint:
-    executor: linux_js
-    steps:
-      - attach_project
-      - run:
-          name: Lint files
-          command: |
-            yarn lint
-
-  typescript:
-    executor: linux_js
-    steps:
-      - attach_project
-      - run:
-          name: Typecheck files
-          command: |
-            yarn typescript
-  test:
-    executor: linux_js
-    steps:
-      - attach_project
-      - run:
-          name: Integration tests
-          command: |
-            yarn test
-  e2e-ios:
-    executor: macos_custom
-
-    steps:
-      - attach_workspace:
-          at: .
-
-      - setup_macos_executor
-
-      - ios_simulator_start
-
+      # - rn/yarn_install
+      # fails with Error untarring cache: Error extracting tarball /var/folders/bq/mjrgbpkx5h1g_b22fpv0tlzc0000gn/T/cache376822577 : tmp/yarn/: Cannot extract through symlink tmp/yarn tmp/yarn/v6/: Cannot extract through symlink tmp/yarn/v6 tmp/yarn/v6/.tmp/: Cannot extract through symlink tmp/yarn/v6/.tmp tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/: Cannot extract through symlink tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/: Cannot extract through symlink tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/@babel/: Cannot extract through symlink tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/@babel tmp/yarn/v6/npm-@babel-code-frame-7.8.3-33e25903d7481181534e12ec0a25f16b6fcf419e-integrity/node_modules/@babel/code-frame/: Cannot extract: exit status 1
       - run:
           command: yarn install --frozen-lockfile
           name: yarn install
-
-      - pod_install
-
       - run:
-          command: yarn e2e:build:ios:release
-          name: build for detox
+          command: yarn lint
+          name: Run ESLint
       - run:
-          command: yarn e2e:test:ios:release
-          name: test detox
-      - store_artifacts:
-          path: ./artifacts
+          command: yarn typescript
+          name: Typescript
 
-  e2e-android:
+  e2e_release_ios:
     executor:
-      name: macos_custom
+      name: rn/macos
+      xcode_version: '13.1.0'
     steps:
-      - attach_workspace:
-          at: .
-      - setup_macos_executor
-
+      - checkout
+      - run:
+          name: install applesimutils
+          command: |
+            HOMEBREW_NO_INSTALL_CLEANUP=1 HOMEBREW_NO_AUTO_UPDATE=1 brew tap wix/brew >/dev/null
+            HOMEBREW_NO_INSTALL_CLEANUP=1 HOMEBREW_NO_AUTO_UPDATE=1 brew install applesimutils >/dev/null
+      - rn/ios_simulator_start:
+          device: 'iPhone 11'
       - run:
           command: yarn install --frozen-lockfile
           name: yarn install
-      - android_emulator_start
+      - rn/pod_install:
+          pod_install_directory: 'example/ios'
       - run:
-          command: yarn e2e:build:android:release
-          name: build for detox
+          command: curl https://raw.githubusercontent.com/facebook/react-native/6334ac35ac3cbc2c84b2d46d46ec118bf9bf714d/scripts/find-node.sh > node_modules/react-native/scripts/find-node.sh
+          name: fix issue with nvm # will be fixed in RN 67 (https://github.com/react-native-community/upgrade-support/issues/138)
       - run:
-          no_output_timeout: 60m
-          command: yarn e2e:test:android:release
-          name: test detox
+          command: yarn --cwd example detox:ios:build:release
+          name: build app for e2e tests
+      - run:
+          command: detox clean-framework-cache && detox build-framework-cache && yarn --cwd example detox:ios:test:release
+          name: run e2e tests
       - store_artifacts:
-          path: ./artifacts
+          path: ./example/artifacts
+
+  e2e_release_android:
+    executor:
+      name: android/android-machine
+      resource-class: large
+    steps:
+      - checkout
+      - run:
+          name: change default node version
+          command: |
+            nvm install v15.11.0
+            nvm alias default v15.11.0
+            echo 'export PATH=/opt/circleci/.nvm/versions/node/v15.11.0/bin:$PATH' >> $BASH_ENV
+      - android/create-avd:
+          avd-name: TestingAVD
+          system-image: system-images;android-29;default;x86
+          additional-args: --device "pixel_4_xl"
+          install: true
+      - android/start-emulator:
+          avd-name: TestingAVD
+          no-window: true
+          restore-gradle-cache-prefix: v1a
+          post-emulator-launch-assemble-command: 'pwd'
+      - android/disable-animations
+      - run:
+          command: npm install --global yarn
+          name: install yarn
+      - run:
+          command: yarn install --frozen-lockfile
+          name: yarn install
+      - run:
+          command: yarn --cwd example detox:android:build:release
+          name: build app for e2e tests
+      - run:
+          command: yarn --cwd example detox:android:test:release
+          name: run e2e tests
+      - store_artifacts:
+          path: ./example/artifacts
 
 workflows:
   build-and-test:
     jobs:
-      - install-dependencies
-      - lint:
-          requires:
-            - install-dependencies
-      - typescript:
-          requires:
-            - install-dependencies
-      - test:
-          requires:
-            - install-dependencies
-      # - e2e-android:
-      #     requires:
-      #       - install-dependencies
-      # - e2e-ios:
-      #     requires:
-      #       - install-dependencies
+      - analyse_js
+      - e2e_release_ios
+      - e2e_release_android
