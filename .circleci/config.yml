@@ -7,7 +7,7 @@ orbs:
 executors:
   default:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:15.11.0
     working_directory: ~/project
 
 commands:
