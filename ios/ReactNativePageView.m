@@ -47,7 +47,6 @@
         _cachedControllers = [NSHashTable hashTableWithOptions:NSHashTableStrongMemory];
         _overdrag = NO;
         _layoutDirection = @"ltr";
-        _previousBounds = CGRectMake(0, 0, 0, 0);
     }
     return self;
 }
@@ -56,13 +55,6 @@
     [super layoutSubviews];
     if (self.reactPageViewController) {
         [self shouldScroll:self.scrollEnabled];
-
-        if (!CGRectEqualToRect(self.previousBounds, CGRectMake(0, 0, 0, 0)) && !CGRectEqualToRect(self.bounds, self.previousBounds)) {
-            // Below line fix bug, where the view does not update after orientation changed.
-            [self updateDataSource];
-        }
-
-        self.previousBounds = CGRectMake(self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
     }
 }
 
@@ -185,13 +177,6 @@
 
     NSArray *currentVCs = self.reactPageViewController.viewControllers;
     if (currentVCs.count == 1 && [currentVCs.firstObject isEqual:controller]) {
-        // see: 
-        // 1) https://github.com/callstack/react-native-pager-view/pull/462
-        // 2) https://github.com/callstack/react-native-pager-view/issues/566
-        [self.reactPageViewController setViewControllers:@[controller]
-                                               direction:direction
-                                                animated:YES
-                                              completion:nil];
         return;
     }
 
