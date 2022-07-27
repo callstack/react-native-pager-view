@@ -9,6 +9,7 @@ import {
   TextInput,
   Button,
   Animated,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import PagerView from 'react-native-pager-view';
@@ -40,49 +41,51 @@ export function KeyboardExample() {
   const { ref, ...navigationPanel } = useNavigationPanel(2);
   const { setPage } = navigationPanel;
   return (
-    <SafeAreaView style={styles.flex}>
-      <ScrollView contentContainerStyle={styles.flex} style={styles.flex}>
-        <View style={styles.logoContainer}>
-          <Image
-            style={styles.logo}
-            source={{
-              uri: logoUrl,
-            }}
-          />
-        </View>
-        <View style={styles.flex}>
-          <AnimatedPagerView
-            {...navigationPanel}
-            ref={ref}
-            style={styles.flex}
-            initialPage={0}
-            scrollEnabled={false}
-          >
-            <View style={styles.sectionContainer}>
-              <Page
-                title="First Question"
-                description="What is your favourite lib ?"
-                onPress={useCallback(() => setPage(1), [setPage])}
-                buttonTitle="Go to next question"
-              />
-            </View>
-            <View style={styles.sectionContainer}>
-              <Page
-                title="Second Question"
-                description="Why Pager View?"
-                onPress={useCallback(() => setPage(0), [setPage])}
-                buttonTitle="Go to previous question"
-              />
-            </View>
-          </AnimatedPagerView>
-        </View>
-      </ScrollView>
-      <NavigationPanel
-        {...navigationPanel}
-        scrollEnabled={false}
-        disablePagesAmountManagement
-      />
-    </SafeAreaView>
+    <KeyboardAvoidingView style={styles.flex} behavior="height">
+      <SafeAreaView style={styles.flex}>
+        <ScrollView contentContainerStyle={styles.flex} style={styles.flex}>
+          <View style={styles.logoContainer}>
+            <Image
+              style={styles.logo}
+              source={{
+                uri: logoUrl,
+              }}
+            />
+          </View>
+          <View style={styles.flex}>
+            <AnimatedPagerView
+              {...navigationPanel}
+              ref={ref}
+              style={styles.flex}
+              initialPage={0}
+              scrollEnabled={false}
+            >
+              <View style={styles.sectionContainer}>
+                <Page
+                  title="First Question"
+                  description="What is your favourite lib ?"
+                  onPress={useCallback(() => setPage(1), [setPage])}
+                  buttonTitle="Go to next question"
+                />
+              </View>
+              <View style={styles.sectionContainer}>
+                <Page
+                  title="Second Question"
+                  description="Why Pager View?"
+                  onPress={useCallback(() => setPage(0), [setPage])}
+                  buttonTitle="Go to previous question"
+                />
+              </View>
+            </AnimatedPagerView>
+          </View>
+        </ScrollView>
+        <NavigationPanel
+          {...navigationPanel}
+          scrollEnabled={false}
+          disablePagesAmountManagement
+        />
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 
