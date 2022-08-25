@@ -16,7 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) BOOL scrollEnabled;
 @property(nonatomic, readonly) BOOL showPageIndicator;
 @property(nonatomic, readonly) UIScrollViewKeyboardDismissMode dismissKeyboard;
-@property(nonatomic) UIPageViewControllerTransitionStyle transitionStyle;
 @property(nonatomic) UIPageViewControllerNavigationOrientation orientation;
 @property(nonatomic, copy) RCTDirectEventBlock onPageSelected;
 @property(nonatomic, copy) RCTDirectEventBlock onPageScroll;

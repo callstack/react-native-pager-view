@@ -148,7 +148,6 @@ For advanced usage please take a look into our [example project](https://github.
 | `pageMargin: number`                                                 |                                                                                                                Blank space to be shown between pages                                                                                                                |   both   |
 | `keyboardDismissMode: ('none' / 'on-drag')`                          |                                                                                                Determines whether the keyboard gets dismissed in response to a drag                                                                                                 |   both   |
 | `orientation: Orientation`                                           |                                                                                       Set `horizontal` or `vertical` scrolling orientation (it does **not** work dynamically)                                                                                       |   both   |
-| `transitionStyle: TransitionStyle`                                   |                                                                                        Use `scroll` or `curl` to change transition style (it does **not** work dynamically)                                                                                         |   iOS    |
 | `showPageIndicator: boolean`                                         |                                                                                                         Shows the dots indicator at the bottom of the view                                                                                                          |   iOS    |
 | `overScrollMode: OverScollMode`                                      |                                                                              Used to override default value of overScroll mode. Can be `auto`, `always` or `never`. Defaults to `auto`                                                                              | Android  |
 | `offscreenPageLimit: number`                                         | Set the number of pages that should be retained to either side of the currently visible page(s). Pages beyond this limit will be recreated from the adapter when needed. Defaults to RecyclerView's caching strategy. The given value must either be larger than 0. | Android  |
@@ -185,13 +184,9 @@ requestAnimationFrame(() => refPagerView.current?.setPage(index));
 
 ### iOS
 
-|                         horizontal - scroll                          |                         horizontal - curl                          |
-| :------------------------------------------------------------------: | :----------------------------------------------------------------: |
-| <img src="img/ios-viewpager-scroll.gif" alt="ViewPager" width="325"> | <img src="img/ios-viewpager-curl.gif" alt="ViewPager" width="325"> |
-
-|                           vertical - scroll                            |                               vertical - curl                               |
-| :--------------------------------------------------------------------: | :-------------------------------------------------------------------------: |
-| <img src="img/ios-viewpager-vertical.gif" alt="ViewPager" width="325"> | <img src="img/ios-viewpager-vertical-curl.gif" alt="ViewPager" width="325"> |
+|                            horizontal                                |                              vertical                                  |
+| :------------------------------------------------------------------: | :--------------------------------------------------------------------: |
+| <img src="img/ios-viewpager-scroll.gif" alt="ViewPager" width="325"> | <img src="img/ios-viewpager-vertical.gif" alt="ViewPager" width="325"> |
 
 ## Reanimated onPageScroll handler
 

@@ -38,7 +38,6 @@
         _scrollEnabled = YES;
         _pageMargin = 0;
         _lastReportedIndex = -1;
-        _transitionStyle = UIPageViewControllerTransitionStyleScroll;
         _orientation = UIPageViewControllerNavigationOrientationHorizontal;
         _currentIndex = 0;
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
@@ -89,7 +88,7 @@
 
 - (void)embed {
     NSDictionary *options = @{ UIPageViewControllerOptionInterPageSpacingKey: @(self.pageMargin) };
-    UIPageViewController *pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:self.transitionStyle
+    UIPageViewController *pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll
                                                                                navigationOrientation:self.orientation
                                                                                              options:options];
     pageViewController.delegate = self;

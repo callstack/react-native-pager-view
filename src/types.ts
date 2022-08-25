@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import type * as ReactNative from 'react-native';
 
-export type TransitionStyle = 'scroll' | 'curl';
 export type Orientation = 'horizontal' | 'vertical';
 export type OverScrollMode = 'auto' | 'always' | 'never';
 export type PageScrollState = 'idle' | 'dragging' | 'settling';
@@ -126,7 +125,6 @@ export interface PagerViewProps {
    * iOS only
    */
   orientation?: Orientation;
-  transitionStyle?: TransitionStyle;
   showPageIndicator?: boolean;
   /**
    * Android only
