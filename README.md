@@ -29,6 +29,8 @@ Lazy page loading has been added to the `next` version. If you would like to tes
 
 ## Migration
 
+In version **6.x** support for `transitionStyle` property has been dropped. More information [here](https://github.com/callstack/react-native-pager-view/blob/master/MIGRATION.md).
+
 `"@react-native-community/viewpager"` library has been changed to `react-native-pager-view`. Here you can find more information, how to migrate pager view to the latest [version](https://github.com/callstack/react-native-pager-view/blob/master/MIGRATION.md)
 
 ## Getting started
