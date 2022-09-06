@@ -1,12 +1,9 @@
 version: 2.1
 
-orbs:
-  rn: react-native-community/react-native@5.4.0
-
 executors:
   default:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:16
     working_directory: ~/project
 
 commands:
@@ -52,6 +49,7 @@ jobs:
           name: Lint files
           command: |
             yarn lint
+
   typescript:
     executor: default
     steps:
@@ -60,61 +58,6 @@ jobs:
           name: Typecheck files
           command: |
             yarn typescript
-  e2e_release_ios:
-    executor:
-      name: rn/macos
-      xcode_version: '11.4.0'
-    steps:
-      - attach_workspace:
-          at: .
-      - rn/setup_macos_executor:
-          node_version: '12.10.0'
-      - rn/ios_simulator_start:
-          device: 'iPhone 11'
-      - rn/pod_install:
-          pod_install_directory: 'example/ios'
-      - run:
-          command: yarn --cwd example detox:ios:build:release
-          name: build for detox
-      - run:
-          command: detox clean-framework-cache && detox build-framework-cache && yarn --cwd example detox:ios:test:release
-          name: test detox
-      - store_artifacts:
-          path: ./example/artifacts
-  e2e_release_android:
-    # we need to use mac to run emulator with acceleration
-    # see https://support.circleci.com/hc/en-us/articles/360000028928-Testing-with-Android-emulator-on-CircleCI-2-0
-    executor:
-      name: rn/macos
-      xcode_version: '11.4.0'
-    steps:
-      - attach_workspace:
-          at: .
-      - rn/setup_macos_executor:
-          node_version: '12.10.0'
-      - rn/android_emulator_start:
-          logcat_grep: 'com.example.reactnativepagerview'
-          platform_version: 'android-29'
-      - run:
-          command: yarn --cwd example detox:android:build:release
-          name: build for detox
-      - run:
-          command: yarn --cwd example detox:android:test:release
-          name: test detox
-      - store_artifacts:
-          path: ./example/artifacts
-  unit-tests:
-    executor: default
-    steps:
-      - attach_project
-      - run:
-          name: Run unit tests
-          command: |
-            yarn test --coverage
-      - store_artifacts:
-          path: coverage
-          destination: coverage
-
   build-package:
     executor: default
     steps:
@@ -123,6 +66,7 @@ jobs:
           name: Build package
           command: |
             yarn prepare
+
 workflows:
   build-and-test:
     jobs:
@@ -133,9 +77,6 @@ workflows:
       - typescript:
           requires:
             - install-dependencies
-      - e2e_release_ios:
-          requires:
-            - install-dependencies
-      - e2e_release_android:
+      - build-package:
           requires:
             - install-dependencies
