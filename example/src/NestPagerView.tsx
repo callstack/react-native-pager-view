@@ -17,7 +17,6 @@ export function NestPagerView() {
         layoutDirection="ltr"
         pageMargin={10}
         orientation="horizontal"
-        transitionStyle="scroll"
       >
         <View
           key="1"
@@ -37,8 +36,6 @@ export function NestPagerView() {
             pageMargin={10}
             // Lib does not support dynamically orientation change
             orientation="horizontal"
-            // Lib does not support dynamically transitionStyle change
-            transitionStyle="scroll"
           >
             <View
               key="1"
@@ -64,8 +61,6 @@ export function NestPagerView() {
             pageMargin={10}
             // Lib does not support dynamically orientation change
             orientation="vertical"
-            // Lib does not support dynamically transitionStyle change
-            transitionStyle="scroll"
           >
             <View
               key="1"
