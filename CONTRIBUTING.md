@@ -10,7 +10,9 @@ To get started with the project, run `yarn` in the root directory to install the
 yarn
 ```
 
-While developing, you can run the [example app](/example/) to test your changes.
+> While it's possible to use [`npm`](https://github.com/npm/cli), the tooling is built around [`yarn`](https://classic.yarnpkg.com/), so you'll have an easier time if you use `yarn` for development.
+
+While developing, you can run the [example app](/example/) to test your changes. Any changes you make in your library's JavaScript code will be reflected in the example app without a rebuild. If you change any native code, then you'll need to rebuild the example app.
 
 To start the packager:
 
@@ -30,6 +32,7 @@ To run the example app on iOS:
 yarn example ios
 ```
 
+
 Make sure your code passes TypeScript and ESLint. Run the following to verify:
 
 ```sh
@@ -48,11 +51,9 @@ Remember to add tests for your change if possible. Run the unit tests by:
 ```sh
 yarn test
 ```
-
 To edit the Objective-C files, open `example/ios/PagerViewExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > react-native-pager-view`.
 
 To edit the Kotlin files, open `example/android` in Android studio and find the source files at `reactnativepagerview` under `Android`.
-
 ### Commit message convention
 
 We follow the [conventional commits specification](https://www.conventionalcommits.org/en) for our commit messages:
@@ -74,6 +75,16 @@ We use [TypeScript](https://www.typescriptlang.org/) for type checking, [ESLint]
 
 Our pre-commit hooks verify that the linter and tests pass when committing.
 
+### Publishing to npm
+
+We use [release-it](https://github.com/release-it/release-it) to make it easier to publish new versions. It handles common tasks like bumping version based on semver, creating tags and releases etc.
+
+To publish new versions, run the following:
+
+```sh
+yarn release
+```
+
 ### Scripts
 
 The `package.json` file contains various scripts for common tasks:
@@ -88,7 +99,7 @@ The `package.json` file contains various scripts for common tasks:
 
 ### Sending a pull request
 
-> **Working on your first pull request?** You can learn how from this _free_ series: [How to Contribute to an Open Source Project on GitHub](https://egghead.io/series/how-to-contribute-to-an-open-source-project-on-github).
+> **Working on your first pull request?** You can learn how from this _free_ series: [How to Contribute to an Open Source Project on GitHub](https://app.egghead.io/playlists/how-to-contribute-to-an-open-source-project-on-github).
 
 When you're sending a pull request:
 

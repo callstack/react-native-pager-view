@@ -1,44 +1,27 @@
 {
-  "name": "react-native-pager-view-example",
-  "description": "Example app for react-native-pager-view",
+  "name": "PagerViewExample",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "get:testbutler": "curl -f -o ./test-butler-app.apk https://repo1.maven.org/maven2/com/linkedin/testbutler/test-butler-app/2.2.1/test-butler-app-2.2.1.apk",
-    "detox:ios:build:release": "detox build -c ios.sim.release",
-    "detox:ios:test:release": "detox test -c ios.sim.release",
-    "detox:android:build:release": "detox build -c android.emu.release",
-    "detox:android:test:release": "yarn get:testbutler && detox test --configuration android.emu.release --loglevel trace --headless --take-screenshots failing",
-    "detox:android:build:debug": "detox build -c android.emu.debug",
-    "detox:android:test:debug": "detox test -c android.emu.debug"
+    "pods": "pod-install --quiet",
+    "postinstall": "patch-package"
   },
   "dependencies": {
-    "@react-native-community/masked-view": "^0.1.10",
-    "@react-navigation/native": "^5.8.10",
-    "@react-navigation/native-stack": "5.0.4",
-    "@react-navigation/stack": "^5.12.8",
-    "react": "16.13.1",
-    "react-native": "0.63.4",
-    "react-native-animated-pagination-dots": "^0.1.51",
-    "react-native-gesture-handler": "^1.9.0",
-    "react-native-reanimated": "^2.3.1",
-    "react-native-safe-area-context": "^3.1.9",
-    "react-native-screens": "^2.16.1",
-    "react-native-tab-view": "^3.1.1"
+    "react": "18.1.0",
+    "react-native": "0.70.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
+    "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
-    "@types/detox": "^17.14.0",
-    "@types/jest": "^26.0.22",
-    "babel-plugin-module-resolver": "^4.0.0",
-    "detox": "^18.9.0",
-    "jest": "^26.6.3",
-    "jest-circus": "^26.6.3",
-    "metro-react-native-babel-preset": "^0.64.0",
-    "ts-jest": "^26.5.4"
+    "@types/react-native": "0.70.0",
+    "@types/react-test-renderer": "^18.0.0",
+    "metro-react-native-babel-preset": "^0.72.1",
+    "react-test-renderer": "18.1.0",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0"
   }
 }

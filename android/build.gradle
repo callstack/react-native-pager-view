@@ -1,21 +1,23 @@
 buildscript {
-  // Buildscript is evaluated before everything else so we can't use getExtOrDefault
-  def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['PagerView_kotlinVersion']
-
   repositories {
-    google()
-    jcenter()
+      google()
+      mavenCentral()
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:4.2.1'
-    // noinspection DifferentKotlinGradleVersion
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath 'com.android.tools.build:gradle:3.5.3'
   }
 }
 
+def isNewArchitectureEnabled() {
+  return rootProject.hasProperty("newArchEnabled") &&  rootProject.getProperty("newArchEnabled") == "true"
+}
+
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+
+if (isNewArchitectureEnabled()) {
+  apply plugin: 'com.facebook.react'
+}
 
 def getExtOrDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['PagerView_' + name]
@@ -27,31 +29,39 @@ def getExtOrIntegerDefault(name) {
 
 android {
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
+
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault('minSdkVersion')
     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
-    versionCode 1
-    versionName "1.0"
-
+    buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
   }
-
   buildTypes {
     release {
       minifyEnabled false
     }
   }
+
   lintOptions {
     disable 'GradleCompatible'
   }
+
   compileOptions {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
+  }
+  sourceSets {
+    main {
+      if (isNewArchitectureEnabled()) {
+          java.srcDirs += ['src/turbo']
+      } else {
+          java.srcDirs += ['src/legacy']
+      }
+    }
   }
 }
 
 repositories {
   mavenCentral()
-  jcenter()
   google()
 
   def found = false
@@ -62,8 +72,8 @@ repositories {
     defaultDir = rootProject.ext.get('reactNativeAndroidRoot')
   } else {
     defaultDir = new File(
-            projectDir,
-            '/../../../node_modules/react-native/android'
+      projectDir,
+      '/../../../node_modules/react-native/android'
     )
   }
 
@@ -83,13 +93,13 @@ repositories {
       parentDir = parentDir.parentFile
 
       def androidSourcesDir = new File(
-              parentDir,
-              'node_modules/react-native'
+        parentDir,
+        'node_modules/react-native'
       )
 
       def androidPrebuiltBinaryDir = new File(
-              parentDir,
-              'node_modules/react-native/android'
+        parentDir,
+        'node_modules/react-native/android'
       )
 
       if (androidPrebuiltBinaryDir.exists()) {
@@ -114,17 +124,23 @@ repositories {
 
   if (!found) {
     throw new GradleException(
-            "${project.name}: unable to locate React Native android sources. " +
-                    "Ensure you have you installed React Native as a dependency in your project and try again."
+      "${project.name}: unable to locate React Native android sources. " +
+      "Ensure you have you installed React Native as a dependency in your project and try again."
     )
   }
 }
 
-def kotlin_version = getExtOrDefault('kotlinVersion')
 
 dependencies {
-  // noinspection GradleDynamicVersion
-  api 'com.facebook.react:react-native:+'
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation 'androidx.viewpager2:viewpager2:1.0.0'
+    //noinspection GradleDynamicVersion
+  implementation "com.facebook.react:react-native:+"
+// From node_modules
+}
+
+if (isNewArchitectureEnabled()) {
+  react {
+    jsRootDir = file("../src/")
+    libraryName = "PagerViewView"
+    codegenJavaPackageName = "com.reactnativepagerview"
+  }
 }

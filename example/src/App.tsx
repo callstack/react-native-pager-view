@@ -1,143 +1,207 @@
-import { enableScreens } from 'react-native-screens';
-// run this before any screen render(usually in App.js)
-enableScreens();
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
 
 import * as React from 'react';
-import {
-  StyleSheet,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  Button,
-  Alert,
-} from 'react-native';
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { BasicPagerViewExample } from './BasicPagerViewExample';
-import { KeyboardExample } from './KeyboardExample';
-import { OnPageScrollExample } from './OnPageScrollExample';
-import { OnPageSelectedExample } from './OnPageSelectedExample';
-import { ScrollablePagerViewExample } from './ScrollablePagerViewExample';
-import { ScrollViewInsideExample } from './ScrollViewInsideExample';
-import HeadphonesCarouselExample from './HeadphonesCarouselExample';
-import PaginationDotsExample from './PaginationDotsExample';
-import { NestPagerView } from './NestPagerView';
-import ScrollableTabBarExample from './tabView/ScrollableTabBarExample';
-import AutoWidthTabBarExample from './tabView/AutoWidthTabBarExample';
-import TabBarIconExample from './tabView/TabBarIconExample';
-import CustomIndicatorExample from './tabView/CustomIndicatorExample';
-import CustomTabBarExample from './tabView/CustomTabBarExample';
-import CoverflowExample from './tabView/CoverflowExample';
-import ReanimatedOnPageScrollExample from './ReanimatedOnPageScrollExample';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Image, StyleSheet, Text, View, SafeAreaView } from 'react-native';
 
-const examples = [
-  { component: BasicPagerViewExample, name: 'Basic Example' },
-  { component: KeyboardExample, name: 'Keyboard Example' },
-  { component: OnPageScrollExample, name: 'OnPageScroll Example' },
-  { component: OnPageSelectedExample, name: 'OnPageSelected Example' },
-  { component: HeadphonesCarouselExample, name: 'Headphones Carousel Example' },
-  { component: PaginationDotsExample, name: 'Pagination Dots Example' },
-  {
-    component: ScrollablePagerViewExample,
-    name: 'Scrollable PagerView Example',
-  },
-  {
-    component: ScrollViewInsideExample,
-    name: 'ScrollView inside PagerView Example',
-  },
-  {
-    component: NestPagerView,
-    name: 'Nest PagerView Example',
-  },
-  { component: ScrollableTabBarExample, name: 'ScrollableTabBarExample' },
-  { component: AutoWidthTabBarExample, name: 'AutoWidthTabBarExample' },
-  { component: TabBarIconExample, name: 'TabBarIconExample' },
-  { component: CustomIndicatorExample, name: 'CustomIndicatorExample' },
-  { component: CustomTabBarExample, name: 'CustomTabBarExample' },
-  {
-    component: ReanimatedOnPageScrollExample,
-    name: 'Reanimated onPageScroll example',
-  },
-  { component: CoverflowExample, name: 'CoverflowExample' },
-];
+import ViewPager from 'react-native-pager-view';
+import { PAGES, createPage } from './utils';
+import { Button } from './component/Button';
+import { LikeCount } from './component/LikeCount';
+import { ProgressBar } from './component/ProgressBar';
+import type { CreatePage } from './utils';
 
-function App() {
-  const navigation = useNavigation();
-  return (
-    <ScrollView>
-      {examples.map((example) => (
-        <TouchableOpacity
-          key={example.name}
-          style={styles.exampleTouchable}
-          onPress={() => {
-            //@ts-ignore
-            navigation.navigate(example.name);
-          }}
+type State = {
+  page: number;
+  animationsAreEnabled: boolean;
+  scrollEnabled: boolean;
+  progress: {
+    position: number;
+    offset: number;
+  };
+  pages: Array<CreatePage>;
+  scrollState: any;
+  dotsVisible: boolean;
+};
+export default class App extends React.Component<{}, State> {
+  viewPager: React.Ref<typeof ViewPager>;
+
+  constructor(props: any) {
+    super(props);
+
+    const pages = [];
+    for (let i = 0; i < PAGES; i++) {
+      pages.push(createPage(i));
+    }
+
+    this.state = {
+      page: 0,
+      animationsAreEnabled: true,
+      scrollEnabled: true,
+      progress: {
+        position: 0,
+        offset: 0,
+      },
+      pages: pages,
+      scrollState: 'idle',
+      dotsVisible: false,
+    };
+    this.viewPager = React.createRef();
+  }
+
+  onPageSelected = (e: any) => {
+    this.setState({ page: e.nativeEvent.position });
+  };
+
+  onPageScroll = (e: any) => {
+    this.setState({
+      progress: {
+        position: e.nativeEvent.position,
+        offset: e.nativeEvent.offset,
+      },
+    });
+  };
+
+  onPageScrollStateChanged = (e: any) => {
+    this.setState({ scrollState: e.nativeEvent.pageScrollState });
+  };
+
+  addPage = () => {
+    this.setState((prevState) => ({
+      pages: [...prevState.pages, createPage(prevState.pages.length)],
+    }));
+  };
+
+  move = (delta: number) => {
+    const page = this.state.page + delta;
+    this.go(page);
+  };
+
+  go = (page: number) => {
+    if (this.state.animationsAreEnabled) {
+      /* @ts-ignore */
+      this.viewPager.current.setPage(page);
+    } else {
+      /* @ts-ignore */
+      this.viewPager.current.setPageWithoutAnimation(page);
+    }
+  };
+
+  renderPage(page: CreatePage) {
+    return (
+      <View key={page.key} style={page.style} collapsable={false}>
+        <Image style={styles.image} source={page.imgSource} />
+        <LikeCount />
+      </View>
+    );
+  }
+
+  toggleDotsVisibility = () => {
+    this.setState((prevState) => ({ dotsVisible: !prevState.dotsVisible }));
+  };
+
+  render() {
+    const { page, pages, animationsAreEnabled, dotsVisible } = this.state;
+    return (
+      <SafeAreaView style={styles.container}>
+        <ViewPager
+          style={styles.viewPager}
+          initialPage={0}
+          scrollEnabled={this.state.scrollEnabled}
+          onPageScroll={this.onPageScroll}
+          onPageSelected={this.onPageSelected}
+          onPageScrollStateChanged={this.onPageScrollStateChanged}
+          pageMargin={10}
+          // Lib does not support dynamically orientation change
+          orientation="horizontal"
+          showPageIndicator={dotsVisible}
+          /* @ts-ignore */
+          ref={this.viewPager}
         >
-          <Text style={styles.exampleText}>{example.name}</Text>
-        </TouchableOpacity>
-      ))}
-    </ScrollView>
-  );
-}
-
-const Stack = createStackNavigator();
-
-const NativeStack = createNativeStackNavigator();
-
-export function Navigation() {
-  const [mode, setMode] = React.useState<'native' | 'js'>('native');
-  const NavigationStack = mode === 'js' ? Stack : NativeStack;
-  return (
-    <NavigationContainer>
-      <NavigationStack.Navigator initialRouteName="PagerView Example">
-        <NavigationStack.Screen
-          name="PagerView Example"
-          component={App}
-          options={{
-            headerRight: () => (
-              <Button
-                onPress={() =>
-                  Alert.alert(
-                    'Alert',
-                    `Do you want to change to the ${
-                      mode === 'js' ? 'native stack' : 'js stack'
-                    } ?`,
-                    [
-                      { text: 'No', onPress: () => {} },
-                      {
-                        text: 'Yes',
-                        onPress: () => {
-                          setMode(mode === 'js' ? 'native' : 'js');
-                        },
-                      },
-                    ]
-                  )
-                }
-                title={mode === 'js' ? 'JS' : 'NATIVE'}
-                color="orange"
-              />
-            ),
-          }}
-        />
-        {examples.map((example, index) => (
-          <NavigationStack.Screen
-            key={index}
-            name={example.name}
-            component={example.component}
+          {pages.map((p) => this.renderPage(p))}
+        </ViewPager>
+        <View style={styles.buttons}>
+          <Button
+            text={
+              this.state.scrollEnabled ? 'Scroll Enabled' : 'Scroll Disabled'
+            }
+            onPress={() =>
+              this.setState({ scrollEnabled: !this.state.scrollEnabled })
+            }
           />
-        ))}
-      </NavigationStack.Navigator>
-    </NavigationContainer>
-  );
+          <Button text="Add new page" onPress={this.addPage} />
+        </View>
+        <View style={styles.buttons}>
+          {animationsAreEnabled ? (
+            <Button
+              text="Turn off animations"
+              onPress={() => this.setState({ animationsAreEnabled: false })}
+            />
+          ) : (
+            <Button
+              text="Turn animations back on"
+              onPress={() => this.setState({ animationsAreEnabled: true })}
+            />
+          )}
+          <Text style={styles.scrollStateText}>
+            ScrollState[ {this.state.scrollState} ]
+          </Text>
+        </View>
+        <View style={styles.buttons}>
+          <Button text="Start" onPress={() => this.go(0)} />
+          <Button text="Prev" onPress={() => this.move(-1)} />
+          <Button text="Next" onPress={() => this.move(1)} />
+          <Button text="Last" onPress={() => this.go(pages.length - 1)} />
+        </View>
+        <View style={styles.progress}>
+          <Text style={styles.buttonText}>
+            {' '}
+            Page {page + 1} / {pages.length}{' '}
+          </Text>
+          <ProgressBar
+            numberOfPages={pages.length}
+            progress={this.state.progress}
+          />
+        </View>
+      </SafeAreaView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
-  exampleTouchable: {
-    padding: 16,
+  buttons: {
+    flexDirection: 'row',
+    backgroundColor: 'black',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  exampleText: {
-    fontSize: 16,
+  progress: {
+    flexDirection: 'row',
+    height: 40,
+    backgroundColor: 'black',
+    justifyContent: 'space-between',
+  },
+  buttonText: {
+    color: 'white',
+  },
+  scrollStateText: {
+    color: '#99d1b7',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  image: {
+    width: 300,
+    height: 200,
+    padding: 20,
+  },
+  viewPager: {
+    flex: 1,
   },
 });

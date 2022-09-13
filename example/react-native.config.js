@@ -1,7 +1,9 @@
+const path = require('path');
+
 module.exports = {
-  project: {
-    ios: {},
-    android: {},
+  dependencies: {
+    'react-native-pager-view': {
+      root: path.join(__dirname, '..'),
+    },
   },
-  assets: ['./assets/'],
 };

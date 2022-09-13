@@ -9,7 +9,7 @@ import type {
 } from './types';
 
 import { childrenWithOverriddenStyle } from './utils';
-import { getViewManagerConfig, PagerViewViewManager } from './PagerViewNative';
+import PagerViewView, { NativeCommands } from './PagerViewViewNativeComponent';
 
 /**
  * Container that allows to flip left and right between child views. Each
@@ -55,16 +55,13 @@ import { getViewManagerConfig, PagerViewViewManager } from './PagerViewNative';
 
 export class PagerView extends React.Component<PagerViewProps> {
   private isScrolling = false;
-  private PagerView = React.createRef<typeof PagerViewViewManager>();
-
-  public getInnerViewNode = (): ReactElement => {
-    return this.PagerView.current!.getInnerViewNode();
-  };
+  private PagerView = React.createRef<NativeCommands>();
 
   private _onPageScroll = (e: PagerViewOnPageScrollEvent) => {
     if (this.props.onPageScroll) {
       this.props.onPageScroll(e);
     }
+
     // Not implemented on iOS yet
     if (Platform.OS === 'android') {
       if (this.props.keyboardDismissMode === 'on-drag') {
@@ -93,11 +90,8 @@ export class PagerView extends React.Component<PagerViewProps> {
    * The transition between pages will be animated.
    */
   public setPage = (selectedPage: number) => {
-    UIManager.dispatchViewManagerCommand(
-      ReactNative.findNodeHandle(this),
-      getViewManagerConfig().Commands.setPage,
-      [selectedPage]
-    );
+    //@ts-ignore FIX IT
+    this.PagerView.current?.setPage(this.PagerView.current, selectedPage);
   };
 
   /**
@@ -105,10 +99,10 @@ export class PagerView extends React.Component<PagerViewProps> {
    * The transition between pages will *not* be animated.
    */
   public setPageWithoutAnimation = (selectedPage: number) => {
-    UIManager.dispatchViewManagerCommand(
-      ReactNative.findNodeHandle(this),
-      getViewManagerConfig().Commands.setPageWithoutAnimation,
-      [selectedPage]
+    //@ts-ignore FIX IT
+    this.PagerView.current?.setPageWithoutAnimation(
+      this.PagerView.current,
+      selectedPage
     );
   };
 
@@ -118,10 +112,10 @@ export class PagerView extends React.Component<PagerViewProps> {
    * imperative solution is more useful (e.g. for not blocking an animation)
    */
   public setScrollEnabled = (scrollEnabled: boolean) => {
-    UIManager.dispatchViewManagerCommand(
-      ReactNative.findNodeHandle(this),
-      getViewManagerConfig().Commands.setScrollEnabled,
-      [scrollEnabled]
+    //@ts-ignore FIX IT
+    this.PagerView.current?.setScrollEnabled(
+      this.PagerView.current,
+      scrollEnabled
     );
   };
 
@@ -142,7 +136,7 @@ export class PagerView extends React.Component<PagerViewProps> {
 
   render() {
     return (
-      <PagerViewViewManager
+      <PagerViewView
         {...this.props}
         ref={this.PagerView as any /** TODO: Fix ref type */}
         style={this.props.style}
