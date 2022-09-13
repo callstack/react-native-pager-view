@@ -1,13 +1,29 @@
-import codegenNativeComponent, {
-  NativeComponentType,
-} from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
 import type * as React from 'react';
-import type { PagerViewProps } from './types';
+import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
+import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+import type { HostComponent, ViewProps } from 'react-native';
+import type {
+  BubblingEventHandler,
+  DirectEventHandler,
+  WithDefault,
+} from 'react-native/Libraries/Types/CodegenTypes';
+import type {
+  PagerViewOnPageScrollEventData,
+  PagerViewOnPageSelectedEventData,
+  PageScrollStateChangedEvent,
+} from './types';
 
 const VIEW_MANAGER_NAME = 'PagerViewView';
 
-export type PagerViewViewType = NativeComponentType<PagerViewProps>;
+interface NativeProps extends ViewProps {
+  scrollEnabled?: WithDefault<boolean, true>;
+  layoutDirection?: 'rtl' | 'ltr' | 'locale';
+  onPageScroll: BubblingEventHandler<PagerViewOnPageScrollEventData>;
+  onPageSelected: DirectEventHandler<PagerViewOnPageSelectedEventData>;
+  onPageScrollStateChanged: DirectEventHandler<PageScrollStateChangedEvent>;
+}
+
+type PagerViewViewType = HostComponent<NativeProps>;
 
 export interface NativeCommands {
   setPage: (
@@ -28,4 +44,6 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
   supportedCommands: ['setPage', 'setPageWithoutAnimation', 'setScrollEnabled'],
 });
 
-export default codegenNativeComponent<PagerViewProps>(VIEW_MANAGER_NAME);
+export default codegenNativeComponent<NativeProps>(
+  VIEW_MANAGER_NAME
+) as HostComponent<NativeProps>;
