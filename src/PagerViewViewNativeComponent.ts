@@ -5,9 +5,12 @@ import type { HostComponent, ViewProps } from 'react-native';
 import type {
   BubblingEventHandler,
   DirectEventHandler,
+  Int32,
   WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
 import type {
+  Orientation,
+  OverScrollMode,
   PagerViewOnPageScrollEventData,
   PagerViewOnPageSelectedEventData,
   PageScrollStateChangedEvent,
@@ -18,6 +21,11 @@ const VIEW_MANAGER_NAME = 'PagerViewView';
 interface NativeProps extends ViewProps {
   scrollEnabled?: WithDefault<boolean, true>;
   layoutDirection?: 'rtl' | 'ltr' | 'locale';
+  initialPage?: Int32;
+  orientation?: Orientation;
+  offscreenPageLimit?: Int32;
+  pageMargin?: Int32;
+  overScrollMode?: OverScrollMode;
   onPageScroll: BubblingEventHandler<PagerViewOnPageScrollEventData>;
   onPageSelected: DirectEventHandler<PagerViewOnPageSelectedEventData>;
   onPageScrollStateChanged: DirectEventHandler<PageScrollStateChangedEvent>;
