@@ -51,14 +51,18 @@ export interface NativeCommands {
     viewRef: React.ElementRef<PagerViewViewType>,
     selectedPage: Int32
   ) => void;
-  setScrollEnabled: (
+  setScrollEnabledImperatively: (
     viewRef: React.ElementRef<PagerViewViewType>,
     scrollEnabled: boolean
   ) => void;
 }
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
-  supportedCommands: ['setPage', 'setPageWithoutAnimation', 'setScrollEnabled'],
+  supportedCommands: [
+    'setPage',
+    'setPageWithoutAnimation',
+    'setScrollEnabledImperatively',
+  ],
 });
 
 export default codegenNativeComponent<NativeProps>(

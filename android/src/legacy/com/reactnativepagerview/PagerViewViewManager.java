@@ -11,9 +11,9 @@ import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.bridge.ReactApplicationContext;
 
 import java.util.Map;
+import com.facebook.react.uimanager.ViewGroupManager;
 
-
-public class PagerViewViewManager extends SimpleViewManager<PagerViewView> {
+public class PagerViewViewManager extends ViewGroupManager<PagerViewView> {
 
   ReactApplicationContext mCallerContext;
 

@@ -28,7 +28,9 @@
     "prepare": "bob build",
     "release": "release-it",
     "example": "yarn --cwd example",
-    "bootstrap": "yarn example && yarn && yarn example pods"
+    "bootstrap": "yarn example && yarn && yarn example pods",
+    "fabricexample": "yarn --cwd fabricexample",
+    "bootstrap-fabric": "yarn fabricexample && yarn && yarn fabricexample pods"
   },
   "keywords": [
     "react-native",
@@ -152,5 +154,10 @@
         }
       ]
     ]
+  },
+  "codegenConfig": {
+    "name": "PagerViewView",
+    "type": "components",
+    "jsSrcsDir": "src"
   }
 }

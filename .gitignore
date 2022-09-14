@@ -62,3 +62,8 @@ lib/
 #e2e
 test-butler-app.apk
 example/vendor
+
+#Example
+fabricexample/ios/Pods
+fabricexample/vendor
+fabricexample/android/app/.cxx

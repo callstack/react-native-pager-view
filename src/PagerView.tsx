@@ -114,7 +114,10 @@ export class PagerView extends React.Component<PagerViewProps> {
    */
   public setScrollEnabled = (scrollEnabled: boolean) => {
     if (this.pagerView) {
-      PagerViewCommands.setScrollEnabled(this.pagerView, scrollEnabled);
+      PagerViewCommands.setScrollEnabledImperatively(
+        this.pagerView,
+        scrollEnabled
+      );
     }
   };
 

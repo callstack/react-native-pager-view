@@ -14,7 +14,7 @@ public class PagerViewViewPackage implements ReactPackage {
   @Override
   public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
     List<ViewManager> viewManagers = new ArrayList<>();
-    viewManagers.add(new PagerViewViewManager(reactContext));
+    viewManagers.add(new com.reactnativepagerview.PagerViewViewManager(reactContext));
     return viewManagers;
   }
 
