@@ -29,7 +29,7 @@ type State = {
   dotsVisible: boolean;
 };
 export default class App extends React.Component<{}, State> {
-  viewPager: React.Ref<typeof ViewPager>;
+  viewPager: { current: React.ElementRef<typeof ViewPager> | null };
 
   constructor(props: any) {
     super(props);
@@ -84,11 +84,9 @@ export default class App extends React.Component<{}, State> {
 
   go = (page: number) => {
     if (this.state.animationsAreEnabled) {
-      /* @ts-ignore */
-      this.viewPager.current.setPage(page);
+      this.viewPager?.current?.setPage(page);
     } else {
-      /* @ts-ignore */
-      this.viewPager.current.setPageWithoutAnimation(page);
+      this.viewPager?.current?.setPageWithoutAnimation(page);
     }
   };
 
@@ -120,7 +118,6 @@ export default class App extends React.Component<{}, State> {
           // Lib does not support dynamically orientation change
           orientation="horizontal"
           showPageIndicator={dotsVisible}
-          /* @ts-ignore */
           ref={this.viewPager}
         >
           {pages.map((p) => this.renderPage(p))}

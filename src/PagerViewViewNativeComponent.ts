@@ -1,35 +1,66 @@
-import codegenNativeComponent, {
-  NativeComponentType,
-} from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
 import type * as React from 'react';
-import type { ViewProps } from 'react-native';
+import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
+import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
+import type { HostComponent, ViewProps } from 'react-native';
+import type {
+  BubblingEventHandler,
+  DirectEventHandler,
+  Double,
+  Int32,
+  WithDefault,
+} from 'react-native/Libraries/Types/CodegenTypes';
 
-const VIEW_MANAGER_NAME = 'PagerViewView';
+type OnPageScrollEventData = Readonly<{
+  position: Double;
+  offset: Double;
+}>;
+
+type OnPageSelectedEventData = Readonly<{
+  position: Double;
+}>;
+
+type OnPageScrollStateChangedEventData = Readonly<{
+  pageScrollState: 'idle' | 'dragging' | 'settling';
+}>;
+
+export type PagerViewOnPageScrollEventData = OnPageScrollEventData;
+export type PagerViewOnPageSelectedEventData = OnPageSelectedEventData;
+export type PageScrollStateChangedEvent = OnPageScrollStateChangedEventData;
 
 interface NativeProps extends ViewProps {
-  color?: string;
+  scrollEnabled?: WithDefault<boolean, true>;
+  layoutDirection?: WithDefault<'rtl' | 'ltr' | 'locale', 'rtl'>;
+  initialPage?: Int32;
+  orientation?: WithDefault<'horizontal' | 'vertical', 'horizontal'>;
+  offscreenPageLimit?: Int32;
+  pageMargin?: Int32;
+  overScrollMode?: WithDefault<'auto' | 'always' | 'never', 'auto'>;
+  onPageScroll: BubblingEventHandler<OnPageScrollEventData>;
+  onPageSelected: DirectEventHandler<OnPageSelectedEventData>;
+  onPageScrollStateChanged: DirectEventHandler<OnPageScrollStateChangedEventData>;
 }
 
-export type PagerViewViewType = NativeComponentType<NativeProps>;
+type PagerViewViewType = HostComponent<NativeProps>;
 
-// export interface NativeCommands {
-//   setPage: (
-//     viewRef: React.ElementRef<PagerViewViewType>,
-//     selectedPage: number
-//   ) => void;
-//   setPageWithoutAnimation: (
-//     viewRef: React.ElementRef<PagerViewViewType>,
-//     selectedPage: number
-//   ) => void;
-//   setScrollEnabled: (
-//     viewRef: React.ElementRef<PagerViewViewType>,
-//     scrollEnabled: boolean
-//   ) => void;
-// }
+export interface NativeCommands {
+  setPage: (
+    viewRef: React.ElementRef<PagerViewViewType>,
+    selectedPage: Int32
+  ) => void;
+  setPageWithoutAnimation: (
+    viewRef: React.ElementRef<PagerViewViewType>,
+    selectedPage: Int32
+  ) => void;
+  setScrollEnabled: (
+    viewRef: React.ElementRef<PagerViewViewType>,
+    scrollEnabled: boolean
+  ) => void;
+}
 
-// export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
-//   supportedCommands: ['setPage', 'setPageWithoutAnimation', 'setScrollEnabled'],
-// });
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: ['setPage', 'setPageWithoutAnimation', 'setScrollEnabled'],
+});
 
-export default codegenNativeComponent<NativeProps>(VIEW_MANAGER_NAME);
+export default codegenNativeComponent<NativeProps>(
+  'PagerViewView'
+) as HostComponent<NativeProps>;

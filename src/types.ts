@@ -1,4 +1,9 @@
 import type * as ReactNative from 'react-native';
+import type {
+  PagerViewOnPageScrollEventData,
+  PagerViewOnPageSelectedEventData,
+  PageScrollStateChangedEvent,
+} from './PagerViewViewNativeComponent';
 
 export type Orientation = 'horizontal' | 'vertical';
 export type OverScrollMode = 'auto' | 'always' | 'never';
@@ -6,24 +11,14 @@ export type PageScrollState = 'idle' | 'dragging' | 'settling';
 
 export type PagerViewOnPageScrollEvent =
   ReactNative.NativeSyntheticEvent<PagerViewOnPageScrollEventData>;
-export interface PagerViewOnPageScrollEventData {
-  position: number;
-  offset: number;
-}
 
 export type PagerViewOnPageSelectedEvent =
   ReactNative.NativeSyntheticEvent<PagerViewOnPageSelectedEventData>;
-export interface PagerViewOnPageSelectedEventData {
-  position: number;
-}
 
 export type PageScrollStateChangedNativeEvent =
   ReactNative.NativeSyntheticEvent<PageScrollStateChangedEvent>;
-export interface PageScrollStateChangedEvent {
-  pageScrollState: PageScrollState;
-}
 
-export interface PagerViewProps extends ReactNative.ViewProps {
+export interface PagerViewProps {
   /**
    * Index of initial page that should be selected. Use `setPage` method to
    * update the page, and `onPageSelected` to monitor page changes
@@ -87,6 +82,7 @@ export interface PagerViewProps extends ReactNative.ViewProps {
    */
   pageMargin?: number;
 
+  style?: ReactNative.StyleProp<ReactNative.ViewStyle>;
   /**
    * Set the number of pages that should be retained to either side
    * of the currently visible page(s). Pages beyond this limit will
