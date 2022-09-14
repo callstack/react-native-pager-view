@@ -147,5 +147,10 @@
         }
       ]
     ]
+  },
+  "codegenConfig": {
+    "name": "RNPagerViewViewSpec",
+    "type": "components",
+    "jsSrcsDir": "./src"
   }
 }

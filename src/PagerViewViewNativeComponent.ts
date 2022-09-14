@@ -13,23 +13,23 @@ interface NativeProps extends ViewProps {
 
 export type PagerViewViewType = NativeComponentType<NativeProps>;
 
-export interface NativeCommands {
-  setPage: (
-    viewRef: React.ElementRef<PagerViewViewType>,
-    selectedPage: number
-  ) => void;
-  setPageWithoutAnimation: (
-    viewRef: React.ElementRef<PagerViewViewType>,
-    selectedPage: number
-  ) => void;
-  setScrollEnabled: (
-    viewRef: React.ElementRef<PagerViewViewType>,
-    scrollEnabled: boolean
-  ) => void;
-}
+// export interface NativeCommands {
+//   setPage: (
+//     viewRef: React.ElementRef<PagerViewViewType>,
+//     selectedPage: number
+//   ) => void;
+//   setPageWithoutAnimation: (
+//     viewRef: React.ElementRef<PagerViewViewType>,
+//     selectedPage: number
+//   ) => void;
+//   setScrollEnabled: (
+//     viewRef: React.ElementRef<PagerViewViewType>,
+//     scrollEnabled: boolean
+//   ) => void;
+// }
 
-export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
-  supportedCommands: ['setPage', 'setPageWithoutAnimation', 'setScrollEnabled'],
-});
+// export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+//   supportedCommands: ['setPage', 'setPageWithoutAnimation', 'setScrollEnabled'],
+// });
 
 export default codegenNativeComponent<NativeProps>(VIEW_MANAGER_NAME);
