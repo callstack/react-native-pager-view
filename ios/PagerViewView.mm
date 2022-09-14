@@ -1,10 +1,10 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 #import "PagerViewView.h"
 
-#import <react/renderer/components/RNPagerViewViewSpec/ComponentDescriptors.h>
-#import <react/renderer/components/RNPagerViewViewSpec/EventEmitters.h>
-#import <react/renderer/components/RNPagerViewViewSpec/Props.h>
-#import <react/renderer/components/RNPagerViewViewSpec/RCTComponentViewHelpers.h>
+#import <react/renderer/components/PagerViewView/ComponentDescriptors.h>
+#import <react/renderer/components/PagerViewView/EventEmitters.h>
+#import <react/renderer/components/PagerViewView/Props.h>
+#import <react/renderer/components/PagerViewView/RCTComponentViewHelpers.h>
 
 #import "RCTFabricComponentsPlugins.h"
 
@@ -42,10 +42,10 @@ using namespace facebook::react;
     const auto &oldViewProps = *std::static_pointer_cast<PagerViewViewProps const>(_props);
     const auto &newViewProps = *std::static_pointer_cast<PagerViewViewProps const>(props);
 
-    if (oldViewProps.color != newViewProps.color) {
-        NSString * colorToConvert = [[NSString alloc] initWithUTF8String: newViewProps.color.c_str()];
-        [_view setBackgroundColor:[self hexStringToColor:colorToConvert]];
-    }
+//    if (oldViewProps.color != newViewProps.color) {
+//        NSString * colorToConvert = [[NSString alloc] initWithUTF8String: newViewProps.color.c_str()];
+//        [_view setBackgroundColor:[self hexStringToColor:colorToConvert]];
+//    }
 
     [super updateProps:props oldProps:oldProps];
 }
@@ -77,6 +77,19 @@ Class<RCTComponentViewProtocol> PagerViewViewCls(void)
 {
   RCTPagerViewViewHandleCommand(self, commandName, args);
 }
+
+- (void)setPage:(NSInteger)selectedPage {
+    
+}
+
+- (void)setPageWithoutAnimation:(NSInteger)selectedPage {
+    
+}
+
+- (void)setScrollEnabled:(BOOL)scrollEnabled {
+    
+}
+
 
 @end
 #endif
