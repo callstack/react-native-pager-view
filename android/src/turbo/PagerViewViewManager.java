@@ -4,6 +4,7 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.module.annotations.ReactModule;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
+import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.ViewManagerDelegate;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -13,7 +14,7 @@ import com.facebook.react.viewmanagers.PagerViewViewManagerInterface;
 import androidx.annotation.Nullable;
 
 @ReactModule(name = PagerViewViewManagerImpl.NAME)
-public class PagerViewViewManager extends SimpleViewManager<PagerViewView> implements PagerViewViewManagerInterface<PagerViewView> {
+public class PagerViewViewManager extends ViewGroupManager<PagerViewView> implements PagerViewViewManagerInterface<PagerViewView> {
   private final ViewManagerDelegate<PagerViewView> mDelegate;
 
   public PagerViewViewManager(ReactApplicationContext context) {
