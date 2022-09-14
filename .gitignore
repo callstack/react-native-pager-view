@@ -65,3 +65,5 @@ example/vendor
 fabric-example/ios/Pods
 fabric-example/vendor
 fabric-example/android/app/.cxx
+fabricexample/ios/Pods
+fabricexample/vendor

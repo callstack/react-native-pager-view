@@ -149,8 +149,8 @@
     ]
   },
   "codegenConfig": {
-    "name": "RNPagerViewViewSpec",
+    "name": "PagerViewView",
     "type": "components",
-    "jsSrcsDir": "./src"
+    "jsSrcsDir": "src"
   }
 }
