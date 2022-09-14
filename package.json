@@ -134,6 +134,11 @@
     "trailingComma": "es5",
     "useTabs": false
   },
+  "codegenConfig": {
+    "name": "PagerViewView",
+    "type": "components",
+    "jsSrcsDir": "src"
+  },
   "react-native-builder-bob": {
     "source": "src",
     "output": "lib",
