@@ -1,4 +1,9 @@
 import type * as ReactNative from 'react-native';
+import type {
+  PagerViewOnPageScrollEventData,
+  PagerViewOnPageSelectedEventData,
+  PageScrollStateChangedEvent,
+} from './PagerViewViewNativeComponent';
 
 export type Orientation = 'horizontal' | 'vertical';
 export type OverScrollMode = 'auto' | 'always' | 'never';
@@ -6,22 +11,12 @@ export type PageScrollState = 'idle' | 'dragging' | 'settling';
 
 export type PagerViewOnPageScrollEvent =
   ReactNative.NativeSyntheticEvent<PagerViewOnPageScrollEventData>;
-export interface PagerViewOnPageScrollEventData {
-  position: number;
-  offset: number;
-}
 
 export type PagerViewOnPageSelectedEvent =
   ReactNative.NativeSyntheticEvent<PagerViewOnPageSelectedEventData>;
-export interface PagerViewOnPageSelectedEventData {
-  position: number;
-}
 
 export type PageScrollStateChangedNativeEvent =
   ReactNative.NativeSyntheticEvent<PageScrollStateChangedEvent>;
-export interface PageScrollStateChangedEvent {
-  pageScrollState: PageScrollState;
-}
 
 export interface PagerViewProps {
   /**
