@@ -59,7 +59,10 @@ android {
   sourceSets {
     main {
       if (isNewArchitectureEnabled()) {
-          java.srcDirs += ['src/turbo']
+          java.srcDirs += [
+            "src/turbo",
+            "${project.buildDir}/generated/source/codegen/java"
+          ]
       } else {
           java.srcDirs += ['src/legacy']
       }
@@ -141,7 +144,7 @@ def kotlin_version = getExtOrDefault('kotlinVersion')
 
 dependencies {
     //noinspection GradleDynamicVersion
-  implementation "com.facebook.react:react-native:+"
+  api "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation 'androidx.viewpager2:viewpager2:1.0.0'
 }
@@ -149,7 +152,7 @@ dependencies {
 if (isNewArchitectureEnabled()) {
   react {
     jsRootDir = file("../src/")
-    libraryName = "PagerViewView"
+    libraryName = "RNCPagerView"
     codegenJavaPackageName = "com.reactnativepagerview"
   }
 }

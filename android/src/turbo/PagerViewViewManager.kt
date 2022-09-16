@@ -9,7 +9,7 @@ import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.viewmanagers.PagerViewViewManagerDelegate
 import com.facebook.react.viewmanagers.PagerViewViewManagerInterface
 
-//@ReactModule(name = PagerViewViewManagerImpl.NAME)
+@ReactModule(name = PagerViewViewManagerImpl.NAME)
 class PagerViewViewManager() : ViewGroupManager<PagerViewView>(), PagerViewViewManagerInterface<PagerViewView> {
     private val mDelegate: ViewManagerDelegate<PagerViewView> = PagerViewViewManagerDelegate(this)
 
