@@ -137,7 +137,7 @@
     "useTabs": false
   },
   "codegenConfig": {
-    "name": "PagerViewView",
+    "name": "RNCViewPager",
     "type": "components",
     "jsSrcsDir": "src"
   },
@@ -154,10 +154,5 @@
         }
       ]
     ]
-  },
-  "codegenConfig": {
-    "name": "PagerViewView",
-    "type": "components",
-    "jsSrcsDir": "src"
   }
 }
