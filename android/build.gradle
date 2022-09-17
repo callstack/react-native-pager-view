@@ -151,8 +151,8 @@ dependencies {
 
 if (isNewArchitectureEnabled()) {
   react {
-    jsRootDir = file("../src/")
-    libraryName = "RNCPagerView"
+    jsRootDir = file("../src")
+    libraryName = "RNCViewPager"
     codegenJavaPackageName = "com.reactnativepagerview"
   }
 }

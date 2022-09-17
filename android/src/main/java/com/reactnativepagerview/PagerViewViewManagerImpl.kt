@@ -4,7 +4,7 @@ import com.facebook.react.uimanager.ThemedReactContext
 import android.graphics.Color
 
 object PagerViewViewManagerImpl {
-    const val NAME = "RNCPagerView"
+    const val NAME = "RNCViewPager"
     fun createViewInstance(context: ThemedReactContext?): PagerViewView {
         return PagerViewView(context)
     }

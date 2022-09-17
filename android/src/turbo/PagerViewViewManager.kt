@@ -6,12 +6,12 @@ import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.ViewManagerDelegate
-import com.facebook.react.viewmanagers.PagerViewViewManagerDelegate
-import com.facebook.react.viewmanagers.PagerViewViewManagerInterface
+import com.facebook.react.viewmanagers.RNCViewPagerManagerDelegate
+import com.facebook.react.viewmanagers.RNCViewPagerManagerInterface
 
 @ReactModule(name = PagerViewViewManagerImpl.NAME)
-class PagerViewViewManager() : ViewGroupManager<PagerViewView>(), PagerViewViewManagerInterface<PagerViewView> {
-    private val mDelegate: ViewManagerDelegate<PagerViewView> = PagerViewViewManagerDelegate(this)
+class PagerViewViewManager() : ViewGroupManager<PagerViewView>(), RNCViewPagerManagerInterface<PagerViewView> {
+    private val mDelegate: ViewManagerDelegate<PagerViewView> = RNCViewPagerManagerDelegate(this)
 
     override fun getDelegate() = mDelegate
 
