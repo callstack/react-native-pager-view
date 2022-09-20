@@ -29,12 +29,14 @@ export type PageScrollStateChangedEvent = OnPageScrollStateChangedEventData;
 
 interface NativeProps extends ViewProps {
   scrollEnabled?: WithDefault<boolean, true>;
-  layoutDirection?: WithDefault<'rtl' | 'ltr' | 'locale', 'rtl'>;
+  layoutDirection?: WithDefault<'ltr' | 'rtl', 'ltr'>;
   initialPage?: Int32;
   orientation?: WithDefault<'horizontal' | 'vertical', 'horizontal'>;
   offscreenPageLimit?: Int32;
   pageMargin?: Int32;
   overScrollMode?: WithDefault<'auto' | 'always' | 'never', 'auto'>;
+  overdrag?: WithDefault<boolean, false>;
+  keyboardDismissMode?: WithDefault<'none' | 'on-drag', 'none'>;
   onPageScroll: BubblingEventHandler<OnPageScrollEventData>;
   onPageSelected: DirectEventHandler<OnPageSelectedEventData>;
   onPageScrollStateChanged: DirectEventHandler<OnPageScrollStateChangedEventData>;

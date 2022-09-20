@@ -11,7 +11,7 @@ import type {
 import { childrenWithOverriddenStyle } from './utils';
 import PagerViewView, {
   Commands as PagerViewCommands,
-} from './PagerViewViewNativeComponent';
+} from './PagerViewNativeComponent';
 
 /**
  * Container that allows to flip left and right between child views. Each
@@ -126,10 +126,10 @@ export class PagerView extends React.Component<PagerViewProps> {
   };
 
   private get deducedLayoutDirection() {
-    const shouldUseDeviceRtlSetup =
-      !this.props.layoutDirection || this.props.layoutDirection === 'locale';
-
-    if (shouldUseDeviceRtlSetup) {
+    if (
+      !this.props.layoutDirection ||
+      this.props.layoutDirection === 'locale'
+    ) {
       return I18nManager.isRTL ? 'rtl' : 'ltr';
     } else {
       return this.props.layoutDirection;
