@@ -29,7 +29,7 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
     }
 
     override fun receiveCommand(root: NestedScrollableHost, commandId: String?, args: ReadableArray?) {
-        mDelegate.receiveCommand(root, commandId, args);
+        mDelegate.receiveCommand(root, commandId, args)
     }
 
     public override fun createViewInstance(reactContext: ThemedReactContext): NestedScrollableHost {

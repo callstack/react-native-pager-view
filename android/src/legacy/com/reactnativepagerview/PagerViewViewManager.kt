@@ -132,12 +132,13 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
                 PageSelectedEvent.EVENT_NAME, MapBuilder.of("registrationName", "onPageSelected"))
     }
 
-    override fun receiveCommand(root: NestedScrollableHost, commandId: Int, args: ReadableArray?) {
+    override fun receiveCommand(root: NestedScrollableHost, commandId: String?, args: ReadableArray?) {
         super.receiveCommand(root, commandId, args)
         val view = PagerViewViewManagerImpl.getViewPager(root)
         Assertions.assertNotNull(view)
         Assertions.assertNotNull(args)
         val childCount = view.adapter?.itemCount
+
         when (commandId) {
             COMMAND_SET_PAGE, COMMAND_SET_PAGE_WITHOUT_ANIMATION -> {
                 val pageIndex = args!!.getInt(0)
@@ -163,20 +164,10 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
         PagerViewViewManagerImpl.setPageMargin(host, margin)
     }
 
-    override fun getCommandsMap(): Map<String, Int>? {
-        return MapBuilder.of(
-                "setPage",
-                COMMAND_SET_PAGE,
-                "setPageWithoutAnimation",
-                COMMAND_SET_PAGE_WITHOUT_ANIMATION,
-                "setScrollEnabledImperatively",
-                COMMAND_SET_SCROLL_ENABLED)
-    }
-
     companion object {
-        private const val COMMAND_SET_PAGE = 1
-        private const val COMMAND_SET_PAGE_WITHOUT_ANIMATION = 2
-        private const val COMMAND_SET_SCROLL_ENABLED = 3
+        private const val COMMAND_SET_PAGE = "setPage"
+        private const val COMMAND_SET_PAGE_WITHOUT_ANIMATION = "setPageWithoutAnimation"
+        private const val COMMAND_SET_SCROLL_ENABLED = "setScrollEnabledImperatively"
     }
 }
 
