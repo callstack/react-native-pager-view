@@ -3,7 +3,7 @@ import type {
   PagerViewOnPageScrollEventData,
   PagerViewOnPageSelectedEventData,
   PageScrollStateChangedEvent,
-} from './PagerViewNativeComponent';
+} from './PagerViewViewNativeComponent';
 
 export type Orientation = 'horizontal' | 'vertical';
 export type OverScrollMode = 'auto' | 'always' | 'never';
