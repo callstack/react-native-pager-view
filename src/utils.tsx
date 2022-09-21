@@ -7,6 +7,7 @@ export const childrenWithOverriddenStyle = (children?: ReactNode) => {
     return (
       // Add a wrapper to ensure layout is calculated correctly
       <View style={StyleSheet.absoluteFill} collapsable={false}>
+        {/* @ts-ignore */}
         {React.cloneElement(element, {
           ...element.props,
           // Override styles so that each page will fill the parent.
