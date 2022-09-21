@@ -146,8 +146,6 @@ using namespace facebook::react;
         _overdrag = newScreenProps.overdrag;
     }
     
-    
-    
     [super updateProps:props oldProps:oldProps];
 }
 
@@ -178,15 +176,13 @@ using namespace facebook::react;
     
     [self setPagerViewControllers:index
                         direction:direction
-                         animated:animated
-         shouldCallOnPageSelected:YES];
+                         animated:animated];
     
 }
 
 - (void)setPagerViewControllers:(NSInteger)index
                       direction:(UIPageViewControllerNavigationDirection)direction
-                       animated:(BOOL)animated
-       shouldCallOnPageSelected:(BOOL)shouldCallOnPageSelected {
+                       animated:(BOOL)animated{
     if (_nativePageViewController == nil) {
         return;
     }
@@ -197,7 +193,7 @@ using namespace facebook::react;
                                          animated:animated
                                        completion:^(BOOL finished) {
         __strong RNCPagerViewComponentView *strongSelf = weakSelf;
-        if (strongSelf->_eventEmitter != nullptr && shouldCallOnPageSelected) {
+        if (strongSelf->_eventEmitter != nullptr ) {
             const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(strongSelf->_eventEmitter);
             int position = (int) index;
             strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
