@@ -27,6 +27,10 @@ export const createPage = (key: number): CreatePage => {
       alignItems: 'center',
       padding: 20,
     },
-    imgSource: { uri: IMAGE_URIS[key % BGCOLOR.length] },
+    imgSource: {
+      uri:
+        IMAGE_URIS[key % BGCOLOR.length] ||
+        'https://apod.nasa.gov/apod/image/1510/lunareclipse_27Sep_beletskycrop4.jpg',
+    },
   };
 };
