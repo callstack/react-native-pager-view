@@ -7,8 +7,7 @@
  */
 
 import * as React from 'react';
-import { Image, StyleSheet, Text, View, SafeAreaView } from 'react-native';
-
+import { Image, StyleSheet, Text, View } from 'react-native';
 import ViewPager from 'react-native-pager-view';
 import { PAGES, createPage } from './utils';
 import { Button } from './component/Button';
@@ -106,7 +105,7 @@ export default class App extends React.Component<{}, State> {
   render() {
     const { page, pages, animationsAreEnabled, dotsVisible } = this.state;
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <ViewPager
           style={styles.viewPager}
           initialPage={0}
@@ -115,6 +114,8 @@ export default class App extends React.Component<{}, State> {
           onPageSelected={this.onPageSelected}
           onPageScrollStateChanged={this.onPageScrollStateChanged}
           pageMargin={10}
+          layoutDirection="ltr"
+          overdrag={false}
           // Lib does not support dynamically orientation change
           orientation="horizontal"
           showPageIndicator={dotsVisible}
@@ -165,7 +166,7 @@ export default class App extends React.Component<{}, State> {
             progress={this.state.progress}
           />
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 }
