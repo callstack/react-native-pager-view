@@ -154,6 +154,16 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
         }
     }
 
+    @ReactProp(name = "overdrag")
+    override fun setOverdrag(view: NestedScrollableHost?, value: Boolean) {
+        return
+    }
+
+    @ReactProp(name = "keyboardDismissMode")
+    override fun setKeyboardDismissMode(view: NestedScrollableHost?, value: String?) {
+        return
+    }
+
     fun goTo(root: NestedScrollableHost?, selectedPage: Int, scrollWithAnimation: Boolean) {
         if (root == null) {
             return
