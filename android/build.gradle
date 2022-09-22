@@ -1,11 +1,16 @@
 buildscript {
+  // Buildscript is evaluated before everything else so we can't use getExtOrDefault
+  def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['PagerView_kotlinVersion']
+
   repositories {
-      google()
-      mavenCentral()
+    google()
+    jcenter()
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:3.5.3'
+    classpath 'com.android.tools.build:gradle:4.2.1'
+    // noinspection DifferentKotlinGradleVersion
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
   }
 }
 
@@ -14,6 +19,8 @@ def isNewArchitectureEnabled() {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
 
 if (isNewArchitectureEnabled()) {
   apply plugin: 'com.facebook.react'
@@ -52,7 +59,10 @@ android {
   sourceSets {
     main {
       if (isNewArchitectureEnabled()) {
-          java.srcDirs += ['src/turbo']
+          java.srcDirs += [
+            "src/turbo",
+            "${project.buildDir}/generated/source/codegen/java"
+          ]
       } else {
           java.srcDirs += ['src/legacy']
       }
@@ -130,17 +140,19 @@ repositories {
   }
 }
 
+def kotlin_version = getExtOrDefault('kotlinVersion')
 
 dependencies {
     //noinspection GradleDynamicVersion
-  implementation "com.facebook.react:react-native:+"
-// From node_modules
+  api "com.facebook.react:react-native:+"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation 'androidx.viewpager2:viewpager2:1.0.0'
 }
 
 if (isNewArchitectureEnabled()) {
   react {
-    jsRootDir = file("../src/")
-    libraryName = "PagerViewView"
+    jsRootDir = file("../src")
+    libraryName = "RNCViewPager"
     codegenJavaPackageName = "com.reactnativepagerview"
   }
 }

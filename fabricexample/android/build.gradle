@@ -49,3 +49,7 @@ allprojects {
         maven { url 'https://www.jitpack.io' }
     }
 }
+
+ext {
+    kotlinVersion = "1.6.10"
+}
