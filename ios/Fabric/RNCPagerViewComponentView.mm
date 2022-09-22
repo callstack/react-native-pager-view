@@ -20,6 +20,10 @@ using namespace facebook::react;
 }
 
 - (void)initializeNativePageViewController {
+    if (_nativePageViewController) {
+        [_nativePageViewController.view removeFromSuperview];
+        _nativePageViewController = nil;
+    }
     const auto &viewProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
     NSDictionary *options = @{ UIPageViewControllerOptionInterPageSpacingKey: @(viewProps.pageMargin) };
     UIPageViewControllerNavigationOrientation orientation = UIPageViewControllerNavigationOrientationHorizontal;
@@ -58,8 +62,6 @@ using namespace facebook::react;
         _currentIndex = -1;
         _layoutDirection = @"ltr";
         _overdrag = NO;
-        
-        [self initializeNativePageViewController];
     }
     
     return self;
@@ -73,15 +75,6 @@ using namespace facebook::react;
     [self goTo:_currentIndex animated:NO];
 }
 
--(void)prepareForRecycle{
-    [super prepareForRecycle];
-    //removes previous page view controller and initializes new one
-    [_nativePageViewController.view removeFromSuperview];
-    _nativePageViewController = nil;
-    
-    [self initializeNativePageViewController];
-    
-}
 
 #pragma mark - React API
 
@@ -100,7 +93,20 @@ using namespace facebook::react;
     if (self.currentIndex >= maxPage) {
         [self goTo:maxPage animated:NO];
     }
+}
+
+- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask {
+    [super finalizeUpdates:updateMask];
     
+    if (!_nativePageViewController) {
+        [self initializeNativePageViewController];
+    }
+}
+
+-(void)prepareForRecycle{
+    [super prepareForRecycle];
+    
+    [self initializeNativePageViewController];
 }
 
 - (void)shouldDismissKeyboard:(RNCViewPagerKeyboardDismissMode)dismissKeyboard {
