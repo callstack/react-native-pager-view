@@ -2,12 +2,13 @@ import React from 'react';
 import { Platform, Keyboard } from 'react-native';
 import { I18nManager } from 'react-native';
 import type {
-  PagerViewOnPageScrollEvent,
-  PagerViewOnPageSelectedEvent,
-  PageScrollStateChangedNativeEvent,
-  PagerViewProps,
-} from './types';
+  OnPageScrollEventData,
+  OnPageScrollStateChangedEventData,
+  OnPageSelectedEventData,
+} from './PagerViewNativeComponent';
+import type * as ReactNative from 'react-native';
 
+import type { NativeProps as PagerViewProps } from './PagerViewNativeComponent';
 import { childrenWithOverriddenStyle } from './utils';
 import PagerViewView, {
   Commands as PagerViewCommands,
@@ -59,7 +60,9 @@ export class PagerView extends React.Component<PagerViewProps> {
   private isScrolling = false;
   pagerView: React.ElementRef<typeof PagerViewView> | null = null;
 
-  private _onPageScroll = (e: PagerViewOnPageScrollEvent) => {
+  private _onPageScroll = (
+    e: ReactNative.NativeSyntheticEvent<OnPageScrollEventData>
+  ) => {
     if (this.props.onPageScroll) {
       this.props.onPageScroll(e);
     }
@@ -73,7 +76,7 @@ export class PagerView extends React.Component<PagerViewProps> {
   };
 
   private _onPageScrollStateChanged = (
-    e: PageScrollStateChangedNativeEvent
+    e: ReactNative.NativeSyntheticEvent<OnPageScrollStateChangedEventData>
   ) => {
     if (this.props.onPageScrollStateChanged) {
       this.props.onPageScrollStateChanged(e);
@@ -81,7 +84,9 @@ export class PagerView extends React.Component<PagerViewProps> {
     this.isScrolling = e.nativeEvent.pageScrollState === 'dragging';
   };
 
-  private _onPageSelected = (e: PagerViewOnPageSelectedEvent) => {
+  private _onPageSelected = (
+    e: ReactNative.NativeSyntheticEvent<OnPageSelectedEventData>
+  ) => {
     if (this.props.onPageSelected) {
       this.props.onPageSelected(e);
     }
@@ -128,6 +133,7 @@ export class PagerView extends React.Component<PagerViewProps> {
   private get deducedLayoutDirection() {
     if (
       !this.props.layoutDirection ||
+      //@ts-ignore fix it
       this.props.layoutDirection === 'locale'
     ) {
       return I18nManager.isRTL ? 'rtl' : 'ltr';

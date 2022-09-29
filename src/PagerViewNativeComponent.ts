@@ -10,24 +10,20 @@ import type {
   WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
-type OnPageScrollEventData = Readonly<{
+export type OnPageScrollEventData = Readonly<{
   position: Double;
   offset: Double;
 }>;
 
-type OnPageSelectedEventData = Readonly<{
+export type OnPageSelectedEventData = Readonly<{
   position: Double;
 }>;
 
-type OnPageScrollStateChangedEventData = Readonly<{
+export type OnPageScrollStateChangedEventData = Readonly<{
   pageScrollState: 'idle' | 'dragging' | 'settling';
 }>;
 
-export type PagerViewOnPageScrollEventData = OnPageScrollEventData;
-export type PagerViewOnPageSelectedEventData = OnPageSelectedEventData;
-export type PageScrollStateChangedEvent = OnPageScrollStateChangedEventData;
-
-interface NativeProps extends ViewProps {
+export interface NativeProps extends ViewProps {
   scrollEnabled?: WithDefault<boolean, true>;
   layoutDirection?: WithDefault<'ltr' | 'rtl', 'ltr'>;
   initialPage?: Int32;
