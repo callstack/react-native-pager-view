@@ -7,7 +7,7 @@
  */
 
 import * as React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import ViewPager from 'react-native-pager-view';
 import { PAGES, createPage } from './utils';
 import { Button } from './component/Button';
@@ -105,7 +105,7 @@ export default class App extends React.Component<{}, State> {
   render() {
     const { page, pages, animationsAreEnabled, dotsVisible } = this.state;
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <ViewPager
           style={styles.viewPager}
           initialPage={0}
@@ -166,7 +166,7 @@ export default class App extends React.Component<{}, State> {
             progress={this.state.progress}
           />
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 }
