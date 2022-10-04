@@ -16,7 +16,7 @@ import {
   Animated,
   ImageRequireSource,
 } from 'react-native';
-import type { PagerViewOnPageScrollEvent } from 'react-native-pager-view';
+import type { PagerViewOnPageScrollEventData } from 'react-native-pager-view';
 import PagerView from 'react-native-pager-view';
 
 const data = [
@@ -244,7 +244,7 @@ export default function HeadphonesCarouselExample() {
       <AnimatedPagerView
         initialPage={0}
         style={{ width: '100%', height: '100%' }}
-        onPageScroll={Animated.event<PagerViewOnPageScrollEvent['nativeEvent']>(
+        onPageScroll={Animated.event<PagerViewOnPageScrollEventData>(
           [
             {
               nativeEvent: {
