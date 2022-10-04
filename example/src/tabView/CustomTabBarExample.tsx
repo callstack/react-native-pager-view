@@ -52,7 +52,7 @@ export default class CustomTabBarExample extends React.Component<{}, State> {
       position,
     }: {
       navigationState: State;
-      position: Animated.AnimatedInterpolation;
+      position: Animated.AnimatedInterpolation<number>;
     }) =>
     ({ route, index }: { route: Route; index: number }) => {
       const inputRange = navigationState.routes.map((_, i) => i);

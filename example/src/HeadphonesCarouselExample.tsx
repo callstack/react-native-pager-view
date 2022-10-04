@@ -244,7 +244,7 @@ export default function HeadphonesCarouselExample() {
       <AnimatedPagerView
         initialPage={0}
         style={{ width: '100%', height: '100%' }}
-        onPageScroll={Animated.event<PagerViewOnPageScrollEvent>(
+        onPageScroll={Animated.event<PagerViewOnPageScrollEvent['nativeEvent']>(
           [
             {
               nativeEvent: {
@@ -254,11 +254,7 @@ export default function HeadphonesCarouselExample() {
             },
           ],
           {
-            listener: ({
-              nativeEvent: {
-                nativeEvent: { offset, position },
-              },
-            }) => {
+            listener: ({ nativeEvent: { offset, position } }) => {
               console.log(`Position: ${position} Offset: ${offset}`);
             },
             useNativeDriver: true,

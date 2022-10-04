@@ -33,9 +33,9 @@ export interface NativeProps extends ViewProps {
   overScrollMode?: WithDefault<'auto' | 'always' | 'never', 'auto'>;
   overdrag?: WithDefault<boolean, false>;
   keyboardDismissMode?: WithDefault<'none' | 'on-drag', 'none'>;
-  onPageScroll: BubblingEventHandler<OnPageScrollEventData>;
-  onPageSelected: DirectEventHandler<OnPageSelectedEventData>;
-  onPageScrollStateChanged: DirectEventHandler<OnPageScrollStateChangedEventData>;
+  onPageScroll?: BubblingEventHandler<OnPageScrollEventData>;
+  onPageSelected?: DirectEventHandler<OnPageSelectedEventData>;
+  onPageScrollStateChanged?: DirectEventHandler<OnPageScrollStateChangedEventData>;
 }
 
 type PagerViewViewType = HostComponent<NativeProps>;
