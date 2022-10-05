@@ -9,16 +9,12 @@ import type {
   NativeProps,
 } from './PagerViewNativeComponent';
 
-interface PagerViewProps extends NativeProps {
-  // TODO do we still need this ?
-  showPageIndicator?: boolean;
-}
 
 export type {
   PagerViewOnPageScrollEventData,
   PagerViewOnPageSelectedEventData,
   PageScrollStateChangedNativeEventData,
-  PagerViewProps,
+  NativeProps as PagerViewProps,
 };
 
 export type PagerViewOnPageScrollEvent =
