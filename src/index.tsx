@@ -9,7 +9,6 @@ import type {
   NativeProps,
 } from './PagerViewNativeComponent';
 
-
 export type {
   PagerViewOnPageScrollEventData,
   PagerViewOnPageSelectedEventData,
