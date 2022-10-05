@@ -10,8 +10,19 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "@react-native-community/masked-view": "^0.1.10",
+    "@react-navigation/native": "^5.8.10",
+    "@react-navigation/native-stack": "5.0.4",
+    "@react-navigation/stack": "^5.12.8",
     "react": "18.1.0",
-    "react-native": "0.70.0"
+    "react-native": "0.70.0",
+    "react-native-animated-pagination-dots": "^0.1.73",
+    "react-native-gesture-handler": "^1.9.0",
+    "react-native-reanimated": "^2.3.1",
+    "react-native-safe-area-context": "^3.1.9",
+    "react-native-screens": "^2.16.1",
+    "react-native-svg": "12.4.4",
+    "react-native-tab-view": "^3.1.1"
   },
   "resolutions": {
     "@types/react": "17.0.21"
@@ -21,10 +32,10 @@
     "@babel/runtime": "^7.12.5",
     "@types/react-native": "0.70.0",
     "@types/react-test-renderer": "^18.0.0",
-    "metro-react-native-babel-preset": "^0.72.1",
-    "react-test-renderer": "18.1.0",
     "babel-plugin-module-resolver": "^4.1.0",
+    "metro-react-native-babel-preset": "^0.72.1",
     "patch-package": "^6.4.7",
-    "postinstall-postinstall": "^2.1.0"
+    "postinstall-postinstall": "^2.1.0",
+    "react-test-renderer": "18.1.0"
   }
 }

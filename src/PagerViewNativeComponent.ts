@@ -10,24 +10,20 @@ import type {
   WithDefault,
 } from 'react-native/Libraries/Types/CodegenTypes';
 
-type OnPageScrollEventData = Readonly<{
+export type OnPageScrollEventData = Readonly<{
   position: Double;
   offset: Double;
 }>;
 
-type OnPageSelectedEventData = Readonly<{
+export type OnPageSelectedEventData = Readonly<{
   position: Double;
 }>;
 
-type OnPageScrollStateChangedEventData = Readonly<{
+export type OnPageScrollStateChangedEventData = Readonly<{
   pageScrollState: 'idle' | 'dragging' | 'settling';
 }>;
 
-export type PagerViewOnPageScrollEventData = OnPageScrollEventData;
-export type PagerViewOnPageSelectedEventData = OnPageSelectedEventData;
-export type PageScrollStateChangedEvent = OnPageScrollStateChangedEventData;
-
-interface NativeProps extends ViewProps {
+export interface NativeProps extends ViewProps {
   scrollEnabled?: WithDefault<boolean, true>;
   layoutDirection?: WithDefault<'ltr' | 'rtl', 'ltr'>;
   initialPage?: Int32;
@@ -37,9 +33,9 @@ interface NativeProps extends ViewProps {
   overScrollMode?: WithDefault<'auto' | 'always' | 'never', 'auto'>;
   overdrag?: WithDefault<boolean, false>;
   keyboardDismissMode?: WithDefault<'none' | 'on-drag', 'none'>;
-  onPageScroll: BubblingEventHandler<OnPageScrollEventData>;
-  onPageSelected: DirectEventHandler<OnPageSelectedEventData>;
-  onPageScrollStateChanged: DirectEventHandler<OnPageScrollStateChangedEventData>;
+  onPageScroll?: BubblingEventHandler<OnPageScrollEventData>;
+  onPageSelected?: DirectEventHandler<OnPageSelectedEventData>;
+  onPageScrollStateChanged?: DirectEventHandler<OnPageScrollStateChangedEventData>;
 }
 
 type PagerViewViewType = HostComponent<NativeProps>;

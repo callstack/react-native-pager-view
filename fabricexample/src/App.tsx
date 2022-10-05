@@ -25,7 +25,6 @@ type State = {
   };
   pages: Array<CreatePage>;
   scrollState: any;
-  dotsVisible: boolean;
 };
 export default class App extends React.Component<{}, State> {
   viewPager: { current: React.ElementRef<typeof ViewPager> | null };
@@ -48,7 +47,6 @@ export default class App extends React.Component<{}, State> {
       },
       pages: pages,
       scrollState: 'idle',
-      dotsVisible: false,
     };
     this.viewPager = React.createRef();
   }
@@ -98,12 +96,8 @@ export default class App extends React.Component<{}, State> {
     );
   }
 
-  toggleDotsVisibility = () => {
-    this.setState((prevState) => ({ dotsVisible: !prevState.dotsVisible }));
-  };
-
   render() {
-    const { page, pages, animationsAreEnabled, dotsVisible } = this.state;
+    const { page, pages, animationsAreEnabled } = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <ViewPager
@@ -118,7 +112,6 @@ export default class App extends React.Component<{}, State> {
           overdrag={false}
           // Lib does not support dynamically orientation change
           orientation="horizontal"
-          showPageIndicator={dotsVisible}
           ref={this.viewPager}
         >
           {pages.map((p) => this.renderPage(p))}
