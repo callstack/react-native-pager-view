@@ -14,7 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) NSInteger currentIndex;
 @property(nonatomic) NSInteger pageMargin;
 @property(nonatomic, readonly) BOOL scrollEnabled;
-@property(nonatomic, readonly) BOOL showPageIndicator;
 @property(nonatomic, readonly) UIScrollViewKeyboardDismissMode dismissKeyboard;
 @property(nonatomic) UIPageViewControllerNavigationOrientation orientation;
 @property(nonatomic, copy) RCTDirectEventBlock onPageSelected;
@@ -26,7 +25,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated;
 - (void)shouldScroll:(BOOL)scrollEnabled;
-- (void)shouldShowPageIndicator:(BOOL)showPageIndicator;
 - (void)shouldDismissKeyboard:(NSString *)dismissKeyboard;
 
 @end

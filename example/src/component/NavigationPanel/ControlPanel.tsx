@@ -10,7 +10,6 @@ export function ControlsPanel({
   pages,
   scrollState,
   scrollEnabled,
-  dotsEnabled,
   progress,
   disablePagesAmountManagement,
   overdragEnabled,
@@ -18,7 +17,6 @@ export function ControlsPanel({
   addPage,
   removePage,
   toggleScroll,
-  toggleDots,
   toggleAnimation,
   toggleOverdrag,
 }: NavigationPanelProps) {
@@ -42,11 +40,6 @@ export function ControlsPanel({
           testID="scroll-enabled-button"
           text={scrollEnabled ? 'Scroll Enabled' : 'Scroll Disabled'}
           onPress={toggleScroll}
-        />
-        <Button
-          style={styles.buttonAdjustment}
-          text={dotsEnabled ? 'Hide dots' : 'Show dots'}
-          onPress={toggleDots}
         />
         <Button
           style={styles.buttonAdjustment}
