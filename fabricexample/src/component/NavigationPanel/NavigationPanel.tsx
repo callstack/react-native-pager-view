@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { ControlsPanel } from './ControlPanel';
 import { LogsPanel } from './LogsPanel';
 import type { NavigationPanelProps } from './types';
