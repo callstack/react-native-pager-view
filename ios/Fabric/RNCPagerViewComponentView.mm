@@ -23,10 +23,6 @@ using namespace facebook::react;
 }
 
 - (void)initializeNativePageViewController {
-    if (_nativePageViewController) {
-        [_nativePageViewController.view removeFromSuperview];
-        _nativePageViewController = nil;
-    }
     const auto &viewProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
     NSDictionary *options = @{ UIPageViewControllerOptionInterPageSpacingKey: @(viewProps.pageMargin) };
     UIPageViewControllerNavigationOrientation orientation = UIPageViewControllerNavigationOrientationHorizontal;
@@ -45,7 +41,7 @@ using namespace facebook::react;
     _nativePageViewController.dataSource = self;
     _nativePageViewController.delegate = self;
     _nativePageViewController.view.frame = self.frame;
-    [self addSubview:_nativePageViewController.view];
+    self.contentView = _nativePageViewController.view;
     
     for (UIView *subview in _nativePageViewController.view.subviews) {
         if([subview isKindOfClass:UIScrollView.class]){
@@ -70,12 +66,16 @@ using namespace facebook::react;
     return self;
 }
 
-
-
-- (void)layoutSubviews {
+-(void)layoutSubviews {
     [super layoutSubviews];
-    //Workaround to fix incorrect frame issue
-    [self goTo:_currentIndex animated:NO];
+    
+    [_nativePageViewController setViewControllers:@[[_nativeChildrenViewControllers objectAtIndex:_currentIndex]] direction: [self isLtrLayout] ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse  animated:NO completion:nil];
+}
+
+- (void)willMoveToSuperview:(UIView *)newSuperview {
+    if (newSuperview != nil) {
+        [self initializeNativePageViewController];
+    }
 }
 
 
@@ -98,18 +98,15 @@ using namespace facebook::react;
     }
 }
 
-- (void)finalizeUpdates:(RNComponentViewUpdateMask)updateMask {
-    [super finalizeUpdates:updateMask];
-    
-    if (!_nativePageViewController) {
-        [self initializeNativePageViewController];
-    }
-}
 
--(void)prepareForRecycle{
+-(void)prepareForRecycle {
     [super prepareForRecycle];
     
-    [self initializeNativePageViewController];
+    _nativeChildrenViewControllers = [[NSMutableArray alloc] init];
+    [_nativePageViewController.view removeFromSuperview];
+    _nativePageViewController = nil;
+    
+    _currentIndex = -1;
 }
 
 - (void)shouldDismissKeyboard:(RNCViewPagerKeyboardDismissMode)dismissKeyboard {
