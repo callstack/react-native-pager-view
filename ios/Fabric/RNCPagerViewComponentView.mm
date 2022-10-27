@@ -10,6 +10,9 @@
 #import "RCTFabricComponentsPlugins.h"
 #import "React/RCTConversions.h"
 
+#import <React/RCTBridge+Private.h>
+#import "RCTOnPageScrollEvent.h"
+
 using namespace facebook::react;
 
 @interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
@@ -315,6 +318,15 @@ using namespace facebook::react;
     const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
     int eventPosition = (int) position;
     strongEventEmitter.onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(eventPosition), .offset =  absoluteOffset});
+
+    //This is temporary workaround to allow animations based on onPageScroll event
+    //until Fabric implements proper NativeAnimationDriver
+    RCTBridge *bridge = [RCTBridge currentBridge];
+    
+    if (bridge) {
+        [bridge.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:[NSNumber numberWithInt:self.tag] position:@(position) offset:@(absoluteOffset)]];
+    }
+    
 }
 
 
