@@ -39,7 +39,7 @@ In version **6.x** support for `transitionStyle` property has been dropped. More
 
 ## New architecture setup (Fabric)
 
-This library supports new architecture! We have two example folders one for each architecture. If you are using this library in our own project there some extra steps needed. 
+This library supports new architecture! We have two example folders one for each architecture. If you are using this library in your own project there some extra steps needed. 
 ### iOS
 Install pods with this flag inside `ios` folder: 
 ```sh
