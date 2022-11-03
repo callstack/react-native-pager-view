@@ -43,7 +43,7 @@ This library supports new architecture! We have two example folders one for each
 ### iOS
 Install pods with this flag inside `ios` folder: 
 ```sh
-RCT_NEW_ARCH_ENABLED=1 pod install
+RCT_NEW_ARCH_ENABLED=1 bundle exec pod install
 ``` 
 (Inside of `fabricexample` the `RCT_NEW_ARCH_ENABLED` is already set to true by default inside `Podfile`)
 
