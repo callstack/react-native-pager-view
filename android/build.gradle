@@ -60,11 +60,11 @@ android {
     main {
       if (isNewArchitectureEnabled()) {
           java.srcDirs += [
-            "src/turbo",
+            "src/fabric/java",
             "${project.buildDir}/generated/source/codegen/java"
           ]
       } else {
-          java.srcDirs += ['src/legacy']
+          java.srcDirs += ["src/paper/java"]
       }
     }
   }
