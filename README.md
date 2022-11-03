@@ -50,7 +50,7 @@ RCT_NEW_ARCH_ENABLED=1 pod install
 ### Android
 Set `newArchEnabled` to `true` inside `android/gradle.properties` (this flag is already set to true in `fabricexample`) and then run: 
 ```sh
-npm run android
+yarn android
 ```
 
 If you have issues with running android build you can try to generate codegen before the build using this command: 
