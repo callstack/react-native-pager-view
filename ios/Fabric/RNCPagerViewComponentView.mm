@@ -83,9 +83,9 @@ using namespace facebook::react;
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
+    [[_nativeChildrenViewControllers objectAtIndex:index].view removeFromSuperview];
+    [_nativeChildrenViewControllers objectAtIndex:index].view = nil;
     [_nativeChildrenViewControllers removeObjectAtIndex:index];
-    
-    [childComponentView removeFromSuperview];
  
     NSInteger maxPage = _nativeChildrenViewControllers.count - 1;
     
