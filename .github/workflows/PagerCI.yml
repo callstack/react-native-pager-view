@@ -1,0 +1,247 @@
+name: Pager CI
+
+on: [push]
+
+jobs:
+  install-dependencies:
+    name: Install dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Cache
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ hashFiles('./package.json') }}
+
+      - name: Cache example node modules
+        id: cache-example-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-example-npm-deps
+        with:
+          path: example/node_modules
+          key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+      - name: Install required dependencies on cache miss (npm)
+        if: steps.cache-example-npm.outputs.cache-hit != 'true'
+        run: yarn install
+        working-directory: example
+
+      - name: Cache fabric example node modules
+        id: cache-fabricexample-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-fabric-npm-deps
+        with:
+          path: fabricexample/node_modules
+          key: ${{ hashFiles('./fabricexample/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+      - name: Install required dependencies on cache miss (npm)
+        if: steps.cache-fabricexample-npm.outputs.cache-hit != 'true'
+        run: yarn install
+        working-directory: fabricexample
+
+  verify-package-source:
+    name: Lint package
+    runs-on: ubuntu-latest
+    needs: install-dependencies
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Pull dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ hashFiles('./package.json') }}
+
+      - name: Pull example node modules
+        id: cache-example-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-example-npm-deps
+        with:
+          path: example/node_modules
+          key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+      - name: Pull fabric example node modules
+        id: cache-fabricexample-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-fabric-npm-deps
+        with:
+          path: fabricexample/node_modules
+          key: ${{ hashFiles('./fabricexample/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+      - name: Lint files
+        run: yarn lint
+
+      - name: Typecheck files
+        run: yarn typescript
+
+      - name: Build package
+        run: yarn prepare
+
+  android-build:
+    runs-on: ubuntu-latest
+    needs: verify-package-source
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Pull dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ hashFiles('./package.json') }}
+
+      - name: Cache example node modules
+        id: cache-example-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-example-npm-deps
+        with:
+          path: example/node_modules
+          key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "11"
+
+      - name: Build Android
+        run: ./gradlew assembleDebug
+        working-directory: example/android
+
+  android-build-fabric:
+    runs-on: ubuntu-latest
+    needs: android-build
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Pull dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ hashFiles('./package.json') }}
+
+      - name: Cache fabric example node modules
+        id: cache-fabricexample-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-fabric-npm-deps
+        with:
+          path: fabricexample/node_modules
+          key: ${{ hashFiles('./fabricexample/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "11"
+
+      - name: Build Android (Fabric)
+        run: ./gradlew assembleDebug -PreactNativeArchitectures=x86,x86_64
+        working-directory: fabricexample/android
+
+  ios-build:
+    runs-on: macos-latest
+    needs: verify-package-source
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Pull dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ hashFiles('./package.json') }}
+
+      - name: Cache example node modules
+        id: cache-example-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-example-npm-deps
+        with:
+          path: example/node_modules
+          key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+      - name: Cache Pods
+        id: cache-pods
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-ios-pods-deps
+        with:
+          path: example/ios/Pods
+          key: ${{ hashFiles('./example/ios/Podfile.lock') }}
+
+      - name: Install required dependencies on cache miss (Pods)
+        if: steps.cache-pods.outputs.cache-hit != 'true'
+        run: pod install
+        working-directory: example/ios
+
+      - name: Reinstall Pods only if using cached ones
+        if: steps.cache-pods.outputs.cache-hit == 'true'
+        run: pod install
+        working-directory: example/ios
+
+      - name: Build iOS
+        run: |
+          device_name='iPhone 13'
+          device=$(xcrun simctl list devices "${device_name}" available | grep "${device_name} (")
+          re='\(([-0-9A-Fa-f]+)\)'
+          [[ $device =~ $re ]] || exit 1
+          xcodebuild -workspace PagerViewExample.xcworkspace -scheme PagerViewExample -destination "platform=iOS Simulator,id=${BASH_REMATCH[1]}" CODE_SIGNING_ALLOWED=NO COMPILER_INDEX_STORE_ENABLE=NO build
+        working-directory: example/ios
+
+  ios-build-fabric:
+    needs: ios-build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Pull dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ hashFiles('./package.json') }}
+
+      - name: Cache fabric example node modules
+        id: cache-fabricexample-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-fabric-npm-deps
+        with:
+          path: fabricexample/node_modules
+          key: ${{ hashFiles('./fabricexample/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+      - name: Cache FabricExample Pods
+        id: cache-pods-fabric
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-ios-pods-deps-fabric
+        with:
+          path: fabricexample/ios/Pods
+          key: ${{ hashFiles('./fabricexample/ios/Podfile.lock') }}
+
+      - name: Install FabricExample required dependencies on cache miss (Pods)
+        if: steps.cache-pods-fabric.outputs.cache-hit != 'true'
+        run: pod install
+        working-directory: fabricexample/ios
+
+      - name: Reinstall FabricExample Pods only if using cached ones
+        if: steps.cache-pods-fabric.outputs.cache-hit == 'true'
+        run: pod install
+        working-directory: fabricexample/ios
+
+      - name: Build iOS (Fabric)
+        run: |
+          device_name='iPhone 13'
+          device=$(xcrun simctl list devices "${device_name}" available | grep "${device_name} (")
+          re='\(([-0-9A-Fa-f]+)\)'
+          [[ $device =~ $re ]] || exit 1
+          xcodebuild -workspace FabricExample.xcworkspace -scheme FabricExample -destination "platform=iOS Simulator,id=${BASH_REMATCH[1]}" CODE_SIGNING_ALLOWED=NO COMPILER_INDEX_STORE_ENABLE=NO build
+        working-directory: fabricexample/ios
