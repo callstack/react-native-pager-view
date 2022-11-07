@@ -14,7 +14,7 @@
     "@react-navigation/native-stack": "^6.9.1",
     "@react-navigation/stack": "^6.3.2",
     "react": "18.1.0",
-    "react-native": "0.70.0",
+    "react-native": "0.70.5",
     "react-native-animated-pagination-dots": "^0.1.73",
     "react-native-gesture-handler": "^2.7.1",
     "react-native-reanimated": "^3.0.0-rc.3",
