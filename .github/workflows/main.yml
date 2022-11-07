@@ -1,4 +1,4 @@
-name: Pager CI
+name: Lint
 
 on: [push]
 
@@ -9,7 +9,12 @@ concurrency:
 jobs:
   install-dependencies: 
     name: Install dependencies
-    uses: ./.github/workflows/install-dependencies.yml
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install dependencies 
+        uses: ./.github/actions/install-dependencies
 
   verify-package-source:
     name: Lint package

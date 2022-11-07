@@ -13,15 +13,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  install-dependencies:
-    name: Install dependencies
-    uses: ./.github/workflows/install-dependencies.yml
-
   ios-build:
-    needs: install-dependencies
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: ./.github/actions/install-dependencies
 
       - name: Pull dependencies
         uses: actions/cache@v3
@@ -63,7 +59,7 @@ jobs:
           device=$(xcrun simctl list devices "${device_name}" available | grep "${device_name} (")
           re='\(([-0-9A-Fa-f]+)\)'
           [[ $device =~ $re ]] || exit 1
-          xcodebuild -workspace PagerViewExample.xcworkspace -scheme PagerViewExample -destination "platform=iOS Simulator,id=${BASH_REMATCH[1]}" CODE_SIGNING_ALLOWED=NO COMPILER_INDEX_STORE_ENABLE=NO build
+          xcodebuild -workspace PagerViewExample.xcworkspace -UseNewBuildSystem=YES -scheme PagerViewExample -destination "platform=iOS Simulator,id=${BASH_REMATCH[1]}" CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=YES COMPILER_INDEX_STORE_ENABLE=NO build
         working-directory: example/ios
 
   ios-build-fabric:
@@ -71,6 +67,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: ./.github/actions/install-dependencies
 
       - name: Pull dependencies
         uses: actions/cache@v3
@@ -112,5 +109,5 @@ jobs:
           device=$(xcrun simctl list devices "${device_name}" available | grep "${device_name} (")
           re='\(([-0-9A-Fa-f]+)\)'
           [[ $device =~ $re ]] || exit 1
-          xcodebuild -workspace FabricExample.xcworkspace -scheme FabricExample -destination "platform=iOS Simulator,id=${BASH_REMATCH[1]}" CODE_SIGNING_ALLOWED=NO COMPILER_INDEX_STORE_ENABLE=NO build
+          xcodebuild -workspace FabricExample.xcworkspace -scheme FabricExample -UseNewBuildSystem=YES -destination "platform=iOS Simulator,id=${BASH_REMATCH[1]}" CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=YES COMPILER_INDEX_STORE_ENABLE=NO build
         working-directory: fabricexample/ios
