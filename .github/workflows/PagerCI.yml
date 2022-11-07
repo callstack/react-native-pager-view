@@ -149,7 +149,7 @@ jobs:
           java-version: "11"
 
       - name: Build Android (Fabric)
-        run: ./gradlew assembleDebug -PreactNativeArchitectures=x86,x86_64
+        run: ./gradlew assembleDebug -PreactNativeArchitectures=arm64-v8a
         working-directory: fabricexample/android
 
   ios-build:
