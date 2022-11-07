@@ -19,6 +19,7 @@ using namespace facebook::react;
 @end
 
 @implementation RNCPagerViewComponentView {
+    LayoutMetrics _layoutMetrics;
     UIScrollView *scrollView;
 }
 
@@ -66,15 +67,10 @@ using namespace facebook::react;
     return self;
 }
 
--(void)layoutSubviews {
-    [super layoutSubviews];
-    
-    [_nativePageViewController setViewControllers:@[[_nativeChildrenViewControllers objectAtIndex:_currentIndex]] direction: [self isLtrLayout] ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse  animated:NO completion:nil];
-}
-
 - (void)willMoveToSuperview:(UIView *)newSuperview {
     if (newSuperview != nil) {
         [self initializeNativePageViewController];
+        [self goTo:_currentIndex animated:NO];
     }
 }
 
@@ -90,12 +86,19 @@ using namespace facebook::react;
     [[_nativeChildrenViewControllers objectAtIndex:index].view removeFromSuperview];
     [_nativeChildrenViewControllers objectAtIndex:index].view = nil;
     [_nativeChildrenViewControllers removeObjectAtIndex:index];
-    
+ 
     NSInteger maxPage = _nativeChildrenViewControllers.count - 1;
     
     if (self.currentIndex >= maxPage) {
         [self goTo:maxPage animated:NO];
     }
+}
+
+
+-(void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics {
+    [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:_layoutMetrics];
+    self.contentView.frame = RCTCGRectFromRect(_layoutMetrics.getContentFrame());
+    _layoutMetrics = layoutMetrics;
 }
 
 
