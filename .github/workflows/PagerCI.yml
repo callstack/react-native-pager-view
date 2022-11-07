@@ -28,7 +28,7 @@ jobs:
           path: example/node_modules
           key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
 
-      - name: Install required dependencies on cache miss (npm)
+      - name: Install required example dependencies on yarn.lock change
         if: steps.cache-example-npm.outputs.cache-hit != 'true'
         run: yarn install
         working-directory: example
