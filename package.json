@@ -1,6 +1,6 @@
 {
   "name": "react-native-pager-view",
-  "version": "6.1.0-rc.2",
+  "version": "6.0.2",
   "description": "React Native wrapper for Android and iOS ViewPager",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -26,7 +26,8 @@
     "typescript": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "prepare": "bob build",
-    "release": "release-it --npm.tag=newarch --preRelease=rc",
+    "release": "release-it",
+    "releaseNext": "release-it --npm.tag=newarch --preRelease=rc",
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn && yarn example pods",
     "fabricexample": "yarn --cwd fabricexample",
@@ -38,7 +39,7 @@
     "android"
   ],
   "repository": "https://github.com/callstack/react-native-pager-view",
-  "author": "Piotr Trocki <piotr.trocki@callstack.com> (https://github.com/callstack)",
+  "author": "troZee <hello@callstack.com> (https://github.com/callstack)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/callstack/react-native-pager-view/issues"
