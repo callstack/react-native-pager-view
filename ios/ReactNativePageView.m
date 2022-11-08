@@ -228,12 +228,18 @@
         return;
     }
     
-    BOOL isForward = (index > self.currentIndex && [self isLtrLayout]) || (index < self.currentIndex && ![self isLtrLayout]);
+    BOOL isRTL = ![self isLtrLayout];
+    
+    BOOL isForward = (index > self.currentIndex && !isRTL) || (index < self.currentIndex && isRTL);
+
+    
     UIPageViewControllerNavigationDirection direction = isForward ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
     
     long diff = labs(index - _currentIndex);
     
-    if (isForward && diff > 0) {
+    BOOL shouldGoForward = isRTL ? !isForward : isForward;
+    
+    if (shouldGoForward && diff > 0) {
         for (NSInteger i=_currentIndex; i<=index; i++) {
             if (i == _currentIndex) {
                 continue;
@@ -242,7 +248,7 @@
         }
     }
     
-    if (!isForward && diff > 0) {
+    if (!shouldGoForward && diff > 0) {
         for (NSInteger i=_currentIndex; i>=index; i--) {
             // Prevent removal of one or many pages at a time
             if (i == _currentIndex || i >= numberOfPages) {
