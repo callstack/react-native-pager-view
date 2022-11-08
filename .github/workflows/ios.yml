@@ -54,12 +54,7 @@ jobs:
         working-directory: example/ios
 
       - name: Build iOS
-        run: |
-          device_name='iPhone 13'
-          device=$(xcrun simctl list devices "${device_name}" available | grep "${device_name} (")
-          re='\(([-0-9A-Fa-f]+)\)'
-          [[ $device =~ $re ]] || exit 1
-          xcodebuild -workspace PagerViewExample.xcworkspace -UseNewBuildSystem=YES -scheme PagerViewExample -destination "platform=iOS Simulator,id=${BASH_REMATCH[1]}" CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=YES COMPILER_INDEX_STORE_ENABLE=NO build
+        run: xcodebuild -scheme PagerViewExample -workspace PagerViewExample.xcworkspace -sdk iphonesimulator -configuration Debug COMPILER_INDEX_STORE_ENABLE=NO
         working-directory: example/ios
 
   ios-build-fabric:
@@ -104,10 +99,5 @@ jobs:
         working-directory: fabricexample/ios
 
       - name: Build iOS (Fabric)
-        run: |
-          device_name='iPhone 13'
-          device=$(xcrun simctl list devices "${device_name}" available | grep "${device_name} (")
-          re='\(([-0-9A-Fa-f]+)\)'
-          [[ $device =~ $re ]] || exit 1
-          xcodebuild -workspace FabricExample.xcworkspace -scheme FabricExample -UseNewBuildSystem=YES -destination "platform=iOS Simulator,id=${BASH_REMATCH[1]}" CODE_SIGNING_ALLOWED=NO ONLY_ACTIVE_ARCH=YES COMPILER_INDEX_STORE_ENABLE=NO build
+        run: xcodebuild -scheme FabricExample -workspace FabricExample.xcworkspace -sdk iphonesimulator -configuration Debug COMPILER_INDEX_STORE_ENABLE=NO
         working-directory: fabricexample/ios
