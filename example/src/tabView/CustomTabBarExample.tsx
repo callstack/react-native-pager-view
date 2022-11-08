@@ -25,7 +25,6 @@ type Route = {
 type State = NavigationState<Route>;
 
 export default class CustomTabBarExample extends React.Component<{}, State> {
-  // eslint-disable-next-line react/sort-comp
   static title = 'Custom tab bar';
   static backgroundColor = '#fafafa';
   static tintColor = '#263238';
@@ -47,39 +46,41 @@ export default class CustomTabBarExample extends React.Component<{}, State> {
       index,
     });
 
-  private renderItem = ({
-    navigationState,
-    position,
-  }: {
-    navigationState: State;
-    position: Animated.AnimatedInterpolation;
-  }) => ({ route, index }: { route: Route; index: number }) => {
-    const inputRange = navigationState.routes.map((_, i) => i);
+  private renderItem =
+    ({
+      navigationState,
+      position,
+    }: {
+      navigationState: State;
+      position: Animated.AnimatedInterpolation<number>;
+    }) =>
+    ({ route, index }: { route: Route; index: number }) => {
+      const inputRange = navigationState.routes.map((_, i) => i);
 
-    const activeOpacity = position.interpolate({
-      inputRange,
-      outputRange: inputRange.map((i: number) => (i === index ? 1 : 0)),
-    });
-    const inactiveOpacity = position.interpolate({
-      inputRange,
-      outputRange: inputRange.map((i: number) => (i === index ? 0 : 1)),
-    });
+      const activeOpacity = position.interpolate({
+        inputRange,
+        outputRange: inputRange.map((i: number) => (i === index ? 1 : 0)),
+      });
+      const inactiveOpacity = position.interpolate({
+        inputRange,
+        outputRange: inputRange.map((i: number) => (i === index ? 0 : 1)),
+      });
 
-    return (
-      <View style={styles.tab}>
-        <Animated.View style={[styles.item, { opacity: inactiveOpacity }]}>
-          <View style={[styles.icon]} />
-          <Text style={[styles.label, styles.inactive]}>{route.title}</Text>
-        </Animated.View>
-        <Animated.View
-          style={[styles.item, styles.activeItem, { opacity: activeOpacity }]}
-        >
-          <View style={[styles.icon]} />
-          <Text style={[styles.label, styles.active]}>{route.title}</Text>
-        </Animated.View>
-      </View>
-    );
-  };
+      return (
+        <View style={styles.tab}>
+          <Animated.View style={[styles.item, { opacity: inactiveOpacity }]}>
+            <View style={[styles.icon]} />
+            <Text style={[styles.label, styles.inactive]}>{route.title}</Text>
+          </Animated.View>
+          <Animated.View
+            style={[styles.item, styles.activeItem, { opacity: activeOpacity }]}
+          >
+            <View style={[styles.icon]} />
+            <Text style={[styles.label, styles.active]}>{route.title}</Text>
+          </Animated.View>
+        </View>
+      );
+    };
 
   private renderTabBar = (
     props: SceneRendererProps & { navigationState: State }

@@ -1,0 +1,58 @@
+name: Lint
+
+on: [push]
+
+concurrency: 
+  group: ${{ github.ref }}-js
+  cancel-in-progress: true
+
+jobs:
+  install-dependencies: 
+    name: Install dependencies
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Install dependencies 
+        uses: ./.github/actions/install-dependencies
+
+  verify-package-source:
+    name: Lint package
+    runs-on: ubuntu-latest
+    needs: install-dependencies
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Pull dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ hashFiles('./package.json') }}
+
+      - name: Pull example node modules
+        id: cache-example-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-example-npm-deps
+        with:
+          path: example/node_modules
+          key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+      - name: Pull fabric example node modules
+        id: cache-fabricexample-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-fabric-npm-deps
+        with:
+          path: fabricexample/node_modules
+          key: ${{ hashFiles('./fabricexample/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+      - name: Lint files
+        run: yarn lint
+
+      - name: Typecheck files
+        run: yarn typescript
+
+      - name: Build package
+        run: yarn prepare

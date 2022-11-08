@@ -1,15 +1,18 @@
-import React, { ReactElement } from 'react';
-import { Platform, UIManager, Keyboard } from 'react-native';
-import ReactNative, { I18nManager } from 'react-native';
+import React from 'react';
+import { Platform, Keyboard } from 'react-native';
+import { I18nManager } from 'react-native';
 import type {
-  PagerViewOnPageScrollEvent,
-  PagerViewOnPageSelectedEvent,
-  PageScrollStateChangedNativeEvent,
-  PagerViewProps,
-} from './types';
+  OnPageScrollEventData,
+  OnPageScrollStateChangedEventData,
+  OnPageSelectedEventData,
+} from './PagerViewNativeComponent';
+import type * as ReactNative from 'react-native';
 
+import type { NativeProps as PagerViewProps } from './PagerViewNativeComponent';
 import { childrenWithOverriddenStyle } from './utils';
-import { getViewManagerConfig, PagerViewViewManager } from './PagerViewNative';
+import PagerViewView, {
+  Commands as PagerViewCommands,
+} from './PagerViewNativeComponent';
 
 /**
  * Container that allows to flip left and right between child views. Each
@@ -55,16 +58,15 @@ import { getViewManagerConfig, PagerViewViewManager } from './PagerViewNative';
 
 export class PagerView extends React.Component<PagerViewProps> {
   private isScrolling = false;
-  private PagerView = React.createRef<typeof PagerViewViewManager>();
+  pagerView: React.ElementRef<typeof PagerViewView> | null = null;
 
-  public getInnerViewNode = (): ReactElement => {
-    return this.PagerView.current!.getInnerViewNode();
-  };
-
-  private _onPageScroll = (e: PagerViewOnPageScrollEvent) => {
+  private _onPageScroll = (
+    e: ReactNative.NativeSyntheticEvent<OnPageScrollEventData>
+  ) => {
     if (this.props.onPageScroll) {
       this.props.onPageScroll(e);
     }
+
     // Not implemented on iOS yet
     if (Platform.OS === 'android') {
       if (this.props.keyboardDismissMode === 'on-drag') {
@@ -74,7 +76,7 @@ export class PagerView extends React.Component<PagerViewProps> {
   };
 
   private _onPageScrollStateChanged = (
-    e: PageScrollStateChangedNativeEvent
+    e: ReactNative.NativeSyntheticEvent<OnPageScrollStateChangedEventData>
   ) => {
     if (this.props.onPageScrollStateChanged) {
       this.props.onPageScrollStateChanged(e);
@@ -82,7 +84,9 @@ export class PagerView extends React.Component<PagerViewProps> {
     this.isScrolling = e.nativeEvent.pageScrollState === 'dragging';
   };
 
-  private _onPageSelected = (e: PagerViewOnPageSelectedEvent) => {
+  private _onPageSelected = (
+    e: ReactNative.NativeSyntheticEvent<OnPageSelectedEventData>
+  ) => {
     if (this.props.onPageSelected) {
       this.props.onPageSelected(e);
     }
@@ -93,11 +97,9 @@ export class PagerView extends React.Component<PagerViewProps> {
    * The transition between pages will be animated.
    */
   public setPage = (selectedPage: number) => {
-    UIManager.dispatchViewManagerCommand(
-      ReactNative.findNodeHandle(this),
-      getViewManagerConfig().Commands.setPage,
-      [selectedPage]
-    );
+    if (this.pagerView) {
+      PagerViewCommands.setPage(this.pagerView, selectedPage);
+    }
   };
 
   /**
@@ -105,11 +107,9 @@ export class PagerView extends React.Component<PagerViewProps> {
    * The transition between pages will *not* be animated.
    */
   public setPageWithoutAnimation = (selectedPage: number) => {
-    UIManager.dispatchViewManagerCommand(
-      ReactNative.findNodeHandle(this),
-      getViewManagerConfig().Commands.setPageWithoutAnimation,
-      [selectedPage]
-    );
+    if (this.pagerView) {
+      PagerViewCommands.setPageWithoutAnimation(this.pagerView, selectedPage);
+    }
   };
 
   /**
@@ -118,11 +118,12 @@ export class PagerView extends React.Component<PagerViewProps> {
    * imperative solution is more useful (e.g. for not blocking an animation)
    */
   public setScrollEnabled = (scrollEnabled: boolean) => {
-    UIManager.dispatchViewManagerCommand(
-      ReactNative.findNodeHandle(this),
-      getViewManagerConfig().Commands.setScrollEnabled,
-      [scrollEnabled]
-    );
+    if (this.pagerView) {
+      PagerViewCommands.setScrollEnabledImperatively(
+        this.pagerView,
+        scrollEnabled
+      );
+    }
   };
 
   private _onMoveShouldSetResponderCapture = () => {
@@ -130,10 +131,11 @@ export class PagerView extends React.Component<PagerViewProps> {
   };
 
   private get deducedLayoutDirection() {
-    const shouldUseDeviceRtlSetup =
-      !this.props.layoutDirection || this.props.layoutDirection === 'locale';
-
-    if (shouldUseDeviceRtlSetup) {
+    if (
+      !this.props.layoutDirection ||
+      //@ts-ignore fix it
+      this.props.layoutDirection === 'locale'
+    ) {
       return I18nManager.isRTL ? 'rtl' : 'ltr';
     } else {
       return this.props.layoutDirection;
@@ -142,9 +144,11 @@ export class PagerView extends React.Component<PagerViewProps> {
 
   render() {
     return (
-      <PagerViewViewManager
+      <PagerViewView
         {...this.props}
-        ref={this.PagerView as any /** TODO: Fix ref type */}
+        ref={(ref) => {
+          this.pagerView = ref;
+        }}
         style={this.props.style}
         layoutDirection={this.deducedLayoutDirection}
         onPageScroll={this._onPageScroll}

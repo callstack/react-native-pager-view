@@ -1,0 +1,45 @@
+name: Install dependencies
+description: "Installs and caches the dependencies"
+   
+runs:
+  using: "composite"
+  steps:
+    - name: Install dependencies
+      shell: bash
+      run: yarn install
+
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: ./node_modules
+        key: ${{ hashFiles('./package.json') }}
+
+    - name: Cache example node modules
+      id: cache-example-npm
+      uses: actions/cache@v3
+      env:
+        cache-name: cached-example-npm-deps
+      with:
+        path: example/node_modules
+        key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+    - name: Install required example dependencies on yarn.lock change
+      if: steps.cache-example-npm.outputs.cache-hit != 'true'
+      shell: bash
+      run: yarn install
+      working-directory: example
+
+    - name: Cache fabric example node modules
+      id: cache-fabricexample-npm
+      uses: actions/cache@v3
+      env:
+        cache-name: cached-fabric-npm-deps
+      with:
+        path: fabricexample/node_modules
+        key: ${{ hashFiles('./fabricexample/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+    - name: Install required fabric example dependencies on yarn.lock change
+      if: steps.cache-fabricexample-npm.outputs.cache-hit != 'true'
+      shell: bash
+      run: yarn install
+      working-directory: fabricexample

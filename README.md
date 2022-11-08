@@ -44,6 +44,29 @@ Lazy page loading has been added to the `next` version. If you would like to tes
 
 `yarn add react-native-pager-view`
 
+## New architecture setup (Fabric)
+
+This library supports new architecture! We have two example folders one for each architecture. If you are using this library in your own project there some extra steps needed. 
+### iOS
+Install pods with this flag inside `ios` folder: 
+```sh
+RCT_NEW_ARCH_ENABLED=1 bundle exec pod install
+``` 
+(Inside of `fabricexample` the `RCT_NEW_ARCH_ENABLED` is already set to true by default inside `Podfile`)
+
+### Android
+Set `newArchEnabled` to `true` inside `android/gradle.properties` (this flag is already set to true in `fabricexample`) and then run: 
+```sh
+yarn android
+```
+
+If you have issues with running android build you can try to generate codegen before the build using this command: 
+
+```sh
+cd android && ./gradlew generateCodegenArtifactsFromSchema
+```
+
+
 ## Linking
 
 ### >= 0.60
@@ -157,7 +180,6 @@ For advanced usage please take a look into our [example project](https://github.
 | `pageMargin: number`                                                 |                                                                                                                Blank space to be shown between pages                                                                                                                |   both   |
 | `keyboardDismissMode: ('none' / 'on-drag')`                          |                                                                                                Determines whether the keyboard gets dismissed in response to a drag                                                                                                 |   both   |
 | `orientation: Orientation`                                           |                                                                                       Set `horizontal` or `vertical` scrolling orientation (it does **not** work dynamically)                                                                                       |   both   |
-| `showPageIndicator: boolean`                                         |                                                                                                         Shows the dots indicator at the bottom of the view                                                                                                          |   iOS    |
 | `overScrollMode: OverScollMode`                                      |                                                                              Used to override default value of overScroll mode. Can be `auto`, `always` or `never`. Defaults to `auto`                                                                              | Android  |
 | `offscreenPageLimit: number`                                         | Set the number of pages that should be retained to either side of the currently visible page(s). Pages beyond this limit will be recreated from the adapter when needed. Defaults to RecyclerView's caching strategy. The given value must either be larger than 0. | Android  |
 | `overdrag: boolean`                                                  |                                                                                       Allows for overscrolling after reaching the end or very beginning or pages. Defaults to `false`                                                                               |   iOS    |

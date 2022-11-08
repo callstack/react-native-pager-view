@@ -1,0 +1,103 @@
+name: iOS Build
+
+on:
+  push: 
+    paths:
+      - '.github/workflows/ios.yml'
+      - 'ios/**'
+      - 'example/ios/**'
+      - 'fabricexample/ios/**'
+
+concurrency: 
+  group: ${{ github.ref }}-ios
+  cancel-in-progress: true
+
+jobs:
+  ios-build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/install-dependencies
+
+      - name: Pull dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ hashFiles('./package.json') }}
+
+      - name: Cache example node modules
+        id: cache-example-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-example-npm-deps
+        with:
+          path: example/node_modules
+          key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+      - name: Cache Pods
+        id: cache-pods
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-ios-pods-deps
+        with:
+          path: example/ios/Pods
+          key: ${{ hashFiles('./example/ios/Podfile.lock') }}
+
+      - name: Install required dependencies on cache miss (Pods)
+        if: steps.cache-pods.outputs.cache-hit != 'true'
+        run: pod install
+        working-directory: example/ios
+
+      - name: Reinstall Pods only if using cached ones
+        if: steps.cache-pods.outputs.cache-hit == 'true'
+        run: pod install
+        working-directory: example/ios
+
+      - name: Build iOS
+        run: xcodebuild -scheme PagerViewExample -workspace PagerViewExample.xcworkspace -sdk iphonesimulator -configuration Debug COMPILER_INDEX_STORE_ENABLE=NO
+        working-directory: example/ios
+
+  ios-build-fabric:
+    needs: ios-build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/install-dependencies
+
+      - name: Pull dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ hashFiles('./package.json') }}
+
+      - name: Cache fabric example node modules
+        id: cache-fabricexample-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-fabric-npm-deps
+        with:
+          path: fabricexample/node_modules
+          key: ${{ hashFiles('./fabricexample/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+      - name: Cache FabricExample Pods
+        id: cache-pods-fabric
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-ios-pods-deps-fabric
+        with:
+          path: fabricexample/ios/Pods
+          key: ${{ hashFiles('./fabricexample/ios/Podfile.lock') }}
+
+      - name: Install FabricExample required dependencies on cache miss (Pods)
+        if: steps.cache-pods-fabric.outputs.cache-hit != 'true'
+        run: pod install
+        working-directory: fabricexample/ios
+
+      - name: Reinstall FabricExample Pods only if using cached ones
+        if: steps.cache-pods-fabric.outputs.cache-hit == 'true'
+        run: pod install
+        working-directory: fabricexample/ios
+
+      - name: Build iOS (Fabric)
+        run: xcodebuild -scheme FabricExample -workspace FabricExample.xcworkspace -sdk iphonesimulator -configuration Debug COMPILER_INDEX_STORE_ENABLE=NO
+        working-directory: fabricexample/ios

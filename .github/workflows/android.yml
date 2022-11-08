@@ -1,0 +1,76 @@
+name: Android Build
+
+on:
+  push: 
+    paths:
+      - '.github/workflows/android.yml'
+      - 'android/**'
+      - 'example/android/**'
+      - 'fabricexample/android/**'
+
+
+concurrency: 
+  group: ${{ github.ref }}-android
+  cancel-in-progress: true
+
+jobs:
+  android-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/install-dependencies
+
+      - name: Pull dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ hashFiles('./package.json') }}
+
+      - name: Cache example node modules
+        id: cache-example-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-example-npm-deps
+        with:
+          path: example/node_modules
+          key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "11"
+
+      - name: Build Android
+        run: ./gradlew assembleDebug
+        working-directory: example/android
+
+  android-build-fabric:
+    runs-on: ubuntu-latest
+    needs: android-build
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/install-dependencies
+
+      - name: Pull dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ hashFiles('./package.json') }}
+
+      - name: Cache fabric example node modules
+        id: cache-fabricexample-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-fabric-npm-deps
+        with:
+          path: fabricexample/node_modules
+          key: ${{ hashFiles('./fabricexample/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "11"
+
+      - name: Build Android (Fabric)
+        run: ./gradlew assembleDebug -PreactNativeArchitectures=arm64-v8a
+        working-directory: fabricexample/android
