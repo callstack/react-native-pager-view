@@ -21,18 +21,18 @@ export function ControlsPanel({
   toggleOverdrag,
 }: NavigationPanelProps) {
   const firstPage = useCallback(() => setPage(0), [setPage]);
-  const prevPage = useCallback(
-    () => setPage(activePage - 1),
-    [activePage, setPage]
-  );
-  const nextPage = useCallback(
-    () => setPage(activePage + 1),
-    [setPage, activePage]
-  );
-  const lastPage = useCallback(
-    () => setPage(pages.length - 1),
-    [pages.length, setPage]
-  );
+  const prevPage = useCallback(() => setPage(activePage - 1), [
+    activePage,
+    setPage,
+  ]);
+  const nextPage = useCallback(() => setPage(activePage + 1), [
+    setPage,
+    activePage,
+  ]);
+  const lastPage = useCallback(() => setPage(pages.length - 1), [
+    pages.length,
+    setPage,
+  ]);
   return (
     <>
       <View style={styles.buttons}>
