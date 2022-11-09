@@ -11,6 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic) NSInteger initialPage;
 @property(nonatomic) NSInteger lastReportedIndex;
+@property(nonatomic) NSInteger destinationIndex;
 @property(nonatomic) NSInteger currentIndex;
 @property(nonatomic) NSInteger pageMargin;
 @property(nonatomic, readonly) BOOL scrollEnabled;
