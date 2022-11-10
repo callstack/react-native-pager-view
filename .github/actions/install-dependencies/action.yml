@@ -6,7 +6,7 @@ runs:
   steps:
     - name: Install dependencies
       shell: bash
-      run: yarn install
+      run: yarn install --frozen-lockfile
 
     - name: Cache
       uses: actions/cache@v3
@@ -26,7 +26,7 @@ runs:
     - name: Install required example dependencies on yarn.lock change
       if: steps.cache-example-npm.outputs.cache-hit != 'true'
       shell: bash
-      run: yarn install
+      run: yarn install --frozen-lockfile
       working-directory: example
 
     - name: Cache fabric example node modules
@@ -41,5 +41,5 @@ runs:
     - name: Install required fabric example dependencies on yarn.lock change
       if: steps.cache-fabricexample-npm.outputs.cache-hit != 'true'
       shell: bash
-      run: yarn install
+      run: yarn install --frozen-lockfile
       working-directory: fabricexample
