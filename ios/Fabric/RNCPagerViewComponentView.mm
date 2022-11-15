@@ -60,7 +60,7 @@ using namespace facebook::react;
         _props = defaultProps;
         _nativeChildrenViewControllers = [[NSMutableArray alloc] init];
         _currentIndex = -1;
-        _destinationIndex = 0;
+        _destinationIndex = -1;
         _layoutDirection = @"ltr";
         _overdrag = NO;
     }
@@ -282,11 +282,11 @@ using namespace facebook::react;
     float offset = 0;
     
     if (self.isHorizontal) {
-        if (self.frame.size.width != 0) {
+        if (scrollView.frame.size.width != 0) {
             offset = (point.x - scrollView.frame.size.width)/scrollView.frame.size.width;
         }
     } else {
-        if (self.frame.size.height != 0) {
+        if (scrollView.frame.size.height != 0) {
             offset = (point.y - scrollView.frame.size.height)/scrollView.frame.size.height;
         }
     }

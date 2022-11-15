@@ -36,7 +36,7 @@
         _scrollEnabled = YES;
         _pageMargin = 0;
         _lastReportedIndex = -1;
-        _destinationIndex = 0;
+        _destinationIndex = -1;
         _orientation = UIPageViewControllerNavigationOrientationHorizontal;
         _currentIndex = 0;
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
@@ -379,12 +379,12 @@
     float offset = 0;
     
     if (self.isHorizontal) {
-        if (self.frame.size.width != 0) {
-            offset = (point.x - self.scrollView.frame.size.width)/self.scrollView.frame.size.width;
+        if (scrollView.frame.size.width != 0) {
+            offset = (point.x - scrollView.frame.size.width)/scrollView.frame.size.width;
         }
     } else {
-        if (self.frame.size.height != 0) {
-            offset = (point.y - self.scrollView.frame.size.height)/self.scrollView.frame.size.height;
+        if (scrollView.frame.size.height != 0) {
+            offset = (point.y - scrollView.frame.size.height)/scrollView.frame.size.height;
         }
     }
     
