@@ -34,6 +34,11 @@ jobs:
           path: example/node_modules
           key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
 
+      - name: Install required example dependencies on yarn.lock change
+        if: steps.cache-example-npm.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+        working-directory: example
+
       - name: Cache Pods
         id: cache-pods
         uses: actions/cache@v3
@@ -78,6 +83,12 @@ jobs:
         with:
           path: fabricexample/node_modules
           key: ${{ hashFiles('./fabricexample/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+   
+      - name: Install required fabric example dependencies on yarn.lock change
+        if: steps.cache-fabricexample-npm.outputs.cache-hit != 'true'
+        shell: bash
+        run: yarn install --frozen-lockfile
+        working-directory: fabricexample
 
       - name: Cache FabricExample Pods
         id: cache-pods-fabric
