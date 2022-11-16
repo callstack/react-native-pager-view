@@ -1,14 +1,14 @@
 name: iOS Build
 
 on:
-  push: 
+  push:
     paths:
       - '.github/workflows/ios.yml'
       - 'ios/**'
       - 'example/ios/**'
       - 'fabricexample/ios/**'
 
-concurrency: 
+concurrency:
   group: ${{ github.ref }}-ios
   cancel-in-progress: true
 
@@ -50,12 +50,12 @@ jobs:
 
       - name: Install required dependencies on cache miss (Pods)
         if: steps.cache-pods.outputs.cache-hit != 'true'
-        run: pod install
+        run: NO_FLIPPER=1 pod install
         working-directory: example/ios
 
       - name: Reinstall Pods only if using cached ones
         if: steps.cache-pods.outputs.cache-hit == 'true'
-        run: pod install
+        run: NO_FLIPPER=1 pod install
         working-directory: example/ios
 
       - name: Build iOS
@@ -83,7 +83,7 @@ jobs:
         with:
           path: fabricexample/node_modules
           key: ${{ hashFiles('./fabricexample/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
-   
+
       - name: Install required fabric example dependencies on yarn.lock change
         if: steps.cache-fabricexample-npm.outputs.cache-hit != 'true'
         shell: bash
@@ -101,12 +101,12 @@ jobs:
 
       - name: Install FabricExample required dependencies on cache miss (Pods)
         if: steps.cache-pods-fabric.outputs.cache-hit != 'true'
-        run: pod install
+        run: NO_FLIPPER=1 pod install
         working-directory: fabricexample/ios
 
       - name: Reinstall FabricExample Pods only if using cached ones
         if: steps.cache-pods-fabric.outputs.cache-hit == 'true'
-        run: pod install
+        run: NO_FLIPPER=1 pod install
         working-directory: fabricexample/ios
 
       - name: Build iOS (Fabric)
