@@ -302,7 +302,7 @@ PODS:
   - React-jsinspector (0.70.5)
   - React-logger (0.70.5):
     - glog
-  - react-native-pager-view (6.1.0-rc.2):
+  - react-native-pager-view (6.1.0):
     - React-Core
   - react-native-safe-area-context (3.4.1):
     - React-Core
@@ -617,7 +617,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 31564fa6912459921568e8b0e49024285a4d584b
   React-jsinspector: badd81696361249893a80477983e697aab3c1a34
   React-logger: fdda34dd285bdb0232e059b19d9606fa0ec3bb9c
-  react-native-pager-view: 037b3949788e38cb5ddfb44b854012804e803655
+  react-native-pager-view: 7abf89f9834d9a4021b2fb6a5ef2abff570b46fb
   react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9
   React-perflogger: e68d3795cf5d247a0379735cbac7309adf2fb931
   React-RCTActionSheet: 05452c3b281edb27850253db13ecd4c5a65bc247

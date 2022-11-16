@@ -60,6 +60,7 @@ using namespace facebook::react;
         _props = defaultProps;
         _nativeChildrenViewControllers = [[NSMutableArray alloc] init];
         _currentIndex = -1;
+        _destinationIndex = -1;
         _layoutDirection = @"ltr";
         _overdrag = NO;
     }
@@ -175,6 +176,8 @@ using namespace facebook::react;
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     NSInteger numberOfPages = _nativeChildrenViewControllers.count;
     
+    _destinationIndex = index;
+    
     
     if (numberOfPages == 0 || index < 0 || index > numberOfPages - 1) {
         return;
@@ -279,12 +282,12 @@ using namespace facebook::react;
     float offset = 0;
     
     if (self.isHorizontal) {
-        if (self.frame.size.width != 0) {
-            offset = (point.x - self.frame.size.width)/self.frame.size.width;
+        if (scrollView.frame.size.width != 0) {
+            offset = (point.x - scrollView.frame.size.width)/scrollView.frame.size.width;
         }
     } else {
-        if (self.frame.size.height != 0) {
-            offset = (point.y - self.frame.size.height)/self.frame.size.height;
+        if (scrollView.frame.size.height != 0) {
+            offset = (point.y - scrollView.frame.size.height)/scrollView.frame.size.height;
         }
     }
     
@@ -293,8 +296,13 @@ using namespace facebook::react;
     NSInteger position = self.currentIndex;
     
     BOOL isAnimatingBackwards = offset<0;
+    
+    if (scrollView.isDragging) {
+        _destinationIndex = isAnimatingBackwards ? _currentIndex - 1 : _currentIndex + 1;
+    }
+    
     if (isAnimatingBackwards) {
-        position =  self.currentIndex - 1;
+        position =  _destinationIndex;
         absoluteOffset =  fmax(0, 1 - absoluteOffset);
     }
     
@@ -315,16 +323,18 @@ using namespace facebook::react;
         }
     }
     
+    float interpolatedOffset = absoluteOffset * labs(_destinationIndex - _currentIndex);
+    
     const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
     int eventPosition = (int) position;
-    strongEventEmitter.onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(eventPosition), .offset =  absoluteOffset});
+    strongEventEmitter.onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(eventPosition), .offset = interpolatedOffset});
 
     //This is temporary workaround to allow animations based on onPageScroll event
     //until Fabric implements proper NativeAnimationDriver
     RCTBridge *bridge = [RCTBridge currentBridge];
     
     if (bridge) {
-        [bridge.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:[NSNumber numberWithInt:self.tag] position:@(position) offset:@(absoluteOffset)]];
+        [bridge.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:[NSNumber numberWithInt:self.tag] position:@(position) offset:@(interpolatedOffset)]];
     }
     
 }

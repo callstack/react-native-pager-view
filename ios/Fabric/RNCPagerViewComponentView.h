@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, strong) NSMutableArray<UIViewController *> *nativeChildrenViewControllers;
 @property(nonatomic) NSInteger initialPage;
 @property(nonatomic) NSInteger currentIndex;
+@property(nonatomic) NSInteger destinationIndex;
 @property(nonatomic) NSString* layoutDirection;
 @property(nonatomic) BOOL overdrag;
 

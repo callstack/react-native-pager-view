@@ -36,6 +36,7 @@
         _scrollEnabled = YES;
         _pageMargin = 0;
         _lastReportedIndex = -1;
+        _destinationIndex = -1;
         _orientation = UIPageViewControllerNavigationOrientationHorizontal;
         _currentIndex = 0;
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
@@ -224,6 +225,8 @@
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     NSInteger numberOfPages = self.reactSubviews.count;
     
+    _destinationIndex = index;
+    
     if (numberOfPages == 0 || index < 0 || index > numberOfPages - 1) {
         return;
     }
@@ -237,26 +240,7 @@
     
     long diff = labs(index - _currentIndex);
     
-    BOOL shouldGoForward = isRTL ? !isForward : isForward;
-    
-    if (shouldGoForward && diff > 0) {
-        for (NSInteger i=_currentIndex; i<=index; i++) {
-            if (i == _currentIndex) {
-                continue;
-            }
-            [self goToViewController:i direction:direction animated:(!self.animating && i == index && animated) shouldCallOnPageSelected: i == index];
-        }
-    }
-    
-    if (!shouldGoForward && diff > 0) {
-        for (NSInteger i=_currentIndex; i>=index; i--) {
-            // Prevent removal of one or many pages at a time
-            if (i == _currentIndex || i >= numberOfPages) {
-                continue;
-            }
-            [self goToViewController:i direction:direction animated:(!self.animating && i == index && animated) shouldCallOnPageSelected: i == index];
-        }
-    }
+    [self goToViewController:index direction:direction animated:(!self.animating && animated) shouldCallOnPageSelected: YES];
     
     if (diff == 0) {
         [self goToViewController:index direction:direction animated:NO shouldCallOnPageSelected:YES];
@@ -395,12 +379,12 @@
     float offset = 0;
     
     if (self.isHorizontal) {
-        if (self.frame.size.width != 0) {
-            offset = (point.x - self.frame.size.width)/self.frame.size.width;
+        if (scrollView.frame.size.width != 0) {
+            offset = (point.x - scrollView.frame.size.width)/scrollView.frame.size.width;
         }
     } else {
-        if (self.frame.size.height != 0) {
-            offset = (point.y - self.frame.size.height)/self.frame.size.height;
+        if (scrollView.frame.size.height != 0) {
+            offset = (point.y - scrollView.frame.size.height)/scrollView.frame.size.height;
         }
     }
     
@@ -408,11 +392,15 @@
     
     NSInteger position = self.currentIndex;
     
-    
     BOOL isAnimatingBackwards = ([self isLtrLayout] && offset<0) || (![self isLtrLayout] && offset > 0.05f);
+    
+    if (scrollView.isDragging) {
+        _destinationIndex = isAnimatingBackwards ? _currentIndex - 1 : _currentIndex + 1;
+    }
+    
     if(isAnimatingBackwards){
-        position =  self.currentIndex - 1;
-        absoluteOffset =  fmax(0, 1 - absoluteOffset);
+        position = _destinationIndex;
+        absoluteOffset = fmax(0, 1 - absoluteOffset);
     }
     
     if (!_overdrag) {
@@ -431,9 +419,11 @@
             position = isLastPage ? lastPageIndex : firstPageIndex;
         }
     }
+
+    float interpolatedOffset = absoluteOffset * labs(_destinationIndex - _currentIndex);
     
     self.lastContentOffset = scrollView.contentOffset;
-    [self.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:@(position) offset:@(absoluteOffset)]];
+    [self.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:@(position) offset:@(interpolatedOffset)]];
 }
 
 - (NSString *)determineScrollDirection:(UIScrollView *)scrollView {
