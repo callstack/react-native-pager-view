@@ -6,6 +6,8 @@ install! 'cocoapods', :deterministic_uuids => false
 
 ENV['RCT_NEW_ARCH_ENABLED'] = '0'
 
+flipper_config = ENV['NO_FLIPPER'] == "1" ? FlipperConfiguration.disabled : FlipperConfiguration.enabled
+
 target 'PagerViewExample' do
   config = use_native_modules!
 
@@ -23,7 +25,7 @@ target 'PagerViewExample' do
     #
     # Note that if you have use_frameworks! enabled, Flipper will not work and
     # you should disable the next line.
-    :flipper_configuration => FlipperConfiguration.enabled,
+    :flipper_configuration => flipper_config,
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
