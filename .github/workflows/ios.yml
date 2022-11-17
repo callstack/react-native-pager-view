@@ -1,12 +1,17 @@
 name: iOS Build
 
 on:
-  push:
+  pull_request:
+    branches:
+      - master
     paths:
       - '.github/workflows/ios.yml'
       - 'ios/**'
       - 'example/ios/**'
       - 'fabricexample/ios/**'
+  push: 
+     branches:
+      - master
 
 concurrency:
   group: ${{ github.ref }}-ios

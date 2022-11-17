@@ -1,12 +1,17 @@
 name: Android Build
 
 on:
-  push: 
+  pull_request:
+    branches:
+      - master
     paths:
       - '.github/workflows/android.yml'
       - 'android/**'
       - 'example/android/**'
       - 'fabricexample/android/**'
+  push:
+    branches:
+      - master
 
 
 concurrency: 
