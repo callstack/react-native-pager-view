@@ -178,6 +178,7 @@
         
         if (finished) {
             strongSelf.animating = NO;
+            strongSelf.reactPageViewController.view.userInteractionEnabled = YES;
         }
         
         if (strongSelf.eventDispatcher) {
@@ -224,6 +225,8 @@
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     NSInteger numberOfPages = self.reactSubviews.count;
+    
+    _reactPageViewController.view.userInteractionEnabled = NO;
     
     _destinationIndex = index;
     

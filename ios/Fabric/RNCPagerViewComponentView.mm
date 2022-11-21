@@ -176,6 +176,8 @@ using namespace facebook::react;
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     NSInteger numberOfPages = _nativeChildrenViewControllers.count;
     
+    _nativePageViewController.view.userInteractionEnabled = NO;
+    
     _destinationIndex = index;
     
     
@@ -210,6 +212,7 @@ using namespace facebook::react;
             int position = (int) index;
             strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
             strongSelf->_currentIndex = index;
+            strongSelf->_nativePageViewController.view.userInteractionEnabled = YES;
         }
     }];
 }
