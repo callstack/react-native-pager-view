@@ -153,11 +153,13 @@
                        animated:(BOOL)animated
                        shouldCallOnPageSelected:(BOOL)shouldCallOnPageSelected {
     if (self.reactPageViewController == nil) {
+        [self enableSwipe];
         return;
     }
 
     NSArray *currentVCs = self.reactPageViewController.viewControllers;
     if (currentVCs.count == 1 && [currentVCs.firstObject isEqual:controller]) {
+        [self enableSwipe];
         return;
     }
 
@@ -176,9 +178,10 @@
         strongSelf.currentIndex = index;
         strongSelf.currentView = controller.view;
         
+        [strongSelf enableSwipe];
+        
         if (finished) {
             strongSelf.animating = NO;
-            strongSelf.reactPageViewController.view.userInteractionEnabled = YES;
         }
         
         if (strongSelf.eventDispatcher) {
@@ -223,10 +226,18 @@
     }
 }
 
+- (void)disableSwipe {
+    self.reactPageViewController.view.userInteractionEnabled = NO;
+}
+
+- (void)enableSwipe {
+    self.reactPageViewController.view.userInteractionEnabled = YES;
+}
+
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     NSInteger numberOfPages = self.reactSubviews.count;
     
-    _reactPageViewController.view.userInteractionEnabled = NO;
+    [self disableSwipe];
     
     _destinationIndex = index;
     

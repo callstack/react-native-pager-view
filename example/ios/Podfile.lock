@@ -302,7 +302,7 @@ PODS:
   - React-jsinspector (0.70.5)
   - React-logger (0.70.5):
     - glog
-  - react-native-pager-view (6.1.0):
+  - react-native-pager-view (6.1.1):
     - React-Core
   - react-native-safe-area-context (3.4.1):
     - React-Core
@@ -617,7 +617,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 31564fa6912459921568e8b0e49024285a4d584b
   React-jsinspector: badd81696361249893a80477983e697aab3c1a34
   React-logger: fdda34dd285bdb0232e059b19d9606fa0ec3bb9c
-  react-native-pager-view: 7abf89f9834d9a4021b2fb6a5ef2abff570b46fb
+  react-native-pager-view: 3c66c4e2f3ab423643d07b2c7041f8ac48395f72
   react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9
   React-perflogger: e68d3795cf5d247a0379735cbac7309adf2fb931
   React-RCTActionSheet: 05452c3b281edb27850253db13ecd4c5a65bc247
@@ -640,6 +640,6 @@ SPEC CHECKSUMS:
   Yoga: eca980a5771bf114c41a754098cd85e6e0d90ed7
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 19416d7ab85e40fb19965457402ab8bdea762543
+PODFILE CHECKSUM: 7bb6ac2c486fd5b7d13ac3d8fc31d2174d38be56
 
 COCOAPODS: 1.11.3

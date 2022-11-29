@@ -173,10 +173,18 @@ using namespace facebook::react;
     [self goTo:index animated:NO];
 }
 
+- (void)disableSwipe {
+    self.nativePageViewController.view.userInteractionEnabled = NO;
+}
+
+- (void)enableSwipe {
+    self.nativePageViewController.view.userInteractionEnabled = YES;
+}
+
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     NSInteger numberOfPages = _nativeChildrenViewControllers.count;
     
-    _nativePageViewController.view.userInteractionEnabled = NO;
+    [self disableSwipe];
     
     _destinationIndex = index;
     
@@ -188,9 +196,11 @@ using namespace facebook::react;
     BOOL isForward = (index > self.currentIndex && [self isLtrLayout]) || (index < self.currentIndex && ![self isLtrLayout]);
     UIPageViewControllerNavigationDirection direction = isForward ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
     
+    long diff = labs(index - _currentIndex);
+    
     [self setPagerViewControllers:index
                         direction:direction
-                         animated:animated];
+                         animated:diff == 0 ? NO : animated];
     
 }
 
@@ -198,6 +208,7 @@ using namespace facebook::react;
                       direction:(UIPageViewControllerNavigationDirection)direction
                        animated:(BOOL)animated{
     if (_nativePageViewController == nil) {
+        [self enableSwipe];
         return;
     }
     
@@ -207,12 +218,12 @@ using namespace facebook::react;
                                          animated:animated
                                        completion:^(BOOL finished) {
         __strong RNCPagerViewComponentView *strongSelf = weakSelf;
+        [strongSelf enableSwipe];
         if (strongSelf->_eventEmitter != nullptr ) {
             const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(strongSelf->_eventEmitter);
             int position = (int) index;
             strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
             strongSelf->_currentIndex = index;
-            strongSelf->_nativePageViewController.view.userInteractionEnabled = YES;
         }
     }];
 }
