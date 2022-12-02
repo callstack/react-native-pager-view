@@ -53,13 +53,7 @@ jobs:
           path: example/ios/Pods
           key: ${{ hashFiles('./example/ios/Podfile.lock') }}
 
-      - name: Install required dependencies on cache miss (Pods)
-        if: steps.cache-pods.outputs.cache-hit != 'true'
-        run: NO_FLIPPER=1 pod install
-        working-directory: example/ios
-
-      - name: Reinstall Pods only if using cached ones
-        if: steps.cache-pods.outputs.cache-hit == 'true'
+      - name: Install example Pods
         run: NO_FLIPPER=1 pod install
         working-directory: example/ios
 
@@ -104,13 +98,7 @@ jobs:
           path: fabricexample/ios/Pods
           key: ${{ hashFiles('./fabricexample/ios/Podfile.lock') }}
 
-      - name: Install FabricExample required dependencies on cache miss (Pods)
-        if: steps.cache-pods-fabric.outputs.cache-hit != 'true'
-        run: NO_FLIPPER=1 pod install
-        working-directory: fabricexample/ios
-
-      - name: Reinstall FabricExample Pods only if using cached ones
-        if: steps.cache-pods-fabric.outputs.cache-hit == 'true'
+      - name: Install FabricExample Pods
         run: NO_FLIPPER=1 pod install
         working-directory: fabricexample/ios
 
