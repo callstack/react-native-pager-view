@@ -9,7 +9,7 @@
 #import "RCTOnPageSelected.h"
 #import <math.h>
 
-@interface ReactNativePageView () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
+@interface ReactNativePageView () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>
 
 @property(nonatomic, strong) UIPageViewController *reactPageViewController;
 @property(nonatomic, strong) RCTEventDispatcher *eventDispatcher;
@@ -79,6 +79,11 @@
         [self embed];
         [self setupInitialController];
     }
+    
+    UIPanGestureRecognizer* panGestureRecognizer = [UIPanGestureRecognizer new];
+    self.panGestureRecognizer = panGestureRecognizer;
+    panGestureRecognizer.delegate = self;
+    [self addGestureRecognizer: panGestureRecognizer];
 
     if (self.reactViewController.navigationController != nil && self.reactViewController.navigationController.interactivePopGestureRecognizer != nil) {
         [self.scrollView.panGestureRecognizer requireGestureRecognizerToFail:self.reactViewController.navigationController.interactivePopGestureRecognizer];
@@ -461,4 +466,24 @@
 - (BOOL)isLtrLayout {
     return [_layoutDirection isEqualToString:@"ltr"];
 }
+
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    
+    // The below snippet disables the pager view's scrollview's scroll when current index is 0 and user is swiping back. Useful for fullScreenGestureEnabled in react-native-screens
+    if (gestureRecognizer == self.panGestureRecognizer) {
+        UIPanGestureRecognizer* panGestureRecognizer = (UIPanGestureRecognizer*) gestureRecognizer;
+        CGPoint velocity = [panGestureRecognizer velocityInView:self];
+        BOOL isLTR = [self isLtrLayout];
+        BOOL isBackGesture = (isLTR && velocity.x > 0) || (!isLTR && velocity.x < 0);
+        if (otherGestureRecognizer == self.scrollView.panGestureRecognizer && self.currentIndex == 0 && isBackGesture) {
+                self.scrollView.panGestureRecognizer.enabled = false;
+                return NO;
+            }
+    }
+    
+    self.scrollView.panGestureRecognizer.enabled = self.scrollEnabled;
+    return YES;
+}
+
 @end

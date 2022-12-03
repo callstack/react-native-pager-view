@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) BOOL overdrag;
 @property(nonatomic) NSString* layoutDirection;
 @property(nonatomic, assign) BOOL animating;
+@property(nonatomic, assign) UIPanGestureRecognizer* panGestureRecognizer;
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated;
 - (void)shouldScroll:(BOOL)scrollEnabled;
