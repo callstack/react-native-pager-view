@@ -477,13 +477,15 @@
         BOOL isLTR = [self isLtrLayout];
         BOOL isBackGesture = (isLTR && velocity.x > 0) || (!isLTR && velocity.x < 0);
         if (otherGestureRecognizer == self.scrollView.panGestureRecognizer && self.currentIndex == 0 && isBackGesture) {
-                self.scrollView.panGestureRecognizer.enabled = false;
-                return NO;
-            }
+            self.scrollView.panGestureRecognizer.enabled = false;
+            return NO;
+        }
+        return YES;
     }
     
     self.scrollView.panGestureRecognizer.enabled = self.scrollEnabled;
-    return YES;
+    
+    return NO;
 }
 
 @end
