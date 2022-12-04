@@ -485,7 +485,7 @@
         return YES;
     }
     
-    // Resetting here to default just in case we add more recognizer.
+    // Resetting here to default in case we add more recognizer.
     self.scrollView.panGestureRecognizer.enabled = self.scrollEnabled;
     return NO;
 }
