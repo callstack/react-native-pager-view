@@ -469,7 +469,7 @@
 
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    
+
     // The below snippet disables the pager view's scrollview's scroll when current index is 0 and user is swiping back. Useful for fullScreenGestureEnabled in react-native-screens
     if (gestureRecognizer == self.panGestureRecognizer) {
         UIPanGestureRecognizer* panGestureRecognizer = (UIPanGestureRecognizer*) gestureRecognizer;
@@ -480,11 +480,13 @@
             self.scrollView.panGestureRecognizer.enabled = false;
             return NO;
         }
+        
+        self.scrollView.panGestureRecognizer.enabled = self.scrollEnabled;
         return YES;
     }
     
+    // Resetting here to default just in case we add more recognizer.
     self.scrollView.panGestureRecognizer.enabled = self.scrollEnabled;
-    
     return NO;
 }
 
