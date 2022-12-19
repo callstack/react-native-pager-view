@@ -149,7 +149,13 @@ export class PagerView extends React.Component<PagerViewProps> {
         ref={(ref) => {
           this.pagerView = ref;
         }}
-        style={this.props.style}
+        style={[
+          this.props.style,
+          {
+            flexDirection:
+              this.props.orientation === 'vertical' ? 'column' : 'row',
+          },
+        ]}
         layoutDirection={this.deducedLayoutDirection}
         onPageScroll={this._onPageScroll}
         onPageScrollStateChanged={this._onPageScrollStateChanged}
