@@ -91,7 +91,7 @@ using namespace facebook::react;
     _containerView.frame = CGRect{RCTCGPointFromPoint(data.contentBoundingRect.origin), contentSize};
     
     _scrollView.contentSize = contentSize;
- 
+    
 }
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
@@ -150,7 +150,7 @@ using namespace facebook::react;
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView {
     int position = [self getCurrentPage];
     
-    double offset = (scrollView.contentOffset.x - (scrollView.frame.size.width * position))/scrollView.frame.size.width;
+    double offset = [self isHorizontal] ? (scrollView.contentOffset.x - (scrollView.frame.size.width * position))/scrollView.frame.size.width : (scrollView.contentOffset.y - (scrollView.frame.size.height * position))/scrollView.frame.size.height;
     
     const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
     
@@ -178,7 +178,7 @@ using namespace facebook::react;
 - (void)setPage:(NSInteger)index {
     CGPoint targetOffset = [self isHorizontal] ? CGPointMake(_scrollView.frame.size.width * index, 0) : CGPointMake(0, _scrollView.frame.size.height * index);
     
-        [_scrollView setContentOffset:targetOffset animated:YES];
+    [_scrollView setContentOffset:targetOffset animated:YES];
 }
 
 - (void)setPageWithoutAnimation:(NSInteger)index {
