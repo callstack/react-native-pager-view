@@ -24,6 +24,7 @@ using namespace facebook::react;
     UIView *_containerView;
     
     CGSize _contentSize;
+    NSInteger _initialPage;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -31,6 +32,7 @@ using namespace facebook::react;
     if (self = [super initWithFrame:frame]) {
         static const auto defaultProps = std::make_shared<const RNCViewPagerProps>();
         _props = defaultProps;
+        _initialPage = -1;
         
         _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
         
@@ -74,6 +76,9 @@ using namespace facebook::react;
 {
     assert(std::dynamic_pointer_cast<RNCViewPagerShadowNode::ConcreteState const>(state));
     _state = std::static_pointer_cast<RNCViewPagerShadowNode::ConcreteState const>(state);
+    
+    const auto &props = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
+    
     auto &data = _state->getData();
     
     auto contentOffset = RCTCGPointFromPoint(data.contentOffset);
@@ -91,6 +96,11 @@ using namespace facebook::react;
     _containerView.frame = CGRect{RCTCGPointFromPoint(data.contentBoundingRect.origin), contentSize};
     
     _scrollView.contentSize = contentSize;
+    
+    if (!CGSizeEqualToSize(_scrollView.frame.size, CGSizeZero) && _initialPage == -1) {
+        [self setPageWithoutAnimation: props.initialPage];
+        _initialPage = props.initialPage;
+    }
     
 }
 
@@ -112,6 +122,9 @@ using namespace facebook::react;
 {
     _state.reset();
     [_scrollView setContentOffset:CGPointZero];
+    
+    _initialPage = -1;
+    
     [super prepareForRecycle];
 }
 
