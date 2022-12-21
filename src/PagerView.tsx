@@ -151,8 +151,12 @@ export class PagerView extends React.Component<PagerViewProps> {
         }}
         style={[
           this.props.style,
+          this.props.pageMargin
+            ? {
+                marginHorizontal: -this.props.pageMargin / 2,
+              }
+            : null,
           {
-            marginHorizontal: -this.props.pageMargin / 2,
             flexDirection:
               this.props.orientation === 'vertical' ? 'column' : 'row',
           },
