@@ -72,6 +72,20 @@ using namespace facebook::react;
     [super updateProps:props oldProps:oldProps];
 }
 
+- (void)updateLayoutMetrics:(const LayoutMetrics &)layoutMetrics
+           oldLayoutMetrics:(const LayoutMetrics &)oldLayoutMetrics
+{
+    [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+    if (layoutMetrics.layoutDirection != oldLayoutMetrics.layoutDirection) {
+        CGAffineTransform transform = (layoutMetrics.layoutDirection == LayoutDirection::LeftToRight)
+        ? CGAffineTransformIdentity
+        : CGAffineTransformMakeScale(-1, 1);
+        
+        _containerView.transform = transform;
+        _scrollView.transform = transform;
+    }
+}
+
 - (void)updateState:(State::Shared const &)state oldState:(State::Shared const &)oldState
 {
     assert(std::dynamic_pointer_cast<RNCViewPagerShadowNode::ConcreteState const>(state));
