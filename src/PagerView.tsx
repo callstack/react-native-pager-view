@@ -152,6 +152,7 @@ export class PagerView extends React.Component<PagerViewProps> {
         style={[
           this.props.style,
           {
+            marginHorizontal: -this.props.pageMargin / 2,
             flexDirection:
               this.props.orientation === 'vertical' ? 'column' : 'row',
           },
@@ -161,7 +162,10 @@ export class PagerView extends React.Component<PagerViewProps> {
         onPageScrollStateChanged={this._onPageScrollStateChanged}
         onPageSelected={this._onPageSelected}
         onMoveShouldSetResponderCapture={this._onMoveShouldSetResponderCapture}
-        children={childrenWithOverriddenStyle(this.props.children)}
+        children={childrenWithOverriddenStyle(
+          this.props.children,
+          this.props.pageMargin
+        )}
       />
     );
   }

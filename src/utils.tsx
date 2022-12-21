@@ -1,12 +1,22 @@
 import React, { Children, ReactNode } from 'react';
 import { View } from 'react-native';
 
-export const childrenWithOverriddenStyle = (children?: ReactNode) => {
+export const childrenWithOverriddenStyle = (
+  children?: ReactNode,
+  pageMargin = 0
+) => {
   return Children.map(children, (child) => {
     const element = child as React.ReactElement;
     return (
       // Add a wrapper to ensure layout is calculated correctly
-      <View style={{ height: '100%', width: '100%' }} collapsable={false}>
+      <View
+        style={{
+          height: '100%',
+          width: '100%',
+          paddingHorizontal: pageMargin / 2,
+        }}
+        collapsable={false}
+      >
         {React.cloneElement(element, {
           ...element.props,
           // Override styles so that each page will fill the parent.
