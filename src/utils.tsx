@@ -6,9 +6,7 @@ export const childrenWithOverriddenStyle = (
   pageMargin = 0
 ) => {
   return Children.map(children, (child) => {
-    const element = child as React.ReactElement;
     return (
-      // Add a wrapper to ensure layout is calculated correctly
       <View
         style={{
           height: '100%',
@@ -17,11 +15,7 @@ export const childrenWithOverriddenStyle = (
         }}
         collapsable={false}
       >
-        {React.cloneElement(element, {
-          ...element.props,
-          // Override styles so that each page will fill the parent.
-          style: [element.props.style, { height: '100%', width: '100%' }],
-        })}
+        {child}
       </View>
     );
   });
