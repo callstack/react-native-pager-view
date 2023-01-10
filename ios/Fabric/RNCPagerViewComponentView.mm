@@ -202,14 +202,18 @@ using namespace facebook::react;
     return [self isHorizontal] ? _scrollView.contentOffset.x / _scrollView.frame.size.width : _scrollView.contentOffset.y / _scrollView.frame.size.height;
 }
 
+-(CGPoint)getPageOffset:(NSInteger)pageIndex {
+    return [self isHorizontal] ? CGPointMake(_scrollView.frame.size.width * pageIndex, 0) : CGPointMake(0, _scrollView.frame.size.height * pageIndex);
+}
+
 - (void)setPage:(NSInteger)index {
-    CGPoint targetOffset = [self isHorizontal] ? CGPointMake(_scrollView.frame.size.width * index, 0) : CGPointMake(0, _scrollView.frame.size.height * index);
+    CGPoint targetOffset = [self getPageOffset:index];
     
     [_scrollView setContentOffset:targetOffset animated:YES];
 }
 
 - (void)setPageWithoutAnimation:(NSInteger)index {
-    CGPoint targetOffset = [self isHorizontal] ? CGPointMake(_scrollView.frame.size.width * index, 0) : CGPointMake(0, _scrollView.frame.size.height * index);
+    CGPoint targetOffset = [self getPageOffset:index];
     
     [_scrollView setContentOffset:targetOffset animated:NO];
     
