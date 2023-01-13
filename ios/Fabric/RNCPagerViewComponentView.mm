@@ -126,6 +126,12 @@ using namespace facebook::react;
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
 {
     [childComponentView removeFromSuperview];
+    
+    NSInteger numberOfPages = _containerView.subviews.count;
+
+    if ([self getCurrentPage] >= numberOfPages - 1) {
+        [self setPageWithoutAnimation: numberOfPages - 1];
+    }
 }
 
 - (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args {
