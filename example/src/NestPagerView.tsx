@@ -20,12 +20,12 @@ export function NestPagerView() {
       >
         <View
           key="1"
-          style={{ backgroundColor: BGCOLOR[0] }}
+          style={[styles.page, { backgroundColor: BGCOLOR[0] }]}
           collapsable={false}
         >
           <LikeCount />
         </View>
-        <View key="2" collapsable={false}>
+        <View style={styles.page} key="2" collapsable={false}>
           <Text style={styles.title}>
             There has two Nest PagerView with horizontal and vertical.
           </Text>
@@ -39,7 +39,7 @@ export function NestPagerView() {
           >
             <View
               key="1"
-              style={{ backgroundColor: BGCOLOR[1] }}
+              style={[styles.page, { backgroundColor: BGCOLOR[1] }]}
               collapsable={false}
             >
               <LikeCount />
@@ -47,7 +47,7 @@ export function NestPagerView() {
             </View>
             <View
               key="2"
-              style={{ backgroundColor: BGCOLOR[2] }}
+              style={[styles.page, { backgroundColor: BGCOLOR[2] }]}
               collapsable={false}
             >
               <LikeCount />
@@ -64,7 +64,7 @@ export function NestPagerView() {
           >
             <View
               key="1"
-              style={{ backgroundColor: BGCOLOR[3] }}
+              style={[styles.page, { backgroundColor: BGCOLOR[3] }]}
               collapsable={false}
             >
               <LikeCount />
@@ -72,7 +72,7 @@ export function NestPagerView() {
             </View>
             <View
               key="2"
-              style={{ backgroundColor: BGCOLOR[4] }}
+              style={[styles.page, { backgroundColor: BGCOLOR[4] }]}
               collapsable={false}
             >
               <LikeCount />
@@ -82,7 +82,7 @@ export function NestPagerView() {
         </View>
         <View
           key="3"
-          style={{ backgroundColor: BGCOLOR[3] }}
+          style={[styles.page, { backgroundColor: BGCOLOR[3] }]}
           collapsable={false}
         >
           <LikeCount />
@@ -103,6 +103,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   PagerView: {
+    flex: 1,
+  },
+  page: {
     flex: 1,
   },
   title: { fontSize: 22, paddingVertical: 10 },
