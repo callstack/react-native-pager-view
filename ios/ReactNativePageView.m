@@ -36,7 +36,6 @@
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
         _coalescingKey = 0;
         _eventDispatcher = eventDispatcher;
-        _overdrag = NO;
         [self embed];
     }
     return self;
@@ -153,18 +152,19 @@
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
-    int position = [self getCurrentPage];
     [self.eventDispatcher sendEvent:[[RCTOnPageScrollStateChanged alloc] initWithReactTag:self.reactTag state:@"settling" coalescingKey:_coalescingKey++]];
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    int position = [self getCurrentPage];
+    [self.eventDispatcher sendEvent:[[RCTOnPageScrollStateChanged alloc] initWithReactTag:self.reactTag state:@"idle" coalescingKey:_coalescingKey++]];
     
     [self.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInt:position] coalescingKey:_coalescingKey++]];
 }
 
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    [self.eventDispatcher sendEvent:[[RCTOnPageScrollStateChanged alloc] initWithReactTag:self.reactTag state:@"idle" coalescingKey:_coalescingKey++]];
-}
-
 -(void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
     int position = [self getCurrentPage];
+    NSLog(@"position scrollViewDidEndScrollingAnimation %d", position);
     
     [self.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInt:position] coalescingKey:_coalescingKey++]];
 }
