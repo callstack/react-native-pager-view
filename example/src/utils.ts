@@ -23,10 +23,10 @@ export const createPage = (key: number): CreatePage => {
   return {
     key: key,
     style: {
+      flex: 1,
       backgroundColor: BGCOLOR[key % BGCOLOR.length],
       alignItems: 'center',
       padding: 20,
-      height: '100%',
     },
     imgSource: { uri: IMAGE_URIS[key % BGCOLOR.length] || '' },
   };
