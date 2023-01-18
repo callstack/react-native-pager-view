@@ -23,7 +23,6 @@
 - (void)shouldScroll:(BOOL)scrollEnabled;
 - (void)shouldDismissKeyboard:(NSString *)dismissKeyboard;
 
-
 @end
 
 @implementation ReactNativePageView {
@@ -36,6 +35,7 @@
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
         _coalescingKey = 0;
         _eventDispatcher = eventDispatcher;
+        _orientation = @"horizontal";
         [self embed];
     }
     return self;
@@ -69,15 +69,15 @@
     _scrollView.showsHorizontalScrollIndicator = NO;
     _scrollView.showsVerticalScrollIndicator = NO;
     [self addSubview:_scrollView];
-
-    _containerView = [[UIView alloc] initWithFrame:CGRectZero];
+    
+    _containerView = [[UIView alloc] initWithFrame:self.bounds];
     [_scrollView addSubview:_containerView];
 }
 
 - (void)didSetProps:(NSArray<NSString *> *)changedProps {
     if ([changedProps containsObject:@"overdrag"]) {
         [_scrollView setBounces:_overdrag];
-      }
+    }
 }
 
 - (void)shouldScroll:(BOOL)scrollEnabled {
@@ -100,14 +100,17 @@
         return;
     }
     
-    CGFloat width = initialView.frame.size.width * self.containerView.subviews.count;
+    CGFloat totalSubviewsWidth = initialView.frame.size.width * self.containerView.subviews.count;
+    CGFloat totalSubviewsHeight = initialView.frame.size.height * self.containerView.subviews.count;
     
-    if (_scrollView.contentSize.width == width) {
-        return;
+    
+    if ([self isHorizontal]) {
+        _scrollView.contentSize = CGSizeMake(totalSubviewsWidth, 0);
+        _containerView.frame = CGRectMake(0, 0, totalSubviewsWidth, initialView.bounds.size.height);
+    } else {
+        _scrollView.contentSize = CGSizeMake(0, totalSubviewsHeight);
+        _containerView.frame = CGRectMake(0, 0, initialView.bounds.size.width, totalSubviewsHeight);
     }
-    
-    _scrollView.contentSize = CGSizeMake(width, 0);
-    _containerView.frame = CGRectMake(0, 0, width, initialView.bounds.size.height);
     
     _scrollView.frame = self.bounds;
     [self.scrollView layoutIfNeeded];
@@ -137,7 +140,7 @@
 }
 
 - (BOOL)isHorizontal {
-    return _scrollView.contentSize.width > _scrollView.contentSize.height;
+    return [_orientation isEqualToString:@"horizontal"];
 }
 
 -(int)getCurrentPage {
@@ -164,7 +167,6 @@
 
 -(void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
     int position = [self getCurrentPage];
-    NSLog(@"position scrollViewDidEndScrollingAnimation %d", position);
     
     [self.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInt:position] coalescingKey:_coalescingKey++]];
 }
