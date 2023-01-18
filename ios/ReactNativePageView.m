@@ -121,11 +121,11 @@
 }
 
 - (void)disableSwipe {
-    self.scrollView.userInteractionEnabled = NO;
+    [_scrollView setScrollEnabled:false];
 }
 
 - (void)enableSwipe {
-    self.scrollView.userInteractionEnabled = YES;
+    [_scrollView setScrollEnabled:true];
 }
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
