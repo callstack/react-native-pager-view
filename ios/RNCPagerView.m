@@ -1,5 +1,5 @@
 
-#import "ReactNativePageView.h"
+#import "RNCPagerView.h"
 #import "React/RCTLog.h"
 #import <React/RCTViewManager.h>
 
@@ -10,7 +10,7 @@
 #import "RCTOnPageSelected.h"
 #import <math.h>
 
-@interface ReactNativePageView () <UIScrollViewDelegate>
+@interface RNCPagerView () <UIScrollViewDelegate>
 
 @property(nonatomic, strong) id<RCTEventDispatcherProtocol> eventDispatcher;
 
@@ -25,7 +25,7 @@
 
 @end
 
-@implementation ReactNativePageView {
+@implementation RNCPagerView {
     uint16_t _coalescingKey;
 }
 
@@ -130,7 +130,7 @@
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     CGPoint targetOffset = [self isHorizontal] ? CGPointMake(_scrollView.frame.size.width * index, 0) : CGPointMake(0, _scrollView.frame.size.height * index);
-    
+        
     [_scrollView setContentOffset:targetOffset animated:animated];
     
     if (!animated) {

@@ -5,7 +5,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ReactNativePageView: UIView
+@interface RNCPagerView: UIView
 
 - (instancetype)initWithEventDispatcher:(id<RCTEventDispatcherProtocol> )eventDispatcher;
 
