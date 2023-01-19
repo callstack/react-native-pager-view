@@ -58,6 +58,10 @@
 - (void)removeReactSubview:(UIView *)subview {
     [super removeReactSubview:subview];
     [subview removeFromSuperview];
+    
+    if ([self getCurrentPage] >= self.reactSubviews.count - 1) {
+        [self goTo:self.reactSubviews.count - 1 animated:false];
+    }
 }
 
 - (void)embed {
