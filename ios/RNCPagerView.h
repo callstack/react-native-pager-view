@@ -11,8 +11,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic) NSInteger initialPage;
 @property(nonatomic) NSString* orientation;
-@property(nonatomic) NSInteger currentIndex;
-@property(nonatomic) NSInteger pageMargin;
 @property(nonatomic, readonly) UIScrollViewKeyboardDismissMode dismissKeyboard;
 @property(nonatomic, copy) RCTDirectEventBlock onPageSelected;
 @property(nonatomic, copy) RCTDirectEventBlock onPageScroll;

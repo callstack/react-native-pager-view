@@ -17,8 +17,6 @@
 @property(nonatomic, strong) UIScrollView *scrollView;
 @property(nonatomic, strong) UIView *containerView;
 
-@property(nonatomic, assign) CGPoint lastContentOffset;
-
 - (void)goTo:(NSInteger)index animated:(BOOL)animated;
 - (void)shouldScroll:(BOOL)scrollEnabled;
 - (void)shouldDismissKeyboard:(NSString *)dismissKeyboard;
@@ -135,6 +133,10 @@
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     CGPoint targetOffset = [self isHorizontal] ? CGPointMake(_scrollView.frame.size.width * index, 0) : CGPointMake(0, _scrollView.frame.size.height * index);
         
+    if (animated) {
+        self.animating = true;
+    }
+    
     [_scrollView setContentOffset:targetOffset animated:animated];
     
     if (!animated) {
@@ -171,7 +173,7 @@
 
 -(void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
     int position = [self getCurrentPage];
-    
+    self.animating = false;
     [self.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:[NSNumber numberWithInt:position] coalescingKey:_coalescingKey++]];
 }
 

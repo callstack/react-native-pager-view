@@ -8,7 +8,6 @@
 RCT_EXPORT_MODULE(RNCViewPager)
 
 RCT_EXPORT_VIEW_PROPERTY(initialPage, NSInteger)
-RCT_EXPORT_VIEW_PROPERTY(pageMargin, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(orientation, NSString)
 
 RCT_EXPORT_VIEW_PROPERTY(onPageSelected, RCTDirectEventBlock)
