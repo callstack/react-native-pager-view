@@ -44,7 +44,7 @@ const examples = [
   },
   {
     component: ScrollViewInsideExample,
-    name: 'ScrollView inside PagerView Example',
+    name: 'ScrollView Inside PagerView Example',
   },
   {
     component: NestPagerView,
