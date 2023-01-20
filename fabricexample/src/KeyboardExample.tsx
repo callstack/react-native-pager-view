@@ -69,11 +69,7 @@ export function KeyboardExample() {
             </AnimatedPagerView>
           </View>
         </ScrollView>
-        <NavigationPanel
-          {...navigationPanel}
-          scrollEnabled={false}
-          disablePagesAmountManagement
-        />
+        <NavigationPanel {...navigationPanel} disablePagesAmountManagement />
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
