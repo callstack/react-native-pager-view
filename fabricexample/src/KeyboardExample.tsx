@@ -5,7 +5,6 @@ import {
   ScrollView,
   View,
   Text,
-  Image,
   TextInput,
   Button,
   Animated,
@@ -13,7 +12,6 @@ import {
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import PagerView from 'react-native-pager-view';
-import { logoUrl } from './utils';
 
 import { NavigationPanel } from './component/NavigationPanel';
 import { useNavigationPanel } from './hook/useNavigationPanel';
@@ -44,14 +42,6 @@ export function KeyboardExample() {
     <KeyboardAvoidingView style={styles.flex} behavior="height">
       <SafeAreaView style={styles.flex}>
         <ScrollView contentContainerStyle={styles.flex} style={styles.flex}>
-          <View style={styles.logoContainer}>
-            <Image
-              style={styles.logo}
-              source={{
-                uri: logoUrl,
-              }}
-            />
-          </View>
           <View style={styles.flex}>
             <AnimatedPagerView
               {...navigationPanel}
