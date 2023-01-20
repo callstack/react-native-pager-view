@@ -33,6 +33,7 @@ export function ControlsPanel({
     pages.length,
     setPage,
   ]);
+
   return (
     <>
       <View style={styles.buttons}>
@@ -101,7 +102,7 @@ export function ControlsPanel({
       </View>
       <View style={styles.progress}>
         <Text style={styles.buttonText}>
-          Page {activePage + 1} / {pages.length}{' '}
+          Page {pages.length > 0 ? activePage + 1 : 0} / {pages.length}{' '}
         </Text>
         <ProgressBar numberOfPages={pages.length} progress={progress} />
       </View>
