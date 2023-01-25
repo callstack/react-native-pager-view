@@ -27,7 +27,7 @@
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "prepare": "bob build",
     "release": "release-it",
-    "releaseNext": "release-it --npm.tag=newarch --preRelease=rc",
+    "releaseNext": "release-it --npm.tag=next --preRelease=rc",
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn && yarn example pods",
     "fabricexample": "yarn --cwd fabricexample",
