@@ -24,6 +24,8 @@ export type OnPageScrollStateChangedEventData = Readonly<{
 }>;
 
 export interface NativeProps extends ViewProps {
+  page?: Int32;
+  animated?: WithDefault<boolean, true>;
   scrollEnabled?: WithDefault<boolean, true>;
   layoutDirection?: WithDefault<'ltr' | 'rtl', 'ltr'>;
   initialPage?: Int32;
