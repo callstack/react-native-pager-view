@@ -67,3 +67,5 @@ example/vendor
 fabricexample/ios/Pods
 fabricexample/vendor
 fabricexample/android/app/.cxx
+.lefthookrc
+lefthook.yml
