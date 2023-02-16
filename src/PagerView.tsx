@@ -98,7 +98,7 @@ export class PagerView extends React.Component<PagerViewProps> {
    */
   public setPage = (selectedPage: number) => {
     if (this.pagerView) {
-      PagerViewCommands.setPage(this.pagerView, selectedPage);
+      PagerViewCommands.setPageWithAnimation(this.pagerView, selectedPage);
     }
   };
 

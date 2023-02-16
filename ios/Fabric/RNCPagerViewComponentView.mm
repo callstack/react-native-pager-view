@@ -187,7 +187,7 @@ using namespace facebook::react;
     strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
 }
 
-//Handles sending onPageSelected event on setPage method completion
+//Handles sending onPageSelected event on setPageWithAnimation method completion
 -(void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
     int position = [self getCurrentPage];
     
@@ -234,7 +234,7 @@ using namespace facebook::react;
     [_scrollView setContentOffset:targetOffset animated:animated];
 }
 
-- (void)setPage:(NSInteger)index {
+- (void)setPageWithAnimation:(NSInteger)index {
     [self goTo:index animated:YES];
 }
 

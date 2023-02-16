@@ -43,7 +43,7 @@ export interface NativeProps extends ViewProps {
 type PagerViewViewType = HostComponent<NativeProps>;
 
 export interface NativeCommands {
-  setPage: (
+  setPageWithAnimation: (
     viewRef: React.ElementRef<PagerViewViewType>,
     selectedPage: Int32
   ) => void;
@@ -59,7 +59,7 @@ export interface NativeCommands {
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
   supportedCommands: [
-    'setPage',
+    'setPageWithAnimation',
     'setPageWithoutAnimation',
     'setScrollEnabledImperatively',
   ],

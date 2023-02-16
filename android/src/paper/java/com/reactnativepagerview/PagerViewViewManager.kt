@@ -165,7 +165,7 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
     }
 
     companion object {
-        private const val COMMAND_SET_PAGE = "setPage"
+        private const val COMMAND_SET_PAGE = "setPageWithAnimation"
         private const val COMMAND_SET_PAGE_WITHOUT_ANIMATION = "setPageWithoutAnimation"
         private const val COMMAND_SET_SCROLL_ENABLED = "setScrollEnabledImperatively"
     }

@@ -52,7 +52,7 @@ RCT_EXPORT_VIEW_PROPERTY(overdrag, BOOL)
     }];
 }
 
-RCT_EXPORT_METHOD(setPage
+RCT_EXPORT_METHOD(setPageWithAnimation
                   : (nonnull NSNumber *)reactTag index
                   : (nonnull NSNumber *)index) {
     [self goToPage:reactTag index:index animated:true];

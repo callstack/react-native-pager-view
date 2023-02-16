@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic) BOOL overdrag;
 
-- (void)setPage:(NSInteger)number;
+- (void)setPageWithAnimation:(NSInteger)number;
 - (void)setPageWithoutAnimation:(NSInteger)number;
 
 @end
