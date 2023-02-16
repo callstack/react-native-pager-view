@@ -95,6 +95,25 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
         return PagerViewViewManagerImpl.needsCustomLayoutForChildren()
     }
 
+    @ReactProp(name = "page")
+    fun setPage(host: NestedScrollableHost, pageIndex: Int) {
+        val view = PagerViewViewManagerImpl.getViewPager(host)
+        Assertions.assertNotNull(view)
+        Assertions.assertNotNull(pageIndex)
+        val childCount = view.adapter?.itemCount
+        val animated = PagerViewViewManagerImpl.animated
+        val canScroll = childCount != null && childCount > 0 && pageIndex >= 0 && pageIndex < childCount
+        if (canScroll) {
+            PagerViewViewManagerImpl.setCurrentItem(view, pageIndex, animated)
+            eventDispatcher.dispatchEvent(PageSelectedEvent(host.id, pageIndex))
+        }
+    }
+
+    @ReactProp(name = "animated", defaultBoolean = true)
+    fun setAnimated(host: NestedScrollableHost, value: Boolean) {
+        PagerViewViewManagerImpl.animated = value
+    }
+
     @ReactProp(name = "scrollEnabled", defaultBoolean = true)
     fun setScrollEnabled(host: NestedScrollableHost, value: Boolean) {
         PagerViewViewManagerImpl.setScrollEnabled(host, value)
