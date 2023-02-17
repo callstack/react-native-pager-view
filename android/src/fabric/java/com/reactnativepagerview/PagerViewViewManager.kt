@@ -107,8 +107,7 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
 
     @ReactProp(name = "page")
     override fun setPage(view: NestedScrollableHost?, value: Int) {
-        val animated = PagerViewViewManagerImpl.animated
-        goTo(view, value, animated)
+        goTo(view, value, PagerViewViewManagerImpl.animated)
     }
 
     @ReactProp(name = "animated", defaultBoolean = true)
