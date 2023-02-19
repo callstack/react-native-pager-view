@@ -129,7 +129,6 @@ using namespace facebook::react;
     if (!CGSizeEqualToSize(_scrollView.frame.size, CGSizeZero) && _initialPage == -1) {
         [self setPageWithoutAnimation: props.initialPage];
         _initialPage = props.initialPage;
-        _page = _initialPage;
     }
     
 }
