@@ -84,7 +84,7 @@
     }
     
     if ([changedProps containsObject:@"page"]) {
-        if (_page >= 0 && _page < _containerView.subviews.count) {
+        if (_page >= 0 && _page < self.reactSubviews.count) {
             [self goTo:_page animated:_animated];
         }
     }
