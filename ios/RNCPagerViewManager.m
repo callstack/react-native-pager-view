@@ -31,9 +31,7 @@ RCT_EXPORT_VIEW_PROPERTY(overdrag, BOOL)
             RCTLogError(@"Cannot find ReactNativePageView with tag #%@", reactTag);
             return;
         }
-        if (!animated || !view.animating) {
-            [view goTo:index.integerValue animated:animated];
-        }
+        [view goTo:index.integerValue animated:animated];
     }];
 }
 
