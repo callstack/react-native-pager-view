@@ -56,9 +56,20 @@ import PagerViewView, {
  * ```
  */
 
-export class PagerView extends React.Component<PagerViewProps> {
+type PagerViewState = {
+  page: number | undefined;
+};
+
+export class PagerView extends React.Component<PagerViewProps, PagerViewState> {
   private isScrolling = false;
   pagerView: React.ElementRef<typeof PagerViewView> | null = null;
+
+  constructor(props: PagerViewProps) {
+    super(props);
+    this.state = {
+      page: this.props.initialPage,
+    };
+  }
 
   private _onPageScroll = (
     e: ReactNative.NativeSyntheticEvent<OnPageScrollEventData>
@@ -87,6 +98,7 @@ export class PagerView extends React.Component<PagerViewProps> {
   private _onPageSelected = (
     e: ReactNative.NativeSyntheticEvent<OnPageSelectedEventData>
   ) => {
+    this.setState({ page: e.nativeEvent.position });
     if (this.props.onPageSelected) {
       this.props.onPageSelected(e);
     }
@@ -98,7 +110,7 @@ export class PagerView extends React.Component<PagerViewProps> {
    */
   public setPage = (selectedPage: number) => {
     if (this.pagerView) {
-      PagerViewCommands.setPage(this.pagerView, selectedPage);
+      PagerViewCommands.setPageWithAnimation(this.pagerView, selectedPage);
     }
   };
 
@@ -139,6 +151,18 @@ export class PagerView extends React.Component<PagerViewProps> {
       return I18nManager.isRTL ? 'rtl' : 'ltr';
     } else {
       return this.props.layoutDirection;
+    }
+  }
+
+  componentDidUpdate(prevProps: Readonly<PagerViewProps>): void {
+    if (this.props.page === undefined) {
+      return;
+    }
+    if (this.props.page !== this.state.page) {
+      this.setState({ page: this.props.page });
+      if (prevProps.page === this.props.page) {
+        this.setPageWithoutAnimation(this.props.page);
+      }
     }
   }
 

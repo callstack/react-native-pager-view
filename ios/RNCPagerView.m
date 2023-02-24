@@ -30,6 +30,8 @@
 - (instancetype)initWithEventDispatcher:(id<RCTEventDispatcherProtocol>)eventDispatcher {
     if (self = [super init]) {
         _initialPage = 0;
+        _page = 0;
+        _animated = YES;
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
         _coalescingKey = 0;
         _eventDispatcher = eventDispatcher;
@@ -79,6 +81,12 @@
 - (void)didSetProps:(NSArray<NSString *> *)changedProps {
     if ([changedProps containsObject:@"overdrag"]) {
         [_scrollView setBounces:_overdrag];
+    }
+    
+    if ([changedProps containsObject:@"page"]) {
+        if (_page >= 0 && _page < self.reactSubviews.count) {
+            [self goTo:_page animated:_animated];
+        }
     }
 }
 

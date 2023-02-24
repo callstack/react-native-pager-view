@@ -7,6 +7,9 @@
 
 RCT_EXPORT_MODULE(RNCViewPager)
 
+RCT_EXPORT_VIEW_PROPERTY(page, NSInteger)
+RCT_EXPORT_VIEW_PROPERTY(animated, BOOL)
+
 RCT_EXPORT_VIEW_PROPERTY(initialPage, NSInteger)
 RCT_EXPORT_VIEW_PROPERTY(orientation, NSString)
 
@@ -28,9 +31,7 @@ RCT_EXPORT_VIEW_PROPERTY(overdrag, BOOL)
             RCTLogError(@"Cannot find ReactNativePageView with tag #%@", reactTag);
             return;
         }
-        if (!animated || !view.animating) {
-            [view goTo:index.integerValue animated:animated];
-        }
+        [view goTo:index.integerValue animated:animated];
     }];
 }
 
@@ -49,7 +50,7 @@ RCT_EXPORT_VIEW_PROPERTY(overdrag, BOOL)
     }];
 }
 
-RCT_EXPORT_METHOD(setPage
+RCT_EXPORT_METHOD(setPageWithAnimation
                   : (nonnull NSNumber *)reactTag index
                   : (nonnull NSNumber *)index) {
     [self goToPage:reactTag index:index animated:true];

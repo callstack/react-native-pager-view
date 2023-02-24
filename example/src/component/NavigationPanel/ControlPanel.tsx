@@ -5,8 +5,8 @@ import { ProgressBar } from '../ProgressBar';
 import type { NavigationPanelProps } from './types';
 
 export function ControlsPanel({
-  activePage,
-  isAnimated,
+  page,
+  animated,
   pages,
   scrollState,
   scrollEnabled,
@@ -21,14 +21,8 @@ export function ControlsPanel({
   toggleOverdrag,
 }: NavigationPanelProps) {
   const firstPage = useCallback(() => setPage(0), [setPage]);
-  const prevPage = useCallback(() => setPage(activePage - 1), [
-    activePage,
-    setPage,
-  ]);
-  const nextPage = useCallback(() => setPage(activePage + 1), [
-    setPage,
-    activePage,
-  ]);
+  const prevPage = useCallback(() => setPage(page - 1), [page, setPage]);
+  const nextPage = useCallback(() => setPage(page + 1), [setPage, page]);
   const lastPage = useCallback(() => setPage(pages.length - 1), [
     pages.length,
     setPage,
@@ -64,7 +58,7 @@ export function ControlsPanel({
       <View style={styles.buttons}>
         <Button
           testID="add-page-button"
-          text={isAnimated ? 'Turn off animations' : 'Turn animations back on'}
+          text={animated ? 'Turn off animations' : 'Turn animations back on'}
           onPress={toggleAnimation}
         />
         <View style={styles.scrollState}>
@@ -77,31 +71,31 @@ export function ControlsPanel({
         <Button
           testID="start-page-button"
           text="Start"
-          disabled={activePage === 0}
+          disabled={page === 0}
           onPress={firstPage}
         />
         <Button
           testID="prev-page-button"
           text="Prev"
-          disabled={activePage === 0}
+          disabled={page === 0}
           onPress={prevPage}
         />
         <Button
           testID="next-page-button"
           text="Next"
-          disabled={activePage === pages.length - 1}
+          disabled={page === pages.length - 1}
           onPress={nextPage}
         />
         <Button
           testID="last-page-button"
           text="Last"
-          disabled={activePage === pages.length - 1}
+          disabled={page === pages.length - 1}
           onPress={lastPage}
         />
       </View>
       <View style={styles.progress}>
         <Text style={styles.buttonText}>
-          Page {activePage + 1} / {pages.length}{' '}
+          Page {page + 1} / {pages.length}{' '}
         </Text>
         <ProgressBar numberOfPages={pages.length} progress={progress} />
       </View>

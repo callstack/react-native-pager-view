@@ -27,8 +27,8 @@ export function useNavigationPanel(
   const [pages, setPages] = useState<CreatePage[]>(
     useMemo(() => getBasePages(pagesAmount), [pagesAmount])
   );
-  const [activePage, setActivePage] = useState(0);
-  const [isAnimated, setIsAnimated] = useState(true);
+  const [page, setPage] = useState(0);
+  const [animated, setAnimated] = useState(true);
   const [overdragEnabled, setOverdragEnabled] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [scrollState, setScrollState] = useState('idle');
@@ -37,14 +37,6 @@ export function useNavigationPanel(
   const onPageScrollOffset = useRef(new Animated.Value(0)).current;
   const onPageScrollPosition = useRef(new Animated.Value(0)).current;
   const onPageSelectedPosition = useRef(new Animated.Value(0)).current;
-
-  const setPage = useCallback(
-    (page: number) =>
-      isAnimated
-        ? ref.current?.setPage(page)
-        : ref.current?.setPageWithoutAnimation(page),
-    [isAnimated]
-  );
 
   const addLog = useCallback((log: EventLog) => {
     setLogs((text) => [log, ...text].slice(0, 100));
@@ -59,7 +51,7 @@ export function useNavigationPanel(
     []
   );
   const toggleAnimation = useCallback(
-    () => setIsAnimated((animated) => !animated),
+    () => setAnimated((prevAnimated) => !prevAnimated),
     []
   );
   const toggleScroll = useCallback(
@@ -112,7 +104,7 @@ export function useNavigationPanel(
               text: `Page: ${position}`,
               timestamp: new Date(),
             });
-            setActivePage(position);
+            setPage(position);
             onPageSelectedCallback(position);
           },
           useNativeDriver: true,
@@ -137,8 +129,8 @@ export function useNavigationPanel(
 
   return {
     ref,
-    activePage,
-    isAnimated,
+    page,
+    animated,
     pages,
     scrollState,
     scrollEnabled,

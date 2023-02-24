@@ -24,6 +24,10 @@ using namespace facebook::react;
     UIView *_containerView;
     
     CGSize _contentSize;
+
+    NSInteger _page;
+    BOOL _animated;
+    
     NSInteger _initialPage;
 }
 
@@ -33,6 +37,9 @@ using namespace facebook::react;
         static const auto defaultProps = std::make_shared<const RNCViewPagerProps>();
         _props = defaultProps;
         _initialPage = -1;
+        
+        _page = -1;
+        _animated = true;
         
         _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
         
@@ -68,6 +75,14 @@ using namespace facebook::react;
         [_scrollView setScrollEnabled:newScreenProps.scrollEnabled];
     }
     
+    if (newScreenProps.animated != _animated) {
+        _animated = newScreenProps.animated;
+    }
+    
+    if (newScreenProps.page != _page && newScreenProps.page >= 0 && newScreenProps.page < _containerView.subviews.count) {
+        _page = newScreenProps.page;
+        [self goTo:_page animated:_animated];
+    }
     
     [super updateProps:props oldProps:oldProps];
 }
@@ -171,7 +186,7 @@ using namespace facebook::react;
     strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
 }
 
-//Handles sending onPageSelected event on setPage method completion
+//Handles sending onPageSelected event on setPageWithAnimation method completion
 -(void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
     int position = [self getCurrentPage];
     
@@ -212,19 +227,20 @@ using namespace facebook::react;
     return [self isHorizontal] ? CGPointMake(_scrollView.frame.size.width * pageIndex, 0) : CGPointMake(0, _scrollView.frame.size.height * pageIndex);
 }
 
-- (void)setPage:(NSInteger)index {
+-(void)goTo:(NSInteger)index animated:(BOOL)animated {
     CGPoint targetOffset = [self getPageOffset:index];
     
-    [_scrollView setContentOffset:targetOffset animated:YES];
+    [_scrollView setContentOffset:targetOffset animated:animated];
+}
+
+- (void)setPageWithAnimation:(NSInteger)index {
+    [self goTo:index animated:YES];
 }
 
 - (void)setPageWithoutAnimation:(NSInteger)index {
-    CGPoint targetOffset = [self getPageOffset:index];
-    
-    [_scrollView setContentOffset:targetOffset animated:NO];
+    [self goTo:index animated:NO];
     
     const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
-    
     strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(index)});
 }
 

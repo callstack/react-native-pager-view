@@ -7,6 +7,8 @@ import com.facebook.react.uimanager.PixelUtil
 object PagerViewViewManagerImpl {
     const val NAME = "RNCViewPager"
 
+    var animated = true
+
     fun getViewPager(view: NestedScrollableHost): ViewPager2 {
         if (view.getChildAt(0) is ViewPager2) {
             return view.getChildAt(0) as ViewPager2

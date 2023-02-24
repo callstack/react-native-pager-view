@@ -9,6 +9,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithEventDispatcher:(id<RCTEventDispatcherProtocol> )eventDispatcher;
 
+@property(nonatomic) NSInteger page;
+@property(nonatomic) BOOL animated;
 @property(nonatomic) NSInteger initialPage;
 @property(nonatomic) NSString* orientation;
 @property(nonatomic, readonly) UIScrollViewKeyboardDismissMode dismissKeyboard;

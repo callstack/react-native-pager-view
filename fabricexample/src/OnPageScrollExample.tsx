@@ -10,7 +10,7 @@ const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
 export function OnPageScrollExample() {
   const { ref, ...navigationPanel } = useNavigationPanel(5);
-  const { activePage, setPage, progress, pages } = navigationPanel;
+  const { page, setPage, progress, pages } = navigationPanel;
 
   return (
     <SafeAreaView style={styles.flex}>
@@ -22,7 +22,7 @@ export function OnPageScrollExample() {
                 <Text
                   style={[
                     styles.touchableTitle,
-                    activePage === index && styles.touchableTitleActive,
+                    page === index && styles.touchableTitleActive,
                   ]}
                 >
                   Page {index}

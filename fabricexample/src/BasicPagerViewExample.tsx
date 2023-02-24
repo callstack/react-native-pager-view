@@ -18,6 +18,8 @@ export function BasicPagerViewExample() {
         //@ts-ignore
         testID="pager-view"
         ref={ref}
+        page={navigationPanel.page}
+        animated={navigationPanel.animated}
         style={styles.PagerView}
         initialPage={0}
         layoutDirection="ltr"
