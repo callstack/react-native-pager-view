@@ -161,9 +161,7 @@ export class PagerView extends React.Component<PagerViewProps, PagerViewState> {
     if (this.props.page !== this.state.page) {
       this.setState({ page: this.props.page });
       if (prevProps.page === this.props.page) {
-        this.props.animated
-          ? this.setPage(this.props.page)
-          : this.setPageWithoutAnimation(this.props.page);
+        this.setPageWithoutAnimation(this.props.page);
       }
     }
   }
