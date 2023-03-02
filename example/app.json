@@ -1,4 +1,21 @@
 {
-  "name": "PagerViewExample",
-  "displayName": "PagerViewExample"
+  "name": "example",
+  "displayName": "PagerExample",
+  "components": [
+    {
+      "appKey": "example",
+      "displayName": "example"
+    }
+  ],
+  "plugins": ["react-native-test-app/plugins/reanimated.js"],
+  "resources": {
+    "android": [
+      "dist/res",
+      "dist/main.android.jsbundle"
+    ],
+    "ios": [
+      "dist/assets",
+      "dist/main.ios.jsbundle"
+    ]
+  }
 }

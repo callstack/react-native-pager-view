@@ -5,7 +5,7 @@ import {
   Image,
   Text,
   StyleSheet,
-  ImageRequireSource,
+  ImageSourcePropType,
 } from 'react-native';
 import { TabView, SceneRendererProps } from 'react-native-tab-view';
 
@@ -19,7 +19,7 @@ type Props = SceneRendererProps & {
   route: Route;
 };
 
-const ALBUMS: { [key: string]: ImageRequireSource } = {
+const ALBUMS: { [key: string]: ImageSourcePropType } = {
   'Abbey Road': require('../../assets/tabView/album-art-1.jpg'),
   'Bat Out of Hell': require('../../assets/tabView/album-art-2.jpg'),
   'Homogenic': require('../../assets/tabView/album-art-3.jpg'),
@@ -78,7 +78,7 @@ const Scene = ({ route, position, layout, index, length }: Props) => {
   return (
     <Animated.View style={[styles.page, coverflowStyle]}>
       <View style={styles.album}>
-        <Image source={ALBUMS[route.key]} style={styles.cover} />
+        <Image source={ALBUMS[route.key]!} style={styles.cover} />
       </View>
       <Text style={styles.label}>{route.key}</Text>
     </Animated.View>
