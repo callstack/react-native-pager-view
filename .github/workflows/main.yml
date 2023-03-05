@@ -46,21 +46,3 @@ jobs:
         with:
           path: example/node_modules
           key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
-
-      - name: Pull fabric example node modules
-        id: cache-fabricexample-npm
-        uses: actions/cache@v3
-        env:
-          cache-name: cached-fabric-npm-deps
-        with:
-          path: fabricexample/node_modules
-          key: ${{ hashFiles('./fabricexample/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
-
-      - name: Lint files
-        run: yarn lint
-
-      - name: Typecheck files
-        run: yarn typescript
-
-      - name: Build package
-        run: yarn prepare

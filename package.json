@@ -29,9 +29,7 @@
     "release": "release-it",
     "releaseNext": "release-it --npm.tag=next --preRelease=rc",
     "example": "yarn --cwd example",
-    "bootstrap": "yarn example && yarn && yarn example pods",
-    "fabricexample": "yarn --cwd fabricexample",
-    "bootstrap-fabric": "yarn fabricexample && yarn && yarn fabricexample pods"
+    "bootstrap": "yarn example && yarn && yarn example pods"
   },
   "keywords": [
     "react-native",

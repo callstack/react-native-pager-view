@@ -49,10 +49,9 @@ Install pods with this flag inside `ios` folder:
 ```sh
 RCT_NEW_ARCH_ENABLED=1 bundle exec pod install
 ``` 
-(Inside of `fabricexample` the `RCT_NEW_ARCH_ENABLED` is already set to true by default inside `Podfile`)
 
 ### Android
-Set `newArchEnabled` to `true` inside `android/gradle.properties` (this flag is already set to true in `fabricexample`) and then run: 
+Set `newArchEnabled` to `true` inside `android/gradle.properties` and then run: 
 ```sh
 yarn android
 ```
