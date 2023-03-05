@@ -1,10 +1,12 @@
 {
   "name": "example",
   "displayName": "PagerExample",
+  "singleApp": "example",
   "components": [
     {
       "appKey": "example",
-      "displayName": "example"
+      "displayName": "Basic Example",
+      "slug": "example"
     }
   ],
   "plugins": ["react-native-test-app/plugins/reanimated.js"],
