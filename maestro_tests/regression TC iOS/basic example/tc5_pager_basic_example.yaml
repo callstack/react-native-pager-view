@@ -1,0 +1,21 @@
+appId: org.reactjs.native.example.FabricExample
+# tc5 The [Scroll Enabled] button can switch states between enabled to disabled and back any number of times
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "Basic Example"
+- assertVisible: "Basic Example"
+- tapOn: "Scroll Enabled"
+- assertVisible: "Scroll Disabled"
+- tapOn: "Scroll Disabled"
+- assertVisible: "Scroll Enabled"
+- tapOn: "Scroll Enabled"
+- assertVisible: "Scroll Disabled"
+- tapOn: "Scroll Disabled"
+- assertVisible: "Scroll Enabled"
+- tapOn: "Scroll Enabled"
+- assertVisible: "Scroll Disabled"
+- tapOn: "Scroll Disabled"
+- assertVisible: "Scroll Enabled"
+- tapOn: "PagerView Example"
+- clearState

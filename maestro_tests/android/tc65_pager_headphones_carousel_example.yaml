@@ -1,0 +1,9 @@
+appId: com.pagerviewexample
+#  tc65 Headphones Carousel Example page 2 can be swiped left to the page 3
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/android/tc62_pager_headphones_carousel_example.yaml
+- swipe:
+    start: "69%,63%"
+    end: "27%,63%"
+    duration: 339
+- assertVisible: "GREAT QUALITY"

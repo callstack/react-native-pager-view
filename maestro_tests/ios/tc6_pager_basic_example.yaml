@@ -1,0 +1,16 @@
+appId: org.reactjs.native.example.FabricExample
+# tc6 The [Add new page] button enables user to add any number of pages one by one
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "Basic Example"
+- assertVisible: "Basic Example"
+- tapOn: "Add new page"
+- assertVisible: "Page 1 / 11 "
+- repeat:
+    times: 25
+    commands:
+      - tapOn: "Add new page"
+- assertVisible: "Page 1 / 36 "
+- tapOn: "Last"
+- assertVisible: "Page 36 / 36 "

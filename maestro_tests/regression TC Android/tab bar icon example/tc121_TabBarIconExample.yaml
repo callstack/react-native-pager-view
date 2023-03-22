@@ -1,0 +1,16 @@
+appId: com.pagerviewexample
+#  tc121 The TabBarIconExample tab displays its content correctly
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC Android/tab bar icon example/tc120_TabBarIconExample.yaml
+- assertVisible: "Navigate up"
+- assertVisible:
+    text: "CHAT"
+    index: 1
+- assertVisible: Write a message
+- assertVisible:
+    text: "CONTACTS"
+    index: 1
+- assertVisible:
+    text: "ARTICLES"
+    index: 1
+- clearState    

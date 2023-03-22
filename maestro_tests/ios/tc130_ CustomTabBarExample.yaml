@@ -1,0 +1,12 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc130 Each time the link on the Bottom navigation bar is tapped a different content is displayed
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/ios/tc128_ CustomTabBarExample.yaml
+- tapOn: "Albums Albums"
+- assertNotVisible: "7766398169"
+- tapOn: "Chat Chat"
+- assertVisible: "make me a sandwich"
+- tapOn: "Article Article"
+- assertVisible: "Lorem Ipsum"
+- tapOn: "Contacts Contacts"
+- assertVisible: "Miles Ferguson"

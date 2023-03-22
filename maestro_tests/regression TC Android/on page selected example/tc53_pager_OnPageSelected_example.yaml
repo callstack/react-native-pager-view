@@ -1,0 +1,18 @@
+appId: com.pagerviewexample
+# tc53 The [Scroll Enabled] button can switch states between enabled to disabled and back any number of times
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC Android/on page selected example/alert dialog dismissal_pager_OnPageSelected_example.yaml
+- tapOn: "Scroll Enabled"
+- assertVisible: "Scroll Disabled"
+- tapOn: "Scroll Disabled"
+- assertVisible: "Scroll Enabled"
+- tapOn: "Scroll Enabled"
+- assertVisible: "Scroll Disabled"
+- tapOn: "Scroll Disabled"
+- assertVisible: "Scroll Enabled"
+- tapOn: "Scroll Enabled"
+- assertVisible: "Scroll Disabled"
+- tapOn: "Scroll Disabled"
+- assertVisible: "Scroll Enabled"
+- tapOn: "Navigate up"
+- clearState

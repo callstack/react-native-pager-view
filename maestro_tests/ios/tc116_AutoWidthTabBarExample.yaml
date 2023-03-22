@@ -1,0 +1,19 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc116 The AutoWidthTabBarExample tab displays its content correctly
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/ios/tc115_AutoWidthTabBarExample.yaml
+- assertVisible: "AutoWidthTabBarExample"
+- assertVisible: "Contacts"
+- assertVisible: "Denzel Curry"
+- assertVisible: "Article"
+- assertVisible: "Albums"
+- assertVisible: "Chat"
+- assertVisible: "long long long title"
+- repeat:
+    times: 4
+    commands:
+      - swipe:
+          start: "71%,19%"
+          end: "15%,18%"
+          duration: 594
+- assertVisible: "medium title"

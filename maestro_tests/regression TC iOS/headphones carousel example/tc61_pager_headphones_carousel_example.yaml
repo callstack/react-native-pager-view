@@ -1,0 +1,12 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc61 Elements of the Headphones Carousel Example screen are visible
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "Headphones Carousel Example"
+- assertVisible: "PagerView Example"
+- assertVisible: "Headphones Carousel Example"
+- assertVisible: "HUMLAN P"
+- assertVisible: "VIBRANT COLORS"
+- assertVisible: "Four on-trend colorways to seamlessly suit your style."
+- clearState

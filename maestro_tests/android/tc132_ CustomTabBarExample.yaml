@@ -1,0 +1,7 @@
+appId: com.pagerviewexample
+# tc132 The message entered in the message field is visible after leaving the “Chat” page
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/android/tc131_ CustomTabBarExample.yaml
+- tapOn: Albums
+- tapOn: Chat
+- assertVisible: "Muffin danish chocolate souffle pastry icing bonbon oat cake."

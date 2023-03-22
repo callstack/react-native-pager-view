@@ -1,0 +1,7 @@
+appId: com.pagerviewexample
+#  tc95 ScrollView inside PagerView Example tab is active and accessible
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "ScrollView inside PagerView Example"
+- clearState

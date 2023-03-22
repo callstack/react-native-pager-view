@@ -1,0 +1,11 @@
+appId: com.pagerviewexample
+#  tc70 Pagination Dots Example tab is active and accessible
+---
+- launchApp:
+    appId: com.pagerviewexample
+    clearState: "true"
+    stopApp: "false"
+- assertVisible: "PagerView Example"
+- tapOn: "Pagination Dots Example"
+- assertVisible: "Page Index: 1"
+- assertVisible: "Expanding Dot"

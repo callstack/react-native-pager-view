@@ -1,0 +1,13 @@
+appId: com.pagerviewexample
+#  tc130 Each time the link on the Bottom navigation bar is tapped a different content is displayed
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC Android/custom tab bar example/tc128_ CustomTabBarExample.yaml
+- tapOn: Albums
+- assertNotVisible: "7766398169"
+- tapOn: "Chat"
+- assertVisible: "make me a sandwich"
+- tapOn: "Article"
+- assertVisible: "Lorem Ipsum"
+- tapOn: "Contacts"
+- assertVisible: "Miles Ferguson"
+- clearState

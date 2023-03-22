@@ -1,0 +1,14 @@
+appId: com.pagerviewexample
+# tc 25 User can answer to “First Question” -input text method
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "Keyboard Example"
+- assertVisible: "Keyboard Example"
+- assertVisible: "Page 1 / 2 "
+- tapOn:
+    point: "50%,62%"
+- inputText: "Angular"
+- tapOn:
+    point: "92%,89%"   
+- assertVisible: "Angular"

@@ -1,0 +1,16 @@
+appId: org.reactjs.native.example.FabricExample
+# tc48 [Control] button hides all the buttons from the bottom of the screen
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "OnPageScroll Example"
+- tapOn:
+    text: "Control"
+    index: 0
+- assertVisible:
+    text: "Logs"
+    index: 0
+- assertNotVisible: "Start"
+- tapOn: "Control"
+- assertVisible: "Start"
+- assertVisible: "Next"

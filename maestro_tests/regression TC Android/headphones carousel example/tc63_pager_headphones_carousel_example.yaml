@@ -1,0 +1,10 @@
+appId: com.pagerviewexample
+#  tc63 Headphones Carousel Example screen can be swiped back to the previous page
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC Android/headphones carousel example/tc62_pager_headphones_carousel_example.yaml
+- swipe:
+    start: "28%,59%"
+    end: "84%,62%"
+    duration: 306
+- assertVisible: "VIBRANT COLORS"
+- clearState

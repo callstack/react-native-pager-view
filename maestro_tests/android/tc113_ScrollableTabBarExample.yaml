@@ -1,0 +1,23 @@
+appId: com.pagerviewexample
+#  tc113 Page can be scrolled right and left
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/android/tc109_ScrollableTabBarExample.yaml
+- swipe:
+    start: "52%,64%"
+    end: "89%,65%"
+    duration: 240
+- assertVisible: "Knowledge Bot"
+- swipe:
+    start: "85%,59%"
+    end: "17%,56%"
+    duration: 224
+- assertVisible: "Marissa Castillo"
+- swipe:
+    start: "83%,63%"
+    end: "22%,58%"
+    duration: 224
+- swipe:
+    start: "87%,64%"
+    end: "18%,62%"
+    duration: 240
+- assertVisible: "Write a message"

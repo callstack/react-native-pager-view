@@ -1,0 +1,14 @@
+appId: com.pagerviewexample
+#  tc114 Users can type in their message at the CHAT page, but sending functionality is not implemented 
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC Android/scrollable tab bar example/tc109_ScrollableTabBarExample.yaml
+- repeat:
+    times: 2
+    commands:
+      - swipe:
+          start: "79%,61%"
+          end: "32%,58%"
+          duration: 288
+- tapOn: "Write a message"
+- inputText: "Hello World"
+- clearState

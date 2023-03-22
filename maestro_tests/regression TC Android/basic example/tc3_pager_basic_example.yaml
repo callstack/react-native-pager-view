@@ -1,0 +1,24 @@
+appId: com.pagerviewexample
+# tc3 Basic Example screen with its elements is displayed correctly
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "Basic Example"
+- assertVisible: "Basic Example"
+- assertVisible: "👍 Like"
+- assertVisible: "7 likes"
+- assertVisible: "page number 0"
+- assertVisible: "Control"
+- assertVisible: "Logs"
+- assertVisible: "Scroll Enabled"
+- assertVisible: "Add new page"
+- assertVisible: "Turn off animations"
+- assertVisible: "Overdrag Disabled"
+- assertVisible: "Remove last page"
+- assertVisible: "ScrollState[ idle ]"
+- assertVisible: "Start"
+- assertVisible: "Prev"
+- assertVisible: "Next"
+- assertVisible: "Last"
+- assertVisible: "Page 1 / 10 "
+- clearState

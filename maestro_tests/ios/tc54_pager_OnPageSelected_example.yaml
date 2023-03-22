@@ -1,0 +1,17 @@
+appId: org.reactjs.native.example.FabricExample
+# tc54 The [Add new page] button enables user to add any number of pages one by one
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/ios/alert dialog dismissal_pager_OnPageSelected_example.yaml
+- tapOn: "Add new page"
+- assertVisible: "Page 1 / 11 "
+- repeat:
+    times: 12
+    commands:
+      - tapOn: "Add new page"
+- assertVisible: "Page 1 / 23 "
+- tapOn: "Last"
+- assertVisible:
+    text: "Page Index: 22"
+    index: 1
+- assertVisible: "You are on 23 page"
+- assertVisible: "Page 23 / 23 "

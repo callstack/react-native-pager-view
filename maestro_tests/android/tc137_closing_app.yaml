@@ -1,0 +1,6 @@
+appId: com.pagerviewexample
+#  tc137 App can be closed via Maestro Studio
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- stopApp

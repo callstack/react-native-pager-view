@@ -1,0 +1,13 @@
+appId: com.pagerviewexample
+# tc57 The [Overdrag Disable] button can switch states between disabled and enabled any number of times
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC Android/on page selected example/alert dialog dismissal_pager_OnPageSelected_example.yaml
+- tapOn: "Overdrag Disabled"
+- assertVisible: "Overdrag Enabled"
+- tapOn: "Overdrag Enabled"
+- assertVisible: "Overdrag Disabled"
+- tapOn: "Overdrag Disabled"
+- assertVisible: "Overdrag Enabled"
+- tapOn: "Overdrag Enabled"
+- assertVisible: "Overdrag Disabled"
+- clearState

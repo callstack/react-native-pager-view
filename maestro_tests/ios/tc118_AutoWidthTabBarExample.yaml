@@ -1,0 +1,41 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc118 Swiping pages is obtainable
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/ios/tc115_AutoWidthTabBarExample.yaml
+- swipe:
+    start: "36%,53%"
+    end: "88%,54%"
+    duration: 192
+- assertVisible: "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old."
+- swipe:
+    start: "74%,68%"
+    end: "2%,66%"
+    duration: 226
+- assertVisible: "Miles Ferguson"
+- swipe:
+    start: "90%,56%"
+    end: "21%,54%"
+    duration: 240
+- swipe:
+    start: "89%,62%"
+    end: "0%,55%"
+    duration: 240
+- assertVisible: "Write a message"
+- swipe:
+    start: "91%,49%"
+    end: "6%,45%"
+    duration: 256
+- assertVisible: "Knowledge Bot"
+- swipe:
+    start: "90%,39%"
+    end: "14%,33%"
+    duration: 240
+- tapOn: "medium title"
+- repeat:
+    times: 2
+    commands:
+      - swipe:
+          start: "14%,38%"
+          end: "77%,39%"
+          duration: 482
+- assertVisible: "Write a message"

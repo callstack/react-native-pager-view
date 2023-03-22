@@ -1,0 +1,14 @@
+appId: com.pagerviewexample
+#  tc61 Elements of the Headphones Carousel Example screen are visible
+---
+- launchApp:
+    appId: com.pagerviewexample
+    clearState: "true"
+    stopApp: "false"
+- assertVisible: "PagerView Example"
+- tapOn: "Headphones Carousel Example"
+- assertVisible: "Navigate up"
+- assertVisible: "Headphones Carousel Example"
+- assertVisible: "HUMLAN P"
+- assertVisible: "VIBRANT COLORS"
+- assertVisible: "Four on-trend colorways to seamlessly suit your style."

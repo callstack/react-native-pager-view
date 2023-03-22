@@ -1,0 +1,51 @@
+appId: com.pagerviewexample
+# tc39 Logs button shows logs on each page after being tapped 
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "Keyboard Example"
+- assertVisible:
+    text: "Page 1 / 2 "
+    index: 0
+- tapOn:
+    text: "Logs"
+    index: 0
+- assertVisible:
+    text: "Page: 0"
+    index: 0
+- tapOn: "Logs"
+- tapOn: "Go to next question"
+- tapOn: "Logs"
+- assertVisible:
+    text: "Position: 1 Offset: 0"
+    index: 0
+- assertVisible:
+    text: "Page: 1"
+    index: 0
+- assertVisible:
+    text: "Position: 0 Offset: 1"
+    index: 0
+- tapOn:
+    text: "Logs"
+    index: 0
+- tapOn: "Go to previous question"
+- assertVisible: "Go to next question"
+- tapOn:
+    text: "Logs"
+    index: 0
+- assertVisible:
+    text: "Position: 0 Offset: 0"
+    index: 0
+- assertVisible:
+    text: "Page: 0"
+    index: 0
+- tapOn:
+    text: "Logs"
+    index: 0
+- tapOn:
+    text: "Control"
+    index: 0
+- assertVisible:
+    text: "Page 1 / 2 "
+    index: 0
+- clearState

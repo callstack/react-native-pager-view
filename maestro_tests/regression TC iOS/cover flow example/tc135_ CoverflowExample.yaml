@@ -1,0 +1,14 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc135 The CoverflowExample tab is accessible
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- swipe:
+    start: "86%,80%"
+    end: "90%,30%"
+    duration: 352
+- tapOn: "CoverflowExample"
+- assertVisible:
+    text: "Homogenic"
+    index: 1
+- clearState

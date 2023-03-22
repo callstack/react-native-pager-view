@@ -1,0 +1,29 @@
+appId: com.pagerviewexample
+#  tc7 The [Remove last page] button enables user to remove pages one by one
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "Basic Example"
+- assertVisible: "Page 1 / 10 "
+- tapOn: "Page 1 / 10 "
+- tapOn: "Add new page"
+- assertTrue: ${"Page 1 / 11 "}
+# - assertVisible: "Page 1 / 11 "
+- tapOn: "Add new page"
+- repeat:
+    times: 25
+    commands:
+      - tapOn: "Add new page"
+# - assertVisible: "Page 1 / 37 "
+- assertTrue: ${"Page 1 / 37 "}
+- tapOn: "Remove last page"
+- repeat:
+    times: 36
+    commands:
+      - tapOn: "Remove last page"
+- assertTrue: ${"Page 1 / 0 "}      
+# - assertVisible: "Page 1 / 0 "
+
+
+
+

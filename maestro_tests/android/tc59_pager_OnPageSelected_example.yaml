@@ -1,0 +1,21 @@
+appId: com.pagerviewexample
+#  tc59 [Logs] button after being tapped shows the logs 
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/android/alert dialog dismissal_pager_OnPageSelected_example.yaml
+- tapOn: "Logs"
+- assertVisible: "Control"
+- assertVisible: "Page Index: 0"
+- tapOn: "Control"
+- assertVisible: "Page Index: 0"
+- tapOn: "Last"
+- assertVisible: "You are on 10 page"
+- tapOn: "OK"
+- assertVisible: "Page Index: 9"
+- tapOn: "Logs"
+- assertVisible: "Position: 9 Offset: 0"
+- assertVisible: "Page: 9"
+- assertVisible: "Position: 0 Offset: 9"
+- scrollUntilVisible:
+    element:
+      text: "Page: 0"
+    direction: DOWN

@@ -1,0 +1,15 @@
+appId: org.reactjs.native.example.FabricExample
+# tc44 The [Overdrag Disable] button can switch states between disabled and enabled any number of times
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "OnPageScroll Example"
+- assertVisible: "OnPageScroll Example"
+- tapOn: "Overdrag Disabled"
+- assertVisible: "Overdrag Enabled"
+- tapOn: "Overdrag Enabled"
+- assertVisible: "Overdrag Disabled"
+- tapOn: "Overdrag Disabled"
+- assertVisible: "Overdrag Enabled"
+- tapOn: "Overdrag Enabled"
+- assertVisible: "Overdrag Disabled"

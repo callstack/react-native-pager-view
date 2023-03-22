@@ -1,0 +1,18 @@
+appId: com.pagerviewexample
+#  tc123 Swiping pages is obtainable
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC Android/tab bar icon example/tc120_TabBarIconExample.yaml
+
+- swipe:
+    direction: LEFT
+- assertVisible: Marissa Castillo
+- swipe:
+    direction: LEFT
+- assertVisible: Knowledge Bot
+- repeat:
+    times: 2
+    commands:
+      - swipe:
+           direction: RIGHT
+- assertVisible: Write a message
+- clearState

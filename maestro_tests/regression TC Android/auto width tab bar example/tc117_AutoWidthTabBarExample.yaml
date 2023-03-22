@@ -1,0 +1,23 @@
+appId: com.pagerviewexample
+#  tc117 All the links placed in the navigation bar are active
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC Android/auto width tab bar example/tc115_AutoWidthTabBarExample.yaml
+- tapOn:
+    text: "ARTICLE"
+    index: 1
+- tapOn:
+    text: "CONTACTS"
+    index: 1
+- tapOn:
+    text: "ALBUMS"
+    index: 1
+- tapOn:
+    text: "CHAT"
+    index: 1
+- tapOn:
+    text: "LONG LONG LONG TITLE"
+    index: 1
+- tapOn:
+    text: "MEDIUM TITLE"
+    index: 1
+- clearState

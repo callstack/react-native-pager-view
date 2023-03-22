@@ -1,0 +1,8 @@
+appId: org.reactjs.native.example.FabricExample
+# tc132 The message entered in the message field is visible after leaving the “Chat” page
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC iOS/custom tab bar example/tc131_ CustomTabBarExample.yaml
+- tapOn: "Albums Albums"
+- tapOn: "Chat Chat"
+- assertVisible: "Muffin danish chocolate souffle pastry icing bonbon oat cake."
+- clearState

@@ -1,0 +1,65 @@
+appId: com.pagerviewexample
+#  tc97 All the page elements are clickable
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "ScrollView inside PagerView Example"
+- tapOn:
+    text: "CLICK ME"
+    index: 0
+- tapOn:
+    text: "CLICK ME"
+    index: 1
+- tapOn:
+    text: "CLICK ME"
+    index: 2
+- tapOn:
+    text: "CLICK ME"
+    index: 3
+- tapOn:
+    text: "CLICK ME"
+    index: 4
+- tapOn:
+    text: "CLICK ME"
+    index: 5
+- tapOn:
+    text: "CLICK ME"
+    index: 6
+- tapOn:
+    text: "CLICK ME"
+    index: 7
+- tapOn:
+    text: "CLICK ME"
+    index: 8                            
+- swipe:
+    start: "84%,80%"
+    end: "89%,12%"
+    duration: 688
+- tapOn:
+    text: "CLICK ME"
+    index: 0
+- tapOn:
+    text: "CLICK ME"
+    index: 1
+- tapOn:
+    text: "CLICK ME"
+    index: 2
+- tapOn:
+    text: "CLICK ME"
+    index: 3
+- tapOn:
+    text: "CLICK ME"
+    index: 4
+- tapOn:
+    text: "CLICK ME"
+    index: 5
+- tapOn:
+    text: "CLICK ME"
+    index: 6
+- tapOn:
+    text: "CLICK ME"
+    index: 7
+- tapOn:
+    text: "CLICK ME"
+    index: 8
+- clearState

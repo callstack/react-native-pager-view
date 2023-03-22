@@ -1,0 +1,23 @@
+appId: com.pagerviewexample
+# tc27 Keyboard Example screen buttons are clickable and they change their labels after being tapped 
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "Keyboard Example"
+- assertVisible: "Keyboard Example"
+- tapOn: "Control"
+- assertNotVisible: "Overdrag Disabled"
+- tapOn: "Control"
+- tapOn: "Logs"
+- assertVisible: "Page: 0"
+- tapOn: "Logs"
+- tapOn: "Control"
+- assertVisible: "Overdrag Disabled"
+# - tapOn: "Scroll Disabled"
+- tapOn: "Turn off animations"
+- tapOn: "Overdrag Disabled"
+- tapOn: "Next"
+- tapOn: "Prev"
+- tapOn: "Last"
+- tapOn: "Start"
+- tapOn: "PagerView Example"

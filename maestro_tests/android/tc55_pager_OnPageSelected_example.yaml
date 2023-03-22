@@ -1,0 +1,25 @@
+appId: com.pagerviewexample
+# tc55 The [Remove last page] button enables user to remove pages one by one
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/android/alert dialog dismissal_pager_OnPageSelected_example.yaml
+- assertVisible: "Page 1 / 10 "
+- tapOn: "Add new page"
+# - tapOn: "Page 1 / 11 "
+- tapOn:
+    text: "Page 1 / 11 "
+    retryTapIfNoChange: false
+#- assertTrue: ${"Page 1 / 10 "}
+- assertVisible: 
+    text: "Page 1 / 11 "
+- repeat:
+    times: 17
+    commands:
+      - tapOn: "Add new page"
+- assertVisible: "Page 1 / 28 "
+- tapOn: "Remove last page"
+- repeat:
+    times: 27
+    commands:
+      - tapOn: "Remove last page"
+- assertVisible: "You are on 1 page"
+- assertVisible: "Page 1 / 1 "

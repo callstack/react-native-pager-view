@@ -1,0 +1,13 @@
+appId: com.pagerviewexample
+#  tc62 Elements of the Headphones Carousel Example page 1 can be swiped to the next page (2)
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "Headphones Carousel Example"
+- assertVisible: "HUMLAN P"
+- swipe:
+    start: "84%,67%"
+    end: "22%,67%"
+    duration: 320
+- assertNotVisible: "VIBRANT COLORS"
+- assertVisible: "REDEFINED SOUND"

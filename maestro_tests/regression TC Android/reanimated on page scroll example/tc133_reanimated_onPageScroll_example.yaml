@@ -1,0 +1,12 @@
+appId: com.pagerviewexample
+#  tc133 The Reanimated onPageScroll example tab is accessible
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- scrollUntilVisible:
+    element:
+      text: "Reanimated onPageScroll example"
+    direction: DOWN
+- assertVisible: Reanimated onPageScroll example
+- tapOn: Reanimated onPageScroll example
+- assertVisible: First page

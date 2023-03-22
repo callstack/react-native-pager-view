@@ -1,0 +1,8 @@
+appId: org.reactjs.native.example.FabricExample
+# tc131 Users can type in their messages at the CHAT page, but sending functionality is not implemented
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC iOS/custom tab bar example/tc128_ CustomTabBarExample.yaml
+- tapOn: "Chat Chat"
+- tapOn:
+    point: "50%,91%"
+- inputText: "Muffin danish chocolate souffle pastry icing bonbon oat cake."

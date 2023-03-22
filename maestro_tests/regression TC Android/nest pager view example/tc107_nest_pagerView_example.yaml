@@ -1,0 +1,22 @@
+appId: com.pagerviewexample
+#  tc107 Overdragging the screen leads to the homepage
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC Android/nest pager view example/tc99_nest_pagerView_example.yaml
+- swipe:
+    start: "5%,51%"
+    end: "99%,43%"
+    duration: 528
+- tapOn: "Nest PagerView Example"
+- repeat:
+    times: 2
+    commands:
+      - swipe:
+          start: "76%,85%"
+          end: "11%,81%"
+          duration: 224
+- swipe:
+    start: "96%,51%"
+    end: "9%,41%"
+    duration: 512
+- assertVisible: "PagerView Example"
+- clearState

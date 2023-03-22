@@ -1,0 +1,11 @@
+appId: com.pagerviewexample
+#  tc128 The CustomTabBarExample tab is accessible
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- swipe:
+    start: "85%,83%"
+    end: "72%,44%"
+    duration: 258
+- tapOn: "CustomTabBarExample"
+- assertVisible: "Marissa Castillo"

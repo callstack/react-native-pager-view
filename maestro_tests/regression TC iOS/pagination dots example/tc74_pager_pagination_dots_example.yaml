@@ -1,0 +1,20 @@
+appId: org.reactjs.native.example.FabricExample
+#  74 Users can swipe Pagination Dots Example pages from last to the first one
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC iOS/pagination dots example/tc73_pager_pagination_dots_example.yaml
+- swipe:
+    start: "13%,40%"
+    end: "92%,41%"
+    duration: 533
+- assertVisible: "Page Index: 3"
+- swipe:
+    start: "23%,42%"
+    end: "88%,41%"
+    duration: 413
+- assertVisible: "Page Index: 2"
+- swipe:
+    start: "26%,42%"
+    end: "85%,47%"
+    duration: 497
+- assertVisible: "Page Index: 1"
+- clearState

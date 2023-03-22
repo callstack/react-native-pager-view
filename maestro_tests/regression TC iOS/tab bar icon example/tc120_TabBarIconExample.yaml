@@ -1,0 +1,15 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc120 The TabBarIconExample tab is accessible
+---
+- launchApp:
+    appId: "org.reactjs.native.example.FabricExample"
+    clearState: "true"
+    clearKeychain: "true"
+    stopApp: "false"
+- assertVisible: "PagerView Example"
+- swipe:
+    start: "84%,74%"
+    end: "94%,35%"
+    duration: 354
+- tapOn: "TabBarIconExample"
+- assertVisible: "TabBarIconExample"

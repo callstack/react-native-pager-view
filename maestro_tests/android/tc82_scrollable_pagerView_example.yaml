@@ -1,0 +1,49 @@
+appId: com.pagerviewexample
+#  tc82 When picture is scrolled {swiped}horizontally, then the Page numeration is changed
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/android/tc78_scrollable_pagerView_example.yaml
+- swipe:
+    start: "84%,35%"
+    end: "9%,32%"
+    duration: 384
+- assertVisible: "Page 2 / 10 "
+- swipe:
+    start: "78%,36%"
+    end: "32%,32%"
+    duration: 370
+- assertVisible: "Page 3 / 10 "
+- swipe:
+    start: "76%,34%"
+    end: "31%,31%"
+    duration: 383
+- assertVisible: "Page 4 / 10 "
+- swipe:
+    start: "75%,36%"
+    end: "31%,37%"
+    duration: 287
+- assertVisible: "Page 5 / 10 "
+- swipe:
+    start: "82%,36%"
+    end: "26%,36%"
+    duration: 336
+- assertVisible: "Page 6 / 10 "
+- swipe:
+    start: "69%,38%"
+    end: "10%,34%"
+    duration: 290
+- assertVisible: "Page 7 / 10 "
+- swipe:
+    start: "69%,37%"
+    end: "14%,31%"
+    duration: 336
+- assertVisible: "Page 8 / 10 "
+- swipe:
+    start: "74%,36%"
+    end: "36%,35%"
+    duration: 320
+- assertVisible: "Page 9 / 10 "
+- swipe:
+    start: "78%,40%"
+    end: "24%,39%"
+    duration: 321
+- assertVisible: "Page 10 / 10 "

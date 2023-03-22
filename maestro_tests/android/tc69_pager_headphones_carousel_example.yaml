@@ -1,0 +1,19 @@
+appId: com.pagerviewexample
+#  tc69 Headphones Carousel Example pages can be swiped back until the 1st page is visible
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/android/tc67_pager_headphones_carousel_example.yaml
+- swipe:
+    start: "25%,65%"
+    end: "81%,65%"
+    duration: 288
+- assertVisible: "GREAT QUALITY"
+- swipe:
+    start: "23%,68%"
+    end: "88%,72%"
+    duration: 338
+- assertVisible: "REDEFINED SOUND"
+- swipe:
+    start: "20%,51%"
+    end: "98%,48%"
+    duration: 528
+- assertVisible: "VIBRANT COLORS"

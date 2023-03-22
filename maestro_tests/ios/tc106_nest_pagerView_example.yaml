@@ -1,0 +1,13 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc106 [Like] buttons on page 2 are clickable
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/ios/tc99_nest_pagerView_example.yaml
+- swipe:
+    start: "75%,74%"
+    end: "13%,67%"
+    duration: 272
+- assertVisible: "There has two Nest PagerView with horizontal and vertical."
+- tapOn: "\U0001f44d Like 7 likes Horizontal"
+- assertVisible: "8 likes"
+- tapOn: "\U0001f44d Like 7 likes Vertical"
+- assertVisible: "8 likes"

@@ -1,0 +1,18 @@
+appId: com.pagerviewexample
+# tc48 [Control] button hides all the buttons from the bottom of the screen
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "OnPageScroll Example"
+- tapOn:
+    text: "Control"
+    index: 0
+- assertVisible:
+    text: "Logs"
+    index: 0
+- assertNotVisible: "Start"
+- tapOn:
+    point: "12%,94%"
+- assertVisible: "Start"
+- assertVisible: "Next"
+- clearState

@@ -1,0 +1,7 @@
+appId: com.pagerviewexample
+#  tc124 Users can type in their message at the CHAT page, but sending functionality is not implemented
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/android/tc120_TabBarIconExample.yaml
+- tapOn: "Write a message"
+- inputText: "Muffin danish chocolate souffle pastry icing bonbon oat cake."
+- assertVisible: "Muffin danish chocolate souffle pastry icing bonbon oat cake."

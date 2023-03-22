@@ -1,0 +1,72 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc85 When the [Remove last page] button is taped then last image from vertical and horizontal views are removed
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/ios/tc80_scrollable_pagerView_example.yaml
+- assertVisible: "Page 1 / 10 "
+- tapOn: "Remove last page"
+- assertVisible: "Page 1 / 9 "
+- swipe:
+    start: "70%,40%"
+    end: "23%,35%"
+    duration: 318
+- swipe:
+    start: "81%,38%"
+    end: "27%,39%"
+    duration: 498
+- swipe:
+    start: "81%,40%"
+    end: "26%,39%"
+    duration: 352
+- swipe:
+    start: "83%,41%"
+    end: "30%,44%"
+    duration: 418
+- swipe:
+    start: "82%,41%"
+    end: "27%,40%"
+    duration: 448
+- swipe:
+    start: "66%,44%"
+    end: "6%,40%"
+    duration: 320
+- swipe:
+    start: "74%,42%"
+    end: "20%,41%"
+    duration: 368
+- swipe:
+    start: "73%,43%"
+    end: "29%,44%"
+    duration: 418
+- swipe:
+    start: "90%,58%"
+    end: "7%,56%"
+    duration: 415
+- assertVisible: "Page 9 / 9 "
+- repeat:
+    times: 3
+    commands:
+      - tapOn: "Remove last page"
+- assertVisible: "Page 6 / 6 "
+- swipe:
+    start: "28%,35%"
+    end: "94%,40%"
+    duration: 274
+- swipe:
+    start: "19%,35%"
+    end: "81%,36%"
+    duration: 418
+- swipe:
+    start: "19%,33%"
+    end: "85%,36%"
+    duration: 434
+- swipe:
+    start: "19%,34%"
+    end: "86%,39%"
+    duration: 466
+- swipe:
+    start: "22%,32%"
+    end: "97%,38%"
+    duration: 479
+- tapOn:
+    point: "50%,33%"
+- assertVisible: "Page 1 / 6 "

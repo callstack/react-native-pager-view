@@ -1,0 +1,18 @@
+appId: com.pagerviewexample
+#  tc75 Page 2 elements are visible and displayed correctly
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "Pagination Dots Example"
+- assertVisible: "Page Index: 1"
+- swipe:
+    start: "71%,43%"
+    end: "11%,42%"
+    duration: 384
+- assertVisible: "Pagination Dots Example"
+- assertVisible: "Navigate up"
+- assertVisible: "Page Index: 2"
+- assertVisible: "Expanding Dot"
+- assertVisible: "Scaling Dot"
+- assertVisible: "Sliding Border"
+- assertVisible: "Sliding Dot"

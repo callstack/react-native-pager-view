@@ -1,0 +1,6 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc128 The CustomTabBarExample tab is accessible
+---
+- assertVisible: "PagerView Example"
+- tapOn: "CustomTabBarExample"
+- assertVisible: "Marissa Castillo"

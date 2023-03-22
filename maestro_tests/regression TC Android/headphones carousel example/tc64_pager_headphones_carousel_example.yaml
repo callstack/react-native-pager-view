@@ -1,0 +1,10 @@
+appId: com.pagerviewexample
+#  tc64 Elements of the second screen of Headphones Carousel Example are visible
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC Android/headphones carousel example/tc62_pager_headphones_carousel_example.yaml
+- assertVisible: "Headphones Carousel Example"
+- assertVisible: "Navigate up"
+- assertVisible: "PAMPAS"
+- assertVisible: "REDEFINED SOUND"
+- assertVisible: "A bold statement tuned to perfection."
+- clearState

@@ -1,0 +1,7 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc78 Scrollable PagerView Example tab is active and accessible
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "Scrollable PagerView Example"
+- assertVisible: "Page 1 / 10 "

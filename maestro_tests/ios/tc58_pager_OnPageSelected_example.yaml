@@ -1,0 +1,27 @@
+appId: org.reactjs.native.example.FabricExample
+# tc58 Page alert dialog informs about selected page accordingly eg. “Hey You are on 1 page”
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/ios/alert dialog dismissal_pager_OnPageSelected_example.yaml
+- tapOn: "Next"
+- assertVisible: "You are on 2 page"
+- tapOn: "OK"
+- tapOn: "Last"
+- assertVisible: "You are on 10 page"
+- tapOn: "OK"
+- assertNotVisible: "You are on 10 page"
+- tapOn: "Prev"
+- assertVisible: "You are on 9 page"
+- tapOn: "OK"
+- tapOn: "Start"
+- assertVisible: "You are on 1 page"
+- tapOn: "OK"
+- repeat:
+    while:
+      notVisible: "Page 1 / 19 "
+    commands:
+      - tapOn: "Add new page"
+- tapOn: "Last"
+- assertVisible: "You are on 19 page"
+- tapOn: "OK"
+- tapOn: "Remove last page"
+- assertVisible: "You are on 18 page"

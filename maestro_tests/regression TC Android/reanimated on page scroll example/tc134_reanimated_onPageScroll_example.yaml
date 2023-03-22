@@ -1,0 +1,14 @@
+appId: com.pagerviewexample
+#  tc134 Swiping pages is obtainable
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC Android/reanimated on page scroll example/tc133_reanimated_onPageScroll_example.yaml
+- swipe: 
+    direction: LEFT
+- assertVisible: "Second page"
+- swipe: 
+    direction: LEFT
+- assertVisible: "Third page"
+- swipe:
+    direction: RIGHT
+- assertVisible: "Second page"
+- clearState

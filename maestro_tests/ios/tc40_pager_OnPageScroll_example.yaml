@@ -1,0 +1,22 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc40 OnPageScroll Example screen with its elements is displayed correctly
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "OnPageScroll Example"
+- assertVisible: "PagerView Example"
+- assertVisible: "OnPageScroll Example"
+- assertVisible: "Page 0"
+- assertVisible: "Page 4"
+- assertVisible: "Page Index: 0"
+- assertVisible: "Control"
+- assertVisible: "Logs"
+- assertVisible: "Scroll Enabled"
+- assertVisible: "Turn off animations"
+- assertVisible: "Overdrag Disabled"
+- assertVisible: "ScrollState[ idle ]"
+- assertVisible: "Start"
+- assertVisible: "Prev"
+- assertVisible: "Next"
+- assertVisible: "Last"
+- assertVisible: "Page 1 / 5 "

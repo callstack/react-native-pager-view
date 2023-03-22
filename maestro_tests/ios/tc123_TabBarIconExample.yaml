@@ -1,0 +1,22 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc123 Swiping pages is obtainable
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/ios/tc120_TabBarIconExample.yaml
+- swipe:
+    start: "82%,50%"
+    end: "31%,47%"
+    duration: 210
+- assertVisible: "Marissa Castillo"
+- swipe:
+    start: "87%,54%"
+    end: "28%,51%"
+    duration: 208
+- assertVisible: "Knowledge Bot"
+- repeat:
+    times: 2
+    commands:
+      - swipe:
+          start: "28%,66%"
+          end: "77%,67%"
+          duration: 405
+- assertVisible: "Write a message"

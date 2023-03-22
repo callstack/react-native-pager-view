@@ -1,0 +1,15 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc79 Scrollable PagerView Example screen and all its elements are displayed correctly
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/ios/tc78_scrollable_pagerView_example.yaml
+- assertVisible: "PagerView Example"
+- assertVisible: "Control"
+- assertVisible: "Logs"
+- assertVisible: "Scroll Enabled"
+- assertVisible: "Add new page"
+- assertVisible: "Turn off animations"
+- assertVisible: "Remove last page"
+- assertVisible: "Start"
+- assertVisible: "Prev"
+- assertVisible: "Next"
+- assertVisible: "Last"

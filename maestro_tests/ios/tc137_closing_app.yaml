@@ -1,0 +1,6 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc136 App can be closed via Maestro Studio
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- stopApp

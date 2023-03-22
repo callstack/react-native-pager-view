@@ -1,0 +1,9 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc64 Elements of the second screen of Headphones Carousel Example are visible
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/ios/tc62_pager_headphones_carousel_example.yaml
+- assertVisible: "Headphones Carousel Example"
+- assertVisible: "PagerView Example"
+- assertVisible: "PAMPAS"
+- assertVisible: "REDEFINED SOUND"
+- assertVisible: "A bold statement tuned to perfection."

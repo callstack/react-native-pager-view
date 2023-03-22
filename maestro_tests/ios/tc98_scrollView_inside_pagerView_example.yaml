@@ -1,0 +1,19 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc98 ScrollView inside PagerView Example tab has 5 pages that are accessible when swiping page 1 left
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "ScrollView inside PagerView Example"
+- repeat:
+    times: 4
+    commands:
+      - swipe:
+          start: "77%,53%"
+          end: "12%,51%"
+          duration: 592
+- swipe:
+    start: "84%,80%"
+    end: "89%,12%"
+    duration: 688
+- tapOn: "Horizontal scroll bar, 1 page"
+# - assertVisible: "Horizontal scroll bar, 1 page"

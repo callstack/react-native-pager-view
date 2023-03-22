@@ -1,0 +1,17 @@
+appId: com.pagerviewexample
+#  tc92 [Control] button hides all the buttons from the bottom of the screen
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/android/tc78_scrollable_pagerView_example.yaml
+- swipe:
+    start: "81%,40%"
+    end: "27%,33%"
+    duration: 240
+- tapOn: "Control"
+- assertVisible:
+    text: "Logs"
+    index: 0
+- assertNotVisible: "Start"
+- tapOn:
+    point: "12%,94%"
+- assertVisible: "Start"
+- assertVisible: "Next"

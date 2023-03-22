@@ -1,0 +1,11 @@
+appId: com.pagerviewexample
+#  tc135 The CoverflowExample tab is accessible
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- swipe:
+    start: "85%,76%"
+    end: "85%,15%"
+    duration: 402
+- tapOn: CoverflowExample
+- assertVisible: Homogenic

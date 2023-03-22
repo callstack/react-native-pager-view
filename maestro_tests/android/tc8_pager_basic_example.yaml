@@ -1,0 +1,11 @@
+appId: com.pagerviewexample
+#  tc8 The [Turn animations off] button can switch states between off and on any number of times
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "Basic Example"
+- tapOn: "Turn off animations"
+- assertVisible: "Turn animations back on"
+- tapOn: "Turn animations back on"
+- assertVisible: "Turn off animations"
+- tapOn: "Turn off animations"

@@ -1,0 +1,13 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc62 Elements of the Headphones Carousel Example page 1 can be swipped to the next page (2)
+---
+- launchApp
+- assertVisible: "PagerView Example"
+- tapOn: "Headphones Carousel Example"
+- assertVisible: "HUMLAN P"
+- swipe:
+    start: "88%,58%"
+    end: "24%,59%"
+    duration: 608
+- assertNotVisible: "VIBRANT COLORS"
+- assertVisible: "REDEFINED SOUND"

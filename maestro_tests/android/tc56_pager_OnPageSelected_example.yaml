@@ -1,0 +1,12 @@
+appId: com.pagerviewexample
+# tc56 The [Turn animations off] button can switch states between off and on any number of times
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/android/alert dialog dismissal_pager_OnPageSelected_example.yaml
+- tapOn: "Turn off animations"
+- assertVisible: "Turn animations back on"
+- tapOn: "Turn animations back on"
+- assertVisible: "Turn off animations"
+- tapOn: "Turn off animations"
+- assertVisible: "Turn animations back on"
+- tapOn: "Turn animations back on"
+- assertVisible: "Turn off animations"

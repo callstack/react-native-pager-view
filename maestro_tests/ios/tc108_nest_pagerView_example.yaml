@@ -1,0 +1,124 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc107 Overdragging the screen leads to the homepage
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/ios/tc99_nest_pagerView_example.yaml
+- repeat:
+    times: 10
+    commands:
+      - tapOn: "\U0001f44d Like"
+- assertVisible: "17 likes"
+- swipe:
+    start: "89%,77%"
+    end: "17%,68%"
+    duration: 304
+- repeat:
+    times: 4
+    commands:
+      - tapOn:
+          text: "\U0001f44d Like"
+          index: 0
+- assertVisible: "11 likes"
+- repeat:
+    times: 26
+    commands:
+      - tapOn:
+          text: "\U0001f44d Like"
+          index: 1
+- assertVisible: "33 likes"
+- swipe:
+    start: "78%,48%"
+    end: "14%,44%"
+    duration: 256
+- assertVisible: "7 likes"    
+- repeat:
+    times: 3
+    commands:
+      - tapOn:
+          text: "\U0001f44d Like"
+          index: 0
+- assertVisible: "10 likes"
+- swipe:
+    start: "29%,49%"
+    end: "91%,50%"
+    duration: 352
+- assertVisible: "11 likes"
+- swipe:
+    start: "54%,87%"
+    end: "53%,70%"
+    duration: 256
+- assertVisible: "7 likes"
+- repeat:
+    times: 13
+    commands:
+      - tapOn:
+          text: "\U0001f44d Like"
+          index: 1
+- assertVisible: "20 likes"
+- swipe:
+    start: "64%,75%"
+    end: "61%,93%"
+    duration: 304
+- assertVisible: "33 likes"
+- swipe:
+    start: "31%,86%"
+    end: "86%,88%"
+    duration: 400
+- assertVisible: "33 likes"
+- swipe:
+    start: "78%,82%"
+    end: "10%,76%"
+    duration: 274
+- assertVisible: "11 likes"
+- assertVisible: "33 likes"
+- swipe:
+    start: "91%,46%"
+    end: "12%,48%"
+    duration: 272
+- assertVisible: "10 likes"
+- swipe:
+    start: "26%,44%"
+    end: "91%,39%"
+    duration: 432
+- assertVisible: "11 likes"
+- swipe:
+    start: "53%,86%"
+    end: "55%,69%"
+    duration: 272
+- assertVisible: "20 likes"
+- swipe:
+    start: "62%,69%"
+    end: "52%,90%"
+    duration: 240
+- assertVisible: "33 likes"
+- swipe:
+    start: "87%,86%"
+    end: "13%,82%"
+    duration: 480
+- assertVisible: "7 likes"
+- repeat:
+    times: 9
+    commands:
+      - tapOn: "\U0001f44d Like"
+- assertVisible: "16 likes"
+- swipe:
+    start: "14%,80%"
+    end: "76%,79%"
+    duration: 448
+- assertVisible: "11 likes"
+- assertVisible: "33 likes"
+- swipe:
+    start: "80%,87%"
+    end: "14%,88%"
+    duration: 321
+- assertVisible: "16 likes"
+- swipe:
+    start: "25%,85%"
+    end: "80%,83%"
+    duration: 256
+- assertVisible: "11 likes"
+- assertVisible: "33 likes"
+- swipe:
+    start: "14%,83%"
+    end: "86%,82%"
+    duration: 274
+- assertVisible: "17 likes"

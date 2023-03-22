@@ -1,0 +1,18 @@
+appId: com.pagerviewexample
+#  tc17 The amount of likes added doesn’t change while swiping pages
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/android/tc16_pager_basic_example.yaml
+- tapOn: "Next"
+- assertVisible: "33 likes"
+- tapOn: "Prev"
+- assertVisible: "87 likes"
+- tapOn: "Start"
+- assertVisible: "8 likes"
+- tapOn: "Next"
+- assertVisible: "17 likes"
+- tapOn: "Prev"
+- assertVisible: "8 likes"
+- tapOn: "Last"
+- assertVisible: "33 likes"
+- tapOn: "Prev"
+- assertVisible: "87 likes"

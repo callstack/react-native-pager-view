@@ -1,0 +1,22 @@
+appId: org.reactjs.native.example.FabricExample
+#  tc126 Swiping pages is obtainable
+---
+- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/ios/tc125_CustomIndicatorExample.yaml
+- assertVisible: "Lorem Ipsum"
+- swipe:
+    start: "73%,53%"
+    end: "18%,51%"
+    duration: 255
+- assertVisible: "Marissa Castillo"
+- swipe:
+    start: "86%,52%"
+    end: "32%,51%"
+    duration: 402
+- repeat:
+    times: 2
+    commands:
+      - swipe:
+          start: "18%,53%"
+          end: "90%,59%"
+          duration: 384
+- assertVisible: "Lorem Ipsum"
