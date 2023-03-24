@@ -47,6 +47,10 @@
         _cachedControllers = [NSHashTable hashTableWithOptions:NSHashTableStrongMemory];
         _overdrag = NO;
         _layoutDirection = @"ltr";
+        UIPanGestureRecognizer* panGestureRecognizer = [UIPanGestureRecognizer new];
+        self.panGestureRecognizer = panGestureRecognizer;
+        panGestureRecognizer.delegate = self;
+        [self addGestureRecognizer: panGestureRecognizer];
     }
     return self;
 }
@@ -81,11 +85,6 @@
         [self embed];
         [self setupInitialController];
     }
-    
-    UIPanGestureRecognizer* panGestureRecognizer = [UIPanGestureRecognizer new];
-    self.panGestureRecognizer = panGestureRecognizer;
-    panGestureRecognizer.delegate = self;
-    [self addGestureRecognizer: panGestureRecognizer];
 
     if (self.reactViewController.navigationController != nil && self.reactViewController.navigationController.interactivePopGestureRecognizer != nil) {
         [self.scrollView.panGestureRecognizer requireGestureRecognizerToFail:self.reactViewController.navigationController.interactivePopGestureRecognizer];
