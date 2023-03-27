@@ -147,6 +147,7 @@ export class PagerView extends React.Component<PagerViewProps> {
       <PagerViewView
         {...this.props}
         ref={(ref) => {
+          //@ts-ignore fix it
           this.pagerView = ref;
         }}
         style={this.props.style}
