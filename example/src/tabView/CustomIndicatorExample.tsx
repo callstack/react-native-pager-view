@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Animated, View, Text, StyleSheet, I18nManager } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   TabView,
   TabBar,
@@ -17,32 +18,25 @@ type Route = {
 
 type State = NavigationState<Route>;
 
-export default class CustomIndicatorExample extends React.Component<{}, State> {
-  static title = 'Custom indicator';
-  static backgroundColor = '#263238';
-  static appbarElevation = 4;
+export default function CustomIndicatorExample() {
+  const [index, setIndex] = React.useState(0);
+  const routes = [
+    {
+      key: 'article',
+    },
+    {
+      key: 'contacts',
+    },
+    {
+      key: 'albums',
+    },
+  ];
 
-  state: State = {
-    index: 0,
-    routes: [
-      {
-        key: 'article',
-      },
-      {
-        key: 'contacts',
-      },
-      {
-        key: 'albums',
-      },
-    ],
-  };
+  const insets = useSafeAreaInsets();
 
-  private handleIndexChange = (index: number) =>
-    this.setState({
-      index,
-    });
+  const handleIndexChange = (index: number) => setIndex(index);
 
-  private renderIndicator = (
+  const renderIndicator = (
     props: SceneRendererProps & {
       navigationState: State;
       getTabWidth: (i: number) => number;
@@ -90,20 +84,20 @@ export default class CustomIndicatorExample extends React.Component<{}, State> {
           styles.container,
           {
             width: `${100 / navigationState.routes.length}%`,
-            transform: [{ translateX }] as any,
+            transform: [{ translateX }],
           },
         ]}
       >
         <Animated.View
-          style={[styles.indicator, { opacity, transform: [{ scale }] } as any]}
+          style={[styles.indicator, { opacity, transform: [{ scale }] }]}
         />
       </Animated.View>
     );
   };
 
-  private renderIcon = () => null;
+  const renderIcon = () => null;
 
-  private renderBadge = ({ route }: { route: Route }) => {
+  const renderBadge = ({ route }: { route: Route }) => {
     if (route.key === 'albums') {
       return (
         <View style={styles.badge}>
@@ -114,35 +108,42 @@ export default class CustomIndicatorExample extends React.Component<{}, State> {
     return null;
   };
 
-  private renderTabBar = (
+  const renderTabBar = (
     props: SceneRendererProps & { navigationState: State }
   ) => (
     <TabBar
       {...props}
-      renderIcon={this.renderIcon}
-      renderBadge={this.renderBadge}
-      renderIndicator={this.renderIndicator}
+      renderIcon={renderIcon}
+      renderBadge={renderBadge}
+      renderIndicator={renderIndicator}
       style={styles.tabbar}
     />
   );
 
-  private renderScene = SceneMap({
+  const renderScene = SceneMap({
     article: Article,
     contacts: Contacts,
     albums: Albums,
   });
 
-  render() {
-    return (
+  return (
+    <View
+      style={{
+        flex: 1,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      }}
+    >
       <TabView
-        navigationState={this.state}
-        renderScene={this.renderScene}
-        renderTabBar={this.renderTabBar}
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        renderTabBar={renderTabBar}
         tabBarPosition="bottom"
-        onIndexChange={this.handleIndexChange}
+        onIndexChange={handleIndexChange}
       />
-    );
-  }
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
