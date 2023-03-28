@@ -3,8 +3,7 @@
 
 @implementation RNCPagerScrollView
 - (instancetype)initWithFrame:(CGRect)frame {
-    self = [super initWithFrame:frame];
-    if (self) {
+    if (self = [super initWithFrame:frame]) {
         self.panGestureRecognizer.delegate = self;
     }
     return self;
