@@ -19,16 +19,15 @@ type Route = {
 
 type State = NavigationState<Route>;
 
+const routes = [
+  { key: 'chat', title: 'Chat' },
+  { key: 'contacts', title: 'Contacts' },
+  { key: 'article', title: 'Article' },
+];
+
 export default function TabBarIconExample() {
   const [index, setIndex] = React.useState(0);
-  const routes = [
-    { key: 'chat', title: 'Chat' },
-    { key: 'contacts', title: 'Contacts' },
-    { key: 'article', title: 'Article' },
-  ];
   const insets = useSafeAreaInsets();
-
-  const handleIndexChange = (index: number) => setIndex(index);
 
   const renderIcon = () => null;
 
@@ -65,7 +64,7 @@ export default function TabBarIconExample() {
         navigationState={{ index, routes }}
         renderScene={renderScene}
         renderTabBar={renderTabBar}
-        onIndexChange={handleIndexChange}
+        onIndexChange={setIndex}
       />
     </View>
   );

@@ -18,23 +18,21 @@ type Route = {
 
 type State = NavigationState<Route>;
 
+const routes = [
+  {
+    key: 'article',
+  },
+  {
+    key: 'contacts',
+  },
+  {
+    key: 'albums',
+  },
+];
+
 export default function CustomIndicatorExample() {
   const [index, setIndex] = React.useState(0);
-  const routes = [
-    {
-      key: 'article',
-    },
-    {
-      key: 'contacts',
-    },
-    {
-      key: 'albums',
-    },
-  ];
-
   const insets = useSafeAreaInsets();
-
-  const handleIndexChange = (index: number) => setIndex(index);
 
   const renderIndicator = (
     props: SceneRendererProps & {
@@ -140,7 +138,7 @@ export default function CustomIndicatorExample() {
         renderScene={renderScene}
         renderTabBar={renderTabBar}
         tabBarPosition="bottom"
-        onIndexChange={handleIndexChange}
+        onIndexChange={setIndex}
       />
     </View>
   );

@@ -25,18 +25,17 @@ type Route = {
 
 type State = NavigationState<Route>;
 
+const routes = [
+  { key: 'contacts', title: 'Contacts' },
+  { key: 'albums', title: 'Albums' },
+  { key: 'article', title: 'Article' },
+  { key: 'chat', title: 'Chat' },
+];
+
 export default function CustomTabBarExample() {
-  const routes = [
-    { key: 'contacts', title: 'Contacts' },
-    { key: 'albums', title: 'Albums' },
-    { key: 'article', title: 'Article' },
-    { key: 'chat', title: 'Chat' },
-  ];
   const [index, setIndex] = React.useState(0);
 
   const insets = useSafeAreaInsets();
-
-  const handleIndexChange = (index: number) => setIndex(index);
 
   const renderItem = ({
     navigationState,
@@ -110,15 +109,13 @@ export default function CustomTabBarExample() {
         renderScene={renderScene}
         renderTabBar={renderTabBar}
         tabBarPosition="bottom"
-        onIndexChange={handleIndexChange}
+        onIndexChange={setIndex}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {},
-
   tabbar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
