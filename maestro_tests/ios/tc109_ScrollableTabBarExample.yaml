@@ -1,7 +1,0 @@
-appId: org.reactjs.native.example.FabricExample
-#  tc109 The ScrollableTabBarExample tab is accessible
----
-- launchApp
-- assertVisible: "PagerView Example"
-- tapOn: "ScrollableTabBarExample"
-- assertVisible: "Contacts"

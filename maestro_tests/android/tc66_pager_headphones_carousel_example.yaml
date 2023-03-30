@@ -1,9 +1,0 @@
-appId: com.pagerviewexample
-#  tc66 Elements of the Headphones Carousel Example screen 3 are visible
----
-- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/android/tc65_pager_headphones_carousel_example.yaml
-- assertVisible: "HUMLAN P"
-- assertVisible: "GREAT QUALITY"
-- assertVisible: "An Urbanears classic! Listen-all-day fit. Striking the perfect balance of effortless technology"
-- assertVisible: "Headphones Carousel Example"
-- assertVisible: "Navigate up"

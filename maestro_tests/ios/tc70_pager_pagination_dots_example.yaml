@@ -1,8 +1,0 @@
-appId: org.reactjs.native.example.FabricExample
-#  tc70 Pagination Dots Example tab is active and accessible
----
-- launchApp
-- assertVisible: "PagerView Example"
-- tapOn: "Pagination Dots Example"
-- assertVisible: "Page Index: 1"
-- assertVisible: "Expanding Dot"

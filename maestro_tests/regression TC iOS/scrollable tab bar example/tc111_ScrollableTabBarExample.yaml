@@ -1,9 +1,0 @@
-appId: org.reactjs.native.example.FabricExample
-#  tc111 All the links placed in the navigation bar are active
----
-- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC iOS/scrollable tab bar example/tc109_ScrollableTabBarExample.yaml
-- tapOn: "Article"
-- tapOn: "Albums"
-- tapOn: "Chat"
-- tapOn: "Contacts"
-- clearState

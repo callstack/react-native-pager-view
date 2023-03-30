@@ -1,0 +1,23 @@
+appId: ${APP_ID}
+#  tc76 Page 3 elements are visible and displayed correctly
+---
+- launchApp
+#- assertVisible: "PagerView Example"
+- tapOn: 'Pagination Dots Example'
+- assertVisible: 'Page Index: 1'
+- swipe:
+    start: '84%,41%'
+    end: '9%,45%'
+    duration: 480
+- assertVisible: 'Page Index: 2'
+- swipe:
+    start: '74%,44%'
+    end: '9%,32%'
+    duration: 352
+- assertVisible: 'Pagination Dots Example'
+#- assertVisible: "PagerView Example"
+- assertVisible: 'Page Index: 3'
+- assertVisible: 'Expanding Dot'
+- assertVisible: 'Scaling Dot'
+- assertVisible: 'Sliding Border'
+- assertVisible: 'Sliding Dot'

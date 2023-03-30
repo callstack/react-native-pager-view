@@ -1,9 +1,0 @@
-appId: org.reactjs.native.example.FabricExample
-#  tc123 Swiping pages is obtainable
----
-- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/regression TC iOS/tab bar icon example/tc120_TabBarIconExample.yaml
-- tapOn: "Write a message"
-- inputText: "Muffin danish chocolate souffle pastry icing bonbon oat cake."
-- waitForAnimationToEnd
-- assertVisible: "Muffin danish chocolate souffle pastry icing bonbon oat cake."
-- clearState

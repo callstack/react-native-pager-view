@@ -1,0 +1,9 @@
+appId: ${APP_ID}
+#  tc63 Headphones Carousel Example screen can be swiped back to the previous page
+---
+- runFlow: tc62_pager_headphones_carousel_example.yaml
+- swipe:
+    start: '17%,67%'
+    end: '99%,66%'
+    duration: 720
+- assertVisible: 'VIBRANT COLORS'

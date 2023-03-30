@@ -1,4 +1,4 @@
-appId: org.reactjs.native.example.FabricExample
+appId: ${APP_ID}
 # tc16 The active [Like] button is on each page 
 ---
 - launchApp
@@ -17,7 +17,9 @@ appId: org.reactjs.native.example.FabricExample
 - repeat:
     times: 9
     commands:
-      - tapOn: "👍 Like"
+      - tapOn:
+          text: "👍 Like"
+          retryTapIfNoChange: false
 - assertVisible: "17 likes"
 - tapOn: "Last"
 - assertVisible: "7 likes"
@@ -25,7 +27,9 @@ appId: org.reactjs.native.example.FabricExample
 - repeat:
     times: 25
     commands:
-      - tapOn: "👍 Like"
+      - tapOn:
+          text: "👍 Like"
+          retryTapIfNoChange: false
 - assertVisible: "33 likes"
 - tapOn: "Prev"
 - assertVisible: "7 likes"
@@ -33,5 +37,7 @@ appId: org.reactjs.native.example.FabricExample
 - repeat:
     times: 79
     commands:
-      - tapOn: "👍 Like"
+      - tapOn:
+          text: "👍 Like"
+          retryTapIfNoChange: false
 - assertVisible: "87 likes"

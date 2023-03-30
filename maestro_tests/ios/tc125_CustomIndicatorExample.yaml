@@ -1,6 +1,0 @@
-appId: org.reactjs.native.example.FabricExample
-#  tc125 The CustomIndicatorExample tab is accessible
----
-- launchApp
-- assertVisible: "PagerView Example"
-- tapOn: "CustomIndicatorExample"

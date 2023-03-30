@@ -1,0 +1,25 @@
+appId: ${APP_ID}
+#  tc39 Logs button shows logs on each page after being tapped
+# only for iOS, because Android returns different logs
+---
+- launchApp
+- assertVisible: 'PagerView Example'
+- tapOn: 'Keyboard Example'
+- assertVisible: 'Page 1 / 2 '
+- tapOn: 'Logs'
+- assertVisible: 'Page: 0'
+- tapOn: 'Logs'
+- tapOn: 'Go to next question'
+- tapOn: 'Logs'
+- assertVisible: 'Position: 1 Offset: 0'
+- assertVisible: 'Page: 1'
+- assertVisible: 'Position: 0 Offset: 1'
+- tapOn: 'Logs'
+- tapOn: 'Go to previous question'
+- assertVisible: 'Go to next question'
+- tapOn: 'Logs'
+- assertVisible: 'Position: 0 Offset: 0'
+- assertVisible: 'Page: 0'
+- tapOn: 'Logs'
+- tapOn: 'Control'
+- assertVisible: 'Page 1 / 2 '

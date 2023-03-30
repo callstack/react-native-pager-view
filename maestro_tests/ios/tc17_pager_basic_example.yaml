@@ -1,7 +1,7 @@
-appId: org.reactjs.native.example.FabricExample
+appId: ${APP_ID}
 #  tc17 The amount of likes added doesn’t change while swiping pages
 ---
-- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/ios/tc16_pager_basic_example.yaml
+- runFlow: tc16_pager_basic_example.yaml
 - tapOn: "Next"
 - assertVisible: "33 likes"
 - tapOn: "Prev"

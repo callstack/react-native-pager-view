@@ -1,0 +1,15 @@
+appId: ${APP_ID}
+#  tc119 Users can type in their message at the CHAT page, but sending functionality is not implemented
+---
+- runFlow: tc115_AutoWidthTabBarExample.yaml
+- repeat:
+      times: 2
+      commands:
+          - swipe:
+                start: '92%,62%'
+                end: '34%,61%'
+                duration: 320
+- assertVisible: 'Write a message'
+- tapOn: 'Write a message'
+- inputText: 'Cotton candy macaroon carrot cake sesame snaps cake caramels pudding powder'
+- assertVisible: 'Cotton candy macaroon carrot cake sesame snaps cake caramels pudding powder'

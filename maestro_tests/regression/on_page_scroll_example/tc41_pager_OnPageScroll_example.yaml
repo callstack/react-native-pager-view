@@ -1,0 +1,27 @@
+appId: ${APP_ID}
+# tc41 OnPageScroll Example screen buttons are clickable and they change their labels after being tapped
+---
+- launchApp
+- assertVisible: 'PagerView Example'
+- tapOn: 'OnPageScroll Example'
+- assertVisible: 'OnPageScroll Example'
+- tapOn: 'Control'
+- assertNotVisible: 'Scroll Enabled'
+- assertVisible: 'Control'
+- tapOn: 'Logs'
+- assertVisible: 'Page: 0'
+- tapOn: 'Control'
+- tapOn: 'Scroll Enabled'
+- assertVisible: 'Scroll Disabled'
+- tapOn: 'Turn off animations'
+- assertVisible: 'Turn animations back on'
+- tapOn: 'Overdrag Disabled'
+- assertVisible: 'Overdrag Enabled'
+- tapOn: 'Next'
+- assertVisible: 'Page Index: 1'
+- tapOn: 'Last'
+- assertVisible: 'Page Index: 4'
+- tapOn: 'Prev'
+- assertVisible: 'Page Index: 3'
+- tapOn: 'Start'
+- assertVisible: 'Page Index: 0'

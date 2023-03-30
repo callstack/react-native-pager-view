@@ -1,0 +1,20 @@
+appId: ${APP_ID}
+# tc51 OnPageSelected Example screen with its elements is displayed correctly
+---
+- launchApp
+- runFlow: alert_dialog_dismissal_pager_OnPageSelected_example.yaml
+- assertVisible: 'OnPageSelected Example'
+- assertVisible: 'Page Index: 0'
+- assertVisible: 'Control'
+- assertVisible: 'Logs'
+- assertVisible: 'Scroll Enabled'
+- assertVisible: 'Add new page'
+- assertVisible: 'Turn off animations'
+- assertVisible: 'Overdrag Disabled'
+- assertVisible: 'Remove last page'
+- assertVisible: 'ScrollState[ idle ]'
+- assertVisible: 'Start'
+- assertVisible: 'Prev'
+- assertVisible: 'Next'
+- assertVisible: 'Last'
+- assertVisible: 'Page 1 / 10 '

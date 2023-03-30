@@ -1,0 +1,9 @@
+appId: ${APP_ID}
+#  tc101 [Like] button on page 1 is clickable
+---
+- runFlow: tc99_nest_pagerView_example.yaml
+- repeat:
+    times: 5
+    commands:
+      - tapOn: "\U0001f44d Like"
+- assertVisible: '12 likes'

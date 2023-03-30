@@ -1,8 +1,0 @@
-appId: org.reactjs.native.example.FabricExample
-#  tc100 There are 4 visible elements on the page 1
----
-- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/ios/tc99_nest_pagerView_example.yaml
-- assertVisible: "PagerView Example"
-- assertVisible: "Nest PagerView Example"
-- assertVisible: "👍 Like"
-- assertVisible: "7 likes"

@@ -1,0 +1,39 @@
+appId: ${APP_ID}
+#  tc95 When picture is scrolled {swiped}horizontally with the [Next]/[Prev] buttons, then the Page numeration is changed
+---
+- runFlow: tc78_scrollable_pagerView_example.yaml
+- tapOn: 'Next'
+- assertVisible: 'Page 2 / 10 '
+- tapOn: 'Next'
+# - assertVisible: "Page 3 / 10 "
+- assertTrue: ${"Page 3 / 10 "}
+- tapOn: 'Next'
+# - assertVisible: "Page 4 / 10 "
+- assertTrue: ${"Page 4 / 10 "}
+- tapOn: 'Next'
+# - assertVisible: "Page 5 / 10 "
+- assertTrue: ${"Page 5 / 10 "}
+- tapOn: 'Next'
+# - assertVisible: "Page 6 / 10 "
+- assertTrue: ${"Page 6 / 10 "}
+- tapOn: 'Next'
+# - assertVisible: "Page 7 / 10 "
+- assertTrue: ${"Page 7 / 10 "}
+- tapOn: 'Next'
+# - assertVisible: "Page 8 / 10 "
+- assertTrue: ${"Page 8 / 10 "}
+- tapOn: 'Next'
+# - assertVisible: "Page 9 / 10 "
+- assertTrue: ${"Page 9 / 10 "}
+- tapOn: 'Next'
+# - assertVisible: "Page 10 / 10 "
+- assertTrue: ${"Page 10 / 10 "}
+- repeat:
+    times: 6
+    commands:
+      - tapOn: 'Prev'
+# - assertVisible: "Page 4 / 10 "
+- assertTrue: ${"Page 4 / 10 "}
+- tapOn: 'Prev'
+# - assertVisible: "Page 3 / 10 "
+- assertTrue: ${"Page 3 / 10 "}

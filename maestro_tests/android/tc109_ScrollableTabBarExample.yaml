@@ -1,9 +1,0 @@
-appId: com.pagerviewexample
-#  tc109 The ScrollableTabBarExample tab is accessible
----
-- launchApp
-- assertVisible: "PagerView Example"
-- tapOn: "ScrollableTabBarExample"
-- assertVisible:
-    text: "CONTACTS"
-    index: 1

@@ -1,0 +1,19 @@
+appId: ${APP_ID}
+#  tc133 Swiping pages is obtainable
+---
+- runFlow: tc133_reanimated_onPageScroll_example.yaml
+- swipe:
+    start: '78%,46%'
+    end: '12%,44%'
+    duration: 240
+- assertVisible: 'Second page'
+- swipe:
+    start: '78%,46%'
+    end: '12%,44%'
+    duration: 240
+- assertVisible: 'Third page'
+- swipe:
+    start: '18%,39%'
+    end: '94%,40%'
+    duration: 336
+- assertVisible: 'Second page'

@@ -1,0 +1,16 @@
+appId: ${APP_ID}
+#  tc22 [Control] button hides all the buttons from the bottom of the screen
+---
+- launchApp
+- assertVisible: 'PagerView Example'
+- tapOn: 'Basic Example'
+- assertVisible: 'Basic Example'
+- tapOn:
+    text: 'Control'
+    index: 0
+- assertVisible:
+    text: 'Logs'
+    index: 0
+- tapOn: 'Control'
+- assertVisible: 'Start'
+- assertVisible: 'Next'

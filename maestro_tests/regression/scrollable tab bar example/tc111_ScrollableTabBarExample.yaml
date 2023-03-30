@@ -1,0 +1,8 @@
+appId: ${APP_ID}
+#  tc111 All the links placed in the navigation bar are active
+---
+- runFlow: tc109_ScrollableTabBarExample.yaml
+- tapOn: 'Article'
+- tapOn: 'Albums'
+- tapOn: 'Chat'
+- tapOn: 'Contacts'

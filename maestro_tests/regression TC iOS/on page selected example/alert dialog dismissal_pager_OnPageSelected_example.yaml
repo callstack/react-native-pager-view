@@ -1,9 +1,0 @@
-appId: org.reactjs.native.example.FabricExample
-# alert dialog dismissal
----
-- launchApp
-- assertVisible: "PagerView Example"
-- tapOn: "OnPageSelected Example"
-- assertVisible: "You are on 1 page"
-- tapOn: "OK"
-- assertNotVisible: "You are on 1 page"

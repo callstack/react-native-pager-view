@@ -1,8 +1,0 @@
-appId: com.pagerviewexample
-#  tc115 The AutoWidthTabBarExample tab is accessible
----
-- launchApp
-- assertVisible: "PagerView Example"
-- scroll
-- tapOn: "AutoWidthTabBarExample"
-- assertVisible: "Navigate up"

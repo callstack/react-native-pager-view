@@ -1,0 +1,19 @@
+appId: ${APP_ID}
+# tc2 The [NATIVE] button allows for changing the js stack
+---
+- launchApp
+- tapOn: 'NATIVE'
+- assertVisible: 'Alert'
+- assertVisible: 'Do you want to change to the js stack ?'
+- tapOn: 'NO'
+- tapOn: 'NATIVE'
+- tapOn: 'YES'
+- assertVisible: 'JS'
+- tapOn: 'JS'
+- assertVisible: 'NO'
+- tapOn: 'NO'
+- assertVisible: 'JS'
+- tapOn: 'JS'
+- assertVisible: 'YES'
+- tapOn: 'YES'
+- assertVisible: 'NATIVE'

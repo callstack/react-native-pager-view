@@ -31,7 +31,9 @@
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn && yarn example pods",
     "fabricexample": "yarn --cwd fabricexample",
-    "bootstrap-fabric": "yarn fabricexample && yarn && yarn fabricexample pods"
+    "bootstrap-fabric": "yarn fabricexample && yarn && yarn fabricexample pods",
+    "maestro-android": "APP_ID=com.pagerviewexample maestro test maestro_tests/regression",
+    "maestro-ios": "APP_ID=org.reactjs.native.example.FabricExample maestro test maestro_tests"
   },
   "keywords": [
     "react-native",

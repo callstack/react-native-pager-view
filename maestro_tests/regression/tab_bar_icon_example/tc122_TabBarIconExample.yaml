@@ -1,0 +1,8 @@
+appId: ${APP_ID}
+#  tc122 All the links placed in the navigation bar are active
+---
+- runFlow: tc120_TabBarIconExample.yaml
+- tapOn: 'CONTACTS'
+- tapOn: 'ARTICLE'
+- tapOn: 'CHAT'
+- tapOn: 'CHAT'

@@ -1,0 +1,7 @@
+appId: ${APP_ID}
+#  tc123 Swiping pages is obtainable
+---
+- runFlow: tc120_TabBarIconExample.yaml
+- tapOn: 'Write a message'
+- inputText: 'Muffin danish chocolate souffle pastry icing bonbon oat cake.'
+- assertVisible: 'Muffin danish chocolate souffle pastry icing bonbon oat cake.'

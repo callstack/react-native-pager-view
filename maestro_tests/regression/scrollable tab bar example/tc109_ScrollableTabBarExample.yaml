@@ -1,0 +1,7 @@
+appId: ${APP_ID}
+#  tc109 The ScrollableTabBarExample tab is accessible
+---
+- launchApp
+- assertVisible: 'PagerView Example'
+- tapOn: 'ScrollableTabBarExample'
+- assertVisible: 'Contacts'

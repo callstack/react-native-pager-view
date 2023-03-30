@@ -1,17 +1,17 @@
-appId: org.reactjs.native.example.FabricExample
+appId: ${APP_ID}
 #  tc26 User can answer to “Second Question” from page 2 -input tex method
 ---
-- runFlow: /Users/martagorecka/pager_repo/react-native-pager-view/maestro_tests/ios/tc25_pager_keyboard_example.yaml
-- tapOn: "GO TO NEXT QUESTION"
-- assertVisible: "Second Question"
-- assertVisible: "Why Pager View?"
-- assertVisible: "Page 2 / 2 "
+- launchApp
+- tapOn: 'Keyboard Example'
+- tapOn: 'GO TO NEXT QUESTION'
+- assertVisible: 'Second Question'
+- assertVisible: 'Why Pager View?'
+- assertVisible: 'Page 2 / 2 '
 - tapOn:
-    point: "50%,57%"
-- inputText: "It is the best."
-- tapOn:
-    id: "Return"
-- assertVisible: "It is the best."
-- tapOn: "GO TO PREVIOUS QUESTION"
-- assertVisible: "GO TO NEXT QUESTION"
-- assertVisible: "Page 1 / 2 "
+    id: 'text-input'
+- inputText: 'It is the best.'
+- hideKeyboard
+- assertVisible: 'It is the best.'
+- tapOn: 'GO TO PREVIOUS QUESTION'
+- assertVisible: 'GO TO NEXT QUESTION'
+- assertVisible: 'Page 1 / 2 '

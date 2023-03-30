@@ -1,0 +1,11 @@
+appId: ${APP_ID}
+#  tc77 Page 4 elements are visible and displayed correctly
+---
+- runFlow: tc73_pager_pagination_dots_example.yaml
+- assertVisible: 'Pagination Dots Example'
+#- assertVisible: "PagerView Example"
+- assertVisible: 'Page Index: 4'
+- assertVisible: 'Expanding Dot'
+- assertVisible: 'Scaling Dot'
+- assertVisible: 'Sliding Border'
+- assertVisible: 'Sliding Dot'
