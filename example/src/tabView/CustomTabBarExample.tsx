@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   TabView,
   SceneMap,
@@ -24,29 +25,19 @@ type Route = {
 
 type State = NavigationState<Route>;
 
-export default class CustomTabBarExample extends React.Component<{}, State> {
-  static title = 'Custom tab bar';
-  static backgroundColor = '#fafafa';
-  static tintColor = '#263238';
-  static appbarElevation = 4;
-  static statusBarStyle = 'dark-content' as 'dark-content';
+const routes = [
+  { key: 'contacts', title: 'Contacts' },
+  { key: 'albums', title: 'Albums' },
+  { key: 'article', title: 'Article' },
+  { key: 'chat', title: 'Chat' },
+];
 
-  state: State = {
-    index: 0,
-    routes: [
-      { key: 'contacts', title: 'Contacts' },
-      { key: 'albums', title: 'Albums' },
-      { key: 'article', title: 'Article' },
-      { key: 'chat', title: 'Chat' },
-    ],
-  };
+export default function CustomTabBarExample() {
+  const [index, setIndex] = React.useState(0);
 
-  private handleIndexChange = (index: number) =>
-    this.setState({
-      index,
-    });
+  const insets = useSafeAreaInsets();
 
-  private renderItem = ({
+  const renderItem = ({
     navigationState,
     position,
   }: {
@@ -80,7 +71,7 @@ export default class CustomTabBarExample extends React.Component<{}, State> {
     );
   };
 
-  private renderTabBar = (
+  const renderTabBar = (
     props: SceneRendererProps & { navigationState: State }
   ) => (
     <View style={styles.tabbar}>
@@ -90,31 +81,38 @@ export default class CustomTabBarExample extends React.Component<{}, State> {
             key={route.key}
             onPress={() => props.jumpTo(route.key)}
           >
-            {this.renderItem(props)({ route, index })}
+            {renderItem(props)({ route, index })}
           </TouchableWithoutFeedback>
         );
       })}
     </View>
   );
 
-  private renderScene = SceneMap({
+  const renderScene = SceneMap({
     contacts: Contacts,
     albums: Albums,
     article: Article,
     chat: Chat,
   });
 
-  render() {
-    return (
+  return (
+    <View
+      style={{
+        flex: 1,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      }}
+    >
       <TabView
-        navigationState={this.state}
-        renderScene={this.renderScene}
-        renderTabBar={this.renderTabBar}
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        renderTabBar={renderTabBar}
         tabBarPosition="bottom"
-        onIndexChange={this.handleIndexChange}
+        onIndexChange={setIndex}
       />
-    );
-  }
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
