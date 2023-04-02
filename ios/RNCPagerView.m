@@ -43,17 +43,17 @@
 - (void)didMoveToWindow {
     // Disable scroll view pan gesture for navigation controller screen edge go back gesture
     if (self.reactViewController.navigationController != nil && self.reactViewController.navigationController.interactivePopGestureRecognizer != nil) {
-           [self.scrollView.panGestureRecognizer requireGestureRecognizerToFail:self.reactViewController.navigationController.interactivePopGestureRecognizer];
-       }
-}
-
-- (void)layoutSubviews {
-    [super layoutSubviews];
-    [self calculateContentSize];
+        [self.scrollView.panGestureRecognizer requireGestureRecognizerToFail:self.reactViewController.navigationController.interactivePopGestureRecognizer];
+    }
 }
 
 - (void)didUpdateReactSubviews {
-    [self calculateContentSize];
+    [self updateContentSizeIfNeeded];
+}
+
+- (void)reactSetFrame:(CGRect)frame {
+    [super reactSetFrame:frame];
+    [self updateContentSizeIfNeeded];
 }
 
 -(void) insertReactSubview:(UIView *)subview atIndex:(NSInteger)atIndex {
@@ -104,29 +104,23 @@
 
 #pragma mark - Internal methods
 
-- (void) calculateContentSize {
-    UIView *initialView = self.containerView.subviews.firstObject;
-    if (!initialView) {
-        return;
-    }
-    
-    CGFloat totalSubviewsWidth = initialView.frame.size.width * self.containerView.subviews.count;
-    CGFloat totalSubviewsHeight = initialView.frame.size.height * self.containerView.subviews.count;
-    
-    
-    if ([self isHorizontal]) {
-        _scrollView.contentSize = CGSizeMake(totalSubviewsWidth, 0);
-        _containerView.frame = CGRectMake(0, 0, totalSubviewsWidth, initialView.bounds.size.height);
-    } else {
-        _scrollView.contentSize = CGSizeMake(0, totalSubviewsHeight);
-        _containerView.frame = CGRectMake(0, 0, initialView.bounds.size.width, totalSubviewsHeight);
-    }
-    
-    _scrollView.frame = self.bounds;
-    [self.scrollView layoutIfNeeded];
-    
-    if (self.initialPage != 0) {
-        [self goTo:self.initialPage animated:false];
+- (CGSize)contentSize
+{
+    UIView *initialView = _containerView.subviews.firstObject;
+    CGFloat subviewsCount = _containerView.subviews.count;
+    return CGSizeMake(initialView.bounds.size.width * subviewsCount, initialView.bounds.size.height * subviewsCount);
+}
+
+- (void)updateContentSizeIfNeeded
+{
+    CGSize contentSize = self.contentSize;
+    if (!CGSizeEqualToSize(_scrollView.contentSize, contentSize)){
+        _scrollView.contentSize = [self isHorizontal] ? CGSizeMake(contentSize.width, 0) : CGSizeMake(0, contentSize.height);
+        _containerView.frame = CGRectMake(0, 0, contentSize.width, contentSize.height);
+        
+        if (self.initialPage != 0) {
+            [self goTo:self.initialPage animated:false];
+        }
     }
 }
 
@@ -140,7 +134,7 @@
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     CGPoint targetOffset = [self isHorizontal] ? CGPointMake(_scrollView.frame.size.width * index, 0) : CGPointMake(0, _scrollView.frame.size.height * index);
-        
+    
     if (animated) {
         self.animating = true;
     }
