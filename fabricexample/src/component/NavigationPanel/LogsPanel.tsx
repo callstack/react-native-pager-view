@@ -8,7 +8,6 @@ export function LogsPanel({ logs }: LogsPanelProps) {
   return (
     <FlatList
       style={styles.container}
-      keyExtractor={({ timestamp }) => `${timestamp.getTime()}`}
       data={logs}
       renderItem={({ item }) => (
         //@ts-ignore
