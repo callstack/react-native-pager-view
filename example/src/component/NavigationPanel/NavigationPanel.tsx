@@ -48,7 +48,6 @@ export function NavigationPanel(props: NavigationPanelProps) {
           ]}
           activeOpacity={0.8}
           onPress={() => {
-            console.log('edek');
             setVisible((prevVisible) =>
               prevVisible === VisibleTab.Logs
                 ? VisibleTab.None
