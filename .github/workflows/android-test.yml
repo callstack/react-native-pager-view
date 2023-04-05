@@ -24,10 +24,17 @@ jobs:
           distribution: 'adopt'
           java-version: '11'
       - uses: dniHze/maestro-test-action@v1
+#      - uses: reactivecircus/android-emulator-runner@v2
+#        with:
+#          api-level: 29
+#          arch: x86_64
+#          ram-size: 2048M
+#          target: default
+#          script: ./gradlew assembleDebug
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
           arch: x86_64
           ram-size: 2048M
           target: default
-          script: maestro test --format=junit --output=report.xml --no-ansi maestro-tests
+          script: ./gradlew assembleDebug && maestro test --format=junit --output=report.xml --no-ansi maestro-tests
