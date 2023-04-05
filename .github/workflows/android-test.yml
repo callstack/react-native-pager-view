@@ -14,27 +14,52 @@ on:
     branches:
       - master
 
+
+concurrency:
+  group: ${{ github.ref }}-android
+  cancel-in-progress: true
+
 jobs:
-  test:
+  android-build:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: ./.github/actions/install-dependencies
+
+      - name: Pull dependencies
+        uses: actions/cache@v3
+        with:
+          path: ./node_modules
+          key: ${{ hashFiles('./package.json') }}
+
+      - name: Cache example node modules
+        id: cache-example-npm
+        uses: actions/cache@v3
+        env:
+          cache-name: cached-example-npm-deps
+        with:
+          path: example/node_modules
+          key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+
+      - name: Install required example dependencies on yarn.lock change
+        if: steps.cache-example-npm.outputs.cache-hit != 'true'
+        run: yarn install --frozen-lockfile
+        working-directory: example
+
       - uses: actions/setup-java@v3
         with:
-          distribution: 'adopt'
-          java-version: '11'
+          distribution: "zulu"
+          java-version: "11"
+
+      - name: Build Android
+        run: ./gradlew assembleDebug
+        working-directory: example/android
+
       - uses: dniHze/maestro-test-action@v1
-#      - uses: reactivecircus/android-emulator-runner@v2
-#        with:
-#          api-level: 29
-#          arch: x86_64
-#          ram-size: 2048M
-#          target: default
-#          script: ./gradlew assembleDebug
       - uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
           arch: x86_64
           ram-size: 2048M
           target: default
-          script: ./gradlew assembleDebug && maestro test --format=junit --output=report.xml --no-ansi maestro-tests
+          script: maestro test --format=junit --output=report.xml --no-ansi maestro-tests
