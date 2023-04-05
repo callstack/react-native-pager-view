@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { ControlsPanel } from './ControlPanel';
 import { LogsPanel } from './LogsPanel';
 import type { NavigationPanelProps } from './types';
@@ -97,37 +96,5 @@ const styles = StyleSheet.create({
   },
   toggleVisibilityTextActive: {
     color: '#000',
-  },
-  buttons: {
-    flexDirection: 'row',
-    backgroundColor: 'black',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  hiddenContainer: {
-    height: 0,
-    overflow: 'hidden',
-  },
-  buttonAdjustment: {
-    flex: 1,
-  },
-  progress: {
-    flexDirection: 'row',
-    height: 40,
-    backgroundColor: 'black',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: 'white',
-    paddingHorizontal: 20,
-  },
-  scrollState: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  scrollStateText: {
-    color: '#99d1b7',
-    textAlign: 'center',
   },
 });
