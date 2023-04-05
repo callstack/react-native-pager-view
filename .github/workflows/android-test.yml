@@ -29,4 +29,4 @@ jobs:
           arch: x86_64
           ram-size: 2048M
           target: default
-          script: maestro test --format=junit --output=report.xml --no-ansi .maestro
+          script: maestro test --format=junit --output=report.xml --no-ansi maestro-tests
