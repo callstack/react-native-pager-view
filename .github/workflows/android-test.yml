@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - '.github/workflows/android.yml'
+      - '.github/workflows/android-test.yml'
       - 'android/**'
       - 'example/android/**'
       - 'fabricexample/android/**'
