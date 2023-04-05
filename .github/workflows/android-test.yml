@@ -9,6 +9,7 @@ on:
       - 'android/**'
       - 'example/android/**'
       - 'fabricexample/android/**'
+      - 'maestro-tests/**'
   push:
     branches:
       - master
