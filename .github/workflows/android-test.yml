@@ -14,7 +14,6 @@ on:
     branches:
       - master
 
-
 concurrency:
   group: ${{ github.ref }}-android
   cancel-in-progress: true
@@ -48,18 +47,18 @@ jobs:
 
       - uses: actions/setup-java@v3
         with:
-          distribution: "zulu"
-          java-version: "11"
+          distribution: 'zulu'
+          java-version: '11'
 
       - name: Build Android
         run: ./gradlew assembleDebug --stacktrace
         working-directory: example/android
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v1
-        with:
-          name: apk
-          path: example/android/app/build/outputs/apk/debug/app-debug.apk
+      #      - name: Upload APK
+      #        uses: actions/upload-artifact@v1
+      #        with:
+      #          name: apk
+      #          path: example/android/app/build/outputs/apk/debug/app-debug.apk
 
       - uses: dniHze/maestro-test-action@v1
 
@@ -69,5 +68,5 @@ jobs:
           arch: x86_64
           ram-size: 2048M
           target: default
-          script: adb install example/android/app/build/outputs/apk/debug/app-debug.apk
+          script: adb install example/android/app/build/outputs/apk/debug/app-debug.apk && maestro test --format=junit --output=report.xml --no-ansi maestro-tests
 #          script: maestro test --format=junit --output=report.xml --no-ansi maestro-tests
