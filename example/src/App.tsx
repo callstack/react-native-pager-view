@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
   Button,
   Alert,
+  I18nManager,
+  DevSettings,
 } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -119,6 +121,16 @@ export function Navigation() {
                   }
                   title={mode === 'js' ? 'JS' : 'NATIVE'}
                   color="orange"
+                />
+              ),
+              headerLeft: () => (
+                <Button
+                  title={I18nManager.getConstants().isRTL ? 'RTL' : 'LTR'}
+                  color="orange"
+                  onPress={() => {
+                    I18nManager.forceRTL(!I18nManager.getConstants().isRTL);
+                    DevSettings.reload();
+                  }}
                 />
               ),
             }}
