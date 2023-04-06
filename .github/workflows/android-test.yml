@@ -59,7 +59,7 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: apk
-          path: example/app/build/outputs/apk/debug/app-debug.apk
+          path: example/android/app/build/outputs/apk/debug/app-debug.apk
 
       - uses: dniHze/maestro-test-action@v1
       - uses: reactivecircus/android-emulator-runner@v2
