@@ -64,8 +64,6 @@ jobs:
       - uses: dniHze/maestro-test-action@v1
 
       - uses: reactivecircus/android-emulator-runner@v2
-        needs:
-          apk
         with:
           api-level: 29
           arch: x86_64
