@@ -29,9 +29,9 @@ jobs:
         run: |
           brew update
           brew install Caskroom/cask/xquartz
-          brew install android-sdk
-          sdkmanager "system-images;android-30;google_apis;x86_64" "emulator" "platform-tools"
-          sdkmanager --licenses
+#          brew install android-sdk
+#          sdkmanager "system-images;android-30;google_apis;x86_64" "emulator" "platform-tools"
+#          sdkmanager --licenses
 
       - name: Pull dependencies
         uses: actions/cache@v3
