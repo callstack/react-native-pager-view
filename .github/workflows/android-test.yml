@@ -25,6 +25,14 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/install-dependencies
 
+      - name: Install dependencies
+        run: |
+          brew update
+          brew install Caskroom/cask/xquartz
+          brew install android-sdk
+          sdkmanager "system-images;android-30;google_apis;x86_64" "emulator" "platform-tools"
+          sdkmanager --licenses
+
       - name: Pull dependencies
         uses: actions/cache@v3
         with:
@@ -60,6 +68,11 @@ jobs:
       #          name: apk
       #          path: example/android/app/build/outputs/apk/debug/app-debug.apk
 
+      - name: Start virtual display
+        run: |
+          sudo Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          export DISPLAY=:99
+
       - uses: dniHze/maestro-test-action@v1
 
       - uses: reactivecircus/android-emulator-runner@v2
@@ -68,7 +81,7 @@ jobs:
           arch: x86_64
           ram-size: 2048M
           target: default
-          disable-animations: false
+#          disable-animations: false
           emulator-options: -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           script: adb install example/android/app/build/outputs/apk/debug/app-debug.apk && adb shell pm list packages com.pagerviewexample && maestro test --format=junit --output=report.xml --no-ansi maestro-tests/test.yaml
 #          script: maestro test --format=junit --output=report.xml --no-ansi maestro-tests
