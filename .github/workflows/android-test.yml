@@ -82,7 +82,7 @@ jobs:
           ram-size: 2048M
           target: default
 #          disable-animations: false
-          emulator-options: -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          emulator-options: -gpu host -no-snapshot -noaudio -no-boot-anim -accel on
           script: |
             adb install example/android/app/build/outputs/apk/debug/app-debug.apk 
             adb shell pm list packages com.pagerviewexample 
