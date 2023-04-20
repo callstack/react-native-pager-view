@@ -6,4 +6,4 @@ appId: ${APP_ID}
 - assertVisible: 'CHAT'
 - assertVisible: 'Write a message'
 - assertVisible: 'CONTACTS'
-- assertVisible: 'ARTICLES'
+- assertVisible: 'ARTICLE'
