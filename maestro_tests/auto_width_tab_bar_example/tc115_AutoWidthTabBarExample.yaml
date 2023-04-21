@@ -1,0 +1,11 @@
+appId: ${APP_ID}
+#  tc115 The AutoWidthTabBarExample tab is accessible
+---
+- launchApp
+- assertVisible: 'PagerView Example'
+- swipe:
+    start: '84%,74%'
+    end: '94%,35%'
+    duration: 354
+- tapOn: 'AutoWidthTabBarExample'
+#- assertVisible: 'PagerView Example'

@@ -1,0 +1,13 @@
+appId: ${APP_ID}
+#  tc67 Headphones Carousel Example page 3 can be swiped left to the page 4
+---
+- runFlow: tc65_pager_headphones_carousel_example.yaml
+- swipe:
+    start: '80%,63%'
+    end: '3%,65%'
+    duration: 448
+- assertVisible: 'Headphones Carousel Example'
+#- assertVisible: 'PagerView Example'
+- assertVisible: 'HUMLAN B'
+- assertVisible: 'FROM SWEDEN'
+- assertVisible: 'The “Plattan” in Plattan headphones is Swedish for “the slab.”'

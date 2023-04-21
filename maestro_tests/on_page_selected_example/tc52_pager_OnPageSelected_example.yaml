@@ -1,0 +1,36 @@
+appId: ${APP_ID}
+# tc52 OnPageSelected Example screen buttons are clickable and they change their labels after being tapped
+# broken on Android
+---
+- launchApp
+- runFlow: alert_dialog_dismissal_pager_OnPageSelected_example.yaml
+- tapOn: 'Logs'
+- tapOn: 'Control'
+- assertVisible: 'Scroll Enabled'
+- tapOn: 'Control'
+- assertNotVisible: 'Scroll Enabled'
+- tapOn: 'Control'
+- tapOn: 'Scroll Enabled'
+- assertVisible: 'Scroll Disabled'
+- tapOn: 'Add new page'
+- assertVisible: 'Page 1 / 11 '
+- tapOn: 'Turn off animations'
+- assertVisible: 'Turn animations back on'
+- tapOn: 'Overdrag Disabled'
+- assertVisible: 'Overdrag Enabled'
+- tapOn: 'Remove last page'
+- assertVisible: 'Page 1 / 10 '
+- tapOn: 'Next'
+- assertVisible: 'Page 2 / 10 '
+- tapOn: 'OK'
+- tapOn: 'Last'
+- assertVisible: 'Page 10 / 10 '
+- tapOn: 'OK'
+- tapOn: 'Prev'
+- assertVisible: 'Page 9 / 10 '
+- tapOn: 'OK'
+- tapOn: 'Start'
+- assertVisible: 'Page 1 / 10 '
+- tapOn: 'OK'
+- tapOn: 'PagerView Example'
+- assertVisible: 'PagerView Example'

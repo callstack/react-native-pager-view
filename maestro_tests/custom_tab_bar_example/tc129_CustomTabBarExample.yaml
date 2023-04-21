@@ -1,0 +1,15 @@
+appId: ${APP_ID}
+#  tc129 Swiping pages is obtainable
+---
+- runFlow: tc128_CustomTabBarExample.yaml
+- swipe:
+    start: '89%,46%'
+    end: '8%,44%'
+    duration: 400
+- assertNotVisible: '7766398169'
+- assertNotVisible: 'Lorem Ipsum'
+- swipe:
+    start: '89%,46%'
+    end: '8%,44%'
+    duration: 400
+- assertVisible: 'Lorem Ipsum'

@@ -1,0 +1,20 @@
+appId: ${APP_ID}
+# tc28 The [Scroll Enabled] button can switch states between enabled to disabled and back any number of times
+# This functionality seems to be permanently disabled in the example
+---
+- launchApp
+- assertVisible: 'PagerView Example'
+- tapOn: 'Keyboard Example'
+- assertVisible: 'Keyboard Example'
+- tapOn: 'Scroll Disabled'
+- tapOn: 'Scroll Enabled'
+- tapOn: 'Scroll Disabled'
+- tapOn: 'Scroll Enabled'
+- tapOn: 'Scroll Disabled'
+- tapOn: 'Scroll Enabled'
+- tapOn: 'Scroll Disabled'
+- tapOn: 'Scroll Enabled'
+- tapOn: 'Scroll Disabled'
+- tapOn: 'Scroll Enabled'
+- tapOn: 'Scroll Disabled'
+- tapOn: 'Scroll Enabled'

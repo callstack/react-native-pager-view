@@ -1,0 +1,23 @@
+appId: ${APP_ID}
+# tc53 The [Scroll Enabled] button can switch states between enabled to disabled and back any number of times
+---
+- launchApp
+- runFlow: alert_dialog_dismissal_pager_OnPageSelected_example.yaml
+- tapOn: 'Scroll Enabled'
+- assertVisible: 'Scroll Disabled'
+- tapOn: 'Scroll Disabled'
+- assertVisible: 'Scroll Enabled'
+- tapOn: 'Scroll Enabled'
+- assertVisible: 'Scroll Disabled'
+- tapOn: 'Scroll Disabled'
+- assertVisible: 'Scroll Enabled'
+- tapOn: 'Scroll Enabled'
+- assertVisible: 'Scroll Disabled'
+- tapOn: 'Scroll Disabled'
+- assertVisible: 'Scroll Enabled'
+# for iOS
+#- tapOn: 'PagerView Example'
+# for Android
+#- tapOn: "Navigate up"
+# or
+#- back

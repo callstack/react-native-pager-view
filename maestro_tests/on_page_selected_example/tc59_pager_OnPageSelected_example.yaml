@@ -1,0 +1,31 @@
+appId: ${APP_ID}
+# tc59 [Logs] button after being tapped shows the logs
+# logs for Android and iOS are different
+---
+- launchApp
+- runFlow: alert_dialog_dismissal_pager_OnPageSelected_example.yaml
+- tapOn: 'Logs'
+- assertVisible: 'Control'
+- assertVisible: 'Page: 0'
+- tapOn: 'Control'
+- assertVisible: 'Page 1 / 10 '
+- tapOn: 'Last'
+- assertVisible: 'You are on 10 page'
+- tapOn: 'OK'
+- assertVisible: 'Page Index: 9'
+- tapOn: 'Logs'
+- assertVisible: 'Position: 9 Offset: 0'
+- assertVisible: 'Page: 9'
+- assertVisible: 'Position: 0 Offset: 9'
+- repeat:
+    times: 3
+    commands:
+      - swipe:
+          start: '73%,88%'
+          end: '73%,70%'
+          duration: 322
+- assertVisible: 'Page: 0'
+# - scrollUntilVisible:
+#     element:
+#       text: "Page: 0"
+#     direction: DOWN

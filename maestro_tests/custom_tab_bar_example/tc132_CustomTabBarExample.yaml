@@ -1,0 +1,7 @@
+appId: ${APP_ID}
+# tc132 The message entered in the message field is visible after leaving the “Chat” page
+---
+- runFlow: tc131_CustomTabBarExample.yaml
+- tapOn: 'Albums Albums'
+- tapOn: 'Chat Chat'
+- assertVisible: 'Muffin danish chocolate souffle pastry icing bonbon oat cake.'

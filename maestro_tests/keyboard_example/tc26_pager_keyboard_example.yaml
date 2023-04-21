@@ -1,0 +1,17 @@
+appId: ${APP_ID}
+#  tc26 User can answer to “Second Question” from page 2 -input tex method
+---
+- launchApp
+- tapOn: 'Keyboard Example'
+- tapOn: 'GO TO NEXT QUESTION'
+- assertVisible: 'Second Question'
+- assertVisible: 'Why Pager View?'
+- assertVisible: 'Page 2 / 2 '
+- tapOn:
+    id: 'text-input'
+- inputText: 'It is the best.'
+- hideKeyboard
+- assertVisible: 'It is the best.'
+- tapOn: 'GO TO PREVIOUS QUESTION'
+- assertVisible: 'GO TO NEXT QUESTION'
+- assertVisible: 'Page 1 / 2 '

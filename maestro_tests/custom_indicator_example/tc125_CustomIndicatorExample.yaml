@@ -1,0 +1,6 @@
+appId: ${APP_ID}
+#  tc125 The CustomIndicatorExample tab is accessible
+---
+- launchApp
+- assertVisible: 'PagerView Example'
+- tapOn: 'CustomIndicatorExample'

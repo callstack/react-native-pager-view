@@ -1,0 +1,7 @@
+appId: ${APP_ID}
+#  tc99 Nest PagerView Example tab is active and accessible
+---
+- launchApp
+- assertVisible: 'PagerView Example'
+- tapOn: 'Nest PagerView Example'
+- assertVisible: '7 likes'

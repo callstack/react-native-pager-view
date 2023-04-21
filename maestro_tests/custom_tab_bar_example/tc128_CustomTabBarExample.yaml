@@ -1,0 +1,7 @@
+appId: ${APP_ID}
+#  tc128 The CustomTabBarExample tab is accessible
+---
+- launchApp
+- assertVisible: 'PagerView Example'
+- tapOn: 'CustomTabBarExample'
+- assertVisible: 'Marissa Castillo'

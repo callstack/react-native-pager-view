@@ -1,0 +1,11 @@
+appId: ${APP_ID}
+#  tc81 Pictures can be scrolled vertically from the bottom to the top
+---
+- runFlow: tc80_scrollable_pagerView_example.yaml
+- repeat:
+    times: 6
+    commands:
+      - swipe:
+          start: '71%,20%'
+          end: '69%,56%'
+          duration: 496

@@ -1,0 +1,27 @@
+appId: ${APP_ID}
+# tc4 Basic Example screen elements are clickable and they change their labels after tapping on each
+---
+- launchApp
+- assertVisible: 'PagerView Example'
+- tapOn: 'Basic Example'
+- assertVisible: '👍 Like'
+- tapOn: '👍 Like'
+- assertVisible: '8 likes'
+- tapOn: 'Scroll Enabled'
+- assertVisible: 'Scroll Disabled'
+- tapOn: 'Add new page'
+- assertVisible: 'Page 1 / 11 '
+- tapOn: 'Turn off animations'
+- assertVisible: 'Turn animations back on'
+- tapOn: 'Overdrag Disabled'
+- assertVisible: 'Overdrag Enabled'
+- tapOn: 'Remove last page'
+- assertVisible: 'Page 1 / 10 '
+- tapOn: 'Next'
+- assertVisible: 'Page 2 / 10 '
+- tapOn: 'Last'
+- assertVisible: 'Page 10 / 10 '
+- tapOn: 'Prev'
+- assertVisible: 'Page 9 / 10 '
+- tapOn: 'Start'
+- assertVisible: 'Page 1 / 10 '

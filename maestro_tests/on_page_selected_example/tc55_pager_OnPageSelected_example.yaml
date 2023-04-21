@@ -1,0 +1,27 @@
+appId: ${APP_ID}
+# tc55 The [Remove last page] button enables user to remove pages one by one
+# flaky test on iOS
+# for some reason on iOS there's sometimes one additional click that results in 29 pages
+---
+- launchApp
+- runFlow: alert_dialog_dismissal_pager_OnPageSelected_example.yaml
+- assertVisible: 'Page 1 / 10 '
+- tapOn: 'Add new page'
+- assertVisible: 'Page 1 / 11 '
+- repeat:
+    times: 17
+    commands:
+      - tapOn:
+          text: 'Add new page'
+          retryTapIfNoChange: false
+- assertVisible: 'Page 1 / 28 '
+- repeat:
+    times: 27
+    commands:
+      - tapOn:
+          text: 'Remove last page'
+          retryTapIfNoChange: false
+# removing all pages except the first one does not trigger modal on Android but it does on iOS
+# it is possible to remove last page and go to 0, possibly a bug
+#- assertVisible: 'You are on 1 page'
+- assertVisible: 'Page 1 / 1 '

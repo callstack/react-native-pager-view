@@ -1,0 +1,14 @@
+appId: ${APP_ID}
+# tc57 The [Overdrag Disable] button can switch states between disabled and enabled any number of times
+---
+- launchApp
+- runFlow: alert_dialog_dismissal_pager_OnPageSelected_example.yaml
+- tapOn: 'Turn off animations'
+- tapOn: 'Overdrag Disabled'
+- assertVisible: 'Overdrag Enabled'
+- tapOn: 'Overdrag Enabled'
+- assertVisible: 'Overdrag Disabled'
+- tapOn: 'Overdrag Disabled'
+- assertVisible: 'Overdrag Enabled'
+- tapOn: 'Overdrag Enabled'
+- assertVisible: 'Overdrag Disabled'
