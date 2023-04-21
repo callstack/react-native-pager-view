@@ -18,10 +18,10 @@ esac
 
 if [ "$PLATFORM" == "ios" ]; then
   APPID="com.pagerviewexample"
-  allTestFiles=$(ls maestro-tests/*.yaml)
+  allTestFiles=$(ls maestro-tests/*.yaml maestro-tests/basic_example/*.yaml)
 else
   APPID="com.pagerviewexample"
-  allTestFiles=$(ls maestro-tests/*.yaml)
+  allTestFiles=$(ls maestro-tests/*.yaml maestro-tests/basic_example/*.yaml)
 fi
 
 failedTests=()
