@@ -19,72 +19,65 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  android-build:
+  test-android:
+    name: e2e-android-test
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/install-dependencies
+      - name: checkout
+        uses: actions/checkout@v2
 
-#      - name: Install dependencies
-#        run: |
-#          brew update
-#          brew install Caskroom/cask/xquartz
-#          brew install android-sdk
-#          sdkmanager "system-images;android-30;google_apis;x86_64" "emulator" "platform-tools"
-#          sdkmanager --licenses
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
 
-      - name: Pull dependencies
-        uses: actions/cache@v3
+      - uses: actions/cache@v2
+        id: yarn-cache
         with:
-          path: ./node_modules
-          key: ${{ hashFiles('./package.json') }}
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
-      - name: Cache example node modules
-        id: cache-example-npm
-        uses: actions/cache@v3
-        env:
-          cache-name: cached-example-npm-deps
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
         with:
-          path: example/node_modules
-          key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+          node-version: 14.15.0
 
-      - name: Install required example dependencies on yarn.lock change
-        if: steps.cache-example-npm.outputs.cache-hit != 'true'
-        run: yarn install --frozen-lockfile
-        working-directory: example
+      - name: Install React Native CLI
+        run: npm install react-native-cli
 
-      - uses: actions/setup-java@v3
+      - name: Install Dependencies
+        run: yarn bootstrap-no-pods
+
+      - name: Setup Java environment
+        uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: '11'
 
-      - name: Build Android
-        run: ./gradlew assembleDebug --stacktrace
-        working-directory: example/android
+      - name: Gradle cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
 
-      #      - name: Upload APK
-      #        uses: actions/upload-artifact@v1
-      #        with:
-      #          name: apk
-      #          path: example/android/app/build/outputs/apk/debug/app-debug.apk
+      - name: Install Maestro CLI
+        run: export MAESTRO_VERSION=1.21.3; curl -Ls "https://get.maestro.mobile.dev" | bash
 
-#      - name: Start virtual display
-#        run: |
-#          sudo Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-#          export DISPLAY=:99
+      - name: Add Maestro to path
+        run: echo "${HOME}/.maestro/bin" >> $GITHUB_PATH
 
-      - uses: dniHze/maestro-test-action@v1
-
-      - uses: reactivecircus/android-emulator-runner@v2
+      - name: Run Android Emulator and app
+        uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
           arch: x86_64
-          ram-size: 2048M
-          target: default
-#          disable-animations: false
-          emulator-options: -gpu host -no-snapshot -noaudio -no-boot-anim -accel on
+          target: google_apis
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
           script: |
-            adb install example/android/app/build/outputs/apk/debug/app-debug.apk 
-            adb shell pm list packages com.pagerviewexample 
-            maestro test --format=junit --output=report.xml --no-ansi maestro-tests/test.yaml
-#          script: maestro test --format=junit --output=report.xml --no-ansi maestro-tests
+            yarn run-example-android
+            yarn test:e2e:android
