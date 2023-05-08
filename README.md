@@ -153,7 +153,8 @@ const MyPager = () => {
 
 const styles = StyleSheet.create({
   pagerView: {
-    flex: 1,
+    width: "100%",
+    height: "100%",
   },
 });
 ```
