@@ -64,9 +64,9 @@ test-butler-app.apk
 example/vendor
 
 #Example
-fabricexample/ios/Pods
-fabricexample/vendor
-fabricexample/android/app/.cxx
+example/ios/Pods
+example/vendor
+example/android/app/.cxx
 .lefthookrc
 lefthook.yml
 
