@@ -8,18 +8,18 @@ on:
     branches:
       - master
 
-concurrency: 
+concurrency:
   group: ${{ github.ref }}-js
   cancel-in-progress: true
 
 jobs:
-  install-dependencies: 
+  install-dependencies:
     name: Install dependencies
     runs-on: ubuntu-latest
-    steps: 
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Install dependencies 
+      - name: Install dependencies
         uses: ./.github/actions/install-dependencies
 
   verify-package-source:
@@ -44,15 +44,6 @@ jobs:
         with:
           path: example/node_modules
           key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
-
-      - name: Pull fabric example node modules
-        id: cache-fabricexample-npm
-        uses: actions/cache@v3
-        env:
-          cache-name: cached-fabric-npm-deps
-        with:
-          path: fabricexample/node_modules
-          key: ${{ hashFiles('./fabricexample/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
 
       - name: Lint files
         run: yarn lint
