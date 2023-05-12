@@ -31,7 +31,12 @@
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn && yarn example pods",
     "fabricexample": "yarn --cwd fabricexample",
-    "bootstrap-fabric": "yarn fabricexample && yarn && yarn fabricexample pods"
+    "bootstrap-fabric": "yarn fabricexample && yarn && yarn fabricexample pods",
+    "bootstrap-no-pods": "yarn example && yarn",
+    "test:e2e:android": "bash ./scripts/run-maestro-tests.sh android",
+    "run-example-android": "cd example;react-native run-android --variant=release",
+    "run-example-ios": "cd example;react-native run-ios --configuration Release --simulator \"iPhone 13 (15.2)\"",
+    "test:e2e:ios": "bash ./scripts/run-maestro-tests.sh ios"
   },
   "keywords": [
     "react-native",

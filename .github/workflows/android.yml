@@ -8,19 +8,17 @@ on:
       - '.github/workflows/android.yml'
       - 'android/**'
       - 'example/android/**'
-      - 'fabricexample/android/**'
   push:
     branches:
       - master
 
-
-concurrency: 
+concurrency:
   group: ${{ github.ref }}-android
   cancel-in-progress: true
 
 jobs:
   android-build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/install-dependencies
@@ -42,51 +40,36 @@ jobs:
 
       - name: Install required example dependencies on yarn.lock change
         if: steps.cache-example-npm.outputs.cache-hit != 'true'
-        run: yarn install --frozen-lockfile
-        working-directory: example
+        run: yarn bootstrap-no-pods --frozen-lockfile
 
       - uses: actions/setup-java@v3
         with:
-          distribution: "zulu"
-          java-version: "11"
+          distribution: 'zulu'
+          java-version: '11'
 
-      - name: Build Android
-        run: ./gradlew assembleDebug
-        working-directory: example/android
-
-  android-build-fabric:
-    runs-on: ubuntu-latest
-    needs: android-build
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/install-dependencies
-
-      - name: Pull dependencies
+      - name: Gradle cache
         uses: actions/cache@v3
         with:
-          path: ./node_modules
-          key: ${{ hashFiles('./package.json') }}
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
 
-      - name: Cache fabric example node modules
-        id: cache-fabricexample-npm
-        uses: actions/cache@v3
-        env:
-          cache-name: cached-fabric-npm-deps
+      - name: Install Maestro CLI
+        run: export MAESTRO_VERSION=1.21.3; curl -Ls "https://get.maestro.mobile.dev" | bash
+
+      - name: Add Maestro to path
+        run: echo "${HOME}/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Run Android Emulator and app
+        uses: reactivecircus/android-emulator-runner@v2
         with:
-          path: fabricexample/node_modules
-          key: ${{ hashFiles('./fabricexample/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
-   
-      - name: Install required fabric example dependencies on yarn.lock change
-        if: steps.cache-fabricexample-npm.outputs.cache-hit != 'true'
-        shell: bash
-        run: yarn install --frozen-lockfile
-        working-directory: fabricexample
-
-      - uses: actions/setup-java@v3
-        with:
-          distribution: "zulu"
-          java-version: "11"
-
-      - name: Build Android (Fabric)
-        run: ./gradlew assembleDebug -PreactNativeArchitectures=arm64-v8a
-        working-directory: fabricexample/android
+          api-level: 29
+          arch: x86_64
+          target: google_apis
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            yarn run-example-android
+            yarn test:e2e:android
