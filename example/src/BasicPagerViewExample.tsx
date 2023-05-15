@@ -15,7 +15,7 @@ export function BasicPagerViewExample() {
   return (
     <SafeAreaView style={styles.container}>
       <AnimatedPagerView
-        //@ts-ignore
+        // @ts-ignore
         testID="pager-view"
         ref={ref}
         style={styles.PagerView}
