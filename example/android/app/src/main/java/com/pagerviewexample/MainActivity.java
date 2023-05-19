@@ -1,18 +1,34 @@
 package com.pagerviewexample;
 
-import androidx.appcompat.app.AppCompatActivity;
+import com.facebook.react.ReactActivity;
+import com.facebook.react.ReactActivityDelegate;
+import com.facebook.react.defaults.DefaultReactActivityDelegate;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
+public class MainActivity extends ReactActivity {
 
-public class MainActivity extends AppCompatActivity {
+    private final boolean farbicEnabled = false;
+
+    /**
+     * Returns the name of the main component registered from JavaScript. This is used to schedule
+     * rendering of the component.
+     */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        findViewById(R.id.fabric).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, FabricActivity.class)));
-        findViewById(R.id.paper).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, PaperActivity.class)));
+    protected String getMainComponentName() {
+        return farbicEnabled ? "PagerViewExample" : "Paper";
+    }
+
+    /**
+     * Returns the instance of the {@link ReactActivityDelegate}. Here we use a util class {@link
+     * DefaultReactActivityDelegate} which allows you to easily enable Fabric and Concurrent React
+     * (aka React 18) with two boolean flags.
+     */
+    @Override
+    protected ReactActivityDelegate createReactActivityDelegate() {
+        return new DefaultReactActivityDelegate(
+                this,
+                getMainComponentName(),
+                farbicEnabled,
+                farbicEnabled
+        );
     }
 }

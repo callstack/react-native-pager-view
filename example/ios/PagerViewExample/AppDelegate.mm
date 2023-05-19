@@ -62,7 +62,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 
   UIViewController *rootViewController = _newArchitectureEnabled ? fabricVC : paperVC;
 
-  // --- VC setup end ---
+
 
   // --- UIWindow setup start ---
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
