@@ -4,8 +4,6 @@
 #import "RCTAppDelegate.h"
 #import <React/RCTAppSetupUtils.h>
 #import <React/RCTRootView.h>
-#import "PaperViewController.h"
-#import "FabricViewController.h"
 
 #if RCT_NEW_ARCH_ENABLED
 #import <React/CoreModulesPlugins.h>
@@ -31,7 +29,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  _newArchitectureEnabled = NO;
+  _newArchitectureEnabled = YES;
   BOOL enableTM = NO;
 #if RCT_NEW_ARCH_ENABLED
   enableTM = self.turboModuleEnabled;
@@ -54,16 +52,13 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
  https://github.com/react-native-community/RNNewArchitectureApp/blob/new-architecture-benchmarks/App/ios/MeasurePerformance/AppDelegate.mm
   */
 
-  PaperViewController *paperVC = [PaperViewController new];
-  paperVC.view = RCTAppSetupDefaultRootView(self.bridge, @"Paper", @{}, NO);
-//
-  FabricViewController *fabricVC = [FabricViewController new];
-  fabricVC.view = RCTAppSetupDefaultRootView(self.bridge, @"PagerViewExample", @{}, YES);
 
-  UIViewController *rootViewController = _newArchitectureEnabled ? fabricVC : paperVC;
+  UIView *paperView = RCTAppSetupDefaultRootView(self.bridge, @"Paper", @{}, NO);
+  UIView *fabricView = RCTAppSetupDefaultRootView(self.bridge, @"PagerViewExample", @{}, YES);
 
-
-
+  UIViewController *rootViewController = [UIViewController new];
+  rootViewController.view = _newArchitectureEnabled ? fabricView : paperView;
+  
   // --- UIWindow setup start ---
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   self.window.rootViewController = rootViewController;
@@ -71,29 +66,6 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
   // --- UIWindow setup end ---
   
   
-  //*** TEMPLATE ***** //
-//  self.moduleName = @"PagerViewExample";
-//  // You can add your custom initial props in the dictionary below.
-//  // They will be passed down to the ViewController used by React Native.
-//  self.initialProps = @{};
-//
-//  NSDictionary *initProps = [self prepareInitialProps];
-//  UIView *rootView = [self createRootViewWithBridge:self.bridge moduleName:self.moduleName initProps:initProps];
-//
-//  if (@available(iOS 13.0, *)) {
-//    rootView.backgroundColor = [UIColor systemBackgroundColor];
-//  } else {
-//    rootView.backgroundColor = [UIColor whiteColor];
-//  }
-//
-//  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-//  UIViewController *rootViewController = [self createRootViewController];
-//  rootViewController.view = rootView;
-//  self.window.rootViewController = rootViewController;
-//  [self.window makeKeyAndVisible];
-  
-  
-  //*** END TEMPLATE ***** //
   return YES;
 }
 

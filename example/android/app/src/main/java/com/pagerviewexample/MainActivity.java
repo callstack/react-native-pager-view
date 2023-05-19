@@ -6,7 +6,7 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate;
 
 public class MainActivity extends ReactActivity {
 
-    private final boolean farbicEnabled = false;
+    private final boolean farbicEnabled = true;
 
     /**
      * Returns the name of the main component registered from JavaScript. This is used to schedule
