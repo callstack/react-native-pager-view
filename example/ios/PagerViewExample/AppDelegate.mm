@@ -21,6 +21,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 @interface AppDelegate () <RCTTurboModuleManagerDelegate, RCTCxxBridgeDelegate> {
   std::shared_ptr<const facebook::react::ReactNativeConfig> _reactNativeConfig;
   facebook::react::ContextContainer::Shared _contextContainer;
+  BOOL _newArchitectureEnabled;
 }
 @end
 
@@ -30,6 +31,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+  _newArchitectureEnabled = NO;
   BOOL enableTM = NO;
 #if RCT_NEW_ARCH_ENABLED
   enableTM = self.turboModuleEnabled;
@@ -52,36 +54,19 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
  https://github.com/react-native-community/RNNewArchitectureApp/blob/new-architecture-benchmarks/App/ios/MeasurePerformance/AppDelegate.mm
   */
 
-  // --- Appearance Start ---
-  UITabBarAppearance *tabBarAppearance = [UITabBarAppearance new];
-  [tabBarAppearance configureWithOpaqueBackground];
-  [UITabBar appearance].scrollEdgeAppearance = tabBarAppearance;
-
-  UINavigationBarAppearance *navBarApperance = [UINavigationBarAppearance new];
-  [navBarApperance configureWithOpaqueBackground];
-  [UINavigationBar appearance].standardAppearance = navBarApperance;
-  [UINavigationBar appearance].compactAppearance = navBarApperance;
-  [UINavigationBar appearance].scrollEdgeAppearance = navBarApperance;
-  // --- Appearance End ---
-  // --- VC setup start ---
-  UITabBarController *vc = [[UITabBarController alloc] init];
-
   PaperViewController *paperVC = [PaperViewController new];
   paperVC.view = RCTAppSetupDefaultRootView(self.bridge, @"Paper", @{}, NO);
 //
   FabricViewController *fabricVC = [FabricViewController new];
   fabricVC.view = RCTAppSetupDefaultRootView(self.bridge, @"PagerViewExample", @{}, YES);
 
-  vc.viewControllers = @[
-    [[UINavigationController alloc] initWithRootViewController:fabricVC],
-    [[UINavigationController alloc] initWithRootViewController:paperVC]
+  UIViewController *rootViewController = _newArchitectureEnabled ? fabricVC : paperVC;
 
-    ];
   // --- VC setup end ---
 
   // --- UIWindow setup start ---
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  self.window.rootViewController = vc;
+  self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   // --- UIWindow setup end ---
   
@@ -124,7 +109,24 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 
 - (BOOL)concurrentRootEnabled
 {
-  return true;
+  return _newArchitectureEnabled;
+}
+
+/// This method controls whether the `turboModules` feature of the New Architecture is turned on or off.
+///
+/// @note: This is required to be rendering on Fabric (i.e. on the New Architecture).
+/// @return: `true` if the Turbo Native Module are enabled. Otherwise, it returns `false`.
+- (BOOL)turboModuleEnabled
+{
+  return _newArchitectureEnabled;
+}
+
+/// This method controls whether the App will use the Fabric renderer of the New Architecture or not.
+///
+/// @return: `true` if the Fabric Renderer is enabled. Otherwise, it returns `false`.
+- (BOOL)fabricEnabled
+{
+  return _newArchitectureEnabled;
 }
 
 - (NSDictionary *)prepareInitialProps
@@ -196,16 +198,6 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 }
 
 #pragma mark - New Arch Enabled settings
-
-- (BOOL)turboModuleEnabled
-{
-  return YES;
-}
-
-- (BOOL)fabricEnabled
-{
-  return YES;
-}
 
 #endif
 
