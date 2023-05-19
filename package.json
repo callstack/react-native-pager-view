@@ -30,8 +30,6 @@
     "releaseNext": "release-it --npm.tag=newarch --preRelease=rc",
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn && yarn example pods",
-    "fabricexample": "yarn --cwd fabricexample",
-    "bootstrap-fabric": "yarn fabricexample && yarn && yarn fabricexample pods",
     "bootstrap-no-pods": "yarn example && yarn",
     "test:e2e:android": "bash ./scripts/run-maestro-tests.sh android",
     "run-example-android": "cd example;react-native run-android --variant=release",
