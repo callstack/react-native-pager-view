@@ -14,7 +14,7 @@ export const ScrollViewInsideExample = (): JSX.Element => {
   );
 
   return (
-    <AnimatedPagerView style={styles.flex}>
+    <AnimatedPagerView testID="pager-view" style={styles.flex}>
       {pages.map((page) => (
         <ScrollView key={page.key} style={styles.content}>
           {Array(20)
