@@ -408,7 +408,7 @@ using namespace facebook::react;
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
 
-    // Recognize simultaneously only if the other gesture is RN Screen's pan gesture (one that is used to perform fullScreenGestureEnabled)
+    // Recognize simultaneously if the other gesture is RN Screen's pan gesture (one that is used to perform fullScreenGestureEnabled)
     if (gestureRecognizer == self.panGestureRecognizer && [NSStringFromClass([otherGestureRecognizer class]) isEqual: @"RNSPanGestureRecognizer"]) {
         UIPanGestureRecognizer* panGestureRecognizer = (UIPanGestureRecognizer*) gestureRecognizer;
         CGPoint velocity = [panGestureRecognizer velocityInView:self];
@@ -424,6 +424,12 @@ using namespace facebook::react;
         
         return YES;
     }
+    
+    // Allow nested scroll views to scroll simultaneously with the pager
+    if ([otherGestureRecognizer.view isKindOfClass: UIScrollView.class]) {
+        return YES;
+    }
+
     const auto &viewProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
     scrollView.panGestureRecognizer.enabled = viewProps.scrollEnabled;
     return NO;
