@@ -35,6 +35,7 @@ def getExtOrIntegerDefault(name) {
 }
 
 android {
+  namespace = "com.reactnativepagerview"
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
 
   defaultConfig {
