@@ -32,17 +32,18 @@ export default () => {
 
   return (
     <AnimatedPager
+      testID={'pager-view'}
       style={styles.pagerView}
       initialPage={0}
       onPageScroll={handler}
     >
-      <View key="1">
+      <View testID={'1'} key="1">
         <Text>First page</Text>
       </View>
-      <View key="2">
+      <View testID={'2'} key="2">
         <Text>Second page</Text>
       </View>
-      <View key="3">
+      <View testID={'3'} key="3">
         <Text>Third page</Text>
       </View>
     </AnimatedPager>

@@ -15,6 +15,7 @@ export function ScrollablePagerViewExample() {
 
   return (
     <View
+      testID={'container'}
       style={{
         flex: 1,
         paddingBottom: insets.bottom,
@@ -22,10 +23,11 @@ export function ScrollablePagerViewExample() {
         paddingRight: insets.right,
       }}
     >
-      <ScrollView style={styles.flex}>
+      <ScrollView testID={'scroll-view'} style={styles.flex}>
         {navigationPanel.pages.map(({ key }) => (
           <AnimatedPagerView
             {...navigationPanel}
+            testID={'pager-view'}
             ref={ref}
             key={key}
             style={{ height: HEIGHT }}

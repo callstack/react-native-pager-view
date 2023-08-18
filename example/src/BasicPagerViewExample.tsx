@@ -33,7 +33,12 @@ export function BasicPagerViewExample() {
         {useMemo(
           () =>
             navigationPanel.pages.map((page, index) => (
-              <View key={page.key} style={page.style} collapsable={false}>
+              <View
+                testID="pager-view-content"
+                key={page.key}
+                style={page.style}
+                collapsable={false}
+              >
                 <LikeCount />
                 <Text
                   testID={`pageNumber${index}`}
