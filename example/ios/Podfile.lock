@@ -789,7 +789,7 @@ PODS:
     - React-Codegen
     - React-RCTFabric
     - ReactCommon/turbomodule/core
-  - RNReanimated (3.0.0):
+  - RNReanimated (3.0.2):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -1095,7 +1095,7 @@ SPEC CHECKSUMS:
   ReactCommon: 85c98ab0a509e70bf5ee5d9715cf68dbf495b84c
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
   RNGestureHandler: 8c8ccd3eb5a8d7b79b79c35635095687845c5534
-  RNReanimated: a318e90c84206fbf6ef10eefc50c4ef5289d206d
+  RNReanimated: b38271c7b72560b7f9c3d0bf531faa8feb4da93a
   RNScreens: 4666ca0a74ee229b2332c5d22d2a8b81ba9202be
   RNSVG: a9204714b832d82b483b0cbaee9e675646426b8d
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608

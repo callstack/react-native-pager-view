@@ -29,7 +29,7 @@ static NSString *const kRNConcurrentRoot = @"concurrentRoot";
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  _newArchitectureEnabled = YES;
+  _newArchitectureEnabled = NO;
   BOOL enableTM = NO;
 #if RCT_NEW_ARCH_ENABLED
   enableTM = self.turboModuleEnabled;
