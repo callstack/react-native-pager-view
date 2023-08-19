@@ -17,11 +17,3 @@ import { NavigationPanel } from './src/component/NavigationPanel';
 import { PaperExample } from './src/PaperExample';
 
 AppRegistry.registerComponent(appName, () => Navigation);
-AppRegistry.registerComponent('Paper', () => (props) => {
-  // https://github.com/software-mansion/react-native-reanimated/issues/3820 - Android workaround
-  return Platform.OS === 'android' ? (
-    <PaperExample />
-  ) : (
-    <BasicPagerViewExample />
-  );
-});
