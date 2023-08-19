@@ -27,10 +27,18 @@ interface PageProps {
 const Page = ({ title, description, onPress, buttonTitle }: PageProps) => {
   return (
     <>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      <Text style={styles.sectionDescription}>{description}</Text>
-      <TextInput style={styles.textInput} />
-      <Button onPress={onPress} title={buttonTitle} />
+      <Text testID="text-section-title" style={styles.sectionTitle}>
+        {title}
+      </Text>
+      <Text testID="text-section-description" style={styles.sectionDescription}>
+        {description}
+      </Text>
+      <TextInput testID="text-input" style={styles.textInput} />
+      <Button
+        testID="text-section-buttonTitle"
+        onPress={onPress}
+        title={buttonTitle}
+      />
     </>
   );
 };
@@ -41,10 +49,18 @@ export function KeyboardExample() {
   const { ref, ...navigationPanel } = useNavigationPanel(2);
   const { setPage } = navigationPanel;
   return (
-    <KeyboardAvoidingView style={styles.flex} behavior="height">
-      <SafeAreaView style={styles.flex}>
-        <ScrollView contentContainerStyle={styles.flex} style={styles.flex}>
-          <View style={styles.logoContainer}>
+    <KeyboardAvoidingView
+      testID="keyboard-avoiding"
+      style={styles.flex}
+      behavior="height"
+    >
+      <SafeAreaView testID="save-area-view" style={styles.flex}>
+        <ScrollView
+          testID="scroll-view-container"
+          contentContainerStyle={styles.flex}
+          style={styles.flex}
+        >
+          <View testID="logo-container" style={styles.logoContainer}>
             <Image
               style={styles.logo}
               source={{
@@ -52,23 +68,24 @@ export function KeyboardExample() {
               }}
             />
           </View>
-          <View style={styles.flex}>
+          <View testID="pager-container" style={styles.flex}>
             <AnimatedPagerView
               {...navigationPanel}
+              testID="pager-view"
               ref={ref}
               style={styles.flex}
               initialPage={0}
               scrollEnabled={false}
             >
-              <View style={styles.sectionContainer}>
+              <View testID="pager-view-child-1" style={styles.sectionContainer}>
                 <Page
                   title="First Question"
-                  description="What is your favourite lib ?"
+                  description="What is your favorite lib ?"
                   onPress={useCallback(() => setPage(1), [setPage])}
                   buttonTitle="Go to next question"
                 />
               </View>
-              <View style={styles.sectionContainer}>
+              <View testID="pager-view-child-2" style={styles.sectionContainer}>
                 <Page
                   title="Second Question"
                   description="Why Pager View?"

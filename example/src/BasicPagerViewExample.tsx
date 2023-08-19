@@ -15,7 +15,7 @@ export function BasicPagerViewExample() {
   return (
     <SafeAreaView style={styles.container}>
       <AnimatedPagerView
-        //@ts-ignore
+        // @ts-ignore
         testID="pager-view"
         ref={ref}
         style={styles.PagerView}
@@ -33,7 +33,12 @@ export function BasicPagerViewExample() {
         {useMemo(
           () =>
             navigationPanel.pages.map((page, index) => (
-              <View key={page.key} style={page.style} collapsable={false}>
+              <View
+                testID="pager-view-content"
+                key={page.key}
+                style={page.style}
+                collapsable={false}
+              >
                 <LikeCount />
                 <Text
                   testID={`pageNumber${index}`}

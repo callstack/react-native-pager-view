@@ -22,16 +22,24 @@ export const OnPageSelectedExample = () => {
   const { ref, ...navigationPanel } = useNavigationPanel(10, callback);
 
   return (
-    <SafeAreaView style={styles.flex}>
+    <SafeAreaView testID={'safe-area-view'} style={styles.flex}>
       <AnimatedPagerView
+        testID="pager"
         {...navigationPanel}
         ref={ref}
         style={styles.flex}
         initialPage={0}
       >
         {navigationPanel.pages.map(({ key, style }) => (
-          <View key={key} style={[style, styles.center]}>
-            <Text style={styles.text}>{`Page Index: ${key}`}</Text>
+          <View
+            testID={`pager-child-${key}`}
+            key={key}
+            style={[style, styles.center]}
+          >
+            <Text
+              testID={`pager-child-text-${key}`}
+              style={styles.text}
+            >{`Page Index: ${key}`}</Text>
           </View>
         ))}
       </AnimatedPagerView>

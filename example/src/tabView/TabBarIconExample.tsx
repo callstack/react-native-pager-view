@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   TabView,
   TabBar,
@@ -13,57 +14,60 @@ import Contacts from './Shared/Contacts';
 
 type Route = {
   key: string;
+  title: string;
 };
 
 type State = NavigationState<Route>;
 
-export default class TabBarIconExample extends React.Component<{}, State> {
-  static title = 'Top tab bar with icons';
-  static backgroundColor = '#e91e63';
-  static appbarElevation = 0;
+const routes = [
+  { key: 'chat', title: 'Chat' },
+  { key: 'contacts', title: 'Contacts' },
+  { key: 'article', title: 'Article' },
+];
 
-  state: State = {
-    index: 0,
-    routes: [{ key: 'chat' }, { key: 'contacts' }, { key: 'article' }],
-  };
+export default function TabBarIconExample() {
+  const [index, setIndex] = React.useState(0);
+  const insets = useSafeAreaInsets();
 
-  private handleIndexChange = (index: number) =>
-    this.setState({
-      index,
-    });
+  const renderIcon = () => null;
 
-  private renderIcon = () => null;
-
-  private renderTabBar = (
+  const renderTabBar = (
     props: SceneRendererProps & { navigationState: State }
   ) => {
     return (
       <TabBar
         {...props}
         indicatorStyle={styles.indicator}
-        renderIcon={this.renderIcon}
+        renderIcon={renderIcon}
         style={styles.tabbar}
       />
     );
   };
 
-  private renderScene = SceneMap({
+  const renderScene = SceneMap({
     chat: Chat,
     contacts: Contacts,
     article: Article,
   });
 
-  render() {
-    return (
+  return (
+    <View
+      style={{
+        flex: 1,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      }}
+    >
       <TabView
         lazy
-        navigationState={this.state}
-        renderScene={this.renderScene}
-        renderTabBar={this.renderTabBar}
-        onIndexChange={this.handleIndexChange}
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        renderTabBar={renderTabBar}
+        onIndexChange={setIndex}
       />
-    );
-  }
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
