@@ -33,10 +33,32 @@ def getExtOrDefault(name) {
 def getExtOrIntegerDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['PagerView_' + name]).toInteger()
 }
+def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
+def shouldUseNameSpace = agpVersion >= 8
+def PACKAGE_PROP = "package=\"com.reactnativepagerview\""
+def manifestOutFile = file("${projectDir}/src/main/AndroidManifest.xml")
+def manifestContent = manifestOutFile.getText()
+if(shouldUseNameSpace){
+      manifestContent = manifestContent.replaceAll(
+        PACKAGE_PROP,
+        ''
+    )  
+} else {
+    if(!manifestContent.contains("$PACKAGE_PROP")){
+        manifestContent = manifestContent.replace(
+            '<manifest',
+            "<manifest $PACKAGE_PROP "
+        )
+    }
+}
+manifestContent.replaceAll("  ", " ")
+manifestOutFile.write(manifestContent)
 
 android {
   compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
-
+  if (shouldUseNameSpace){
+    namespace = "com.reactnativepagerview"
+  }
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault('minSdkVersion')
     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
