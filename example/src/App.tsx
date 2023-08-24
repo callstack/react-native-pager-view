@@ -72,6 +72,7 @@ function App() {
       {examples.map((example) => (
         <TouchableOpacity
           key={example.name}
+          testID={example.name}
           style={styles.exampleTouchable}
           onPress={() => {
             //@ts-ignore
