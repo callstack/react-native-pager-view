@@ -97,12 +97,16 @@ jobs:
             yarn run-example-android
             yarn test:e2e:android
 
-      - name: Upload artifacts
+      - name: Upload report
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: e2e-test-logs
-          path: ~/.maestro/tests/**/*
+          name: E2E Report
+          path: |
+            ${{ github.workspace }}/*.mp4
+            ${{ github.workspace }}/*.png
+            ${{ github.workspace }}/report*.xml
+            ~/.maestro/tests/**/*
 
       - name: Store tests result
         uses: actions/upload-artifact@v3
