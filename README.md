@@ -19,16 +19,10 @@ This component allows the user to swipe left and right through pages of data. Un
 
 ## Versions
 
-| 4.x        | 5.x         |
-| ---------- | ----------- |
-| iOS        | iOS support |
-| ViewPager1 | ViewPager2  |
-
-## New architecture support (Fabric)
-
-This library supports both architectures (Paper and Fabric). If you would like enable new architecture, please run below command:
-
-`yarn add react-native-pager-view@newarch`
+| 4.x        | 5.x and above |
+| ---------- | ------------- |
+| iOS        | iOS support   |
+| ViewPager1 | ViewPager2    |
 
 ## Migration
 

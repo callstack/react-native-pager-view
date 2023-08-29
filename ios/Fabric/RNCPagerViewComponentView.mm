@@ -192,6 +192,10 @@ using namespace facebook::react;
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     NSInteger numberOfPages = _nativeChildrenViewControllers.count;
     
+    if (index == _currentIndex) {
+        return;
+    }
+    
     [self disableSwipe];
     
     _destinationIndex = index;
