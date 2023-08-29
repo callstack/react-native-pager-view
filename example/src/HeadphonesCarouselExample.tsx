@@ -64,39 +64,46 @@ const CIRCLE_SIZE = width * 0.6;
 
 const Circle = ({
   scrollOffsetAnimatedValue,
+  positionAnimatedValue,
 }: {
   scrollOffsetAnimatedValue: Animated.Value;
+  positionAnimatedValue: Animated.Value;
 }) => {
+  const inputRange = [0, 0.5, 0.99];
+  const inputRangeOpacity = [0, 0.5, 0.99];
+
+  const scale = scrollOffsetAnimatedValue.interpolate({
+    inputRange,
+    outputRange: [1, 0, 1],
+    extrapolate: 'clamp',
+  });
+
+  const opacity = scrollOffsetAnimatedValue.interpolate({
+    inputRange: inputRangeOpacity,
+    outputRange: [0.2, 0, 0.2],
+  });
+
+  const backgroundColor = Animated.add(
+    scrollOffsetAnimatedValue,
+    positionAnimatedValue
+  ).interpolate({
+    inputRange: data.map((_, index) => index),
+    outputRange: data.map(({ color }) => color),
+    extrapolate: 'clamp',
+  });
+
   return (
     <View style={[StyleSheet.absoluteFillObject, styles.circleContainer]}>
-      {data.map(({ color }, index) => {
-        const inputRange = [0, 0.5, 0.99];
-        const inputRangeOpacity = [0, 0.5, 0.99];
-        const scale = scrollOffsetAnimatedValue.interpolate({
-          inputRange,
-          outputRange: [1, 0, 1],
-          extrapolate: 'clamp',
-        });
-
-        const opacity = scrollOffsetAnimatedValue.interpolate({
-          inputRange: inputRangeOpacity,
-          outputRange: [0.2, 0, 0.2],
-        });
-
-        return (
-          <Animated.View
-            key={index}
-            style={[
-              styles.circle,
-              {
-                backgroundColor: color,
-                opacity,
-                transform: [{ scale }],
-              },
-            ]}
-          />
-        );
-      })}
+      <Animated.View
+        style={[
+          styles.circle,
+          {
+            backgroundColor,
+            opacity,
+            transform: [{ scale }],
+          },
+        ]}
+      />
     </View>
   );
 };
@@ -240,7 +247,10 @@ export default function HeadphonesCarouselExample() {
 
   return (
     <View style={styles.container}>
-      <Circle scrollOffsetAnimatedValue={scrollOffsetAnimatedValue} />
+      <Circle
+        scrollOffsetAnimatedValue={scrollOffsetAnimatedValue}
+        positionAnimatedValue={positionAnimatedValue}
+      />
       <AnimatedPagerView
         initialPage={0}
         style={{ width: '100%', height: '100%' }}
