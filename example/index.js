@@ -1,19 +1,10 @@
-import React, { useMemo } from 'react';
-import {
-  AppRegistry,
-  View,
-  SafeAreaView,
-  Animated,
-  Text,
-  Platform,
-} from 'react-native';
+import { AppRegistry } from 'react-native';
 import { Navigation } from './src/App';
-import { name as appName } from './app.json';
 import { BasicPagerViewExample } from './src/BasicPagerViewExample';
-import PagerView from 'react-native-pager-view';
-import { useNavigationPanel } from './src/hook/useNavigationPanel';
-import { LikeCount } from './src/component/LikeCount';
-import { NavigationPanel } from './src/component/NavigationPanel';
-import { PaperExample } from './src/PaperExample';
+import { name as appName } from './app.json';
 
-AppRegistry.registerComponent(appName, () => Navigation);
+AppRegistry.registerComponent(appName, () => BasicPagerViewExample);
+
+// FOR SOME REASON REANIMATED OR GH IS BROKEN FOR 72
+// Uncomment it if more examples are needed
+// AppRegistry.registerComponent(appName, () => Navigation);
