@@ -6,7 +6,9 @@ onFlowComplete: # <- and this
   - stopRecording
 ---
 - launchApp
-- assertVisible: 'page number 0'
+- assertVisible: 'PagerView Example'
+- tapOn: 'Basic Example'
+- assertVisible: 'Basic Example'
 - tapOn: 'Last'
 - assertVisible: 'page number 9'
 - assertVisible: 'Page 10 / 10 '
