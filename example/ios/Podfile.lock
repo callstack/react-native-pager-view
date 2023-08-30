@@ -375,7 +375,7 @@ PODS:
   - React-jsinspector (0.72.4)
   - React-logger (0.72.4):
     - glog
-  - react-native-pager-view (6.2.0):
+  - react-native-pager-view (6.2.1):
     - React-Core
   - react-native-safe-area-context (4.5.2):
     - RCT-Folly
@@ -495,9 +495,9 @@ PODS:
     - React-perflogger (= 0.72.4)
   - RNCMaskedView (0.1.11):
     - React
-  - RNGestureHandler (2.12.1):
+  - RNGestureHandler (2.12.0):
     - React-Core
-  - RNReanimated (3.4.2):
+  - RNReanimated (3.4.0):
     - DoubleConversion
     - FBLazyVector
     - glog
@@ -526,7 +526,7 @@ PODS:
     - React-RCTText
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNScreens (3.20.0):
+  - RNScreens (3.21.0):
     - React-Core
     - React-RCTImage
   - RNSVG (13.9.0):
@@ -754,7 +754,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: c7f826e40fa9cab5d37cab6130b1af237332b594
   React-jsinspector: aaed4cf551c4a1c98092436518c2d267b13a673f
   React-logger: da1ebe05ae06eb6db4b162202faeafac4b435e77
-  react-native-pager-view: 0ccb8bf60e2ebd38b1f3669fa3650ecce81db2df
+  react-native-pager-view: d211379f61895b6349bd7e571b44a26d005c2975
   react-native-safe-area-context: 1d596539b05a78f2b346e954e7c577f6f9be7544
   React-NativeModulesApple: edb5ace14f73f4969df6e7b1f3e41bef0012740f
   React-perflogger: 496a1a3dc6737f964107cb3ddae7f9e265ddda58
@@ -774,9 +774,9 @@ SPEC CHECKSUMS:
   React-utils: b79f2411931f9d3ea5781404dcbb2fa8a837e13a
   ReactCommon: 4b2bdcb50a3543e1c2b2849ad44533686610826d
   RNCMaskedView: 0e1bc4bfa8365eba5fbbb71e07fbdc0555249489
-  RNGestureHandler: c0d04458598fcb26052494ae23dda8f8f5162b13
-  RNReanimated: 726395a2fa2f04cea340274ba57a4e659bc0d9c1
-  RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
+  RNGestureHandler: dec4645026e7401a0899f2846d864403478ff6a5
+  RNReanimated: 020859659f64be2d30849a1fe88c821a7c3e0cbf
+  RNScreens: d037903436160a4b039d32606668350d2a808806
   RNSVG: 53c661b76829783cdaf9b7a57258f3d3b4c28315
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: 3efc43e0d48686ce2e8c60f99d4e6bd349aff981
