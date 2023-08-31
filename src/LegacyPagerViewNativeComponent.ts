@@ -64,5 +64,5 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
 });
 
 export default codegenNativeComponent<NativeProps>(
-  'RNCScrollViewPager'
+  'RNCViewPager'
 ) as HostComponent<NativeProps>;

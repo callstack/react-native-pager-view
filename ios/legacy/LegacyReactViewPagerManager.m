@@ -1,19 +1,21 @@
 
-#import "RNCPagerViewManager.h"
+#import "LegacyReactViewPagerManager.h"
 
-@implementation RNCPagerViewManager
+@implementation ReactViewPagerManager
 
 #pragma mark - RTC
 
-RCT_EXPORT_MODULE(RNCScrollViewPager)
+RCT_EXPORT_MODULE(RNCViewPager)
 
 RCT_EXPORT_VIEW_PROPERTY(initialPage, NSInteger)
-RCT_EXPORT_VIEW_PROPERTY(orientation, NSString)
+RCT_EXPORT_VIEW_PROPERTY(pageMargin, NSInteger)
 
+RCT_EXPORT_VIEW_PROPERTY(orientation, UIPageViewControllerNavigationOrientation)
 RCT_EXPORT_VIEW_PROPERTY(onPageSelected, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPageScroll, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onPageScrollStateChanged, RCTDirectEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(overdrag, BOOL)
+RCT_EXPORT_VIEW_PROPERTY(layoutDirection, NSString)
 
 
 - (void) goToPage
@@ -23,8 +25,8 @@ RCT_EXPORT_VIEW_PROPERTY(overdrag, BOOL)
     [self.bridge.uiManager addUIBlock:^(
                                         RCTUIManager *uiManager,
                                         NSDictionary<NSNumber *, UIView *> *viewRegistry) {
-        RNCPagerView *view = (RNCPagerView *)viewRegistry[reactTag];
-        if (!view || ![view isKindOfClass:[RNCPagerView class]]) {
+        ReactNativePageView *view = (ReactNativePageView *)viewRegistry[reactTag];
+        if (!view || ![view isKindOfClass:[ReactNativePageView class]]) {
             RCTLogError(@"Cannot find ReactNativePageView with tag #%@", reactTag);
             return;
         }
@@ -40,8 +42,8 @@ RCT_EXPORT_VIEW_PROPERTY(overdrag, BOOL)
     [self.bridge.uiManager addUIBlock:^(
                                         RCTUIManager *uiManager,
                                         NSDictionary<NSNumber *, UIView *> *viewRegistry) {
-        RNCPagerView *view = (RNCPagerView *)viewRegistry[reactTag];
-        if (!view || ![view isKindOfClass:[RNCPagerView class]]) {
+        ReactNativePageView *view = (ReactNativePageView *)viewRegistry[reactTag];
+        if (!view || ![view isKindOfClass:[ReactNativePageView class]]) {
             RCTLogError(@"Cannot find ReactNativePageView with tag #%@", reactTag);
             return;
         }
@@ -61,24 +63,24 @@ RCT_EXPORT_METHOD(setPageWithoutAnimation
     [self goToPage:reactTag index:index animated:false];
 }
 
-RCT_EXPORT_METHOD(setScrollEnabled
+RCT_EXPORT_METHOD(setScrollEnabledImperatively
                   : (nonnull NSNumber *)reactTag enabled
                   : (nonnull NSNumber *)enabled) {
     BOOL isEnabled = [enabled boolValue];
     [self changeScrollEnabled:reactTag enabled:isEnabled];
 }
 
-RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, RNCPagerView) {
+RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, ReactNativePageView) {
     [view shouldScroll:[RCTConvert BOOL:json]];
 }
 
-RCT_CUSTOM_VIEW_PROPERTY(keyboardDismissMode, NSString, RNCPagerView) {
+RCT_CUSTOM_VIEW_PROPERTY(keyboardDismissMode, NSString, ReactNativePageView) {
     [view shouldDismissKeyboard:[RCTConvert NSString:json]];
 }
 
 
 - (UIView *)view {
-    return [[RNCPagerView alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
+    return [[ReactNativePageView alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
 }
 
 @end
