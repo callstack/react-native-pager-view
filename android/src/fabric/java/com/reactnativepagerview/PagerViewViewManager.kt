@@ -201,4 +201,8 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
                 PageScrollStateChangedEvent.EVENT_NAME, MapBuilder.of("registrationName", "onPageScrollStateChanged"),
                 PageSelectedEvent.EVENT_NAME, MapBuilder.of("registrationName", "onPageSelected"))
     }
+
+    override fun setUseLegacy(view: NestedScrollableHost?, value: Boolean) {
+
+    }
 }
