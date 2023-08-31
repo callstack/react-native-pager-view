@@ -5,7 +5,7 @@
 namespace facebook {
 namespace react {
 
-class RNCViewPagerState final {
+class RNCScrollViewPagerState final {
 public:
     Point contentOffset;
     Rect contentBoundingRect;

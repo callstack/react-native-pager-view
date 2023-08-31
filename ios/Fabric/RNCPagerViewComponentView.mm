@@ -3,10 +3,11 @@
 #import <Foundation/Foundation.h>
 #import "RNCPagerViewComponentView.h"
 #import "RNCPagerScrollView.h"
-#import <RNCViewPager/RNCViewPagerComponentDescriptor.h>
-#import <react/renderer/components/RNCViewPager/EventEmitters.h>
-#import <react/renderer/components/RNCViewPager/Props.h>
-#import <react/renderer/components/RNCViewPager/RCTComponentViewHelpers.h>
+#import "RNCScrollViewPagerComponentDescriptor.h"
+//#import <RNCScrollViewPager/RNCScrollViewPagerComponentDescriptor.h>
+#import <react/renderer/components/RNCScrollViewPager/EventEmitters.h>
+#import <react/renderer/components/RNCScrollViewPager/Props.h>
+#import <react/renderer/components/RNCScrollViewPager/RCTComponentViewHelpers.h>
 
 #import "RCTFabricComponentsPlugins.h"
 #import "React/RCTConversions.h"
@@ -20,7 +21,7 @@ using namespace facebook::react;
 @end
 
 @implementation RNCPagerViewComponentView {
-    RNCViewPagerShadowNode::ConcreteState::Shared _state;
+    RNCScrollViewPagerShadowNode::ConcreteState::Shared _state;
     RNCPagerScrollView *_scrollView;
     UIView *_containerView;
     
@@ -96,10 +97,10 @@ using namespace facebook::react;
 
 - (void)updateState:(State::Shared const &)state oldState:(State::Shared const &)oldState
 {
-    assert(std::dynamic_pointer_cast<RNCViewPagerShadowNode::ConcreteState const>(state));
-    _state = std::static_pointer_cast<RNCViewPagerShadowNode::ConcreteState const>(state);
+    assert(std::dynamic_pointer_cast<RNCScrollViewPagerShadowNode::ConcreteState const>(state));
+    _state = std::static_pointer_cast<RNCScrollViewPagerShadowNode::ConcreteState const>(state);
     
-    const auto &props = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
+    const auto &props = *std::static_pointer_cast<const RNCScrollViewPagerProps>(_props);
     
     auto &data = _state->getData();
     

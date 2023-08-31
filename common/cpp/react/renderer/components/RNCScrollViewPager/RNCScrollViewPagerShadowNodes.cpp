@@ -1,14 +1,12 @@
-#include "RNCViewPagerShadowNode.h"
-
-#include <react/debug/react_native_assert.h>
-#include <react/renderer/core/LayoutMetrics.h>
+#include "RNCScrollViewPagerShadowNodes.h"
 
 namespace facebook {
 namespace react {
 
 const char RNCViewPagerComponentName[] = "RNCViewPager";
+const char RNCScrollViewPagerComponentName[] = "RNCScrollViewPager";
 
-void RNCViewPagerShadowNode::updateStateIfNeeded() {
+void RNCScrollViewPagerShadowNodes::updateStateIfNeeded() {
     ensureUnsealed();
     
     auto contentBoundingRect = Rect{};
@@ -26,7 +24,7 @@ void RNCViewPagerShadowNode::updateStateIfNeeded() {
 
 #pragma mark - LayoutableShadowNode
 
-void RNCViewPagerShadowNode::layout(LayoutContext layoutContext) {
+void RNCScrollViewPagerShadowNodes::layout(LayoutContext layoutContext) {
     ConcreteViewShadowNode::layout(layoutContext);
     updateStateIfNeeded();
 }
