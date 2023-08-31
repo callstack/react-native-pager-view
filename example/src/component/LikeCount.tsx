@@ -22,11 +22,19 @@ export class LikeCount extends React.Component<Props, State> {
 
   render() {
     return (
-      <View style={styles.likeContainer}>
-        <TouchableOpacity onPress={this.onClick} style={styles.likeButton}>
-          <Text style={styles.likesText}>{thumbsUp + ' Like'}</Text>
+      <View testID="like-count-container" style={styles.likeContainer}>
+        <TouchableOpacity
+          testID="like-count-touchable"
+          onPress={this.onClick}
+          style={styles.likeButton}
+        >
+          <Text testID="like-count-text" style={styles.likesText}>
+            {thumbsUp + ' Like'}
+          </Text>
         </TouchableOpacity>
-        <Text style={styles.likesText}>{this.state.likes + ' likes'}</Text>
+        <Text testID="like-count-text2" style={styles.likesText}>
+          {this.state.likes + ' likes'}
+        </Text>
       </View>
     );
   }

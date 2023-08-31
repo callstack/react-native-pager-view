@@ -4,7 +4,6 @@ import PagerView from 'react-native-pager-view';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { ProgressBar } from './component/ProgressBar';
 import { useNavigationPanel } from './hook/useNavigationPanel';
-import { NavigationPanel } from './component/NavigationPanel';
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
@@ -13,12 +12,16 @@ export function OnPageScrollExample() {
   const { activePage, setPage, progress, pages } = navigationPanel;
 
   return (
-    <SafeAreaView style={styles.flex}>
-      <View style={styles.container}>
-        <ScrollView horizontal>
+    <SafeAreaView testID="safe-area-view" style={styles.flex}>
+      <View testID="container" style={styles.container}>
+        <ScrollView testID="scroll-view" horizontal>
           {pages.map((_v, index) => (
-            <TouchableOpacity key={index} onPress={() => setPage(index)}>
-              <View style={styles.separator}>
+            <TouchableOpacity
+              testID={`touchable-view-${index}`}
+              key={index}
+              onPress={() => setPage(index)}
+            >
+              <View testID={`container-view-${index}`} style={styles.separator}>
                 <Text
                   style={[
                     styles.touchableTitle,
@@ -34,22 +37,28 @@ export function OnPageScrollExample() {
       </View>
 
       <AnimatedPagerView
+        testID={'pager-view'}
         {...navigationPanel}
         ref={ref}
         style={styles.PagerView}
         initialPage={0}
       >
         {navigationPanel.pages.map(({ key, style }) => (
-          <View key={key} style={[style, styles.center]}>
-            <Text style={styles.text}>{`Page Index: ${key}`}</Text>
+          <View
+            testID={`pager-view-child-${key}`}
+            key={key}
+            style={[style, styles.center]}
+          >
+            <Text
+              testID={`pager-view-child-text-${key}`}
+              style={styles.text}
+            >{`Page Index: ${key}`}</Text>
           </View>
         ))}
       </AnimatedPagerView>
       <View style={styles.progressContainer}>
         <ProgressBar numberOfPages={pages.length} progress={progress} />
       </View>
-
-      <NavigationPanel {...navigationPanel} disablePagesAmountManagement />
     </SafeAreaView>
   );
 }

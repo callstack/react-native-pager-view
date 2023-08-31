@@ -1,8 +1,8 @@
 name: Install dependencies
-description: "Installs and caches the dependencies"
-   
+description: 'Installs and caches the dependencies'
+
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Install dependencies
       shell: bash
@@ -28,18 +28,3 @@ runs:
       shell: bash
       run: yarn install --frozen-lockfile
       working-directory: example
-
-    - name: Cache fabric example node modules
-      id: cache-fabricexample-npm
-      uses: actions/cache@v3
-      env:
-        cache-name: cached-fabric-npm-deps
-      with:
-        path: fabricexample/node_modules
-        key: ${{ hashFiles('./fabricexample/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
-
-    - name: Install required fabric example dependencies on yarn.lock change
-      if: steps.cache-fabricexample-npm.outputs.cache-hit != 'true'
-      shell: bash
-      run: yarn install --frozen-lockfile
-      working-directory: fabricexample

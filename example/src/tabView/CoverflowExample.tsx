@@ -75,10 +75,12 @@ const Scene = ({ route, position, layout, index, length }: Props) => {
     };
   }, [index, layout, length, position]);
 
+  const imgSource = ALBUMS[route.key];
+
   return (
     <Animated.View style={[styles.page, coverflowStyle]}>
       <View style={styles.album}>
-        <Image source={ALBUMS[route.key]} style={styles.cover} />
+        {imgSource ? <Image source={imgSource} style={styles.cover} /> : null}
       </View>
       <Text style={styles.label}>{route.key}</Text>
     </Animated.View>

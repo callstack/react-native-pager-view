@@ -29,7 +29,7 @@ const Page = ({ title, description, onPress, buttonTitle }: PageProps) => {
     <>
       <Text style={styles.sectionTitle}>{title}</Text>
       <Text style={styles.sectionDescription}>{description}</Text>
-      <TextInput style={styles.textInput} />
+      <TextInput testID="text-input" style={styles.textInput} />
       <Button onPress={onPress} title={buttonTitle} />
     </>
   );
