@@ -118,9 +118,22 @@
     "useTabs": false
   },
   "codegenConfig": {
-    "name": "RNCViewPager",
-    "type": "components",
-    "jsSrcsDir": "src"
+    "libraries": [
+      {
+        "name": "RNCViewPager",
+        "type": "components",
+        "ios": {},
+        "android": {},
+        "jsSrcsDir": "src"
+      },
+      {
+        "name": "RNCScrollViewPager",
+        "type": "components",
+        "ios": {},
+        "android": {},
+        "jsSrcsDir": "src"
+      }
+    ]
   },
   "react-native-builder-bob": {
     "source": "src",

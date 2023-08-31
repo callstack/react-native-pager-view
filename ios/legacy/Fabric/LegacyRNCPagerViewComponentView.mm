@@ -1,7 +1,7 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 
 #import <Foundation/Foundation.h>
-#import "RNCPagerViewComponentView.h"
+#import "LegacyRNCPagerViewComponentView.h"
 #import <react/renderer/components/RNCViewPager/ComponentDescriptors.h>
 #import <react/renderer/components/RNCViewPager/EventEmitters.h>
 #import <react/renderer/components/RNCViewPager/Props.h>
@@ -15,13 +15,13 @@
 
 using namespace facebook::react;
 
-@interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>
+@interface LegacyRNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>
 
 @property(nonatomic, assign) UIPanGestureRecognizer* panGestureRecognizer;
 
 @end
 
-@implementation RNCPagerViewComponentView {
+@implementation LegacyRNCPagerViewComponentView {
     LayoutMetrics _layoutMetrics;
     UIScrollView *scrollView;
 }
@@ -224,12 +224,12 @@ using namespace facebook::react;
         return;
     }
     
-    __weak RNCPagerViewComponentView *weakSelf = self;
+    __weak LegacyRNCPagerViewComponentView *weakSelf = self;
     [_nativePageViewController setViewControllers:@[[_nativeChildrenViewControllers objectAtIndex:index]]
                                         direction:direction
                                          animated:animated
                                        completion:^(BOOL finished) {
-        __strong RNCPagerViewComponentView *strongSelf = weakSelf;
+        __strong LegacyRNCPagerViewComponentView *strongSelf = weakSelf;
         [strongSelf enableSwipe];
         if (strongSelf->_eventEmitter != nullptr ) {
             const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(strongSelf->_eventEmitter);
@@ -437,7 +437,7 @@ using namespace facebook::react;
 
 Class<RCTComponentViewProtocol> RNCViewPagerCls(void)
 {
-    return RNCPagerViewComponentView.class;
+    return LegacyRNCPagerViewComponentView.class;
 }
 
 #endif
