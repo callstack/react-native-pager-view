@@ -6,7 +6,8 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
-    "pods": "pod-install --quiet"
+    "pods": "pod-install --quiet",
+    "pods-fabric": "RCT_NEW_ARCH_ENABLED=1 pod-install --quiet"
   },
   "dependencies": {
     "@react-native-community/masked-view": "^0.1.10",
