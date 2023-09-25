@@ -183,10 +183,6 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
         val canScroll = childCount != null && childCount > 0 && selectedPage >= 0 && selectedPage < childCount
         if (canScroll) {
             PagerViewViewManagerImpl.setCurrentItem(view, selectedPage, scrollWithAnimation)
-            val reactContext = view.context as ReactContext
-            UIManagerHelper.getEventDispatcherForReactTag(reactContext, view.id)?.dispatchEvent(
-                    PageSelectedEvent(view.id, selectedPage)
-            )
         }
     }
 
