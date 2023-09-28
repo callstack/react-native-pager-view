@@ -3,7 +3,6 @@ import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativ
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
 import type { HostComponent, ViewProps } from 'react-native';
 import type {
-  BubblingEventHandler,
   DirectEventHandler,
   Double,
   Int32,
@@ -33,7 +32,7 @@ export interface NativeProps extends ViewProps {
   overScrollMode?: WithDefault<'auto' | 'always' | 'never', 'auto'>;
   overdrag?: WithDefault<boolean, false>;
   keyboardDismissMode?: WithDefault<'none' | 'on-drag', 'none'>;
-  onPageScroll?: BubblingEventHandler<OnPageScrollEventData>;
+  onPageScroll?: DirectEventHandler<OnPageScrollEventData>;
   onPageSelected?: DirectEventHandler<OnPageSelectedEventData>;
   onPageScrollStateChanged?: DirectEventHandler<OnPageScrollStateChangedEventData>;
 }

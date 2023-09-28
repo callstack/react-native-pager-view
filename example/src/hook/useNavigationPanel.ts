@@ -54,10 +54,14 @@ export function useNavigationPanel(
     () => setPages((prevPages) => [...prevPages, createPage(prevPages.length)]),
     []
   );
-  const removePage = useCallback(
-    () => setPages((prevPages) => prevPages.slice(0, prevPages.length - 1)),
-    []
-  );
+  const removePage = useCallback(() => {
+    setPages((prevPages) => {
+      if (prevPages.length === 1) {
+        return prevPages;
+      }
+      return prevPages.slice(0, prevPages.length - 1);
+    });
+  }, []);
   const toggleAnimation = useCallback(
     () => setIsAnimated((animated) => !animated),
     []

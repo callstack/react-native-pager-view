@@ -81,15 +81,20 @@ export default function PaginationDotsExample() {
   );
 
   return (
-    <SafeAreaView style={styles.flex}>
+    <SafeAreaView testID="safe-area-view" style={styles.flex}>
       <AnimatedPagerView
+        testID="pager-view"
         initialPage={0}
         ref={ref}
         style={styles.PagerView}
         onPageScroll={onPageScroll}
       >
         {INTRO_DATA.map(({ key }) => (
-          <View key={key} style={styles.center}>
+          <View
+            testID={`pager-view-data-${key}`}
+            key={key}
+            style={styles.center}
+          >
             <Text style={styles.text}>{`Page Index: ${key}`}</Text>
           </View>
         ))}
@@ -98,6 +103,7 @@ export default function PaginationDotsExample() {
         <View style={styles.dotContainer}>
           <Text>Expanding Dot</Text>
           <ExpandingDot
+            testID={'expanding-dot'}
             data={INTRO_DATA}
             expandingDotWidth={30}
             //@ts-ignore
@@ -118,6 +124,7 @@ export default function PaginationDotsExample() {
         <View style={styles.dotContainer}>
           <Text>Scaling Dot</Text>
           <ScalingDot
+            testID={'scaling-dot'}
             data={INTRO_DATA}
             //@ts-ignore
             scrollX={scrollX}
@@ -130,6 +137,7 @@ export default function PaginationDotsExample() {
         <View style={styles.dotContainer}>
           <Text>Sliding Border</Text>
           <SlidingBorder
+            testID={'sliding-border'}
             containerStyle={{ top: 30 }}
             data={INTRO_DATA}
             //@ts-ignore
@@ -140,6 +148,7 @@ export default function PaginationDotsExample() {
         <View style={styles.dotContainer}>
           <Text>Sliding Dot</Text>
           <SlidingDot
+            testID={'sliding-dot'}
             marginHorizontal={3}
             containerStyle={{ top: 30 }}
             data={INTRO_DATA}

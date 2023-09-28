@@ -31,7 +31,12 @@
     "example": "yarn --cwd example",
     "bootstrap": "yarn example && yarn && yarn example pods",
     "fabricexample": "yarn --cwd fabricexample",
-    "bootstrap-fabric": "yarn fabricexample && yarn && yarn fabricexample pods"
+    "bootstrap-fabric": "yarn fabricexample && yarn && yarn fabricexample pods",
+    "bootstrap-no-pods": "yarn example && yarn",
+    "test:e2e:android": "bash ./scripts/run-maestro-tests.sh android",
+    "run-example-android": "cd example;react-native run-android --variant=release",
+    "run-example-ios": "cd example;react-native run-ios --configuration Release --simulator \"iPhone 13 (15.2)\"",
+    "test:e2e:ios": "bash ./scripts/run-maestro-tests.sh ios"
   },
   "keywords": [
     "react-native",
@@ -53,7 +58,7 @@
     "@react-native-community/eslint-config": "^3.0.2",
     "@release-it/conventional-changelog": "^2.0.0",
     "@types/jest": "^28.1.2",
-    "@types/react": "17.0.21",
+    "@types/react": "18.0.29",
     "@types/react-native": "0.70.0",
     "eslint": "^8.4.1",
     "eslint-config-prettier": "^8.5.0",
@@ -68,7 +73,7 @@
     "typescript": "^4.5.2"
   },
   "resolutions": {
-    "@types/react": "17.0.21"
+    "@types/react": "18.0.29"
   },
   "peerDependencies": {
     "react": "*",

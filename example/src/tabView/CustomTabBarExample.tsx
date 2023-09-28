@@ -6,6 +6,7 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   TabView,
   SceneMap,
@@ -24,63 +25,55 @@ type Route = {
 
 type State = NavigationState<Route>;
 
-export default class CustomTabBarExample extends React.Component<{}, State> {
-  static title = 'Custom tab bar';
-  static backgroundColor = '#fafafa';
-  static tintColor = '#263238';
-  static appbarElevation = 4;
-  static statusBarStyle = 'dark-content' as 'dark-content';
+const routes = [
+  { key: 'contacts', title: 'Contacts' },
+  { key: 'albums', title: 'Albums' },
+  { key: 'article', title: 'Article' },
+  { key: 'chat', title: 'Chat' },
+];
 
-  state: State = {
-    index: 0,
-    routes: [
-      { key: 'contacts', title: 'Contacts' },
-      { key: 'albums', title: 'Albums' },
-      { key: 'article', title: 'Article' },
-      { key: 'chat', title: 'Chat' },
-    ],
-  };
+export default function CustomTabBarExample() {
+  const [index, setIndex] = React.useState(0);
 
-  private handleIndexChange = (index: number) =>
-    this.setState({
-      index,
-    });
+  const insets = useSafeAreaInsets();
 
-  private renderItem = ({
-    navigationState,
-    position,
-  }: {
-    navigationState: State;
-    position: Animated.AnimatedInterpolation<number>;
-  }) => ({ route, index }: { route: Route; index: number }) => {
-    const inputRange = navigationState.routes.map((_, i) => i);
+  const renderItem =
+    ({
+      navigationState,
+      position,
+    }: {
+      navigationState: State;
+      position: Animated.AnimatedInterpolation<number>;
+    }) =>
+    ({ route, index }: { route: Route; index: number }) => {
+      const inputRange = navigationState.routes.map((_, i) => i);
 
-    const activeOpacity = position.interpolate({
-      inputRange,
-      outputRange: inputRange.map((i: number) => (i === index ? 1 : 0)),
-    });
-    const inactiveOpacity = position.interpolate({
-      inputRange,
-      outputRange: inputRange.map((i: number) => (i === index ? 0 : 1)),
-    });
+      const activeOpacity = position.interpolate({
+        inputRange,
+        outputRange: inputRange.map((i: number) => (i === index ? 1 : 0)),
+      });
+      const inactiveOpacity = position.interpolate({
+        inputRange,
+        outputRange: inputRange.map((i: number) => (i === index ? 0 : 1)),
+      });
 
-    return (
-      <View style={styles.tab}>
-        <Animated.View style={[styles.item, { opacity: inactiveOpacity }]}>
-          <View style={[styles.icon]} />
-          <Text style={[styles.label, styles.inactive]}>{route.title}</Text>
-        </Animated.View>
-        <Animated.View
-          style={[styles.item, styles.activeItem, { opacity: activeOpacity }]}
-        >
-          <View style={[styles.icon]} />
-          <Text style={[styles.label, styles.active]}>{route.title}</Text>
-        </Animated.View>
-      </View>
-    );
-  };
+      return (
+        <View style={styles.tab}>
+          <Animated.View style={[styles.item, { opacity: inactiveOpacity }]}>
+            <View style={[styles.icon]} />
+            <Text style={[styles.label, styles.inactive]}>{route.title}</Text>
+          </Animated.View>
+          <Animated.View
+            style={[styles.item, styles.activeItem, { opacity: activeOpacity }]}
+          >
+            <View style={[styles.icon]} />
+            <Text style={[styles.label, styles.active]}>{route.title}</Text>
+          </Animated.View>
+        </View>
+      );
+    };
 
-  private renderTabBar = (
+  const renderTabBar = (
     props: SceneRendererProps & { navigationState: State }
   ) => (
     <View style={styles.tabbar}>
@@ -90,31 +83,38 @@ export default class CustomTabBarExample extends React.Component<{}, State> {
             key={route.key}
             onPress={() => props.jumpTo(route.key)}
           >
-            {this.renderItem(props)({ route, index })}
+            {renderItem(props)({ route, index })}
           </TouchableWithoutFeedback>
         );
       })}
     </View>
   );
 
-  private renderScene = SceneMap({
+  const renderScene = SceneMap({
     contacts: Contacts,
     albums: Albums,
     article: Article,
     chat: Chat,
   });
 
-  render() {
-    return (
+  return (
+    <View
+      style={{
+        flex: 1,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      }}
+    >
       <TabView
-        navigationState={this.state}
-        renderScene={this.renderScene}
-        renderTabBar={this.renderTabBar}
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        renderTabBar={renderTabBar}
         tabBarPosition="bottom"
-        onIndexChange={this.handleIndexChange}
+        onIndexChange={setIndex}
       />
-    );
-  }
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

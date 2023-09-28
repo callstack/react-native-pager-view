@@ -8,9 +8,8 @@ on:
       - '.github/workflows/ios.yml'
       - 'ios/**'
       - 'example/ios/**'
-      - 'fabricexample/ios/**'
-  push: 
-     branches:
+  push:
+    branches:
       - master
 
 concurrency:
@@ -57,51 +56,19 @@ jobs:
         run: NO_FLIPPER=1 pod install
         working-directory: example/ios
 
-      - name: Build iOS
-        run: xcodebuild -scheme PagerViewExample -workspace PagerViewExample.xcworkspace -sdk iphonesimulator -configuration Debug COMPILER_INDEX_STORE_ENABLE=NO
-        working-directory: example/ios
+      - name: Install Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          brew tap facebook/fb
+          brew install facebook/fb/idb-companion
 
-  ios-build-fabric:
-    needs: ios-build
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/install-dependencies
+      - name: Add Maestro to path
+        run: echo "${HOME}/.maestro/bin" >> $GITHUB_PATH
 
-      - name: Pull dependencies
-        uses: actions/cache@v3
-        with:
-          path: ./node_modules
-          key: ${{ hashFiles('./package.json') }}
+      - name: Build iOS App
+        run: |
+          yarn run-example-ios
 
-      - name: Cache fabric example node modules
-        id: cache-fabricexample-npm
-        uses: actions/cache@v3
-        env:
-          cache-name: cached-fabric-npm-deps
-        with:
-          path: fabricexample/node_modules
-          key: ${{ hashFiles('./fabricexample/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
-
-      - name: Install required fabric example dependencies on yarn.lock change
-        if: steps.cache-fabricexample-npm.outputs.cache-hit != 'true'
-        shell: bash
-        run: yarn install --frozen-lockfile
-        working-directory: fabricexample
-
-      - name: Cache FabricExample Pods
-        id: cache-pods-fabric
-        uses: actions/cache@v3
-        env:
-          cache-name: cached-ios-pods-deps-fabric
-        with:
-          path: fabricexample/ios/Pods
-          key: ${{ hashFiles('./fabricexample/ios/Podfile.lock') }}
-
-      - name: Install FabricExample Pods
-        run: NO_FLIPPER=1 pod install
-        working-directory: fabricexample/ios
-
-      - name: Build iOS (Fabric)
-        run: xcodebuild -scheme FabricExample -workspace FabricExample.xcworkspace -sdk iphonesimulator -configuration Debug COMPILER_INDEX_STORE_ENABLE=NO
-        working-directory: fabricexample/ios
+      - name: Run tests
+        run: |
+          yarn test:e2e:ios
