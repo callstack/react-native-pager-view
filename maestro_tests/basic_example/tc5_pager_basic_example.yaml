@@ -17,4 +17,3 @@ appId: ${APP_ID}
 - assertVisible: 'Scroll Disabled'
 - tapOn: 'Scroll Disabled'
 - assertVisible: 'Scroll Enabled'
-- tapOn: 'PagerView Example'

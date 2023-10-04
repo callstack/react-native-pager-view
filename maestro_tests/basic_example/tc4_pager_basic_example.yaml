@@ -5,7 +5,8 @@ appId: ${APP_ID}
 - assertVisible: 'PagerView Example'
 - tapOn: 'Basic Example'
 - assertVisible: '👍 Like'
-- tapOn: '👍 Like'
+- tapOn:
+    id: "like-count-touchable"
 - assertVisible: '8 likes'
 - tapOn: 'Scroll Enabled'
 - assertVisible: 'Scroll Disabled'

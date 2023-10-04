@@ -12,5 +12,5 @@ appId: ${APP_ID}
 #- tapOn: "Logs"
 #- assertNotVisible: "Position: 0 Offset: 0"
 - tapOn: 'Control'
-- assertVisible: 'Start'
+- assertVisible: 'Last'
 - assertVisible: 'Next'

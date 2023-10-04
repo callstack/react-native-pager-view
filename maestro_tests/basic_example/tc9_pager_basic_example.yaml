@@ -2,7 +2,7 @@ appId: ${APP_ID}
 # The [Overdrag Disable] button can switch states between disabled and enabled any number of times
 ---
 - launchApp
-- assertVisible: 'PagerView Example'
+- assertVisible: "PagerView Example"
 - tapOn: 'Basic Example'
 - assertVisible: 'Basic Example'
 - tapOn: 'Overdrag Disabled'

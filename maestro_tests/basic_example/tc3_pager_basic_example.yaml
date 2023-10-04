@@ -1,7 +1,7 @@
 appId: ${APP_ID}
 # tc3 Basic Example screen with its elements is displayed correctly
 ---
-- launchApp
+- launchApp:
 - assertVisible: 'PagerView Example'
 - tapOn: 'Basic Example'
 - assertVisible: 'Basic Example'

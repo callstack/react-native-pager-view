@@ -6,7 +6,8 @@ appId: ${APP_ID}
 - tapOn: 'Basic Example'
 - assertVisible: 'Basic Example'
 - tapOn: 'Last'
-- assertVisible: 'page number 9'
+- assertVisible:
+    id: "pageNumber9"
 - assertVisible: 'Page 10 / 10 '
 - assertVisible: 'Prev'
 - tapOn: 'Prev'
@@ -14,8 +15,10 @@ appId: ${APP_ID}
     times: 8
     commands:
       - tapOn: 'Prev'
-- assertVisible: 'page number 0'
+- assertVisible:
+    id: "pageNumber0"
 - assertVisible: 'Page 1 / 10 '
 - tapOn: 'Prev'
-- assertVisible: 'page number 0'
+- assertVisible:
+    id: "pageNumber0"
 - assertVisible: 'Page 1 / 10 '

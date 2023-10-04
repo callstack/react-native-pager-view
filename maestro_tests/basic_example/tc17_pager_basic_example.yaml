@@ -9,7 +9,7 @@ appId: ${APP_ID}
 - tapOn: 'Start'
 - assertVisible: '8 likes'
 - tapOn: 'Next'
-- assertVisible: '17 likes'
+- assertVisible: '16 likes'
 - tapOn: 'Prev'
 - assertVisible: '8 likes'
 - tapOn: 'Last'

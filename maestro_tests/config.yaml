@@ -1,2 +1,5 @@
 flows:
   - '**'
+APP_ID: com.pagerviewexample
+env:
+  APP_ID: com.pagerviewexample
