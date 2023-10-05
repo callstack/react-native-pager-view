@@ -7,7 +7,7 @@ import type {
   OnPageSelectedEventData as PagerViewOnPageSelectedEventData,
   OnPageScrollStateChangedEventData as PageScrollStateChangedNativeEventData,
   NativeProps,
-} from './PagerViewNativeComponent';
+} from './types';
 
 export type {
   PagerViewOnPageScrollEventData,

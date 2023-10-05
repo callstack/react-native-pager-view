@@ -12,6 +12,7 @@ import {
   Alert,
   I18nManager,
   DevSettings,
+  Platform,
 } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -32,6 +33,7 @@ import CustomTabBarExample from './tabView/CustomTabBarExample';
 import CoverflowExample from './tabView/CoverflowExample';
 import ReanimatedOnPageScrollExample from './ReanimatedOnPageScrollExample';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { LegacyBasicPagerViewExample } from './LegacyBasicPagerViewExample';
 
 const examples = [
   { component: BasicPagerViewExample, name: 'Basic Example' },
@@ -63,6 +65,13 @@ const examples = [
   },
   { component: CoverflowExample, name: 'CoverflowExample' },
 ];
+
+if (Platform.OS === 'ios') {
+  examples.unshift({
+    component: LegacyBasicPagerViewExample,
+    name: '❌ Legacy Basic Example',
+  });
+}
 
 function App() {
   const navigation = useNavigation();

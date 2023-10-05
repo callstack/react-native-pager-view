@@ -1,3 +1,6 @@
+/*
+  TODO: A comment describing the purpose of this file
+*/
 import type { HostComponent } from 'react-native';
 import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
@@ -12,5 +15,5 @@ export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
 });
 
 export default codegenNativeComponent<NativeProps>(
-  'RNCViewPager'
+  'LEGACY_RNCViewPager'
 ) as HostComponent<NativeProps>;

@@ -1,18 +1,23 @@
 import React from 'react';
 import { Platform, Keyboard } from 'react-native';
 import { I18nManager } from 'react-native';
+import type * as ReactNative from 'react-native';
+
 import type {
+  NativeProps as PagerViewProps,
   OnPageScrollEventData,
   OnPageScrollStateChangedEventData,
   OnPageSelectedEventData,
-} from './PagerViewNativeComponent';
-import type * as ReactNative from 'react-native';
-
-import type { NativeProps as PagerViewProps } from './PagerViewNativeComponent';
+} from './types';
 import { childrenWithOverriddenStyle } from './utils';
-import PagerViewView, {
+
+import PagerViewComponent, {
   Commands as PagerViewCommands,
 } from './PagerViewNativeComponent';
+
+import LEGACY_PagerViewComponent, {
+  Commands as LEGACY_PagerViewCommands,
+} from './LEGACY_PagerViewNativeComponent';
 
 /**
  * Container that allows to flip left and right between child views. Each
@@ -58,7 +63,7 @@ import PagerViewView, {
 
 export class PagerView extends React.Component<PagerViewProps> {
   private isScrolling = false;
-  pagerView: React.ElementRef<typeof PagerViewView> | null = null;
+  pagerView: React.ElementRef<typeof PagerViewComponent> | null = null;
 
   private _onPageScroll = (
     e: ReactNative.NativeSyntheticEvent<OnPageScrollEventData>
@@ -98,7 +103,11 @@ export class PagerView extends React.Component<PagerViewProps> {
    */
   public setPage = (selectedPage: number) => {
     if (this.pagerView) {
-      PagerViewCommands.setPage(this.pagerView, selectedPage);
+      if (this.props.useLegacy) {
+        LEGACY_PagerViewCommands.setPage(this.pagerView, selectedPage);
+      } else {
+        PagerViewCommands.setPage(this.pagerView, selectedPage);
+      }
     }
   };
 
@@ -108,7 +117,14 @@ export class PagerView extends React.Component<PagerViewProps> {
    */
   public setPageWithoutAnimation = (selectedPage: number) => {
     if (this.pagerView) {
-      PagerViewCommands.setPageWithoutAnimation(this.pagerView, selectedPage);
+      if (this.props.useLegacy) {
+        LEGACY_PagerViewCommands.setPageWithoutAnimation(
+          this.pagerView,
+          selectedPage
+        );
+      } else {
+        PagerViewCommands.setPageWithoutAnimation(this.pagerView, selectedPage);
+      }
     }
   };
 
@@ -119,10 +135,17 @@ export class PagerView extends React.Component<PagerViewProps> {
    */
   public setScrollEnabled = (scrollEnabled: boolean) => {
     if (this.pagerView) {
-      PagerViewCommands.setScrollEnabledImperatively(
-        this.pagerView,
-        scrollEnabled
-      );
+      if (this.props.useLegacy) {
+        LEGACY_PagerViewCommands.setScrollEnabledImperatively(
+          this.pagerView,
+          scrollEnabled
+        );
+      } else {
+        PagerViewCommands.setScrollEnabledImperatively(
+          this.pagerView,
+          scrollEnabled
+        );
+      }
     }
   };
 
@@ -143,8 +166,22 @@ export class PagerView extends React.Component<PagerViewProps> {
   }
 
   render() {
-    return (
-      <PagerViewView
+    return this.props.useLegacy ? (
+      <LEGACY_PagerViewComponent
+        {...this.props}
+        ref={(ref) => {
+          this.pagerView = ref;
+        }}
+        style={this.props.style}
+        layoutDirection={this.deducedLayoutDirection}
+        onPageScroll={this._onPageScroll}
+        onPageScrollStateChanged={this._onPageScrollStateChanged}
+        onPageSelected={this._onPageSelected}
+        onMoveShouldSetResponderCapture={this._onMoveShouldSetResponderCapture}
+        children={childrenWithOverriddenStyle(this.props.children)}
+      />
+    ) : (
+      <PagerViewComponent
         {...this.props}
         ref={(ref) => {
           this.pagerView = ref;
