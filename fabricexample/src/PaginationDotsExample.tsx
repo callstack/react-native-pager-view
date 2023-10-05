@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
   },
   progressContainer: { flex: 0.1, backgroundColor: '#63a4ff' },
   center: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     alignContent: 'center',
