@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "RNCPagerViewComponentView.h"
-// #import "RNCPagerScrollView.h"
+// #import "RNCPagerScrollView.h"   // PR -> https://github.com/callstack/react-native-pager-view/pull/705
 // #import <RNCViewPager/RNCViewPagerComponentDescriptor.h>
 #import <react/renderer/components/RNCViewPager/ComponentDescriptors.h>
 #import <react/renderer/components/RNCViewPager/EventEmitters.h>
@@ -21,6 +21,8 @@ using namespace facebook::react;
 @end
 
 @implementation RNCPagerViewComponentView {
+    // RNCPagerScrollView *_scrollView; // PR -> https://github.com/callstack/react-native-pager-view/pull/705
+
     // RNCViewPagerShadowNode::ConcreteState::Shared _state;
     // RNCPagerScrollView *_scrollView;
     // UIView *_containerView;
@@ -65,7 +67,7 @@ using namespace facebook::react;
         _props = defaultProps;
         // _initialPage = -1;
         
-        // _scrollView = [[RNCPagerScrollView alloc] initWithFrame:self.bounds];
+        _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds]; // PR -> https://github.com/callstack/react-native-pager-view/pull/705
         
         // _scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         // _scrollView.delaysContentTouches = NO;
@@ -97,6 +99,7 @@ using namespace facebook::react;
 }
 
 
+// PR -> https://github.com/callstack/react-native-pager-view/pull/705
 // - (void)didMoveToWindow {
 //     // Disable scroll view pan gesture for navigation controller screen edge go back gesture
 //     if (self.reactViewController.navigationController != nil && self.reactViewController.navigationController.interactivePopGestureRecognizer != nil) {
