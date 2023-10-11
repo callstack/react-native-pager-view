@@ -1,7 +1,7 @@
 #ifdef RCT_NEW_ARCH_ENABLED
 
 #import <Foundation/Foundation.h>
-#import "RNCPagerViewComponentView.h"
+#import "LEGACY_RNCPagerViewComponentView.h"
 // #import "RNCPagerScrollView.h"
 // #import <RNCViewPager/RNCViewPagerComponentDescriptor.h>
 #import <react/renderer/components/RNCViewPager/ComponentDescriptors.h>
@@ -424,7 +424,7 @@ using namespace facebook::react;
 
 @end
 
-Class<RCTComponentViewProtocol> RNCViewPagerCls(void)
+Class<RCTComponentViewProtocol> LEGACY_RNCViewPagerCls(void)
 {
     return RNCPagerViewComponentView.class;
 }

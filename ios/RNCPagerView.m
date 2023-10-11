@@ -5,7 +5,7 @@
 
 #import "UIViewController+CreateExtension.h"
 #import "RCTOnPageScrollEvent.h"
-#import "RNCPagerScrollView.h"
+// #import "RNCPagerScrollView.h"
 #import "RCTOnPageScrollStateChanged.h"
 #import "React/RCTUIManagerObserverCoordinator.h"
 #import "RCTOnPageSelected.h"
