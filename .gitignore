@@ -47,12 +47,6 @@ npm-debug.log
 yarn-debug.log
 yarn-error.log
 
-# BUCK
-buck-out/
-\.buckd/
-android/app/libs
-android/keystores/debug.keystore
-
 # Expo
 .expo/*
 
@@ -76,4 +70,6 @@ lefthook.yml
 .cxx
 
 #Testing
+/coverage
 example/coverage
+fabricexample/coverage
