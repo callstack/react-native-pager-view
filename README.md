@@ -24,12 +24,6 @@ This component allows the user to swipe left and right through pages of data. Un
 | iOS        | iOS support |
 | ViewPager1 | ViewPager2  |
 
-## New architecture support (Fabric)
-
-This library supports both architectures (Paper and Fabric). If you would like enable new architecture, please run below command:
-
-`yarn add react-native-pager-view@newarch`
-
 ## Migration
 
 In version **6.x** support for `transitionStyle` property has been dropped. More information [here](https://github.com/callstack/react-native-pager-view/blob/master/MIGRATION.md).
@@ -39,32 +33,6 @@ In version **6.x** support for `transitionStyle` property has been dropped. More
 ## Getting started
 
 `yarn add react-native-pager-view`
-
-## New architecture setup (Fabric)
-
-This library supports new architecture! We have two example folders one for each architecture. If you are using this library in your own project there some extra steps needed.
-
-### iOS
-
-Install pods with this flag inside `ios` folder:
-
-```sh
-RCT_NEW_ARCH_ENABLED=1 bundle exec pod install
-```
-
-### Android
-
-Set `newArchEnabled` to `true` inside `android/gradle.properties` and then run:
-
-```sh
-yarn android
-```
-
-If you have issues with running android build you can try to generate codegen before the build using this command:
-
-```sh
-cd android && ./gradlew generateCodegenArtifactsFromSchema
-```
 
 ## Linking
 
