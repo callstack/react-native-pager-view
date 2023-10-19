@@ -14,11 +14,11 @@ import PagerViewNativeComponent, {
   OnPageScrollStateChangedEventData,
   OnPageSelectedEventData,
   NativeProps as PagerViewProps,
-} from './PagerViewNativeComponent';
+} from './NEW_IMPL/PagerViewNativeComponent';
 
 import LEGACY_PagerViewNativeComponent, {
   LEGACY_PagerViewNativeCommands,
-} from './LEGACY_PagerViewNativeComponent';
+} from './LEGACY_IMPL/LEGACY_PagerViewNativeComponent';
 
 /**
  * Container that allows to flip left and right between child views. Each

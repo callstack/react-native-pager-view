@@ -4,14 +4,14 @@
 #import "LEGACY_RNCPagerViewComponentView.h"
 // #import "RNCPagerScrollView.h"
 // #import <RNCViewPager/RNCViewPagerComponentDescriptor.h>
-#import <react/renderer/components/RNCViewPager/ComponentDescriptors.h>
-#import <react/renderer/components/RNCViewPager/EventEmitters.h>
-#import <react/renderer/components/RNCViewPager/Props.h>
-#import <react/renderer/components/RNCViewPager/RCTComponentViewHelpers.h>
-// #import <react/renderer/components/LEGACY_RNCViewPager/ComponentDescriptors.h>
-// #import <react/renderer/components/LEGACY_RNCViewPager/EventEmitters.h>
-// #import <react/renderer/components/LEGACY_RNCViewPager/Props.h>
-// #import <react/renderer/components/LEGACY_RNCViewPager/RCTComponentViewHelpers.h>
+// #import <react/renderer/components/RNCViewPager/ComponentDescriptors.h>
+// #import <react/renderer/components/RNCViewPager/EventEmitters.h>
+// #import <react/renderer/components/RNCViewPager/Props.h>
+// #import <react/renderer/components/RNCViewPager/RCTComponentViewHelpers.h>
+#import <react/renderer/components/LEGACY_RNCViewPager/ComponentDescriptors.h>
+#import <react/renderer/components/LEGACY_RNCViewPager/EventEmitters.h>
+#import <react/renderer/components/LEGACY_RNCViewPager/Props.h>
+#import <react/renderer/components/LEGACY_RNCViewPager/RCTComponentViewHelpers.h>
 
 #import "RCTFabricComponentsPlugins.h"
 #import "React/RCTConversions.h"

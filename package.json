@@ -118,9 +118,18 @@
     "useTabs": false
   },
   "codegenConfig": {
-    "name": "RNCViewPager",
-    "type": "components",
-    "jsSrcsDir": "src"
+    "libraries": [
+      {
+        "name": "RNCViewPager",
+        "type": "components",
+        "jsSrcsDir": "src/NEW_IMPL"
+      },
+      {
+        "name": "LEGACY_RNCViewPager",
+        "type": "components",
+        "jsSrcsDir": "src/LEGACY_IMPL"
+      }
+    ]
   },
   "react-native-builder-bob": {
     "source": "src",
