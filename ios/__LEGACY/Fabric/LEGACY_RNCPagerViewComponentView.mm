@@ -21,7 +21,7 @@
 
 using namespace facebook::react;
 
-@interface LEGACY_RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
+@interface LEGACY_RNCPagerViewComponentView () <RCTLEGACY_RNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
 @end
 
 @implementation LEGACY_RNCPagerViewComponentView {
@@ -33,14 +33,14 @@ using namespace facebook::react;
 }
 
 - (void)initializeNativePageViewController {
-    const auto &viewProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
+    const auto &viewProps = *std::static_pointer_cast<const LEGACY_RNCViewPagerProps>(_props);
     NSDictionary *options = @{ UIPageViewControllerOptionInterPageSpacingKey: @(viewProps.pageMargin) };
     UIPageViewControllerNavigationOrientation orientation = UIPageViewControllerNavigationOrientationHorizontal;
     switch (viewProps.orientation) {
-        case RNCViewPagerOrientation::Horizontal:
+        case LEGACY_RNCViewPagerOrientation::Horizontal:
             orientation = UIPageViewControllerNavigationOrientationHorizontal;
             break;
-        case RNCViewPagerOrientation::Vertical:
+        case LEGACY_RNCViewPagerOrientation::Vertical:
             orientation = UIPageViewControllerNavigationOrientationVertical;
             break;
     }
@@ -65,7 +65,7 @@ using namespace facebook::react;
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
-        static const auto defaultProps = std::make_shared<const RNCViewPagerProps>();
+        static const auto defaultProps = std::make_shared<const LEGACY_RNCViewPagerProps>();
         _props = defaultProps;
         // _initialPage = -1;
         
@@ -145,13 +145,13 @@ using namespace facebook::react;
     _currentIndex = -1;
 }
 
-- (void)shouldDismissKeyboard:(RNCViewPagerKeyboardDismissMode)dismissKeyboard {
+- (void)shouldDismissKeyboard:(LEGACY_RNCViewPagerKeyboardDismissMode)dismissKeyboard {
     UIScrollViewKeyboardDismissMode dismissKeyboardMode = UIScrollViewKeyboardDismissModeNone;
     switch (dismissKeyboard) {
-        case RNCViewPagerKeyboardDismissMode::None:
+        case LEGACY_RNCViewPagerKeyboardDismissMode::None:
             dismissKeyboardMode = UIScrollViewKeyboardDismissModeNone;
             break;
-        case RNCViewPagerKeyboardDismissMode::OnDrag:
+        case LEGACY_RNCViewPagerKeyboardDismissMode::OnDrag:
             dismissKeyboardMode = UIScrollViewKeyboardDismissModeOnDrag;
             break;
     }
@@ -160,8 +160,8 @@ using namespace facebook::react;
 
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props oldProps:(const facebook::react::Props::Shared &)oldProps{
-    const auto &oldScreenProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
-    const auto &newScreenProps = *std::static_pointer_cast<const RNCViewPagerProps>(props);
+    const auto &oldScreenProps = *std::static_pointer_cast<const LEGACY_RNCViewPagerProps>(_props);
+    const auto &newScreenProps = *std::static_pointer_cast<const LEGACY_RNCViewPagerProps>(props);
     
     // change index only once
     if (_currentIndex == -1) {
@@ -192,7 +192,7 @@ using namespace facebook::react;
 }
 
 - (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args {
-    RCTRNCViewPagerHandleCommand(self, commandName, args);
+    RCTLEGACY_RNCViewPagerHandleCommand(self, commandName, args);
 }
 
 #pragma mark - Internal methods
@@ -252,9 +252,9 @@ using namespace facebook::react;
         __strong LEGACY_RNCPagerViewComponentView *strongSelf = weakSelf;
         [strongSelf enableSwipe];
         if (strongSelf->_eventEmitter != nullptr ) {
-            const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(strongSelf->_eventEmitter);
+            const auto strongEventEmitter = *std::dynamic_pointer_cast<const LEGACY_RNCViewPagerEventEmitter>(strongSelf->_eventEmitter);
             int position = (int) index;
-            strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
+            strongEventEmitter.onPageSelected(LEGACY_RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
             strongSelf->_currentIndex = index;
         }
     }];
@@ -286,8 +286,8 @@ using namespace facebook::react;
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
-    strongEventEmitter.onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Dragging });
+    const auto strongEventEmitter = *std::dynamic_pointer_cast<const LEGACY_RNCViewPagerEventEmitter>(_eventEmitter);
+    strongEventEmitter.onPageScrollStateChanged(LEGACY_RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  LEGACY_RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Dragging });
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
@@ -305,13 +305,13 @@ using namespace facebook::react;
         }
     }
     
-    const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
-    strongEventEmitter.onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Settling });
+    const auto strongEventEmitter = *std::dynamic_pointer_cast<const LEGACY_RNCViewPagerEventEmitter>(_eventEmitter);
+    strongEventEmitter.onPageScrollStateChanged(LEGACY_RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  LEGACY_RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Settling });
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
-    strongEventEmitter.onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Idle });
+    const auto strongEventEmitter = *std::dynamic_pointer_cast<const LEGACY_RNCViewPagerEventEmitter>(_eventEmitter);
+    strongEventEmitter.onPageScrollStateChanged(LEGACY_RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  LEGACY_RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Idle });
 }
 
 - (BOOL)isHorizontal {
@@ -371,9 +371,9 @@ using namespace facebook::react;
     
     float interpolatedOffset = absoluteOffset * labs(_destinationIndex - _currentIndex);
     
-    const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
+    const auto strongEventEmitter = *std::dynamic_pointer_cast<const LEGACY_RNCViewPagerEventEmitter>(_eventEmitter);
     int eventPosition = (int) position;
-    strongEventEmitter.onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(eventPosition), .offset = interpolatedOffset});
+    strongEventEmitter.onPageScroll(LEGACY_RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(eventPosition), .offset = interpolatedOffset});
 
     //This is temporary workaround to allow animations based on onPageScroll event
     //until Fabric implements proper NativeAnimationDriver
@@ -397,9 +397,9 @@ using namespace facebook::react;
         NSUInteger currentIndex = [_nativeChildrenViewControllers indexOfObject:currentVC];
         _currentIndex = currentIndex;
         int position = (int) currentIndex;
-        const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
-        strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
-        strongEventEmitter.onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(position), .offset =  0.0});
+        const auto strongEventEmitter = *std::dynamic_pointer_cast<const LEGACY_RNCViewPagerEventEmitter>(_eventEmitter);
+        strongEventEmitter.onPageSelected(LEGACY_RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
+        strongEventEmitter.onPageScroll(LEGACY_RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(position), .offset =  0.0});
     }
 }
 
