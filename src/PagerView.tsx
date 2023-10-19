@@ -3,7 +3,10 @@ import { Platform, Keyboard } from 'react-native';
 import { I18nManager } from 'react-native';
 import type * as ReactNative from 'react-native';
 
-import { childrenWithOverriddenStyle } from './utils';
+import {
+  LEGACY_childrenWithOverriddenStyle,
+  childrenWithOverriddenStyle,
+} from './utils';
 
 import PagerViewNativeComponent, {
   PagerViewNativeCommands,
@@ -179,7 +182,7 @@ export class PagerView extends React.Component<PagerViewProps> {
         onPageScrollStateChanged={this._onPageScrollStateChanged}
         onPageSelected={this._onPageSelected}
         onMoveShouldSetResponderCapture={this._onMoveShouldSetResponderCapture}
-        children={childrenWithOverriddenStyle(this.props.children)}
+        children={LEGACY_childrenWithOverriddenStyle(this.props.children)}
       />
     ) : (
       <PagerViewNativeComponent
@@ -187,13 +190,27 @@ export class PagerView extends React.Component<PagerViewProps> {
         ref={(ref) => {
           this.pagerView = ref;
         }}
-        style={this.props.style}
+        style={[
+          this.props.style,
+          this.props.pageMargin
+            ? {
+                marginHorizontal: -this.props.pageMargin / 2,
+              }
+            : null,
+          {
+            flexDirection:
+              this.props.orientation === 'vertical' ? 'column' : 'row',
+          },
+        ]}
         layoutDirection={this.deducedLayoutDirection}
         onPageScroll={this._onPageScroll}
         onPageScrollStateChanged={this._onPageScrollStateChanged}
         onPageSelected={this._onPageSelected}
         onMoveShouldSetResponderCapture={this._onMoveShouldSetResponderCapture}
-        children={childrenWithOverriddenStyle(this.props.children)}
+        children={childrenWithOverriddenStyle(
+          this.props.children,
+          this.props.pageMargin
+        )}
       />
     );
   }
