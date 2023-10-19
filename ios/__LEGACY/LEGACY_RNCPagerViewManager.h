@@ -6,7 +6,7 @@
 #import "LEGACY_RNCPagerView.h"
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNCPagerViewManager : RCTViewManager
+@interface LEGACY_RNCPagerViewManager : RCTViewManager
 
 @end
 

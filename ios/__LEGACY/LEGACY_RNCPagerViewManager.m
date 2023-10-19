@@ -1,7 +1,7 @@
 
 #import "LEGACY_RNCPagerViewManager.h"
 
-@implementation RNCPagerViewManager
+@implementation LEGACY_RNCPagerViewManager
 
 #pragma mark - RTC
 
@@ -25,9 +25,9 @@ RCT_EXPORT_VIEW_PROPERTY(layoutDirection, NSString)
     [self.bridge.uiManager addUIBlock:^(
                                         RCTUIManager *uiManager,
                                         NSDictionary<NSNumber *, UIView *> *viewRegistry) {
-        RNCPagerView *view = (RNCPagerView *)viewRegistry[reactTag];
-        if (!view || ![view isKindOfClass:[RNCPagerView class]]) {
-            RCTLogError(@"Cannot find RNCPagerView with tag #%@", reactTag);
+        LEGACY_RNCPagerView *view = (LEGACY_RNCPagerView *)viewRegistry[reactTag];
+        if (!view || ![view isKindOfClass:[LEGACY_RNCPagerView class]]) {
+            RCTLogError(@"Cannot find LEGACY_RNCPagerView with tag #%@", reactTag);
             return;
         }
         if (!animated || !view.animating) {
@@ -42,9 +42,9 @@ RCT_EXPORT_VIEW_PROPERTY(layoutDirection, NSString)
     [self.bridge.uiManager addUIBlock:^(
                                         RCTUIManager *uiManager,
                                         NSDictionary<NSNumber *, UIView *> *viewRegistry) {
-        RNCPagerView *view = (RNCPagerView *)viewRegistry[reactTag];
-        if (!view || ![view isKindOfClass:[RNCPagerView class]]) {
-            RCTLogError(@"Cannot find RNCPagerView with tag #%@", reactTag);
+        LEGACY_RNCPagerView *view = (LEGACY_RNCPagerView *)viewRegistry[reactTag];
+        if (!view || ![view isKindOfClass:[LEGACY_RNCPagerView class]]) {
+            RCTLogError(@"Cannot find LEGACY_RNCPagerView with tag #%@", reactTag);
             return;
         }
         [view shouldScroll:enabled];
@@ -70,17 +70,17 @@ RCT_EXPORT_METHOD(setScrollEnabled
     [self changeScrollEnabled:reactTag enabled:isEnabled];
 }
 
-RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, RNCPagerView) {
+RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, LEGACY_RNCPagerView) {
     [view shouldScroll:[RCTConvert BOOL:json]];
 }
 
-RCT_CUSTOM_VIEW_PROPERTY(keyboardDismissMode, NSString, RNCPagerView) {
+RCT_CUSTOM_VIEW_PROPERTY(keyboardDismissMode, NSString, LEGACY_RNCPagerView) {
     [view shouldDismissKeyboard:[RCTConvert NSString:json]];
 }
 
 
 - (UIView *)view {
-    return [[RNCPagerView alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
+    return [[LEGACY_RNCPagerView alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
 }
 
 @end

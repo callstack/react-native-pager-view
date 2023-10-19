@@ -8,6 +8,10 @@
 #import <react/renderer/components/RNCViewPager/EventEmitters.h>
 #import <react/renderer/components/RNCViewPager/Props.h>
 #import <react/renderer/components/RNCViewPager/RCTComponentViewHelpers.h>
+// #import <react/renderer/components/LEGACY_RNCViewPager/ComponentDescriptors.h>
+// #import <react/renderer/components/LEGACY_RNCViewPager/EventEmitters.h>
+// #import <react/renderer/components/LEGACY_RNCViewPager/Props.h>
+// #import <react/renderer/components/LEGACY_RNCViewPager/RCTComponentViewHelpers.h>
 
 #import "RCTFabricComponentsPlugins.h"
 #import "React/RCTConversions.h"
@@ -17,10 +21,10 @@
 
 using namespace facebook::react;
 
-@interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
+@interface LEGACY_RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
 @end
 
-@implementation RNCPagerViewComponentView {
+@implementation LEGACY_RNCPagerViewComponentView {
     // RNCViewPagerShadowNode::ConcreteState::Shared _state;
     // RNCPagerScrollView *_scrollView;
     // UIView *_containerView;
@@ -240,12 +244,12 @@ using namespace facebook::react;
         return;
     }
     
-    __weak RNCPagerViewComponentView *weakSelf = self;
+    __weak LEGACY_RNCPagerViewComponentView *weakSelf = self;
     [_nativePageViewController setViewControllers:@[[_nativeChildrenViewControllers objectAtIndex:index]]
                                         direction:direction
                                          animated:animated
                                        completion:^(BOOL finished) {
-        __strong RNCPagerViewComponentView *strongSelf = weakSelf;
+        __strong LEGACY_RNCPagerViewComponentView *strongSelf = weakSelf;
         [strongSelf enableSwipe];
         if (strongSelf->_eventEmitter != nullptr ) {
             const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(strongSelf->_eventEmitter);
@@ -418,7 +422,7 @@ using namespace facebook::react;
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
 {
-    return concreteComponentDescriptorProvider<RNCViewPagerComponentDescriptor>();
+    return concreteComponentDescriptorProvider<LEGACY_RNCViewPagerComponentDescriptor>();
 }
 
 
@@ -426,7 +430,7 @@ using namespace facebook::react;
 
 Class<RCTComponentViewProtocol> LEGACY_RNCViewPagerCls(void)
 {
-    return RNCPagerViewComponentView.class;
+    return LEGACY_RNCPagerViewComponentView.class;
 }
 
 #endif

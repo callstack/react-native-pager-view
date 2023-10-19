@@ -9,7 +9,7 @@
 #import "RCTOnPageSelected.h"
 #import <math.h>
 
-@interface RNCPagerView () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
+@interface LEGACY_RNCPagerView () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
 
 @property(nonatomic, strong) UIPageViewController *reactPageViewController;
 @property(nonatomic, strong) RCTEventDispatcher *eventDispatcher;
@@ -27,7 +27,7 @@
 
 @end
 
-@implementation RNCPagerView {
+@implementation LEGACY_RNCPagerView {
     uint16_t _coalescingKey;
 }
 
@@ -163,7 +163,7 @@
         return;
     }
 
-    __weak RNCPagerView *weakSelf = self;
+    __weak LEGACY_RNCPagerView *weakSelf = self;
     uint16_t coalescingKey = _coalescingKey++;
     
     if (animated == YES) {
