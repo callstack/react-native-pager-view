@@ -122,12 +122,12 @@
       {
         "name": "RNCViewPager",
         "type": "components",
-        "jsSrcsDir": "src/NEW_IMPL"
+        "jsSrcsDir": "src/PagerViewNativeComponent"
       },
       {
         "name": "LEGACY_RNCViewPager",
         "type": "components",
-        "jsSrcsDir": "src/LEGACY_IMPL"
+        "jsSrcsDir": "src/LEGACY_PagerViewNativeComponent"
       }
     ]
   },
