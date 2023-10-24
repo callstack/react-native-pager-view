@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android",
-    "ios": "react-native run-ios",
-    "start": "react-native start",
+    "android": "react-native run-android --port 8083",
+    "ios": "react-native run-ios --port 8083",
+    "start": "react-native start --port 8083",
     "pods": "pod-install --quiet",
     "postinstall": "patch-package"
   },

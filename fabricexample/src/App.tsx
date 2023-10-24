@@ -104,7 +104,7 @@ export function Navigation() {
     <NavigationContainer>
       <NavigationStack.Navigator initialRouteName="PagerView Example">
         <NavigationStack.Screen
-          name="PagerView Example"
+          name="PagerView Example (Fabric)"
           component={App}
           options={{
             headerRight: () => (
