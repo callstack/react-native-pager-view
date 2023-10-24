@@ -66,6 +66,24 @@ export class PagerView extends React.Component<PagerViewProps> {
   private isScrolling = false;
   pagerView: React.ElementRef<typeof PagerViewNativeComponent> | null = null;
 
+  private get nativeCommandsWrapper() {
+    return this.props.useLegacy
+      ? LEGACY_PagerViewNativeCommands
+      : PagerViewNativeCommands;
+  }
+
+  private get deducedLayoutDirection() {
+    if (
+      !this.props.layoutDirection ||
+      //@ts-ignore fix it
+      this.props.layoutDirection === 'locale'
+    ) {
+      return I18nManager.isRTL ? 'rtl' : 'ltr';
+    } else {
+      return this.props.layoutDirection;
+    }
+  }
+
   private _onPageScroll = (
     e: ReactNative.NativeSyntheticEvent<OnPageScrollEventData>
   ) => {
@@ -98,17 +116,17 @@ export class PagerView extends React.Component<PagerViewProps> {
     }
   };
 
+  private _onMoveShouldSetResponderCapture = () => {
+    return this.isScrolling;
+  };
+
   /**
    * A helper function to scroll to a specific page in the PagerView.
    * The transition between pages will be animated.
    */
   public setPage = (selectedPage: number) => {
     if (this.pagerView) {
-      if (this.props.useLegacy) {
-        LEGACY_PagerViewNativeCommands.setPage(this.pagerView, selectedPage);
-      } else {
-        PagerViewNativeCommands.setPage(this.pagerView, selectedPage);
-      }
+      this.nativeCommandsWrapper.setPage(this.pagerView, selectedPage);
     }
   };
 
@@ -118,17 +136,10 @@ export class PagerView extends React.Component<PagerViewProps> {
    */
   public setPageWithoutAnimation = (selectedPage: number) => {
     if (this.pagerView) {
-      if (this.props.useLegacy) {
-        LEGACY_PagerViewNativeCommands.setPageWithoutAnimation(
-          this.pagerView,
-          selectedPage
-        );
-      } else {
-        PagerViewNativeCommands.setPageWithoutAnimation(
-          this.pagerView,
-          selectedPage
-        );
-      }
+      this.nativeCommandsWrapper.setPageWithoutAnimation(
+        this.pagerView,
+        selectedPage
+      );
     }
   };
 
@@ -139,35 +150,12 @@ export class PagerView extends React.Component<PagerViewProps> {
    */
   public setScrollEnabled = (scrollEnabled: boolean) => {
     if (this.pagerView) {
-      if (this.props.useLegacy) {
-        LEGACY_PagerViewNativeCommands.setScrollEnabledImperatively(
-          this.pagerView,
-          scrollEnabled
-        );
-      } else {
-        PagerViewNativeCommands.setScrollEnabledImperatively(
-          this.pagerView,
-          scrollEnabled
-        );
-      }
+      this.nativeCommandsWrapper.setScrollEnabledImperatively(
+        this.pagerView,
+        scrollEnabled
+      );
     }
   };
-
-  private _onMoveShouldSetResponderCapture = () => {
-    return this.isScrolling;
-  };
-
-  private get deducedLayoutDirection() {
-    if (
-      !this.props.layoutDirection ||
-      //@ts-ignore fix it
-      this.props.layoutDirection === 'locale'
-    ) {
-      return I18nManager.isRTL ? 'rtl' : 'ltr';
-    } else {
-      return this.props.layoutDirection;
-    }
-  }
 
   render() {
     return this.props.useLegacy ? (
