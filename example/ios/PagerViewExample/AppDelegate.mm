@@ -30,7 +30,7 @@
 /// @return: `true` if the `concurrentRoot` feature is enabled. Otherwise, it returns `false`.
 - (BOOL)concurrentRootEnabled
 {
-  return true;
+  return true; // TODO: Figure out if we should keep this
 }
 
 @end

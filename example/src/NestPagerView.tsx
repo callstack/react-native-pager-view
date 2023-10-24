@@ -27,10 +27,8 @@ export function NestPagerView() {
         >
           <LikeCount />
         </View>
-        {/* <View key="2" testID="2-nd-nested" collapsable={false}>
-          <Text testID="2-nd-nested-title" style={styles.title}> */}
-        <View key="2" collapsable={false}>
-          <Text style={styles.title}>
+        <View key="2" testID="2-nd-nested" collapsable={false}>
+          <Text testID="2-nd-nested-title" style={styles.title}>
             There has two Nest PagerView with horizontal and vertical.
           </Text>
           <AnimatedPagerView
@@ -71,7 +69,7 @@ export function NestPagerView() {
           >
             <View
               key="1"
-              // testID="2-nd-pager-view-2-content"
+              testID="2-nd-pager-view-2-content"
               style={{ backgroundColor: BGCOLOR[3] }}
               collapsable={false}
             >
