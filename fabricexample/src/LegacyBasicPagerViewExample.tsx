@@ -29,7 +29,7 @@ export function LegacyBasicPagerViewExample() {
         pageMargin={10}
         // Lib does not support dynamically orientation change
         orientation="horizontal"
-        useLegacy={true}
+        useLegacy
       >
         {useMemo(
           () =>
