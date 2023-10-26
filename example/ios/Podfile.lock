@@ -377,7 +377,7 @@ PODS:
     - glog
   - react-native-pager-view (7.0.0-rc.0):
     - React-Core
-  - react-native-safe-area-context (3.4.1):
+  - react-native-safe-area-context (4.7.4):
     - React-Core
   - React-NativeModulesApple (0.72.5):
     - hermes-engine
@@ -467,7 +467,6 @@ PODS:
     - React-runtimeexecutor
   - React-utils (0.72.5):
     - glog
-    - hermes-engine
     - RCT-Folly (= 2021.07.22.00)
     - React-debug
   - ReactCommon/turbomodule/bridging (0.72.5):
@@ -752,7 +751,7 @@ SPEC CHECKSUMS:
   React-jsinspector: aef73cbd43b70675f572214d10fa438c89bf11ba
   React-logger: 2e4aee3e11b3ec4fa6cfd8004610bbb3b8d6cca4
   react-native-pager-view: 563a43b511eea680f803ab4fb20bd7525fbde2cc
-  react-native-safe-area-context: 9e40fb181dac02619414ba1294d6c2a807056ab9
+  react-native-safe-area-context: 2cd91d532de12acdb0a9cbc8d43ac72a8e4c897c
   React-NativeModulesApple: 797bc6078d566eef3fb3f74127e6e1d2e945a15f
   React-perflogger: cd8886513f68e1c135a1e79d20575c6489641597
   React-RCTActionSheet: 726d2615ca62a77ce3e2c13d87f65379cdc73498
@@ -781,4 +780,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 3875acd7cb7e8f7782e244f1db71aa5f14571810
 
-COCOAPODS: 1.13.0
+COCOAPODS: 1.12.1
