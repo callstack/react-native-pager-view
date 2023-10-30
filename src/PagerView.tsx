@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, Keyboard } from 'react-native';
+import { Platform, Keyboard, StyleProp, ViewStyle } from 'react-native';
 import { I18nManager } from 'react-native';
 import type * as ReactNative from 'react-native';
 
@@ -157,38 +157,47 @@ export class PagerView extends React.Component<PagerViewProps> {
   };
 
   render() {
-    return this.props.useLegacy ? (
-      <LEGACY_PagerViewNativeComponent
-        {...this.props}
-        ref={(ref) => {
-          this.pagerView = ref;
-        }}
-        style={this.props.style}
-        layoutDirection={this.deducedLayoutDirection}
-        onPageScroll={this._onPageScroll}
-        onPageScrollStateChanged={this._onPageScrollStateChanged}
-        onPageSelected={this._onPageSelected}
-        onMoveShouldSetResponderCapture={this._onMoveShouldSetResponderCapture}
-        children={LEGACY_childrenWithOverriddenStyle(this.props.children)}
-      />
-    ) : (
+    // old iOS `UIPageViewController`-based implementation
+    if (Platform.OS === 'ios' && this.props.useLegacy) {
+      return (
+        <LEGACY_PagerViewNativeComponent
+          {...this.props}
+          ref={(ref) => {
+            this.pagerView = ref;
+          }}
+          style={this.props.style}
+          layoutDirection={this.deducedLayoutDirection}
+          onPageScroll={this._onPageScroll}
+          onPageScrollStateChanged={this._onPageScrollStateChanged}
+          onPageSelected={this._onPageSelected}
+          onMoveShouldSetResponderCapture={
+            this._onMoveShouldSetResponderCapture
+          }
+          children={LEGACY_childrenWithOverriddenStyle(this.props.children)}
+        />
+      );
+    }
+
+    const style: StyleProp<ViewStyle> = [
+      this.props.style,
+      this.props.pageMargin
+        ? {
+            marginHorizontal: -this.props.pageMargin / 2,
+          }
+        : null,
+      {
+        flexDirection: this.props.orientation === 'vertical' ? 'column' : 'row',
+      },
+    ];
+
+    // new iOS `UIScrollView`-based implementation, Android, and other platforms
+    return (
       <PagerViewNativeComponent
         {...this.props}
         ref={(ref) => {
           this.pagerView = ref;
         }}
-        style={[
-          this.props.style,
-          this.props.pageMargin
-            ? {
-                marginHorizontal: -this.props.pageMargin / 2,
-              }
-            : null,
-          {
-            flexDirection:
-              this.props.orientation === 'vertical' ? 'column' : 'row',
-          },
-        ]}
+        style={style}
         layoutDirection={this.deducedLayoutDirection}
         onPageScroll={this._onPageScroll}
         onPageScrollStateChanged={this._onPageScrollStateChanged}

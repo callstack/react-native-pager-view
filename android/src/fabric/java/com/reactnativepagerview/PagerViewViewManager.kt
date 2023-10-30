@@ -164,6 +164,11 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
         return
     }
 
+    @ReactProp(name = "useLegacy")
+    override fun setUseLegacy(view: NestedScrollableHost?, value: Boolean?) {
+        return
+    }
+
     fun goTo(root: NestedScrollableHost?, selectedPage: Int, scrollWithAnimation: Boolean) {
         if (root == null) {
             return
