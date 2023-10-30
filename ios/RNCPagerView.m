@@ -5,7 +5,6 @@
 
 #import "UIViewController+CreateExtension.h"
 #import "RCTOnPageScrollEvent.h"
-// #import "RNCPagerScrollView.h"
 #import "RCTOnPageScrollStateChanged.h"
 #import "React/RCTUIManagerObserverCoordinator.h"
 #import "RCTOnPageSelected.h"
@@ -16,7 +15,6 @@
 @property(nonatomic, strong) id<RCTEventDispatcherProtocol> eventDispatcher;
 
 @property(nonatomic, strong) UIScrollView *scrollView;
-// @property(nonatomic, strong) RNCPagerScrollView *scrollView;
 @property(nonatomic, strong) UIView *containerView;
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated;
@@ -40,13 +38,6 @@
     }
     return self;
 }
-
-// - (void)didMoveToWindow {
-//     // Disable scroll view pan gesture for navigation controller screen edge go back gesture
-//     if (self.reactViewController.navigationController != nil && self.reactViewController.navigationController.interactivePopGestureRecognizer != nil) {
-//         [self.scrollView.panGestureRecognizer requireGestureRecognizerToFail:self.reactViewController.navigationController.interactivePopGestureRecognizer];
-//     }
-// }
 
 - (void)didUpdateReactSubviews {
     [self updateContentSizeIfNeeded];
@@ -73,7 +64,6 @@
 
 - (void)embed {
     _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
-    // _scrollView = [[RNCPagerScrollView alloc] initWithFrame:self.bounds];
     _scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     _scrollView.delaysContentTouches = NO;
     _scrollView.delegate = self;

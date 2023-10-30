@@ -2,12 +2,6 @@
 
 #import <Foundation/Foundation.h>
 #import "LEGACY_RNCPagerViewComponentView.h"
-// #import "RNCPagerScrollView.h"
-// #import <RNCViewPager/RNCViewPagerComponentDescriptor.h>
-// #import <react/renderer/components/RNCViewPager/ComponentDescriptors.h>
-// #import <react/renderer/components/RNCViewPager/EventEmitters.h>
-// #import <react/renderer/components/RNCViewPager/Props.h>
-// #import <react/renderer/components/RNCViewPager/RCTComponentViewHelpers.h>
 #import <react/renderer/components/LEGACY_RNCViewPager/ComponentDescriptors.h>
 #import <react/renderer/components/LEGACY_RNCViewPager/EventEmitters.h>
 #import <react/renderer/components/LEGACY_RNCViewPager/Props.h>
@@ -25,9 +19,6 @@ using namespace facebook::react;
 @end
 
 @implementation LEGACY_RNCPagerViewComponentView {
-    // RNCViewPagerShadowNode::ConcreteState::Shared _state;
-    // RNCPagerScrollView *_scrollView;
-    // UIView *_containerView;
     LayoutMetrics _layoutMetrics;
     UIScrollView *scrollView;
 }
@@ -67,22 +58,6 @@ using namespace facebook::react;
     if (self = [super initWithFrame:frame]) {
         static const auto defaultProps = std::make_shared<const LEGACY_RNCViewPagerProps>();
         _props = defaultProps;
-        // _initialPage = -1;
-        
-        // _scrollView = [[RNCPagerScrollView alloc] initWithFrame:self.bounds];
-        
-        // _scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        // _scrollView.delaysContentTouches = NO;
-        // _scrollView.delegate = self;
-        // _scrollView.pagingEnabled = YES;
-        // _scrollView.showsHorizontalScrollIndicator = NO;
-        // _scrollView.showsVerticalScrollIndicator = NO;
-        
-        // [self addSubview:_scrollView];
-        
-        // _containerView = [[UIView alloc] initWithFrame:CGRectZero];
-        
-        // [_scrollView addSubview:_containerView];
         _nativeChildrenViewControllers = [[NSMutableArray alloc] init];
         _currentIndex = -1;
         _destinationIndex = -1;
@@ -99,14 +74,6 @@ using namespace facebook::react;
         [self goTo:_currentIndex animated:NO];
     }
 }
-
-
-// - (void)didMoveToWindow {
-//     // Disable scroll view pan gesture for navigation controller screen edge go back gesture
-//     if (self.reactViewController.navigationController != nil && self.reactViewController.navigationController.interactivePopGestureRecognizer != nil) {
-//            [_scrollView.panGestureRecognizer requireGestureRecognizerToFail:self.reactViewController.navigationController.interactivePopGestureRecognizer];
-//        }
-// }
 
 #pragma mark - React API
 

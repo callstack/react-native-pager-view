@@ -2,9 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "RNCPagerViewComponentView.h"
-// #import "RNCPagerScrollView.h"   // PR -> https://github.com/callstack/react-native-pager-view/pull/705
 #import <RNCViewPager/RNCViewPagerComponentDescriptor.h>
-// #import <react/renderer/components/RNCViewPager/ComponentDescriptors.h>
 #import <react/renderer/components/RNCViewPager/EventEmitters.h>
 #import <react/renderer/components/RNCViewPager/Props.h>
 #import <react/renderer/components/RNCViewPager/RCTComponentViewHelpers.h>
@@ -21,10 +19,6 @@ using namespace facebook::react;
 @end
 
 @implementation RNCPagerViewComponentView {
-    // RNCPagerScrollView *_scrollView; // PR -> https://github.com/callstack/react-native-pager-view/pull/705
-
-    // LayoutMetrics _layoutMetrics;
-    // UIScrollView *scrollView;
     RNCViewPagerShadowNode::ConcreteState::Shared _state;
     UIScrollView *_scrollView;
     UIView *_containerView;
@@ -40,7 +34,7 @@ using namespace facebook::react;
         _props = defaultProps;
         _initialPage = -1;
         
-        _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds]; // PR -> https://github.com/callstack/react-native-pager-view/pull/705
+        _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
         
         _scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         _scrollView.delaysContentTouches = NO;
@@ -58,16 +52,6 @@ using namespace facebook::react;
     
     return self;
 }
-
-
-
-// PR -> https://github.com/callstack/react-native-pager-view/pull/705
-// - (void)didMoveToWindow {
-//     // Disable scroll view pan gesture for navigation controller screen edge go back gesture
-//     if (self.reactViewController.navigationController != nil && self.reactViewController.navigationController.interactivePopGestureRecognizer != nil) {
-//            [_scrollView.panGestureRecognizer requireGestureRecognizerToFail:self.reactViewController.navigationController.interactivePopGestureRecognizer];
-//        }
-// }
 
 #pragma mark - React API
 
