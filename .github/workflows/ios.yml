@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - master
+      - next
     paths:
       - '.github/workflows/ios.yml'
       - 'ios/**'
@@ -11,6 +12,7 @@ on:
   push:
     branches:
       - master
+      - next
 
 concurrency:
   group: ${{ github.ref }}-ios
