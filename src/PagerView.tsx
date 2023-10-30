@@ -61,7 +61,6 @@ import LEGACY_PagerViewNativeComponent, {
  * }
  * ```
  */
-
 export class PagerView extends React.Component<PagerViewProps> {
   private isScrolling = false;
   pagerView: React.ElementRef<typeof PagerViewNativeComponent> | null = null;

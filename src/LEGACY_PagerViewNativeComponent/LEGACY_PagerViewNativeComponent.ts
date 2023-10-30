@@ -1,5 +1,13 @@
 /*
-  TODO: A comment describing the purpose of this file **and why the types are duplicated between here and `PagerViewNativeComponent.tsx`**
+  Note: The types below are duplicated between this file and `src/PagerViewNativeComponent/PagerViewNativeComponent.ts`.
+
+  This is on purpose. Firstly, we're declaring two native modules with two different iOS implementation flavors, but the same API.
+  Secondly, as these files serve as a reference point for React Native's new architecture Codegen process (which takes care of the
+  automatic generation of the native modules) we cannot extract the types into a separate file, or declare both native modules
+  in one file, as Codegen supports neither of these workarounds at the time of writing.
+
+  In order to make things as intuitive as possible, the duplicated types in this file are *not* exported, as they are meant for use
+  in this file only, by Codegen-related functions.
 */
 import type * as React from 'react';
 import type { HostComponent, ViewProps } from 'react-native';
