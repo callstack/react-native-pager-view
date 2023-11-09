@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { StyleSheet, View, SafeAreaView, Animated, Text } from 'react-native';
 
 import PagerView from 'react-native-pager-view';
@@ -9,8 +9,20 @@ import { useNavigationPanel } from './hook/useNavigationPanel';
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
+function Cell({ page, index }) {
+  React.useEffect(() => {
+    console.log(`🚀🚀🚀🚀🚀🚀🚀🚀 ${page.key}`);
+  }, []);
+
+  return (
+    <>
+      <LikeCount />
+      <Text testID={`pageNumber${index}`}>{`page number ${index}`}</Text>
+    </>
+  );
+}
 export function BasicPagerViewExample() {
-  const { ref, ...navigationPanel } = useNavigationPanel();
+  const { ref, ...navigationPanel } = useNavigationPanel(2);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -32,19 +44,18 @@ export function BasicPagerViewExample() {
       >
         {useMemo(
           () =>
-            navigationPanel.pages.map((page, index) => (
-              <View
-                testID="pager-view-content"
-                key={page.key}
-                style={page.style}
-                collapsable={false}
-              >
-                <LikeCount />
-                <Text
-                  testID={`pageNumber${index}`}
-                >{`page number ${index}`}</Text>
-              </View>
-            )),
+            navigationPanel.pages.map((page, index) => {
+              return (
+                <View
+                  testID="pager-view-content"
+                  key={page.key}
+                  style={page.style}
+                  collapsable={false}
+                >
+                  <Cell page={page} index={index} />
+                </View>
+              );
+            }),
           [navigationPanel.pages]
         )}
       </AnimatedPagerView>

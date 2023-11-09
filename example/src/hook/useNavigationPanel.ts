@@ -50,10 +50,14 @@ export function useNavigationPanel(
     setLogs((text) => [log, ...text].slice(0, 100));
   }, []);
 
-  const addPage = useCallback(
-    () => setPages((prevPages) => [...prevPages, createPage(prevPages.length)]),
-    []
-  );
+  const addPage = useCallback(() => {
+    const nextIndex = activePage + 1;
+    if (nextIndex > pages.length - 2) {
+      setPages([...pages, createPage(pages.length)]);
+    }
+    setPage(nextIndex);
+  }, [activePage, setPage, pages]);
+
   const removePage = useCallback(() => {
     setPages((prevPages) => {
       if (prevPages.length === 1) {
