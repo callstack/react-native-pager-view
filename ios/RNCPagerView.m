@@ -17,6 +17,7 @@
 
 @property(nonatomic, strong) RNCPagerScrollView *scrollView;
 @property(nonatomic, strong) UIView *containerView;
+@property(nonatomic, assign) BOOL scrolledToInitialPage;
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated;
 - (void)shouldScroll:(BOOL)scrollEnabled;
@@ -46,6 +47,15 @@
         [self.scrollView.panGestureRecognizer requireGestureRecognizerToFail:self.reactViewController.navigationController.interactivePopGestureRecognizer];
     }
 }
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    if (!_scrolledToInitialPage) {
+        _scrolledToInitialPage = YES;
+        [self goTo:self.initialPage animated:false];
+    }
+}
+
 
 - (void)didUpdateReactSubviews {
     [self updateContentSizeIfNeeded];
@@ -118,10 +128,6 @@
     if (!CGSizeEqualToSize(_scrollView.contentSize, contentSize)){
         _scrollView.contentSize = [self isHorizontal] ? CGSizeMake(contentSize.width, 0) : CGSizeMake(0, contentSize.height);
         _containerView.frame = CGRectMake(0, 0, contentSize.width, contentSize.height);
-        
-        if (self.initialPage != 0) {
-            [self goTo:self.initialPage animated:false];
-        }
     }
 }
 
