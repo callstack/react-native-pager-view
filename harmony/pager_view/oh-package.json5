@@ -1,0 +1,12 @@
+{
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "rnoh": "file:../rnoh"
+  },
+  "author": "",
+  "name": "pager_view",
+  "description": "Please describe the basic information.",
+  "main": "Index.ets",
+  "version": "1.0.0",
+  "dependencies": {}
+}
