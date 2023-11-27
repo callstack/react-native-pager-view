@@ -68,7 +68,7 @@ export class PagerView extends React.Component<PagerViewProps> {
     }
 
     // Not implemented on iOS yet
-    if (Platform.OS === 'android') {
+    if (Platform.OS === 'android' || Platform.OS === 'harmony') {
       if (this.props.keyboardDismissMode === 'on-drag') {
         Keyboard.dismiss();
       }
