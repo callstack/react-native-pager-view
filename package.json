@@ -1,10 +1,7 @@
 {
-  "name": "@react-native-oh-library/react-native-harmony-pager-view",
-  "version": "6.2.0-0.0.1",
+  "name": "@react-native-oh-tpl/react-native-harmony-pager-view",
+  "version": "6.2.2-0.0.1",
   "description": "React Native wrapper for Android, iOS, Harmony ViewPager",
-  "harmony": {
-    "alias": "react-native-harmony-pager-view"
-  },
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",
@@ -60,7 +57,8 @@
   },
   "homepage": "https://github.com/callstack/react-native-pager-view#readme",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.18.2",
