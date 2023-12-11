@@ -39,6 +39,10 @@ export interface NativeProps extends ViewProps {
 
 type PagerViewViewType = HostComponent<NativeProps>;
 
+export interface PagerViewState {
+  page: number;
+}
+
 export interface NativeCommands {
   setPage: (
     viewRef: React.ElementRef<PagerViewViewType>,
