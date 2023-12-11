@@ -41,7 +41,9 @@
         _destinationIndex = -1;
         _orientation = UIPageViewControllerNavigationOrientationHorizontal;
         _currentIndex = 0;
+#if !TARGET_OS_VISION
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
+#endif
         _coalescingKey = 0;
         _eventDispatcher = eventDispatcher;
         _cachedControllers = [NSHashTable hashTableWithOptions:NSHashTableStrongMemory];
@@ -102,7 +104,9 @@
     for (UIView *subview in pageViewController.view.subviews) {
         if([subview isKindOfClass:UIScrollView.class]){
             ((UIScrollView *)subview).delegate = self;
+#if !TARGET_OS_VISION
             ((UIScrollView *)subview).keyboardDismissMode = _dismissKeyboard;
+#endif
             ((UIScrollView *)subview).delaysContentTouches = YES;
             self.scrollView = (UIScrollView *)subview;
         }
@@ -128,9 +132,11 @@
 }
 
 - (void)shouldDismissKeyboard:(NSString *)dismissKeyboard {
+#if !TARGET_OS_VISION
     _dismissKeyboard = [dismissKeyboard  isEqual: @"on-drag"] ?
     UIScrollViewKeyboardDismissModeOnDrag : UIScrollViewKeyboardDismissModeNone;
     self.scrollView.keyboardDismissMode = _dismissKeyboard;
+#endif
 }
 
 - (void)setupInitialController {
