@@ -34,6 +34,7 @@ import ReanimatedOnPageScrollExample from './ReanimatedOnPageScrollExample';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { UsePagerViewExample } from './UsePagerViewExample';
 
 const examples = [
   { component: BasicPagerViewExample, name: 'Basic Example' },
@@ -64,6 +65,7 @@ const examples = [
     name: 'Reanimated onPageScroll example',
   },
   { component: CoverflowExample, name: 'CoverflowExample' },
+  { component: UsePagerViewExample, name: 'UsePagerViewExample' },
 ];
 
 function App() {
