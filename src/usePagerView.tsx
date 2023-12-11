@@ -9,24 +9,9 @@ export type PagerViewMethod = {
   setScrollEnabled: (scrollEnabled: boolean) => void;
 };
 
-export const PagerViewContext = React.createContext<PagerViewMethod>({
-  page: 0,
-  hasNextPage: false,
-  hasPreviousPage: false,
-  setPage: () => {
-    throw new Error('setPage must be used within a <PagerView /> component');
-  },
-  setPageWithoutAnimation: () => {
-    throw new Error(
-      'setPageWithoutAnimation must be used within a <PagerView /> component'
-    );
-  },
-  setScrollEnabled: () => {
-    throw new Error(
-      'setScrollEnabled must be used within a <PagerView /> component'
-    );
-  },
-});
+export const PagerViewContext = React.createContext<PagerViewMethod | null>(
+  null
+);
 
 export const usePagerView = () => {
   const value = useContext(PagerViewContext);
