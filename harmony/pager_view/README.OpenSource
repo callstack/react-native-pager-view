@@ -1,0 +1,11 @@
+[
+    {
+        "Name": "react-native-pager-view",
+        "License": "MIT License",
+        "License File": "https://github.com/callstack/react-native-pager-view/blob/master/LICENSE",
+        "Version Number": "6.2.2",
+        "Owner" : "troZee <hello@callstack.com>",
+        "Upstream URL": "https://github.com/callstack/react-native-pager-view",
+        "Description": "React Native wrapper for Android, iOS, Harmony ViewPager"
+    }
+]
