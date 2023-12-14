@@ -1,12 +1,15 @@
 {
   "name": "@react-native-oh-tpl/react-native-pager-view",
-  "version": "6.2.2-0.0.1",
+  "version": "6.2.2-0.0.2",
   "description": "React Native wrapper for Android, iOS, Harmony ViewPager",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
+  "harmony": {
+    "alias":"react-native-pager-view"
+  },
   "files": [
     "src",
     "lib",
