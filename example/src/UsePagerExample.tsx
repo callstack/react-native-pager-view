@@ -71,7 +71,7 @@ const HookComponent = ({ index }: { index: number }) => {
   );
 };
 
-export const UsePagerViewExample = (): JSX.Element => {
+export const UsePagerExample = (): JSX.Element => {
   return (
     <PagerView testID="pager-view" style={styles.flex}>
       <HookComponent index={1} />
