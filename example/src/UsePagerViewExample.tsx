@@ -1,11 +1,19 @@
-import PagerView, { usePagerView } from 'react-native-pager-view';
+import PagerView, { usePager } from 'react-native-pager-view';
 import React from 'react';
-import { useState } from 'react';
 import { View, StyleSheet, Button } from 'react-native';
-import { PAGES, createPage } from './utils';
 import { Text } from 'react-native';
 
-const Item = () => {
+const NonHookComponent = () => {
+  console.log('rerender <NonHookComponent />');
+
+  return (
+    <View style={styles.content}>
+      <Text>HasNotHook</Text>
+    </View>
+  );
+};
+
+const HookComponent = ({ index }: { index: number }) => {
   const {
     page,
     hasNextPage,
@@ -13,7 +21,9 @@ const Item = () => {
     setPage,
     setPageWithoutAnimation,
     setScrollEnabled,
-  } = usePagerView();
+  } = usePager();
+
+  console.log(`rerender <HookComponent index={${index}} />`);
 
   return (
     <View style={styles.content}>
@@ -62,17 +72,12 @@ const Item = () => {
 };
 
 export const UsePagerViewExample = (): JSX.Element => {
-  const [pages] = useState(
-    Array(PAGES)
-      .fill(1)
-      .map((_, index) => createPage(index))
-  );
-
   return (
     <PagerView testID="pager-view" style={styles.flex}>
-      {pages.map((page) => (
-        <Item key={page.key} />
-      ))}
+      <HookComponent index={1} />
+      <HookComponent index={2} />
+      <HookComponent index={3} />
+      <NonHookComponent />
     </PagerView>
   );
 };
