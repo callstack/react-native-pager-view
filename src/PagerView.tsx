@@ -14,7 +14,7 @@ import { childrenWithOverriddenStyle } from './utils';
 import PagerViewView, {
   Commands as PagerViewCommands,
 } from './PagerViewNativeComponent';
-import { PagerViewContext } from './usePagerView';
+import { PagerStore, PagerViewContext, createPagerStore } from './usePager';
 
 /**
  * Container that allows to flip left and right between child views. Each
@@ -61,10 +61,11 @@ import { PagerViewContext } from './usePagerView';
 export class PagerView extends React.Component<PagerViewProps, PagerViewState> {
   private isScrolling = false;
   pagerView: React.ElementRef<typeof PagerViewView> | null = null;
+  store: PagerStore | null = null;
 
   constructor(props: PagerViewProps) {
     super(props);
-    this.state = { page: props.initialPage ?? 0 };
+    this.store = createPagerStore(props.initialPage ?? 0);
   }
 
   private _onPageScroll = (
@@ -97,7 +98,12 @@ export class PagerView extends React.Component<PagerViewProps, PagerViewState> {
     if (this.props.onPageSelected) {
       this.props.onPageSelected(e);
     }
-    this.setState({ page: e.nativeEvent.position });
+    this.store?.setState({
+      page: e.nativeEvent.position,
+      hasNextPage:
+        e.nativeEvent.position < React.Children.count(this.props.children) - 1,
+      hasPreviousPage: e.nativeEvent.position > 0,
+    });
   };
 
   /**
@@ -154,10 +160,7 @@ export class PagerView extends React.Component<PagerViewProps, PagerViewState> {
     return (
       <PagerViewContext.Provider
         value={{
-          hasNextPage:
-            this.state.page < React.Children.count(this.props.children) - 1,
-          hasPreviousPage: this.state.page > 0,
-          page: this.state.page,
+          store: this.store,
           setPage: this.setPage,
           setPageWithoutAnimation: this.setPageWithoutAnimation,
           setScrollEnabled: this.setScrollEnabled,
