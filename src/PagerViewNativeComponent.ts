@@ -22,6 +22,8 @@ export type OnPageScrollStateChangedEventData = Readonly<{
   pageScrollState: 'idle' | 'dragging' | 'settling';
 }>;
 
+export type ScrollSensitivity = 2 | 3 | 4 | 5 | 6 | 7 | 8;
+
 export interface NativeProps extends ViewProps {
   scrollEnabled?: WithDefault<boolean, true>;
   layoutDirection?: WithDefault<'ltr' | 'rtl', 'ltr'>;
@@ -35,6 +37,7 @@ export interface NativeProps extends ViewProps {
   onPageScroll?: DirectEventHandler<OnPageScrollEventData>;
   onPageSelected?: DirectEventHandler<OnPageSelectedEventData>;
   onPageScrollStateChanged?: DirectEventHandler<OnPageScrollStateChangedEventData>;
+  scrollSensitivity?: ScrollSensitivity;
 }
 
 type PagerViewViewType = HostComponent<NativeProps>;

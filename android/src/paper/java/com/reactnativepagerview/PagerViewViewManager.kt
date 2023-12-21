@@ -13,6 +13,7 @@ import com.facebook.react.uimanager.UIManagerModule
 import com.facebook.react.uimanager.ViewGroupManager
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.uimanager.events.EventDispatcher
+import com.reactnativepagerview.PagerViewViewManagerImpl.reduceDragSensitivity
 import com.reactnativepagerview.event.PageScrollEvent
 import com.reactnativepagerview.event.PageScrollStateChangedEvent
 import com.reactnativepagerview.event.PageSelectedEvent
@@ -124,6 +125,12 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
     fun setLayoutDirection(host: NestedScrollableHost, value: String) {
         PagerViewViewManagerImpl.setLayoutDirection(host, value)
     }
+
+    @ReactProp(name = "scrollSensitivity", defaultInt = 2)
+   fun setScrollSensitivity(host: NestedScrollableHost, value: Int) {
+       val view = PagerViewViewManagerImpl.getViewPager(host)
+       view.reduceDragSensitivity(value)
+   }
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Map<String, String>> {
         return MapBuilder.of(
