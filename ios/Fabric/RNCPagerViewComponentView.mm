@@ -114,6 +114,7 @@ using namespace facebook::react;
 }
 
 - (void)shouldDismissKeyboard:(RNCViewPagerKeyboardDismissMode)dismissKeyboard {
+#if !TARGET_OS_VISION
     UIScrollViewKeyboardDismissMode dismissKeyboardMode = UIScrollViewKeyboardDismissModeNone;
     switch (dismissKeyboard) {
         case RNCViewPagerKeyboardDismissMode::None:
@@ -124,6 +125,7 @@ using namespace facebook::react;
             break;
     }
     scrollView.keyboardDismissMode = dismissKeyboardMode;
+#endif
 }
 
 
