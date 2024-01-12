@@ -5,7 +5,6 @@ import type {
   OnPageScrollEventData,
   OnPageScrollStateChangedEventData,
   OnPageSelectedEventData,
-  PagerViewState,
 } from './PagerViewNativeComponent';
 import type * as ReactNative from 'react-native';
 
@@ -58,7 +57,7 @@ import { PagerStore, PagerViewContext, createPagerStore } from './usePager';
  * ```
  */
 
-export class PagerView extends React.Component<PagerViewProps, PagerViewState> {
+export class PagerView extends React.Component<PagerViewProps> {
   private isScrolling = false;
   pagerView: React.ElementRef<typeof PagerViewView> | null = null;
   store: PagerStore | null = null;
