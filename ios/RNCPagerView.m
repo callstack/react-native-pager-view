@@ -126,6 +126,10 @@
 }
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
+    if ([self getCurrentPage] == index) {
+        return;
+    }
+    
     CGPoint targetOffset = [self isHorizontal] ? CGPointMake(_scrollView.frame.size.width * index, 0) : CGPointMake(0, _scrollView.frame.size.height * index);
     
     if (animated) {
