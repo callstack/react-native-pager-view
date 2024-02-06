@@ -63,7 +63,9 @@ class ViewPagerAdapter() : Adapter<ViewPagerViewHolder>() {
   }
 
   fun removeChildAt(index: Int) {
-    childrenViews.removeAt(index)
-    notifyItemRemoved(index)
+    if (index >= 0 && index < childrenViews.size) { 
+      childrenViews.removeAt(index)
+      notifyItemRemoved(index)
+    }
   }
 }
