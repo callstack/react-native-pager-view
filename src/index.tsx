@@ -1,6 +1,8 @@
 import type * as ReactNative from 'react-native';
 import { PagerView } from './PagerView';
 export default PagerView;
+export { usePager } from './usePager';
+export type { PagerState } from './usePager';
 
 import type {
   OnPageScrollEventData as PagerViewOnPageScrollEventData,

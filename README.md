@@ -229,6 +229,48 @@ const pageScrollHandler = usePageScrollHandler({
 <AnimatedPagerView onPageScroll={pageScrollHandler} />;
 ```
 
+## usePager Hook Usage
+The `usePager` hook is a convenient way to manage the state and control the behavior of the `<PagerView />` component. It provides functions and variables to interact with the pager, such as navigating between pages and enabling/disabling scrolling.
+
+**Warning:** The usePager hook is compatible with React version 18 and above. Ensure that your project is using an appropriate version of React before implementing this hook.
+
+Below is an example of how to use the usePager hook:
+
+```jsx
+// 1. Create a component that utilizes the hook within the <PagerView /> component..
+<PagerView >
+  <HookComponent />
+</PagerView>
+
+// 2. Inside HookComponent, use the `usePager` hook.
+const HookComponent = () => {
+  const {
+    page,
+    hasNextPage,
+    hasPreviousPage,
+    setPage,
+    setPageWithoutAnimation,
+    setScrollEnabled,
+  } = usePager();
+
+  return (
+    <View>
+      <Text>Current Page: {page}</Text>
+      <Button
+        title="next page"
+        onPress={() => {
+          if (hasNextPage) {
+            setPage(page + 1);
+          }
+        }}
+      />
+    </View>
+  )
+}
+
+```
+
+
 ## License
 
 MIT

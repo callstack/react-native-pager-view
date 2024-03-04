@@ -13,6 +13,7 @@ import { childrenWithOverriddenStyle } from './utils';
 import PagerViewView, {
   Commands as PagerViewCommands,
 } from './PagerViewNativeComponent';
+import { PagerStore, PagerViewContext, createPagerStore } from './usePager';
 
 /**
  * Container that allows to flip left and right between child views. Each
@@ -59,6 +60,12 @@ import PagerViewView, {
 export class PagerView extends React.Component<PagerViewProps> {
   private isScrolling = false;
   pagerView: React.ElementRef<typeof PagerViewView> | null = null;
+  store: PagerStore | null = null;
+
+  constructor(props: PagerViewProps) {
+    super(props);
+    this.store = createPagerStore(props.initialPage ?? 0);
+  }
 
   private _onPageScroll = (
     e: ReactNative.NativeSyntheticEvent<OnPageScrollEventData>
@@ -90,6 +97,12 @@ export class PagerView extends React.Component<PagerViewProps> {
     if (this.props.onPageSelected) {
       this.props.onPageSelected(e);
     }
+    this.store?.setState({
+      page: e.nativeEvent.position,
+      hasNextPage:
+        e.nativeEvent.position < React.Children.count(this.props.children) - 1,
+      hasPreviousPage: e.nativeEvent.position > 0,
+    });
   };
 
   /**
@@ -144,19 +157,30 @@ export class PagerView extends React.Component<PagerViewProps> {
 
   render() {
     return (
-      <PagerViewView
-        {...this.props}
-        ref={(ref) => {
-          this.pagerView = ref;
+      <PagerViewContext.Provider
+        value={{
+          store: this.store,
+          setPage: this.setPage,
+          setPageWithoutAnimation: this.setPageWithoutAnimation,
+          setScrollEnabled: this.setScrollEnabled,
         }}
-        style={this.props.style}
-        layoutDirection={this.deducedLayoutDirection}
-        onPageScroll={this._onPageScroll}
-        onPageScrollStateChanged={this._onPageScrollStateChanged}
-        onPageSelected={this._onPageSelected}
-        onMoveShouldSetResponderCapture={this._onMoveShouldSetResponderCapture}
-        children={childrenWithOverriddenStyle(this.props.children)}
-      />
+      >
+        <PagerViewView
+          {...this.props}
+          ref={(ref) => {
+            this.pagerView = ref;
+          }}
+          style={this.props.style}
+          layoutDirection={this.deducedLayoutDirection}
+          onPageScroll={this._onPageScroll}
+          onPageScrollStateChanged={this._onPageScrollStateChanged}
+          onPageSelected={this._onPageSelected}
+          onMoveShouldSetResponderCapture={
+            this._onMoveShouldSetResponderCapture
+          }
+          children={childrenWithOverriddenStyle(this.props.children)}
+        />
+      </PagerViewContext.Provider>
     );
   }
 }
