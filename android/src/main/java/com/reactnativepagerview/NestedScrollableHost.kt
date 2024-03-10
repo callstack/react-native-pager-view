@@ -43,6 +43,10 @@ class NestedScrollableHost : FrameLayout {
   }
 
   private fun canChildScroll(orientation: Int, delta: Float): Boolean {
+    if ((child as? ViewPager2)?.isUserInputEnabled == false) {
+      return false
+    }
+
     val direction = -delta.sign.toInt()
     return when (orientation) {
       0 -> child?.canScrollHorizontally(direction) ?: false
