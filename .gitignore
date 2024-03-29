@@ -70,3 +70,4 @@ lefthook.yml
 # testing
 /coverage
 .cxx
+example/ios/PagerViewExample.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist

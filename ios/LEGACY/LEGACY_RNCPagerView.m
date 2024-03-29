@@ -1,4 +1,3 @@
-
 #import "LEGACY_RNCPagerView.h"
 #import "React/RCTLog.h"
 #import <React/RCTViewManager.h>
@@ -9,7 +8,9 @@
 #import "RCTOnPageSelected.h"
 #import <math.h>
 
-@interface LEGACY_RNCPagerView () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
+@interface LEGACY_RNCPagerView () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>
+
+@property(nonatomic, assign) UIPanGestureRecognizer* panGestureRecognizer;
 
 @property(nonatomic, strong) UIPageViewController *reactPageViewController;
 @property(nonatomic, strong) RCTEventDispatcher *eventDispatcher;

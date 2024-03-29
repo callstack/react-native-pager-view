@@ -24,20 +24,30 @@ export function ScrollablePagerViewExample() {
       }}
     >
       <ScrollView testID={'scroll-view'} style={styles.flex}>
-        {navigationPanel.pages.map(({ key }) => (
-          <AnimatedPagerView
-            {...navigationPanel}
-            testID={'pager-view'}
-            ref={ref}
-            key={key}
-            style={{ height: HEIGHT }}
-          >
-            {navigationPanel.pages.map((page) => (
-              <View key={`${key}+${page.key}`} style={styles.content}>
-                <Image style={styles.flex} source={page.imgSource} />
-              </View>
-            ))}
-          </AnimatedPagerView>
+        <AnimatedPagerView
+          {...navigationPanel}
+          testID={'pager-view'}
+          ref={ref}
+          // todo fix it
+          useLegacy
+          style={{ height: HEIGHT }}
+        >
+          {navigationPanel.pages.map((page) => (
+            <View key={`${page.key}`} style={styles.content}>
+              <Image style={styles.flex} source={page.imgSource} />
+            </View>
+          ))}
+        </AnimatedPagerView>
+        {new Array(10).fill(1).map((_, index) => (
+          <View
+            key={index}
+            style={{
+              width: '100%',
+              height: 200,
+              backgroundColor: 'purple',
+              marginBottom: 10,
+            }}
+          />
         ))}
       </ScrollView>
       <NavigationPanel {...navigationPanel} />
