@@ -1,4 +1,9 @@
 appId: ${APP_ID}
+name: Verify prev and next buttons work
+onFlowStart:
+  - startRecording: recording
+onFlowComplete: # <- and this
+  - stopRecording
 ---
 - launchApp
 - assertVisible: 'PagerView Example'

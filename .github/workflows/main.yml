@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install dependencies
         uses: ./.github/actions/install-dependencies
 
@@ -30,17 +30,17 @@ jobs:
     needs: install-dependencies
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Pull dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ./node_modules
           key: ${{ hashFiles('./package.json') }}
 
       - name: Pull example node modules
         id: cache-example-npm
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         env:
           cache-name: cached-example-npm-deps
         with:

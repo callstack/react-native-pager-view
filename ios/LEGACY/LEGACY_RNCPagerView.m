@@ -39,12 +39,18 @@
         _destinationIndex = -1;
         _orientation = UIPageViewControllerNavigationOrientationHorizontal;
         _currentIndex = 0;
+#if !TARGET_OS_VISION
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
+#endif
         _coalescingKey = 0;
         _eventDispatcher = eventDispatcher;
         _cachedControllers = [NSHashTable hashTableWithOptions:NSHashTableStrongMemory];
         _overdrag = NO;
         _layoutDirection = @"ltr";
+        UIPanGestureRecognizer* panGestureRecognizer = [UIPanGestureRecognizer new];
+        self.panGestureRecognizer = panGestureRecognizer;
+        panGestureRecognizer.delegate = self;
+        [self addGestureRecognizer: panGestureRecognizer];
     }
     return self;
 }
@@ -96,7 +102,9 @@
     for (UIView *subview in pageViewController.view.subviews) {
         if([subview isKindOfClass:UIScrollView.class]){
             ((UIScrollView *)subview).delegate = self;
+#if !TARGET_OS_VISION
             ((UIScrollView *)subview).keyboardDismissMode = _dismissKeyboard;
+#endif
             ((UIScrollView *)subview).delaysContentTouches = YES;
             self.scrollView = (UIScrollView *)subview;
         }
@@ -122,9 +130,11 @@
 }
 
 - (void)shouldDismissKeyboard:(NSString *)dismissKeyboard {
+#if !TARGET_OS_VISION
     _dismissKeyboard = [dismissKeyboard  isEqual: @"on-drag"] ?
     UIScrollViewKeyboardDismissModeOnDrag : UIScrollViewKeyboardDismissModeNone;
     self.scrollView.keyboardDismissMode = _dismissKeyboard;
+#endif
 }
 
 - (void)setupInitialController {
@@ -236,6 +246,10 @@
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     NSInteger numberOfPages = self.reactSubviews.count;
+    
+    if (index == _currentIndex) {
+        return;
+    }
     
     [self disableSwipe];
     
@@ -375,6 +389,8 @@
         if ((isFirstPage && contentOffset <= topBound) || (isLastPage && contentOffset >= topBound)) {
             CGPoint croppedOffset = [self isHorizontal] ? CGPointMake(topBound, 0) : CGPointMake(0, topBound);
             *targetContentOffset = croppedOffset;
+            
+            [self.eventDispatcher sendEvent:[[RCTOnPageScrollStateChanged alloc] initWithReactTag:self.reactTag state:@"idle" coalescingKey:_coalescingKey++]];
         }
     }
 }
@@ -456,6 +472,28 @@
         }
     }
     return scrollDirection;
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+
+    // Recognize simultaneously only if the other gesture is RN Screen's pan gesture (one that is used to perform fullScreenGestureEnabled)
+    if (gestureRecognizer == self.panGestureRecognizer && [NSStringFromClass([otherGestureRecognizer class]) isEqual: @"RNSPanGestureRecognizer"]) {
+        UIPanGestureRecognizer* panGestureRecognizer = (UIPanGestureRecognizer*) gestureRecognizer;
+        CGPoint velocity = [panGestureRecognizer velocityInView:self];
+        BOOL isLTR = [self isLtrLayout];
+        BOOL isBackGesture = (isLTR && velocity.x > 0) || (!isLTR && velocity.x < 0);
+        
+        if (self.currentIndex == 0 && isBackGesture) {
+            self.scrollView.panGestureRecognizer.enabled = false;
+        } else {
+            self.scrollView.panGestureRecognizer.enabled = self.scrollEnabled;
+        }
+        
+        return YES;
+    }
+    
+    self.scrollView.panGestureRecognizer.enabled = self.scrollEnabled;
+    return NO;
 }
 
 - (BOOL)isLtrLayout {
