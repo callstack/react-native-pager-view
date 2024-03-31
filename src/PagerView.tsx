@@ -13,7 +13,7 @@ import PagerViewNativeComponent, {
   OnPageScrollEventData,
   OnPageScrollStateChangedEventData,
   OnPageSelectedEventData,
-  NativeProps as PagerViewProps,
+  NativeProps,
 } from './PagerViewNativeComponent/PagerViewNativeComponent';
 
 import LEGACY_PagerViewNativeComponent, {
@@ -72,7 +72,8 @@ if (Platform.OS === 'ios') {
  * }
  * ```
  */
-export class PagerView extends React.Component<PagerViewProps> {
+
+class PagerViewInternal extends React.Component<NativeProps> {
   private isScrolling = false;
   pagerView: React.ElementRef<typeof PagerViewNativeComponent> | null = null;
 
@@ -222,3 +223,13 @@ export class PagerView extends React.Component<PagerViewProps> {
     );
   }
 }
+
+// Temporary solution. It should be removed once all things get fixed
+type PagerViewProps = Omit<NativeProps, 'useLegacy'> & { useNext: boolean };
+
+export const PagerView = React.forwardRef<PagerViewInternal, PagerViewProps>(
+  (props, ref) => {
+    const { useNext, ...rest } = props;
+    return <PagerViewInternal {...rest} useLegacy={!useNext} ref={ref} />;
+  }
+);

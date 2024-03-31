@@ -34,7 +34,7 @@ import CoverflowExample from './tabView/CoverflowExample';
 import ReanimatedOnPageScrollExample from './ReanimatedOnPageScrollExample';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { LegacyBasicPagerViewExample } from './LegacyBasicPagerViewExample';
+import { NextBasicPagerViewExample } from './NextBasicPagerViewExample';
 
 const examples = [
   { component: BasicPagerViewExample, name: 'Basic Example' },
@@ -69,8 +69,8 @@ const examples = [
 
 if (Platform.OS === 'ios') {
   examples.unshift({
-    component: LegacyBasicPagerViewExample,
-    name: '❌ Legacy Basic Example',
+    component: NextBasicPagerViewExample,
+    name: '🔜 Next Basic Example',
   });
 }
 

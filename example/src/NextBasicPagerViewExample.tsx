@@ -9,7 +9,7 @@ import { useNavigationPanel } from './hook/useNavigationPanel';
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
-export function LegacyBasicPagerViewExample() {
+export function NextBasicPagerViewExample() {
   const { ref, ...navigationPanel } = useNavigationPanel();
 
   return (
@@ -29,7 +29,7 @@ export function LegacyBasicPagerViewExample() {
         pageMargin={10}
         // Lib does not support dynamically orientation change
         orientation="horizontal"
-        useLegacy
+        useNext={true}
       >
         {useMemo(
           () =>

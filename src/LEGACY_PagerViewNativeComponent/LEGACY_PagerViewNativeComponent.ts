@@ -47,7 +47,7 @@ interface NativeProps extends ViewProps {
   onPageScroll?: DirectEventHandler<OnPageScrollEventData>;
   onPageSelected?: DirectEventHandler<OnPageSelectedEventData>;
   onPageScrollStateChanged?: DirectEventHandler<OnPageScrollStateChangedEventData>;
-  useLegacy?: WithDefault<boolean, false>;
+  useLegacy?: WithDefault<boolean, true>;
 }
 
 type PagerViewViewType = HostComponent<NativeProps>;
