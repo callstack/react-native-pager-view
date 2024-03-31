@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - master
-      - next
+      - rc
     paths:
       - '.github/workflows/android.yml'
       - 'android/**'
@@ -12,7 +12,7 @@ on:
   push:
     branches:
       - master
-      - next
+      - rc
 
 concurrency:
   group: ${{ github.ref }}-android
