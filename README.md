@@ -8,10 +8,7 @@
 [![iOS Build](https://github.com/callstack/react-native-pager-view/actions/workflows/ios.yml/badge.svg)](https://github.com/callstack/react-native-pager-view/actions/workflows/ios.yml)
 [![Android Build](https://github.com/callstack/react-native-pager-view/actions/workflows/android.yml/badge.svg)](https://github.com/callstack/react-native-pager-view/actions/workflows/android.yml)
 
-PagerView allows the user to swipe left and right through pages of data.
-It leverages the native [Android ViewPager2](https://developer.android.com/jetpack/androidx/releases/viewpager2)
-and [iOS UIScrollView](https://developer.apple.com/documentation/uikit/uiscrollview) under the hood.
-[See it in action!](https://github.com/callstack/react-native-pager-view#preview)
+This component allows the user to swipe left and right through pages of data. Under the hood it is using the native [Android ViewPager](https://developer.android.com/reference/android/support/v4/view/ViewPager) and the [iOS UIPageViewController](https://developer.apple.com/documentation/uikit/uipageviewcontroller) implementations. [See it in action!](https://github.com/callstack/react-native-pager-view#preview)
 
 <br/>
 <p align="center">
@@ -20,80 +17,22 @@ and [iOS UIScrollView](https://developer.apple.com/documentation/uikit/uiscrollv
 
 <br/>
 
+## Versions
+
+| 4.x        | 5.x and above |
+| ---------- | ------------- |
+| iOS        | iOS support   |
+| ViewPager1 | ViewPager2    |
+
+## Migration
+
+In version **6.x** support for `transitionStyle` property has been dropped. More information [here](https://github.com/callstack/react-native-pager-view/blob/master/MIGRATION.md).
+
+`"@react-native-community/viewpager"` library has been changed to `react-native-pager-view`. Here you can find more information, how to migrate pager view to the latest [version](https://github.com/callstack/react-native-pager-view/blob/master/MIGRATION.md)
+
 ## Getting started
 
-Install the library with:
-
-```sh
-yarn add react-native-pager-view
-```
-
-or:
-
-```sh
-npm install react-native-pager-view
-```
-
-## Migration from `@react-native-community/viewpager`
-
-The `@react-native-community/viewpager` library has been moved and now lives here, in the `react-native-pager-view` repo.
-[Here](https://github.com/callstack/react-native-pager-view/blob/master/MIGRATION.md) you can find
-more information on how to migrate PagerView to the latest version.
-
-## Versions & compatibility
-
-The underlying iOS/Android native implementations of PagerView have changed over the years.
-Here's an overview of the implementation details throughout the library's lifespan:
-
-|         | `1.x.x`     | `2.x.x`                | `5.0.8`                | `7.x.x`        |
-| ------- | ----------- | ---------------------- | ---------------------- | -------------- |
-| iOS     | ❌          | `UIPageViewController` | `UIPageViewController` | `UIScrollView` |
-| Android | `ViewPager` | `ViewPager`            | `ViewPager2`           | `ViewPager2`   |
-
-### Legacy iOS implementation support (`UIPageViewController`)
-
-As per the table above, the iOS implementation of this library has been rewritten to use
-[`UIScrollView`](https://developer.apple.com/documentation/uikit/uiscrollview) over
-[`UIPageViewController`](https://developer.apple.com/documentation/uikit/uipageviewcontroller).
-
-For backwards-compatibility purposes, the old iOS implementation is still supported, however — simply pass `true` to
-the `useLegacy` boolean prop to switch the used implementation back to `UIPageViewController`.
-
-### Other notes
-
-In version **6.x.x** the support for the iOS `transitionStyle` property has been dropped.
-More information [here](https://github.com/callstack/react-native-pager-view/blob/master/MIGRATION.md).
-
-## New architecture support (Fabric)
-
-This library supports both architectures — Paper and Fabric!
-
-To properly migrate to the new architecture and enable it in your app consult the newest
-[docs](https://reactnative.dev/docs/new-architecture-app-intro).
-
-From the perspective of PagerView, the steps required to make the library work with Fabric are as follows:
-
-### iOS
-
-Install pods the usual way, with the `RCT_NEW_ARCH_ENABLED` flag set, e.g.:
-
-```sh
-cd ios && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install
-```
-
-### Android
-
-In the `android/gradle.properties` file, set `newArchEnabled` to `true` and build the app, e.g.:
-
-```sh
-yarn android
-```
-
-If you have issues running the Android build, you can try generating the Codegen files before the build using:
-
-```sh
-cd android && ./gradlew generateCodegenArtifactsFromSchema
-```
+`yarn add react-native-pager-view`
 
 ## Linking
 
@@ -194,7 +133,7 @@ const styles = StyleSheet.create({
 
 ## Advanced usage
 
-For advanced usage please take a look into our [example project](https://github.com/callstack/react-native-pager-view/blob/master/example/src/BasicPagerViewExample.tsx).
+For advanced usage please take a look into our [example project](https://github.com/callstack/react-native-pager-view/blob/master/example/src/BasicPagerViewExample.tsx)
 
 ## API
 
@@ -208,7 +147,7 @@ For advanced usage please take a look into our [example project](https://github.
 | `pageMargin: number`                                                 |                                                                                                                Blank space to be shown between pages                                                                                                                |   both   |
 | `keyboardDismissMode: ('none' / 'on-drag')`                          |                                                                                                Determines whether the keyboard gets dismissed in response to a drag                                                                                                 |   both   |
 | `orientation: Orientation`                                           |                                                                                       Set `horizontal` or `vertical` scrolling orientation (it does **not** work dynamically)                                                                                       |   both   |
-| `overScrollMode: OverScrollMode`                                      |                                                                              Used to override default value of overScroll mode. Can be `auto`, `always` or `never`. Defaults to `auto`                                                                              | Android  |
+| `overScrollMode: OverScrollMode`                                     |                                                                              Used to override default value of overScroll mode. Can be `auto`, `always` or `never`. Defaults to `auto`                                                                              | Android  |
 | `offscreenPageLimit: number`                                         | Set the number of pages that should be retained to either side of the currently visible page(s). Pages beyond this limit will be recreated from the adapter when needed. Defaults to RecyclerView's caching strategy. The given value must either be larger than 0. | Android  |
 | `overdrag: boolean`                                                  |                                                                                   Allows for overscrolling after reaching the end or very beginning or pages. Defaults to `false`                                                                                   |   iOS    |
 | `layoutDirection: ('ltr' / 'rtl' / 'locale')`                        |                                                      Specifies layout direction. Use `ltr` or `rtl` to set explicitly or `locale` to deduce from the default language script of a locale. Defaults to `locale`                                                      |   both   |
@@ -249,7 +188,7 @@ requestAnimationFrame(() => refPagerView.current?.setPage(index));
 
 ## Reanimated onPageScroll handler
 
-An example can be found [here](https://github.com/callstack/react-native-pager-view/blob/master/example/src/ReanimatedOnPageScrollExample.tsx).
+An example can be found [here](https://github.com/callstack/react-native-pager-view/blob/master/example/src/ReanimatedOnPageScrollExample.tsx)
 
 #### Instructions
 
