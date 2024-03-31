@@ -1,5 +1,4 @@
-
-#import "ReactNativePageView.h"
+#import "LEGACY_RNCPagerView.h"
 #import "React/RCTLog.h"
 #import <React/RCTViewManager.h>
 
@@ -9,7 +8,7 @@
 #import "RCTOnPageSelected.h"
 #import <math.h>
 
-@interface ReactNativePageView () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>
+@interface LEGACY_RNCPagerView () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>
 
 @property(nonatomic, assign) UIPanGestureRecognizer* panGestureRecognizer;
 
@@ -29,7 +28,7 @@
 
 @end
 
-@implementation ReactNativePageView {
+@implementation LEGACY_RNCPagerView {
     uint16_t _coalescingKey;
 }
 
@@ -175,7 +174,7 @@
         return;
     }
 
-    __weak ReactNativePageView *weakSelf = self;
+    __weak LEGACY_RNCPagerView *weakSelf = self;
     uint16_t coalescingKey = _coalescingKey++;
     
     if (animated == YES) {

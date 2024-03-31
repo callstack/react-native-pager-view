@@ -1,18 +1,24 @@
 import React from 'react';
-import { Platform, Keyboard } from 'react-native';
+import { Platform, Keyboard, StyleProp, ViewStyle } from 'react-native';
 import { I18nManager } from 'react-native';
-import type {
+import type * as ReactNative from 'react-native';
+
+import {
+  LEGACY_childrenWithOverriddenStyle,
+  childrenWithOverriddenStyle,
+} from './utils';
+
+import PagerViewNativeComponent, {
+  PagerViewNativeCommands,
   OnPageScrollEventData,
   OnPageScrollStateChangedEventData,
   OnPageSelectedEventData,
-} from './PagerViewNativeComponent';
-import type * as ReactNative from 'react-native';
+  NativeProps,
+} from './PagerViewNativeComponent/PagerViewNativeComponent';
 
-import type { NativeProps as PagerViewProps } from './PagerViewNativeComponent';
-import { childrenWithOverriddenStyle } from './utils';
-import PagerViewView, {
-  Commands as PagerViewCommands,
-} from './PagerViewNativeComponent';
+import LEGACY_PagerViewNativeComponent, {
+  LEGACY_PagerViewNativeCommands,
+} from './LEGACY_PagerViewNativeComponent/LEGACY_PagerViewNativeComponent';
 
 // The Fabric component for PagerView uses a work around present also in ScrollView:
 // https://github.com/callstack/react-native-pager-view/blob/master/ios/Fabric/RNCPagerViewComponentView.mm#L362-L368
@@ -67,9 +73,27 @@ if (Platform.OS === 'ios') {
  * ```
  */
 
-export class PagerView extends React.Component<PagerViewProps> {
+class PagerViewInternal extends React.Component<NativeProps> {
   private isScrolling = false;
-  pagerView: React.ElementRef<typeof PagerViewView> | null = null;
+  pagerView: React.ElementRef<typeof PagerViewNativeComponent> | null = null;
+
+  private get nativeCommandsWrapper() {
+    return this.props.useLegacy
+      ? LEGACY_PagerViewNativeCommands
+      : PagerViewNativeCommands;
+  }
+
+  private get deducedLayoutDirection() {
+    if (
+      !this.props.layoutDirection ||
+      //@ts-ignore fix it
+      this.props.layoutDirection === 'locale'
+    ) {
+      return I18nManager.isRTL ? 'rtl' : 'ltr';
+    } else {
+      return this.props.layoutDirection;
+    }
+  }
 
   private _onPageScroll = (
     e: ReactNative.NativeSyntheticEvent<OnPageScrollEventData>
@@ -103,13 +127,17 @@ export class PagerView extends React.Component<PagerViewProps> {
     }
   };
 
+  private _onMoveShouldSetResponderCapture = () => {
+    return this.isScrolling;
+  };
+
   /**
    * A helper function to scroll to a specific page in the PagerView.
    * The transition between pages will be animated.
    */
   public setPage = (selectedPage: number) => {
     if (this.pagerView) {
-      PagerViewCommands.setPage(this.pagerView, selectedPage);
+      this.nativeCommandsWrapper.setPage(this.pagerView, selectedPage);
     }
   };
 
@@ -119,7 +147,10 @@ export class PagerView extends React.Component<PagerViewProps> {
    */
   public setPageWithoutAnimation = (selectedPage: number) => {
     if (this.pagerView) {
-      PagerViewCommands.setPageWithoutAnimation(this.pagerView, selectedPage);
+      this.nativeCommandsWrapper.setPageWithoutAnimation(
+        this.pagerView,
+        selectedPage
+      );
     }
   };
 
@@ -130,44 +161,75 @@ export class PagerView extends React.Component<PagerViewProps> {
    */
   public setScrollEnabled = (scrollEnabled: boolean) => {
     if (this.pagerView) {
-      PagerViewCommands.setScrollEnabledImperatively(
+      this.nativeCommandsWrapper.setScrollEnabledImperatively(
         this.pagerView,
         scrollEnabled
       );
     }
   };
 
-  private _onMoveShouldSetResponderCapture = () => {
-    return this.isScrolling;
-  };
-
-  private get deducedLayoutDirection() {
-    if (
-      !this.props.layoutDirection ||
-      //@ts-ignore fix it
-      this.props.layoutDirection === 'locale'
-    ) {
-      return I18nManager.isRTL ? 'rtl' : 'ltr';
-    } else {
-      return this.props.layoutDirection;
-    }
-  }
-
   render() {
+    // old iOS `UIPageViewController`-based implementation
+    if (Platform.OS === 'ios' && this.props.useLegacy) {
+      return (
+        <LEGACY_PagerViewNativeComponent
+          {...this.props}
+          ref={(ref) => {
+            this.pagerView = ref;
+          }}
+          style={this.props.style}
+          layoutDirection={this.deducedLayoutDirection}
+          onPageScroll={this._onPageScroll}
+          onPageScrollStateChanged={this._onPageScrollStateChanged}
+          onPageSelected={this._onPageSelected}
+          onMoveShouldSetResponderCapture={
+            this._onMoveShouldSetResponderCapture
+          }
+          children={LEGACY_childrenWithOverriddenStyle(this.props.children)}
+        />
+      );
+    }
+
+    const style: StyleProp<ViewStyle> = [
+      this.props.style,
+      this.props.pageMargin
+        ? {
+            marginHorizontal: -this.props.pageMargin / 2,
+          }
+        : null,
+      {
+        flexDirection: this.props.orientation === 'vertical' ? 'column' : 'row',
+      },
+    ];
+
+    // new iOS `UIScrollView`-based implementation, Android, and other platforms
     return (
-      <PagerViewView
+      <PagerViewNativeComponent
         {...this.props}
         ref={(ref) => {
           this.pagerView = ref;
         }}
-        style={this.props.style}
+        style={style}
         layoutDirection={this.deducedLayoutDirection}
         onPageScroll={this._onPageScroll}
         onPageScrollStateChanged={this._onPageScrollStateChanged}
         onPageSelected={this._onPageSelected}
         onMoveShouldSetResponderCapture={this._onMoveShouldSetResponderCapture}
-        children={childrenWithOverriddenStyle(this.props.children)}
+        children={childrenWithOverriddenStyle(
+          this.props.children,
+          this.props.pageMargin
+        )}
       />
     );
   }
 }
+
+// Temporary solution. It should be removed once all things get fixed
+type PagerViewProps = Omit<NativeProps, 'useLegacy'> & { useNext: boolean };
+
+export const PagerView = React.forwardRef<PagerViewInternal, PagerViewProps>(
+  (props, ref) => {
+    const { useNext, ...rest } = props;
+    return <PagerViewInternal {...rest} useLegacy={!useNext} ref={ref} />;
+  }
+);

@@ -3,10 +3,10 @@
 #import <React/RCTViewManager.h>
 #import <React/RCTUIManager.h>
 #import <React/RCTLog.h>
-#import "ReactNativePageView.h"
+#import "LEGACY_RNCPagerView.h"
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ReactViewPagerManager : RCTViewManager
+@interface LEGACY_RNCPagerViewManager : RCTViewManager
 
 @end
 

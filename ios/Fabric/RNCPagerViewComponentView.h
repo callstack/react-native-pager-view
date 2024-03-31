@@ -7,14 +7,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNCPagerViewComponentView : RCTViewComponentView <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
+@interface RNCPagerViewComponentView : RCTViewComponentView <UIScrollViewDelegate>
 
-@property(strong, nonatomic, readonly) UIPageViewController *nativePageViewController;
-@property(nonatomic, strong) NSMutableArray<UIViewController *> *nativeChildrenViewControllers;
-@property(nonatomic) NSInteger initialPage;
-@property(nonatomic) NSInteger currentIndex;
-@property(nonatomic) NSInteger destinationIndex;
-@property(nonatomic) NSString* layoutDirection;
 @property(nonatomic) BOOL overdrag;
 
 - (void)setPage:(NSInteger)number;

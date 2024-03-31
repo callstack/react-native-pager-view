@@ -1,7 +1,8 @@
 import type * as React from 'react';
+import type { HostComponent, ViewProps } from 'react-native';
 import codegenNativeCommands from 'react-native/Libraries/Utilities/codegenNativeCommands';
 import codegenNativeComponent from 'react-native/Libraries/Utilities/codegenNativeComponent';
-import type { HostComponent, ViewProps } from 'react-native';
+
 import type {
   DirectEventHandler,
   Double,
@@ -35,6 +36,7 @@ export interface NativeProps extends ViewProps {
   onPageScroll?: DirectEventHandler<OnPageScrollEventData>;
   onPageSelected?: DirectEventHandler<OnPageSelectedEventData>;
   onPageScrollStateChanged?: DirectEventHandler<OnPageScrollStateChangedEventData>;
+  useLegacy?: WithDefault<boolean, true>;
 }
 
 type PagerViewViewType = HostComponent<NativeProps>;
@@ -54,13 +56,14 @@ export interface NativeCommands {
   ) => void;
 }
 
-export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
-  supportedCommands: [
-    'setPage',
-    'setPageWithoutAnimation',
-    'setScrollEnabledImperatively',
-  ],
-});
+export const PagerViewNativeCommands: NativeCommands =
+  codegenNativeCommands<NativeCommands>({
+    supportedCommands: [
+      'setPage',
+      'setPageWithoutAnimation',
+      'setScrollEnabledImperatively',
+    ],
+  });
 
 export default codegenNativeComponent<NativeProps>(
   'RNCViewPager'

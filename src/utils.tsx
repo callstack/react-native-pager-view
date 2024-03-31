@@ -1,7 +1,7 @@
 import React, { Children, ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-export const childrenWithOverriddenStyle = (children?: ReactNode) => {
+export const LEGACY_childrenWithOverriddenStyle = (children?: ReactNode) => {
   return Children.map(children, (child) => {
     const element = child as React.ReactElement;
     return (
@@ -13,6 +13,26 @@ export const childrenWithOverriddenStyle = (children?: ReactNode) => {
           // Override styles so that each page will fill the parent.
           style: [element.props.style, StyleSheet.absoluteFill],
         })}
+      </View>
+    );
+  });
+};
+
+export const childrenWithOverriddenStyle = (
+  children?: ReactNode,
+  pageMargin = 0
+) => {
+  return Children.map(children, (child) => {
+    return (
+      <View
+        style={{
+          height: '100%',
+          width: '100%',
+          paddingHorizontal: pageMargin / 2,
+        }}
+        collapsable={false}
+      >
+        {child}
       </View>
     );
   });

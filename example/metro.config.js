@@ -31,15 +31,6 @@ const config = {
       return acc;
     }, {}),
   },
-
-  transformer: {
-    getTransformOptions: async () => ({
-      transform: {
-        experimentalImportSupport: false,
-        inlineRequires: true,
-      },
-    }),
-  },
 };
 
 module.exports = mergeConfig(getDefaultConfig(__dirname), config);

@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "RNCPagerViewComponentView.h"
-#import <react/renderer/components/RNCViewPager/ComponentDescriptors.h>
+#import <RNCViewPager/RNCViewPagerComponentDescriptor.h>
 #import <react/renderer/components/RNCViewPager/EventEmitters.h>
 #import <react/renderer/components/RNCViewPager/Props.h>
 #import <react/renderer/components/RNCViewPager/RCTComponentViewHelpers.h>
@@ -22,38 +22,12 @@ using namespace facebook::react;
 @end
 
 @implementation RNCPagerViewComponentView {
-    LayoutMetrics _layoutMetrics;
-    UIScrollView *scrollView;
-}
+    RNCViewPagerShadowNode::ConcreteState::Shared _state;
+    UIScrollView *_scrollView;
+    UIView *_containerView;
 
-- (void)initializeNativePageViewController {
-    const auto &viewProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
-    NSDictionary *options = @{ UIPageViewControllerOptionInterPageSpacingKey: @(viewProps.pageMargin) };
-    UIPageViewControllerNavigationOrientation orientation = UIPageViewControllerNavigationOrientationHorizontal;
-    switch (viewProps.orientation) {
-        case RNCViewPagerOrientation::Horizontal:
-            orientation = UIPageViewControllerNavigationOrientationHorizontal;
-            break;
-        case RNCViewPagerOrientation::Vertical:
-            orientation = UIPageViewControllerNavigationOrientationVertical;
-            break;
-    }
-    _nativePageViewController = [[UIPageViewController alloc]
-                                 initWithTransitionStyle: UIPageViewControllerTransitionStyleScroll
-                                 navigationOrientation:orientation
-                                 options:options];
-    _nativePageViewController.dataSource = self;
-    _nativePageViewController.delegate = self;
-    _nativePageViewController.view.frame = self.frame;
-    self.contentView = _nativePageViewController.view;
-    
-    for (UIView *subview in _nativePageViewController.view.subviews) {
-        if([subview isKindOfClass:UIScrollView.class]){
-            ((UIScrollView *)subview).delegate = self;
-            ((UIScrollView *)subview).delaysContentTouches = NO;
-            scrollView = (UIScrollView *)subview;
-        }
-    }
+    CGSize _contentSize;
+    NSInteger _initialPage;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -75,14 +49,6 @@ using namespace facebook::react;
     
     return self;
 }
-
-- (void)willMoveToSuperview:(UIView *)newSuperview {
-    if (newSuperview != nil) {
-        [self initializeNativePageViewController];
-        [self goTo:_currentIndex animated:NO];
-    }
-}
-
 
 #pragma mark - React API
 
@@ -141,124 +107,92 @@ using namespace facebook::react;
     const auto &oldScreenProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
     const auto &newScreenProps = *std::static_pointer_cast<const RNCViewPagerProps>(props);
     
-    // change index only once
-    if (_currentIndex == -1) {
-        _currentIndex = newScreenProps.initialPage;
-        [self shouldDismissKeyboard: newScreenProps.keyboardDismissMode];
+    if (_scrollView.bounces != newScreenProps.overdrag) {
+        [_scrollView setBounces: newScreenProps.overdrag];
     }
     
-    const auto newLayoutDirectionStr = RCTNSStringFromString(toString(newScreenProps.layoutDirection));
-    
-    
-    if (self.layoutDirection != newLayoutDirectionStr) {
-        self.layoutDirection = newLayoutDirectionStr;
+    if (_scrollView.scrollEnabled != newScreenProps.scrollEnabled) {
+        [_scrollView setScrollEnabled:newScreenProps.scrollEnabled];
     }
     
-    if (oldScreenProps.keyboardDismissMode != newScreenProps.keyboardDismissMode) {
-        [self shouldDismissKeyboard: newScreenProps.keyboardDismissMode];
-    }
-    
-    if (newScreenProps.scrollEnabled != scrollView.scrollEnabled) {
-        scrollView.scrollEnabled = newScreenProps.scrollEnabled;
-    }
-    
-    if (newScreenProps.overdrag != _overdrag) {
-        _overdrag = newScreenProps.overdrag;
-    }
     
     [super updateProps:props oldProps:oldProps];
+}
+
+- (void)updateLayoutMetrics:(const LayoutMetrics &)layoutMetrics
+           oldLayoutMetrics:(const LayoutMetrics &)oldLayoutMetrics
+{
+    [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:oldLayoutMetrics];
+    if (layoutMetrics.layoutDirection != oldLayoutMetrics.layoutDirection) {
+        CGAffineTransform transform = (layoutMetrics.layoutDirection == LayoutDirection::LeftToRight)
+        ? CGAffineTransformIdentity
+        : CGAffineTransformMakeScale(-1, 1);
+        
+        _containerView.transform = transform;
+        _scrollView.transform = transform;
+    }
+}
+
+- (void)updateState:(State::Shared const &)state oldState:(State::Shared const &)oldState
+{
+    assert(std::dynamic_pointer_cast<RNCViewPagerShadowNode::ConcreteState const>(state));
+    _state = std::static_pointer_cast<RNCViewPagerShadowNode::ConcreteState const>(state);
+    
+    const auto &props = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
+    
+    auto &data = _state->getData();
+    
+    auto contentOffset = RCTCGPointFromPoint(data.contentOffset);
+    if (!oldState && !CGPointEqualToPoint(contentOffset, CGPointZero)) {
+        _scrollView.contentOffset = contentOffset;
+    }
+    
+    CGSize contentSize = RCTCGSizeFromSize(data.getContentSize());
+    
+    if (CGSizeEqualToSize(_contentSize, contentSize)) {
+        return;
+    }
+    
+    _contentSize = contentSize;
+    _containerView.frame = CGRect{RCTCGPointFromPoint(data.contentBoundingRect.origin), contentSize};
+    
+    _scrollView.contentSize = contentSize;
+    
+    if (!CGSizeEqualToSize(_scrollView.frame.size, CGSizeZero) && _initialPage == -1) {
+        [self setPageWithoutAnimation: props.initialPage];
+        _initialPage = props.initialPage;
+    }
+    
+}
+
+- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+    [_containerView insertSubview:childComponentView atIndex:index];
+}
+
+- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index
+{
+    [childComponentView removeFromSuperview];
+    
+    NSInteger numberOfPages = _containerView.subviews.count;
+
+    if ([self getCurrentPage] >= numberOfPages - 1) {
+        [self setPageWithoutAnimation: numberOfPages - 1];
+    }
 }
 
 - (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args {
     RCTRNCViewPagerHandleCommand(self, commandName, args);
 }
 
-#pragma mark - Internal methods
-
-- (void)setPage:(NSInteger)index {
-    [self goTo:index animated:YES];
-}
-
-- (void)setPageWithoutAnimation:(NSInteger)index {
-    [self goTo:index animated:NO];
-}
-
-- (void)disableSwipe {
-    self.nativePageViewController.view.userInteractionEnabled = NO;
-}
-
-- (void)enableSwipe {
-    self.nativePageViewController.view.userInteractionEnabled = YES;
-}
-
-- (void)goTo:(NSInteger)index animated:(BOOL)animated {
-    NSInteger numberOfPages = _nativeChildrenViewControllers.count;
+- (void)prepareForRecycle
+{
+    _state.reset();
+    [_scrollView setContentOffset:CGPointZero];
     
-    [self disableSwipe];
+    _initialPage = -1;
     
-    _destinationIndex = index;
-    
-    
-    if (numberOfPages == 0 || index < 0 || index > numberOfPages - 1) {
-        return;
-    }
-    
-    BOOL isForward = (index > self.currentIndex && [self isLtrLayout]) || (index < self.currentIndex && ![self isLtrLayout]);
-    UIPageViewControllerNavigationDirection direction = isForward ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
-    
-    long diff = labs(index - _currentIndex);
-    
-    [self setPagerViewControllers:index
-                        direction:direction
-                         animated:diff == 0 ? NO : animated];
-    
-}
-
-- (void)setPagerViewControllers:(NSInteger)index
-                      direction:(UIPageViewControllerNavigationDirection)direction
-                       animated:(BOOL)animated{
-    if (_nativePageViewController == nil) {
-        [self enableSwipe];
-        return;
-    }
-    
-    __weak RNCPagerViewComponentView *weakSelf = self;
-    [_nativePageViewController setViewControllers:@[[_nativeChildrenViewControllers objectAtIndex:index]]
-                                        direction:direction
-                                         animated:animated
-                                       completion:^(BOOL finished) {
-        __strong RNCPagerViewComponentView *strongSelf = weakSelf;
-        [strongSelf enableSwipe];
-        if (strongSelf->_eventEmitter != nullptr ) {
-            const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(strongSelf->_eventEmitter);
-            int position = (int) index;
-            strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
-            strongSelf->_currentIndex = index;
-        }
-    }];
-}
-
-
-- (UIViewController *)nextControllerForController:(UIViewController *)controller
-                                      inDirection:(UIPageViewControllerNavigationDirection)direction {
-    NSUInteger numberOfPages = _nativeChildrenViewControllers.count;
-    NSInteger index = [_nativeChildrenViewControllers indexOfObject:controller];
-    
-    if (index == NSNotFound) {
-        return nil;
-    }
-    
-    direction == UIPageViewControllerNavigationDirectionForward ? index++ : index--;
-    
-    if (index < 0 || (index > (numberOfPages - 1))) {
-        return nil;
-    }
-    
-    return [_nativeChildrenViewControllers objectAtIndex:index];
-}
-
-- (UIViewController *)currentlyDisplayed {
-    return _nativePageViewController.viewControllers.firstObject;
+    [super prepareForRecycle];
 }
 
 #pragma mark - UIScrollViewDelegate
@@ -292,112 +226,70 @@ using namespace facebook::react;
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    int position = [self getCurrentPage];
+    
     const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
+    
     strongEventEmitter.onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Idle });
+    
+    strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
 }
 
-- (BOOL)isHorizontal {
-    return _nativePageViewController.navigationOrientation == UIPageViewControllerNavigationOrientationHorizontal;
-}
-
-- (BOOL)isLtrLayout {
-    return [_layoutDirection isEqualToString: @"ltr"];
-}
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    CGPoint point = scrollView.contentOffset;
-    
-    float offset = 0;
-    
-    if (self.isHorizontal) {
-        if (scrollView.frame.size.width != 0) {
-            offset = (point.x - scrollView.frame.size.width)/scrollView.frame.size.width;
-        }
-    } else {
-        if (scrollView.frame.size.height != 0) {
-            offset = (point.y - scrollView.frame.size.height)/scrollView.frame.size.height;
-        }
-    }
-    
-    float absoluteOffset = fabs(offset);
-    
-    NSInteger position = self.currentIndex;
-    
-    BOOL isAnimatingBackwards = offset<0;
-    
-    if (scrollView.isDragging) {
-        _destinationIndex = isAnimatingBackwards ? _currentIndex - 1 : _currentIndex + 1;
-    }
-    
-    if (isAnimatingBackwards) {
-        position =  _destinationIndex;
-        absoluteOffset =  fmax(0, 1 - absoluteOffset);
-    }
-    
-    if (!_overdrag) {
-        NSInteger maxIndex = _nativeChildrenViewControllers.count - 1;
-        NSInteger firstPageIndex = [self isLtrLayout] ?  0 :  maxIndex;
-        NSInteger lastPageIndex = [self isLtrLayout] ?  maxIndex :  0;
-        BOOL isFirstPage = _currentIndex == firstPageIndex;
-        BOOL isLastPage = _currentIndex == lastPageIndex;
-        CGFloat contentOffset =[self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;
-        CGFloat topBound = [self isHorizontal] ? scrollView.bounds.size.width : scrollView.bounds.size.height;
-        
-        if ((isFirstPage && contentOffset <= topBound) || (isLastPage && contentOffset >= topBound)) {
-            CGPoint croppedOffset = [self isHorizontal] ? CGPointMake(topBound, 0) : CGPointMake(0, topBound);
-            scrollView.contentOffset = croppedOffset;
-            absoluteOffset=0;
-            position = isLastPage ? lastPageIndex : firstPageIndex;
-        }
-    }
-    
-    float interpolatedOffset = absoluteOffset * labs(_destinationIndex - _currentIndex);
+//Handles sending onPageSelected event on setPage method completion
+-(void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
+    int position = [self getCurrentPage];
     
     const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
-    int eventPosition = (int) position;
-    strongEventEmitter.onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(eventPosition), .offset = interpolatedOffset});
+    
+    strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
+}
 
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    int position = [self getCurrentPage];
+    
+    double offset = [self isHorizontal] ? (scrollView.contentOffset.x - (scrollView.frame.size.width * position))/scrollView.frame.size.width : (scrollView.contentOffset.y - (scrollView.frame.size.height * position))/scrollView.frame.size.height;
+    
+    const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
+    
+    strongEventEmitter.onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(position), .offset = offset});
+    
     //This is temporary workaround to allow animations based on onPageScroll event
     //until Fabric implements proper NativeAnimationDriver
     RCTBridge *bridge = [RCTBridge currentBridge];
     
     if (bridge) {
-        [bridge.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:[NSNumber numberWithInt:self.tag] position:@(position) offset:@(interpolatedOffset)]];
-    }
-    
-}
-
-
-#pragma mark - UIPageViewControllerDelegate
-
-- (void)pageViewController:(UIPageViewController *)pageViewController
-        didFinishAnimating:(BOOL)finished
-   previousViewControllers:(nonnull NSArray<UIViewController *> *)previousViewControllers
-       transitionCompleted:(BOOL)completed {
-    if (completed) {
-        UIViewController* currentVC = [self currentlyDisplayed];
-        NSUInteger currentIndex = [_nativeChildrenViewControllers indexOfObject:currentVC];
-        _currentIndex = currentIndex;
-        int position = (int) currentIndex;
-        const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
-        strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
-        strongEventEmitter.onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(position), .offset =  0.0});
+        [bridge.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:[NSNumber numberWithInt:self.tag] position:@(position) offset:@(offset)]];
     }
 }
 
-#pragma mark - UIPageViewControllerDataSource
+#pragma mark - Internal methods
 
-- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController
-       viewControllerAfterViewController:(UIViewController *)viewController {
-    
-    UIPageViewControllerNavigationDirection direction = [self isLtrLayout] ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
-    return [self nextControllerForController:viewController inDirection:direction];
+-(bool)isHorizontal {
+    return _scrollView.contentSize.width > _scrollView.contentSize.height;
 }
 
-- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController
-      viewControllerBeforeViewController:(UIViewController *)viewController {
-    UIPageViewControllerNavigationDirection direction = [self isLtrLayout] ? UIPageViewControllerNavigationDirectionReverse : UIPageViewControllerNavigationDirectionForward;
-    return [self nextControllerForController:viewController inDirection:direction];
+-(int)getCurrentPage {
+    return [self isHorizontal] ? _scrollView.contentOffset.x / _scrollView.frame.size.width : _scrollView.contentOffset.y / _scrollView.frame.size.height;
+}
+
+-(CGPoint)getPageOffset:(NSInteger)pageIndex {
+    return [self isHorizontal] ? CGPointMake(_scrollView.frame.size.width * pageIndex, 0) : CGPointMake(0, _scrollView.frame.size.height * pageIndex);
+}
+
+- (void)setPage:(NSInteger)index {
+    CGPoint targetOffset = [self getPageOffset:index];
+    
+    [_scrollView setContentOffset:targetOffset animated:YES];
+}
+
+- (void)setPageWithoutAnimation:(NSInteger)index {
+    CGPoint targetOffset = [self getPageOffset:index];
+    
+    [_scrollView setContentOffset:targetOffset animated:NO];
+    
+    const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
+    
+    strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(index)});
 }
 
 #pragma mark - RCTComponentViewProtocol

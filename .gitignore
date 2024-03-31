@@ -47,12 +47,6 @@ npm-debug.log
 yarn-debug.log
 yarn-error.log
 
-# BUCK
-buck-out/
-\.buckd/
-android/app/libs
-android/keystores/debug.keystore
-
 # Expo
 .expo/*
 
@@ -76,3 +70,4 @@ lefthook.yml
 # testing
 /coverage
 .cxx
+example/ios/PagerViewExample.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
