@@ -67,14 +67,13 @@ interface NativeCommands {
   ) => void;
 }
 
-export const Commands: NativeCommands =
-  codegenNativeCommands<NativeCommands>({
-    supportedCommands: [
-      'setPage',
-      'setPageWithoutAnimation',
-      'setScrollEnabledImperatively',
-    ],
-  });
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: [
+    'setPage',
+    'setPageWithoutAnimation',
+    'setScrollEnabledImperatively',
+  ],
+});
 
 export default codegenNativeComponent<NativeProps>(
   'LEGACY_RNCViewPager'
