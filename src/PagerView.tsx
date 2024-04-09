@@ -9,7 +9,7 @@ import {
 } from './utils';
 
 import PagerViewNativeComponent, {
-  PagerViewNativeCommands,
+  Commands as PagerViewNativeCommands,
   OnPageScrollEventData,
   OnPageScrollStateChangedEventData,
   OnPageSelectedEventData,
@@ -17,7 +17,7 @@ import PagerViewNativeComponent, {
 } from './PagerViewNativeComponent/PagerViewNativeComponent';
 
 import LEGACY_PagerViewNativeComponent, {
-  LEGACY_PagerViewNativeCommands,
+  Commands as LEGACY_PagerViewNativeCommands,
 } from './LEGACY_PagerViewNativeComponent/LEGACY_PagerViewNativeComponent';
 
 // The Fabric component for PagerView uses a work around present also in ScrollView:
