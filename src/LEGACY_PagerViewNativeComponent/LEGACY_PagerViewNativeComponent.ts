@@ -67,7 +67,7 @@ interface NativeCommands {
   ) => void;
 }
 
-export const LEGACY_PagerViewNativeCommands: NativeCommands =
+export const Commands: NativeCommands =
   codegenNativeCommands<NativeCommands>({
     supportedCommands: [
       'setPage',

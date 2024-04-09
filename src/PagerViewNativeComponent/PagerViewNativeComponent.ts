@@ -56,7 +56,7 @@ export interface NativeCommands {
   ) => void;
 }
 
-export const PagerViewNativeCommands: NativeCommands =
+export const Commands: NativeCommands =
   codegenNativeCommands<NativeCommands>({
     supportedCommands: [
       'setPage',
