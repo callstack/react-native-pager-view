@@ -1,6 +1,6 @@
 {
   "name": "react-native-pager-view",
-  "version": "6.3.0",
+  "version": "6.3.1",
   "description": "React Native wrapper for Android and iOS ViewPager",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -65,7 +65,7 @@
     "eslint-plugin-ft-flow": "^3.0.1",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^28.1.1",
-    "metro-react-native-babel-preset": "^0.77.0",
+    "metro-react-native-babel-preset": "0.76.8",
     "pod-install": "^0.1.0",
     "prettier": "^2.4.1",
     "react": "18.2.0",
@@ -73,10 +73,7 @@
     "react-native-builder-bob": "^0.18.3",
     "release-it": "^14.2.2",
     "typescript": "^4.5.2",
-    "@react-native/eslint-config": "^0.72.2",
-    "@react-native/metro-config": "^0.72.11",
-    "@tsconfig/react-native": "^3.0.0",
-    "metro-react-native-babel-preset": "0.76.8"
+    "@react-native/metro-config": "^0.72.11"
   },
   "resolutions": {
     "@types/react": "18.0.29"
