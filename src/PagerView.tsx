@@ -233,3 +233,9 @@ export const PagerView = React.forwardRef<PagerViewInternal, PagerViewProps>(
     return <PagerViewInternal {...rest} useLegacy={!useNext} ref={ref} />;
   }
 );
+
+// React.forwardRef does not type returned component properly, thus breaking Ref<MyComponent> typing.
+// One way to overcome this is using separate typing for component "interface",
+// but that breaks backward compatibility in this case.
+// Approach of merging type is hacky, but produces a good typing for both ref attributes and component itself.
+export type PagerView = PagerViewInternal & typeof PagerView;
