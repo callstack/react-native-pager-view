@@ -14,11 +14,11 @@ import PagerViewNativeComponent, {
   OnPageScrollStateChangedEventData,
   OnPageSelectedEventData,
   NativeProps,
-} from './PagerViewNativeComponent/PagerViewNativeComponent';
+} from './specs/PagerViewNativeComponent';
 
 import LEGACY_PagerViewNativeComponent, {
   Commands as LEGACY_PagerViewNativeCommands,
-} from './LEGACY_PagerViewNativeComponent/LEGACY_PagerViewNativeComponent';
+} from './specs/LEGACY_PagerViewNativeComponent';
 
 // The Fabric component for PagerView uses a work around present also in ScrollView:
 // https://github.com/callstack/react-native-pager-view/blob/master/ios/Fabric/RNCPagerViewComponentView.mm#L362-L368

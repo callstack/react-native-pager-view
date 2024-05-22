@@ -1,5 +1,5 @@
 /*
-  Note: The types below are duplicated between this file and `src/PagerViewNativeComponent/PagerViewNativeComponent.ts`.
+  Note: The types below are duplicated between this file and `src/specs/PagerViewNativeComponent.ts`.
 
   This is on purpose. Firstly, we're declaring two native modules with two different iOS implementation flavors, but the same API.
   Secondly, as these files serve as a reference point for React Native's new architecture Codegen process (which takes care of the
