@@ -15,17 +15,14 @@
 
 using namespace facebook::react;
 
-@interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>
-
-@property(nonatomic, assign) UIPanGestureRecognizer* panGestureRecognizer;
-
+@interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, UIScrollViewDelegate>
 @end
 
 @implementation RNCPagerViewComponentView {
     RNCViewPagerShadowNode::ConcreteState::Shared _state;
     UIScrollView *_scrollView;
     UIView *_containerView;
-
+    
     CGSize _contentSize;
     NSInteger _initialPage;
 }
@@ -35,73 +32,29 @@ using namespace facebook::react;
     if (self = [super initWithFrame:frame]) {
         static const auto defaultProps = std::make_shared<const RNCViewPagerProps>();
         _props = defaultProps;
-        _nativeChildrenViewControllers = [[NSMutableArray alloc] init];
-        _currentIndex = -1;
-        _destinationIndex = -1;
-        _layoutDirection = @"ltr";
-        _overdrag = NO;
-        UIPanGestureRecognizer* panGestureRecognizer = [UIPanGestureRecognizer new];
-        self.panGestureRecognizer = panGestureRecognizer;
-        panGestureRecognizer.delegate = self;
-        [self addGestureRecognizer: panGestureRecognizer];
-
+        _initialPage = -1;
+        
+        _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
+        
+        _scrollView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+        _scrollView.delaysContentTouches = NO;
+        _scrollView.delegate = self;
+        _scrollView.pagingEnabled = YES;
+        _scrollView.showsHorizontalScrollIndicator = NO;
+        _scrollView.showsVerticalScrollIndicator = NO;
+        
+        [self addSubview:_scrollView];
+        
+        _containerView = [[UIView alloc] initWithFrame:CGRectZero];
+        
+        [_scrollView addSubview:_containerView];
     }
     
     return self;
 }
 
+
 #pragma mark - React API
-
-- (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
-    UIViewController *wrapper = [[UIViewController alloc] initWithView:childComponentView];
-    [_nativeChildrenViewControllers insertObject:wrapper atIndex:index];
-}
-
-- (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
-    [[_nativeChildrenViewControllers objectAtIndex:index].view removeFromSuperview];
-    [_nativeChildrenViewControllers objectAtIndex:index].view = nil;
-    [_nativeChildrenViewControllers removeObjectAtIndex:index];
- 
-    NSInteger maxPage = _nativeChildrenViewControllers.count - 1;
-    
-    if (self.currentIndex >= maxPage) {
-        [self goTo:maxPage animated:NO];
-    }
-}
-
-
--(void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics {
-    [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:_layoutMetrics];
-    self.contentView.frame = RCTCGRectFromRect(_layoutMetrics.getContentFrame());
-    _layoutMetrics = layoutMetrics;
-}
-
-
--(void)prepareForRecycle {
-    [super prepareForRecycle];
-    
-    _nativeChildrenViewControllers = [[NSMutableArray alloc] init];
-    [_nativePageViewController.view removeFromSuperview];
-    _nativePageViewController = nil;
-    
-    _currentIndex = -1;
-}
-
-- (void)shouldDismissKeyboard:(RNCViewPagerKeyboardDismissMode)dismissKeyboard {
-#if !TARGET_OS_VISION
-    UIScrollViewKeyboardDismissMode dismissKeyboardMode = UIScrollViewKeyboardDismissModeNone;
-    switch (dismissKeyboard) {
-        case RNCViewPagerKeyboardDismissMode::None:
-            dismissKeyboardMode = UIScrollViewKeyboardDismissModeNone;
-            break;
-        case RNCViewPagerKeyboardDismissMode::OnDrag:
-            dismissKeyboardMode = UIScrollViewKeyboardDismissModeOnDrag;
-            break;
-    }
-    scrollView.keyboardDismissMode = dismissKeyboardMode;
-#endif
-}
-
 
 - (void)updateProps:(const facebook::react::Props::Shared &)props oldProps:(const facebook::react::Props::Shared &)oldProps{
     const auto &oldScreenProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
@@ -206,23 +159,6 @@ using namespace facebook::react;
     
     const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
     strongEventEmitter.onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Settling });
-    
-    if (!_overdrag) {
-        NSInteger maxIndex = _nativeChildrenViewControllers.count - 1;
-        BOOL isFirstPage = [self isLtrLayout] ? _currentIndex == 0 : _currentIndex == maxIndex;
-        BOOL isLastPage = [self isLtrLayout] ? _currentIndex == maxIndex : _currentIndex == 0;
-        CGFloat contentOffset = [self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;
-        CGFloat topBound = [self isHorizontal] ? scrollView.bounds.size.width : scrollView.bounds.size.height;
-        
-        if ((isFirstPage && contentOffset <= topBound) || (isLastPage && contentOffset >= topBound)) {
-            CGPoint croppedOffset = [self isHorizontal] ? CGPointMake(topBound, 0) : CGPointMake(0, topBound);
-            *targetContentOffset = croppedOffset;
-            
-            strongEventEmitter.onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Idle });
-        }
-    }
-    
-   
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
@@ -299,29 +235,6 @@ using namespace facebook::react;
     return concreteComponentDescriptorProvider<RNCViewPagerComponentDescriptor>();
 }
 
-
-- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-
-    // Recognize simultaneously only if the other gesture is RN Screen's pan gesture (one that is used to perform fullScreenGestureEnabled)
-    if (gestureRecognizer == self.panGestureRecognizer && [NSStringFromClass([otherGestureRecognizer class]) isEqual: @"RNSPanGestureRecognizer"]) {
-        UIPanGestureRecognizer* panGestureRecognizer = (UIPanGestureRecognizer*) gestureRecognizer;
-        CGPoint velocity = [panGestureRecognizer velocityInView:self];
-        BOOL isLTR = [self isLtrLayout];
-        BOOL isBackGesture = (isLTR && velocity.x > 0) || (!isLTR && velocity.x < 0);
-        
-        if (self.currentIndex == 0 && isBackGesture) {
-            scrollView.panGestureRecognizer.enabled = false;
-        } else {
-            const auto &viewProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
-            scrollView.panGestureRecognizer.enabled = viewProps.scrollEnabled;
-        }
-        
-        return YES;
-    }
-    const auto &viewProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
-    scrollView.panGestureRecognizer.enabled = viewProps.scrollEnabled;
-    return NO;
-}
 
 @end
 

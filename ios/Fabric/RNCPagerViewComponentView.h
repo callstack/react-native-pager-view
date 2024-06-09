@@ -9,8 +9,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNCPagerViewComponentView : RCTViewComponentView <UIScrollViewDelegate>
 
-@property(nonatomic) BOOL overdrag;
-
 - (void)setPage:(NSInteger)number;
 - (void)setPageWithoutAnimation:(NSInteger)number;
 

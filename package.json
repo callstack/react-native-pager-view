@@ -12,7 +12,7 @@
     "lib",
     "android",
     "ios",
-    "cpp",
+    "common",
     "react-native-pager-view.podspec",
     "!lib/typescript/example",
     "!android/build",
@@ -55,6 +55,7 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.18.2",
     "@react-native/eslint-config": "^0.72.2",
+    "@react-native/metro-config": "^0.72.11",
     "@release-it/conventional-changelog": "^2.0.0",
     "@tsconfig/react-native": "^3.0.0",
     "@types/jest": "^28.1.2",
@@ -72,8 +73,7 @@
     "react-native": "0.72.5",
     "react-native-builder-bob": "^0.18.3",
     "release-it": "^14.2.2",
-    "typescript": "^4.5.2",
-    "@react-native/metro-config": "^0.72.11"
+    "typescript": "^4.5.2"
   },
   "resolutions": {
     "@types/react": "18.0.29"
