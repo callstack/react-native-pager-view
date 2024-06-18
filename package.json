@@ -66,7 +66,6 @@
     "eslint-plugin-ft-flow": "^3.0.1",
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "^28.1.1",
-    "metro-react-native-babel-preset": "0.76.8",
     "pod-install": "^0.1.0",
     "prettier": "^2.4.1",
     "react": "18.2.0",

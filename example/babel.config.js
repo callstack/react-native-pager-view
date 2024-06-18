@@ -15,4 +15,16 @@ module.exports = {
     ],
     'react-native-reanimated/plugin',
   ],
+  overrides: [
+    {
+      plugins: [
+        [
+          '@babel/plugin-transform-private-methods',
+          {
+            loose: true,
+          },
+        ],
+      ],
+    },
+  ],
 };

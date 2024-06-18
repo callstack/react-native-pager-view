@@ -1,4 +1,24 @@
 {
   "name": "PagerViewExample",
-  "displayName": "PagerViewExample"
+  "displayName": "PagerViewExample",
+  "components": [
+    {
+      "appKey": "PagerViewExample",
+      "displayName": "PagerViewExample"
+    }
+  ],
+  "resources": {
+    "android": [
+      "dist/res",
+      "dist/main.android.jsbundle"
+    ],
+    "ios": [
+      "dist/assets",
+      "dist/main.ios.jsbundle"
+    ],
+    "visionos": [
+      "dist/assets",
+      "dist/main.visionos.jsbundle"
+    ]
+  }
 }
