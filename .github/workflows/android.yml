@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   android-build:
-    runs-on: macos-latest
+    runs-on: macos-12
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-dependencies
@@ -47,7 +47,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '11'
 
       - name: Gradle cache
         uses: actions/cache@v4
