@@ -121,18 +121,12 @@
     "useTabs": false
   },
   "codegenConfig": {
-    "libraries": [
-      {
-        "name": "RNCViewPager",
-        "type": "components",
-        "jsSrcsDir": "src/PagerViewNativeComponent"
-      },
-      {
-        "name": "LEGACY_RNCViewPager",
-        "type": "components",
-        "jsSrcsDir": "src/LEGACY_PagerViewNativeComponent"
-      }
-    ]
+    "name": "pagerview",
+    "type": "all",
+    "jsSrcsDir": "./src/specs",
+    "android": {
+      "javaPackageName": "com.reactnativepagerview"
+    }
   },
   "react-native-builder-bob": {
     "source": "src",
