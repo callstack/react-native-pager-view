@@ -28,6 +28,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
+**/.xcode.env.local
 
 # Android/IJ
 #
@@ -71,3 +72,11 @@ lefthook.yml
 /coverage
 .cxx
 example/ios/PagerViewExample.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+
+# Yarn
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

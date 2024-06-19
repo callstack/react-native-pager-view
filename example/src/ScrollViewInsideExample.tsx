@@ -6,7 +6,7 @@ import { PAGES, createPage } from './utils';
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
-export const ScrollViewInsideExample = (): JSX.Element => {
+export const ScrollViewInsideExample = (): React.JSX.Element => {
   const [pages] = useState(
     Array(PAGES)
       .fill(1)
