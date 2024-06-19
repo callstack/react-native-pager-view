@@ -7,8 +7,8 @@ require "#{ws_dir}/node_modules/react-native-test-app/test_app.rb"
 workspace 'PagerViewExample.xcworkspace'
 
 options = {
-  :bridgeless_enabled => true,
-  :fabric_enabled => true,
+  :bridgeless_enabled => false,
+  :fabric_enabled => false,
   :hermes_enabled => true,
 }
 
