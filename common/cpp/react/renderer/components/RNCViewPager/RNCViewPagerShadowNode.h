@@ -1,7 +1,9 @@
 #pragma once
 
-#include <react/renderer/components/RNCViewPager/EventEmitters.h>
-#include <react/renderer/components/RNCViewPager/Props.h>
+//These imports come from the common/cpp directory 
+#include <react/renderer/components/pagerview/EventEmitters.h>
+#include <react/renderer/components/pagerview/Props.h>
+//This import comes from the codegen directory 
 #include <react/renderer/components/RNCViewPager/RNCViewPagerState.h>
 #include <react/renderer/components/view/ConcreteViewShadowNode.h>
 #include <react/renderer/core/LayoutContext.h>
