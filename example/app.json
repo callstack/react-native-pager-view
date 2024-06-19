@@ -1,12 +1,29 @@
 {
+  "$schema": "https://raw.githubusercontent.com/microsoft/react-native-test-app/trunk/schema.json",
   "name": "PagerViewExample",
   "displayName": "PagerViewExample",
+  "singleApp": "PagerViewExample",
   "components": [
     {
       "appKey": "PagerViewExample",
-      "displayName": "PagerViewExample"
+      "displayName": "PagerViewExample",
+      "slug": "PagerViewExample"
     }
   ],
+  "android": {
+    "package": "com.pagerviewexample",
+    "signingConfigs": {
+      "debug": {
+        "storeFile": "android/debug.keystore"
+      },
+      "release": {
+        "storeFile": "android/debug.keystore"
+      }
+    }
+  },
+  "ios": {
+    "bundleIdentifier": "com.pagerviewexample"
+  },
   "resources": {
     "android": [
       "dist/res",

@@ -935,7 +935,7 @@ PODS:
   - React-Mapbuffer (0.74.2):
     - glog
     - React-debug
-  - react-native-pager-view (6.3.1):
+  - react-native-pager-view (6.3.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -949,7 +949,7 @@ PODS:
     - React-featureflags
     - React-graphics
     - React-ImageManager
-    - react-native-pager-view/common (= 6.3.1)
+    - react-native-pager-view/common (= 6.3.3)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-rendererdebug
@@ -957,7 +957,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-pager-view/common (6.3.1):
+  - react-native-pager-view/common (6.3.3):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1669,7 +1669,7 @@ SPEC CHECKSUMS:
   React-jsitracing: 0fa7f78d8fdda794667cb2e6f19c874c1cf31d7e
   React-logger: 29fa3e048f5f67fe396bc08af7606426d9bd7b5d
   React-Mapbuffer: bf56147c9775491e53122a94c423ac201417e326
-  react-native-pager-view: f8f2da2d70b7ec8e083aecd9a84c2f7aaaf4e256
+  react-native-pager-view: b082c41ed422d67f20fdff729a982865a973e292
   react-native-safe-area-context: 2908c69c3ef0a68d536b985a76738d541d6b022e
   React-nativeconfig: 9f223cd321823afdecf59ed00861ab2d69ee0fc1
   React-NativeModulesApple: ff7efaff7098639db5631236cfd91d60abff04c0
