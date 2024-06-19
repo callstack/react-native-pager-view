@@ -15,7 +15,6 @@
     "visionos": "react-native run-visionos"
   },
   "dependencies": {
-    "@babel/plugin-transform-private-methods": "^7.24.7",
     "@callstack/react-native-visionos": "^0.74.0",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-navigation/native": "^6.0.13",
