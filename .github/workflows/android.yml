@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - master
-      - next
     paths:
       - '.github/workflows/android.yml'
       - 'android/**'
@@ -12,15 +11,13 @@ on:
   push:
     branches:
       - master
-      - next
-
-concurrency:
-  group: ${{ github.ref }}-android
-  cancel-in-progress: true
 
 jobs:
   android-build:
     runs-on: macos-12
+    concurrency:
+      group: ${{ github.ref }}-android
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-dependencies
@@ -48,23 +45,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
-
-      - name: Gradle cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*') }}-${{ hashFiles('**/gradle/wrapper/gradle-wrapper.properties') }}-${{ hashFiles('**/buildSrc/**/*.kt') }}
-
-      - name: AVD cache
-        uses: actions/cache@v4
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-cache
+          cache: 'gradle'
 
       - name: Install Maestro CLI
         run: export MAESTRO_VERSION=1.31.0; curl -Ls "https://get.maestro.mobile.dev" | bash
@@ -72,29 +53,17 @@ jobs:
       - name: Add Maestro to path
         run: echo "${HOME}/.maestro/bin" >> $GITHUB_PATH
 
-      - name: create AVD and generate snapshot for caching
-        if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: 29
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
-          cores: 2
-          ram-size: 4096M
-          profile: Nexus 6
-          script: echo "Generated AVD snapshot for caching."
-
       - name: Run Android Emulator and app
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
-          force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          api-level: 31
+          target: aosp_atd
+          profile: pixel_2
+          ram-size: '4096M'
+          disk-size: '10G'
           disable-animations: false
-          cores: 2
-          ram-size: 4096M
-          profile: Nexus 6
+          avd-name: e2e_emulator
+          arch: x86_64
           script: |
             yarn run-example-android
             yarn test:e2e:android

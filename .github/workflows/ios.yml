@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - master
-      - next
     paths:
       - '.github/workflows/ios.yml'
       - 'ios/**'
@@ -12,23 +11,17 @@ on:
   push:
     branches:
       - master
-      - next
 
-concurrency:
-  group: ${{ github.ref }}-ios
-  cancel-in-progress: true
 
 jobs:
   ios-build:
     runs-on: macos-14
+    concurrency:
+      group: ${{ github.ref }}-ios
+      cancel-in-progress: true
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/install-dependencies
-
-      - name: Use latest stable Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest-stable
 
       - name: Pull dependencies
         uses: actions/cache@v4
