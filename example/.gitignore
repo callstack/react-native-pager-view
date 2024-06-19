@@ -6,7 +6,7 @@
 .gradle/
 .idea/
 .vs/
-.xcode.env
+**/.xcode.env.local
 Pods/
 build/
 dist/*
