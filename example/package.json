@@ -49,7 +49,7 @@
     "prettier": "2.4.1",
     "react-native-test-app": "^3.7.6",
     "react-test-renderer": "18.2.0",
-    "typescript": "5.0.4"
+    "typescript": "^4.5.2"
   },
   "engines": {
     "node": ">=18"
