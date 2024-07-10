@@ -225,7 +225,7 @@ class PagerViewInternal extends React.Component<NativeProps> {
 }
 
 // Temporary solution. It should be removed once all things get fixed
-type PagerViewProps = Omit<NativeProps, 'useLegacy'> & { useNext: boolean };
+type PagerViewProps = Omit<NativeProps, 'useLegacy'> & { useNext?: boolean };
 
 export const PagerView = React.forwardRef<PagerViewInternal, PagerViewProps>(
   (props, ref) => {
