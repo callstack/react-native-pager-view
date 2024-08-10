@@ -106,7 +106,7 @@ using namespace facebook::react;
 
 -(void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics {
     [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:_layoutMetrics];
-    self.contentView.frame = RCTCGRectFromRect(_layoutMetrics.getContentFrame());
+    self.contentView.frame = RCTCGRectFromRect(layoutMetrics.getContentFrame());
     _layoutMetrics = layoutMetrics;
 }
 
