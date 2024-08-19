@@ -69,7 +69,7 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
         return host
     }
 
-    override fun addView(host: NestedScrollableHost, child: View?, index: Int) {
+    override fun addView(host: NestedScrollableHost, child: View, index: Int) {
         PagerViewViewManagerImpl.addView(host, child, index)
     }
 
