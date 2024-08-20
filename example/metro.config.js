@@ -1,4 +1,4 @@
-const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
+const { makeMetroConfig } = require('@rnx-kit/metro-config');
 const path = require('path');
 const escape = require('escape-string-regexp');
 const exclusionList = require('metro-config/src/defaults/exclusionList');
@@ -7,13 +7,15 @@ const pak = require('../package.json');
 const root = path.resolve(__dirname, '..');
 const modules = Object.keys({ ...pak.peerDependencies });
 
-/**
- * Metro configuration
- * https://reactnative.dev/docs/metro
- *
- * @type {import('metro-config').MetroConfig}
- */
-const config = {
+module.exports = makeMetroConfig({
+  transformer: {
+    getTransformOptions: async () => ({
+      transform: {
+        experimentalImportSupport: false,
+        inlineRequires: false,
+      },
+    }),
+  },
   watchFolders: [root],
 
   // We need to make sure that only one version is loaded for peerDependencies
@@ -31,6 +33,4 @@ const config = {
       return acc;
     }, {}),
   },
-};
-
-module.exports = mergeConfig(getDefaultConfig(__dirname), config);
+});

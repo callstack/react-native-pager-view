@@ -52,6 +52,10 @@ jobs:
           path: example/ios/Pods
           key: ${{ hashFiles('./example/ios/Podfile.lock') }}
 
+      - name: Bundle app
+        run: yarn build:ios
+        working-directory: example/ios
+
       - name: Install example Pods
         run: pod install
         working-directory: example/ios
