@@ -30,7 +30,9 @@
 - (instancetype)initWithEventDispatcher:(id<RCTEventDispatcherProtocol>)eventDispatcher {
     if (self = [super init]) {
         _initialPage = 0;
+#if !TARGET_OS_VISION
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
+#endif
         _coalescingKey = 0;
         _eventDispatcher = eventDispatcher;
         _orientation = @"horizontal";
@@ -89,11 +91,13 @@
     }
 }
 
+#if !TARGET_OS_VISION
 - (void)shouldDismissKeyboard:(NSString *)dismissKeyboard {
     _dismissKeyboard = [dismissKeyboard  isEqual: @"on-drag"] ?
     UIScrollViewKeyboardDismissModeOnDrag : UIScrollViewKeyboardDismissModeNone;
     self.scrollView.keyboardDismissMode = _dismissKeyboard;
 }
+#endif
 
 #pragma mark - Internal methods
 
