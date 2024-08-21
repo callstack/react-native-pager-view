@@ -2,7 +2,7 @@
 
 #import <Foundation/Foundation.h>
 #import "RNCPagerViewComponentView.h"
-#import <RNCViewPager/RNCViewPagerComponentDescriptor.h>
+#import <react/renderer/components/RNCViewPager/RNCViewPagerComponentDescriptor.h>
 #import <react/renderer/components/pagerview/EventEmitters.h>
 #import <react/renderer/components/pagerview/Props.h>
 #import <react/renderer/components/pagerview/RCTComponentViewHelpers.h>
