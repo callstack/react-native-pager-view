@@ -1,5 +1,5 @@
 import React, { Children, ReactNode } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 export const LEGACY_childrenWithOverriddenStyle = (children?: ReactNode) => {
   return Children.map(children, (child) => {
@@ -29,6 +29,7 @@ export const childrenWithOverriddenStyle = (
           height: '100%',
           width: '100%',
           paddingHorizontal: pageMargin / 2,
+          position: Platform.OS === 'android' ? 'absolute' : undefined,
         }}
         collapsable={false}
       >
