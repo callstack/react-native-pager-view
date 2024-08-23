@@ -16,11 +16,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
+      - uses: actions/checkout@v4
       - uses: ./.github/actions/install-dependencies
 
       - name: Configure Git
@@ -39,4 +35,5 @@ jobs:
             --npm.publish \
             --no-git.requireCleanWorkingDir \
             --dry-run \
-            --verbose
+            --verbose \
+            --npm.tag=test
