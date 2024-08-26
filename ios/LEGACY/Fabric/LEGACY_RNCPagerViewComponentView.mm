@@ -26,6 +26,12 @@ using namespace facebook::react;
     UIScrollView *scrollView;
 }
 
+// Needed because of this: https://github.com/facebook/react-native/pull/37274
++ (void)load
+{
+  [super load];
+}
+
 - (void)initializeNativePageViewController {
     const auto &viewProps = *std::static_pointer_cast<const LEGACY_RNCViewPagerProps>(_props);
     NSDictionary *options = @{ UIPageViewControllerOptionInterPageSpacingKey: @(viewProps.pageMargin) };
