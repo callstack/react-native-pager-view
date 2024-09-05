@@ -1,8 +1,12 @@
+import type * as ReactNative from 'react-native';
 import type {
-  OnPageScrollEventData as PageScrollStateChangedNativeEvent,
-  OnPageSelectedEventData as PagerViewOnPageScrollEventData,
-  OnPageScrollStateChangedEventData as PagerViewOnPageSelectedEventData,
+  OnPageScrollEventData as PagerViewOnPageScrollEventData,
+  OnPageSelectedEventData as PagerViewOnPageSelectedEventData,
+  OnPageScrollStateChangedEventData as PageScrollStateChangedNativeEventData,
 } from './specs/PagerViewNativeComponent';
+
+type PageScrollStateChangedNativeEvent =
+  ReactNative.NativeSyntheticEvent<PageScrollStateChangedNativeEventData>;
 
 import { PagerView } from './PagerView';
 
@@ -108,7 +112,6 @@ export function useViewPager(pagesAmount: number = 0) {
     (e: PageScrollStateChangedNativeEvent) => {
       setScrollState(e.nativeEvent.pageScrollState);
     },
-
     []
   );
 
