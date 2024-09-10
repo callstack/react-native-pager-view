@@ -62,6 +62,18 @@ import LEGACY_PagerViewNativeComponent, {
  * ```
  */
 
+// Type that excludes the private methods
+// Fix for class exporting using hook.
+type PublicPagerViewMethods = Omit<
+  PagerViewInternal,
+  | 'nativeCommandsWrapper'
+  | 'deducedLayoutDirection'
+  | '_onPageScroll'
+  | '_onPageScrollStateChanged'
+  | '_onPageSelected'
+  | '_onMoveShouldSetResponderCapture'
+>;
+
 class PagerViewInternal extends React.Component<NativeProps> {
   private isScrolling = false;
   pagerView: React.ElementRef<typeof PagerViewNativeComponent> | null = null;
@@ -216,15 +228,22 @@ class PagerViewInternal extends React.Component<NativeProps> {
 // Temporary solution. It should be removed once all things get fixed
 type PagerViewProps = Omit<NativeProps, 'useLegacy'> & { useNext?: boolean };
 
-export const PagerView = React.forwardRef<PagerViewInternal, PagerViewProps>(
-  (props, ref) => {
-    const { useNext, ...rest } = props;
-    return <PagerViewInternal {...rest} useLegacy={!useNext} ref={ref} />;
-  }
-);
+export const PagerView = React.forwardRef<
+  PublicPagerViewMethods,
+  PagerViewProps
+>((props, ref) => {
+  const { useNext, ...rest } = props;
+  return (
+    <PagerViewInternal
+      {...rest}
+      useLegacy={!useNext}
+      ref={ref as React.LegacyRef<PagerViewInternal>}
+    />
+  );
+});
 
 // React.forwardRef does not type returned component properly, thus breaking Ref<MyComponent> typing.
 // One way to overcome this is using separate typing for component "interface",
 // but that breaks backward compatibility in this case.
 // Approach of merging type is hacky, but produces a good typing for both ref attributes and component itself.
-export type PagerView = PagerViewInternal & typeof PagerView;
+export type PagerView = PublicPagerViewMethods & typeof PagerView;
