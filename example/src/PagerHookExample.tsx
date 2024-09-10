@@ -49,6 +49,7 @@ export function PagerHookExample() {
           [rest.pages]
         )}
       </AnimatedPagerView>
+      {/*@ts-ignore*/}
       <NavigationPanel {...rest} />
     </SafeAreaView>
   );
