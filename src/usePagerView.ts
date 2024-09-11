@@ -19,7 +19,7 @@ const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
 type UsePagerViewParams = {
   pagesAmount: number;
-}
+};
 
 export function usePagerView(
   { pagesAmount }: UsePagerViewParams = { pagesAmount: 0 }
