@@ -3,10 +3,10 @@ import { StyleSheet, View, SafeAreaView, Text } from 'react-native';
 
 import { LikeCount } from './component/LikeCount';
 import { NavigationPanel } from './component/NavigationPanel';
-import { useViewPager } from 'react-native-pager-view';
+import { usePagerView } from 'react-native-pager-view';
 
 export function PagerHookExample() {
-  const { AnimatedPagerView, ref, ...rest } = useViewPager(10);
+  const { AnimatedPagerView, ref, ...rest } = usePagerView({ pagesAmount: 10 });
 
   return (
     <SafeAreaView style={styles.container}>

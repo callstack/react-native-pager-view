@@ -229,15 +229,15 @@ const pageScrollHandler = usePageScrollHandler({
 <AnimatedPagerView onPageScroll={pageScrollHandler} />;
 ```
 
-## usePager Hook Usage
-The `usePager` hook is a convenient way to manage the state and control the behavior of the `<PagerView />` component. It provides functions and variables to interact with the pager, such as navigating between pages and enabling/disabling scrolling.
+## usePagerView Hook Usage
+The `usePagerView` hook is a convenient way to manage the state and control the behavior of the `<PagerView />` component. It provides functions and variables to interact with the pager, such as navigating between pages and enabling/disabling scrolling.
 
 Below is an example of how to use the usePager hook:
 
 ```jsx
 export function PagerHookExample() {
-  const { AnimatedPagerView, ref, ...rest } = useViewPager(10); // Hook manages 10 pages
-
+  const { AnimatedPagerView, ref, ...rest } = usePagerView({ pagesAmount: 10 });
+  
   return (
     <SafeAreaView style={styles.container}>
       <AnimatedPagerView
@@ -281,16 +281,6 @@ export function PagerHookExample() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'white',
-  },
-  PagerView: {
-    flex: 1,
-  },
-});
 ```
 ### How the Example Works:
 

@@ -13,11 +13,17 @@ import { PagerView } from './PagerView';
 import { Animated } from 'react-native';
 import { useCallback, useMemo, useRef, useState } from 'react';
 
-export type UsePagerViewProps = ReturnType<typeof useViewPager>;
+export type UsePagerViewProps = ReturnType<typeof usePagerView>;
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
-export function useViewPager(pagesAmount: number = 0) {
+type UsePagerViewParams = {
+  pagesAmount: number;
+}
+
+export function usePagerView(
+  { pagesAmount }: UsePagerViewParams = { pagesAmount: 0 }
+) {
   const ref = useRef<PagerView>(null);
   const [pages, setPages] = useState<number[]>(
     new Array(pagesAmount).fill('').map((_v, index) => index)
