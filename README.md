@@ -229,6 +229,70 @@ const pageScrollHandler = usePageScrollHandler({
 <AnimatedPagerView onPageScroll={pageScrollHandler} />;
 ```
 
+## usePagerView Hook Usage
+The `usePagerView` hook is a convenient way to manage the state and control the behavior of the `<PagerView />` component. It provides functions and variables to interact with the pager, such as navigating between pages and enabling/disabling scrolling.
+
+Below is an example of how to use the usePager hook:
+
+```jsx
+export function PagerHookExample() {
+  const { AnimatedPagerView, ref, ...rest } = usePagerView({ pagesAmount: 10 });
+  
+  return (
+    <SafeAreaView style={styles.container}>
+      <AnimatedPagerView
+        testID="pager-view"
+        ref={ref}
+        style={styles.PagerView}
+        initialPage={0}
+        layoutDirection="ltr"
+        overdrag={rest.overdragEnabled}
+        scrollEnabled={rest.scrollEnabled}
+        onPageScroll={rest.onPageScroll}
+        onPageSelected={rest.onPageSelected}
+        onPageScrollStateChanged={rest.onPageScrollStateChanged}
+        pageMargin={10}
+        orientation="horizontal"
+      >
+        {useMemo(
+          () =>
+            rest.pages.map((_, index) => (
+              <View
+                testID="pager-view-content"
+                key={index}
+                style={{
+                  flex: 1,
+                  backgroundColor: '#fdc08e',
+                  alignItems: 'center',
+                  padding: 20,
+                }}
+                collapsable={false}
+              >
+                <LikeCount />
+                <Text testID={`pageNumber${index}`}>
+                  {`page number ${index}`}
+                </Text>
+              </View>
+            )),
+          [rest.pages]
+        )}
+      </AnimatedPagerView>
+      <NavigationPanel {...rest} />
+    </SafeAreaView>
+  );
+}
+```
+### How the Example Works:
+
+- **Pager View Setup**: The `AnimatedPagerView` component wraps `PagerView` in React Native's animation capabilities. It accepts multiple props from the `usePager` hook, such as `overdragEnabled`, `scrollEnabled`, `onPageScroll`, `onPageSelected`, and others to manage pager behavior.
+
+- **Rendering Pages**: The pages are dynamically generated using the `rest.pages` array (initialized by `usePager`). The `useMemo` hook ensures the pages are only recomputed when necessary for performance reasons.
+
+### Conclusion
+
+The `usePager` hook makes it easy to handle pagination with dynamic views. This example demonstrates how to set up a simple paginated interface where users can scroll through pages, interact with page elements, and control the pager with external navigation.
+
+
 ## License
 
 MIT

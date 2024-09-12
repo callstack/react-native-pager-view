@@ -35,9 +35,11 @@ import ReanimatedOnPageScrollExample from './ReanimatedOnPageScrollExample';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NextBasicPagerViewExample } from './NextBasicPagerViewExample';
+import { PagerHookExample } from './PagerHookExample';
 
 const examples = [
   { component: BasicPagerViewExample, name: 'Basic Example' },
+  { component: PagerHookExample, name: 'Pager Hook Example' },
   { component: KeyboardExample, name: 'Keyboard Example' },
   { component: OnPageScrollExample, name: 'OnPageScroll Example' },
   { component: OnPageSelectedExample, name: 'OnPageSelected Example' },
