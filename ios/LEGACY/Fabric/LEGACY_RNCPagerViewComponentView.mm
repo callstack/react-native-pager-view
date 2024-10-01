@@ -363,14 +363,10 @@ using namespace facebook::react;
     int eventPosition = (int) position;
     strongEventEmitter.onPageScroll(LEGACY_RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(eventPosition), .offset = interpolatedOffset});
 
-    //This is temporary workaround to allow animations based on onPageScroll event
-    //until Fabric implements proper NativeAnimationDriver
-    RCTBridge *bridge = [RCTBridge currentBridge];
-    
-    if (bridge) {
-        [bridge.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:[NSNumber numberWithInt:self.tag] position:@(position) offset:@(interpolatedOffset)]];
-    }
-    
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:[[RCTOnPageScrollEvent alloc] initWithReactTag:[NSNumber numberWithInt:self.tag] position:@(position) offset:@(interpolatedOffset)], @"event", nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
+                                                        object:nil
+                                                      userInfo:userInfo];
 }
 
 
