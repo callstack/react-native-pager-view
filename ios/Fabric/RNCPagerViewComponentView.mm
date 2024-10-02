@@ -10,7 +10,6 @@
 #import "RCTFabricComponentsPlugins.h"
 #import "React/RCTConversions.h"
 
-#import <React/RCTBridge+Private.h>
 #import "RCTOnPageScrollEvent.h"
 
 using namespace facebook::react;
