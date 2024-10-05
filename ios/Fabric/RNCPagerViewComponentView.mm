@@ -10,7 +10,6 @@
 #import "RCTFabricComponentsPlugins.h"
 #import "React/RCTConversions.h"
 
-#import <React/RCTBridge+Private.h>
 #import "RCTOnPageScrollEvent.h"
 
 using namespace facebook::react;
@@ -195,13 +194,13 @@ using namespace facebook::react;
     
     strongEventEmitter.onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(position), .offset = offset});
     
-    //This is temporary workaround to allow animations based on onPageScroll event
-    //until Fabric implements proper NativeAnimationDriver
-    RCTBridge *bridge = [RCTBridge currentBridge];
-    
-    if (bridge) {
-        [bridge.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:[NSNumber numberWithInt:self.tag] position:@(position) offset:@(offset)]];
-    }
+    // This is temporary workaround to allow animations based on onPageScroll event
+    // until Fabric implements proper NativeAnimationDriver,
+    // see: https://github.com/facebook/react-native/blob/44f431b471c243c92284aa042d3807ba4d04af65/packages/react-native/React/Fabric/Mounting/ComponentViews/ScrollView/RCTScrollViewComponentView.mm#L59
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:[[RCTOnPageScrollEvent alloc] initWithReactTag:[NSNumber numberWithInt:self.tag] position:@(position) offset:@(offset)], @"event", nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
+                                                        object:nil
+                                                      userInfo:userInfo];
 }
 
 #pragma mark - Internal methods
