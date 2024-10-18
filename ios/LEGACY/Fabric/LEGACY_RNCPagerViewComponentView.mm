@@ -309,10 +309,6 @@ using namespace facebook::react;
     return [_layoutDirection isEqualToString: @"ltr"];
 }
 
-- (BOOL)isHorizontalRtlLayout {
-    return self.isHorizontal && ![self isLtrLayout];
-}
-
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     CGPoint point = scrollView.contentOffset;
     

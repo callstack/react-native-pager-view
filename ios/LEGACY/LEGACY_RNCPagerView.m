@@ -500,7 +500,4 @@
     return [_layoutDirection isEqualToString:@"ltr"];
 }
 
-- (BOOL)isHorizontalRtlLayout {
-    return self.isHorizontal && ![self isLtrLayout];
-}
 @end

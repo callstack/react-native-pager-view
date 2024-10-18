@@ -2,10 +2,11 @@
 #import <React/RCTShadowView.h>
 #import <React/UIView+React.h>
 #import <UIKit/UIKit.h>
+#import "UIView+isHorizontalRtlLayout.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface LEGACY_RNCPagerView: UIView
+@interface LEGACY_RNCPagerView: UIView <RtlLayoutProtocol>
 
 - (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher;
 
