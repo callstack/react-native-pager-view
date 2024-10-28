@@ -328,6 +328,7 @@ using namespace facebook::react;
     
     NSInteger position = self.currentIndex;
     
+    BOOL isHorizontalRtl = [self isHorizontalRtlLayout];
     BOOL isAnimatingBackwards = offset<0;
     
     if (scrollView.isDragging) {
@@ -341,8 +342,8 @@ using namespace facebook::react;
     
     if (!_overdrag) {
         NSInteger maxIndex = _nativeChildrenViewControllers.count - 1;
-        NSInteger firstPageIndex = [self isLtrLayout] ?  0 :  maxIndex;
-        NSInteger lastPageIndex = [self isLtrLayout] ?  maxIndex :  0;
+        NSInteger firstPageIndex = !isHorizontalRtl ? 0 :  maxIndex;
+        NSInteger lastPageIndex = !isHorizontalRtl ? maxIndex :  0;
         BOOL isFirstPage = _currentIndex == firstPageIndex;
         BOOL isLastPage = _currentIndex == lastPageIndex;
         CGFloat contentOffset =[self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;

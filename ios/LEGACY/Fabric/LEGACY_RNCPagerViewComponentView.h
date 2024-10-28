@@ -4,10 +4,11 @@
 #import <Foundation/Foundation.h>
 #import <React/RCTViewComponentView.h>
 #import "UIViewController+CreateExtension.h"
+#import "UIView+isHorizontalRtlLayout.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface LEGACY_RNCPagerViewComponentView : RCTViewComponentView <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
+@interface LEGACY_RNCPagerViewComponentView : RCTViewComponentView <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, isHorizontalRtlLayout>
 
 @property(strong, nonatomic, readonly) UIPageViewController *nativePageViewController;
 @property(nonatomic, strong) NSMutableArray<UIViewController *> *nativeChildrenViewControllers;
