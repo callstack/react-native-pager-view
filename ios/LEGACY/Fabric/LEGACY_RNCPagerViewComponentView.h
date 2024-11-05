@@ -8,7 +8,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface LEGACY_RNCPagerViewComponentView : RCTViewComponentView <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, isHorizontalRtlLayout>
+@interface LEGACY_RNCPagerViewComponentView : RCTViewComponentView <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, RtlLayoutProtocol>
 
 @property(strong, nonatomic, readonly) UIPageViewController *nativePageViewController;
 @property(nonatomic, strong) NSMutableArray<UIViewController *> *nativeChildrenViewControllers;
