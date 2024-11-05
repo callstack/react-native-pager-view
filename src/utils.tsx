@@ -23,6 +23,7 @@ export const childrenWithOverriddenStyle = (
   pageMargin = 0
 ) => {
   return Children.map(children, (child) => {
+    const element = child as React.ReactElement;
     return (
       <View
         style={{
@@ -33,7 +34,15 @@ export const childrenWithOverriddenStyle = (
         }}
         collapsable={false}
       >
-        {child}
+        {React.cloneElement(element, {
+          ...element.props,
+          style: [
+            element.props.style,
+            {
+              flex: 1,
+            },
+          ],
+        })}
       </View>
     );
   });
