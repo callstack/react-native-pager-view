@@ -94,6 +94,7 @@ using namespace facebook::react;
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
     UIViewController *wrapper = [[UIViewController alloc] initWithView:childComponentView];
     [_nativeChildrenViewControllers insertObject:wrapper atIndex:index];
+    [self setPagerViewControllers:_currentIndex direction:UIPageViewControllerNavigationDirectionForward animated:false];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
