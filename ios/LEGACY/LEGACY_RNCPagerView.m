@@ -260,9 +260,11 @@
         return;
     }
     
-    BOOL isHorizontalRtl = [self isHorizontalRtlLayout];
-    BOOL isForward = isHorizontalRtl ? index < self.currentIndex : index > self.currentIndex;
+    BOOL isRTL = ![self isLtrLayout];
+    
+    BOOL isForward = (index > self.currentIndex && !isRTL) || (index < self.currentIndex && isRTL);
 
+    
     UIPageViewControllerNavigationDirection direction = isForward ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
     
     long diff = labs(index - _currentIndex);
@@ -351,13 +353,13 @@
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController
        viewControllerAfterViewController:(UIViewController *)viewController {
-    UIPageViewControllerNavigationDirection direction = ![self isHorizontalRtlLayout] ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
+    UIPageViewControllerNavigationDirection direction = [self isLtrLayout] ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
     return [self nextControllerForController:viewController inDirection:direction];
 }
 
 - (UIViewController *)pageViewController:(UIPageViewController *)pageViewController
       viewControllerBeforeViewController:(UIViewController *)viewController {
-    UIPageViewControllerNavigationDirection direction = ![self isHorizontalRtlLayout] ? UIPageViewControllerNavigationDirectionReverse : UIPageViewControllerNavigationDirectionForward;
+    UIPageViewControllerNavigationDirection direction = [self isLtrLayout] ? UIPageViewControllerNavigationDirectionReverse : UIPageViewControllerNavigationDirectionForward;
     return [self nextControllerForController:viewController inDirection:direction];
 }
 
@@ -380,8 +382,8 @@
     
     if (!_overdrag) {
         NSInteger maxIndex = self.reactSubviews.count - 1;
-        BOOL isFirstPage = ![self isHorizontalRtlLayout] ? _currentIndex == 0 : _currentIndex == maxIndex;
-        BOOL isLastPage = ![self isHorizontalRtlLayout] ? _currentIndex == maxIndex : _currentIndex == 0;
+        BOOL isFirstPage = [self isLtrLayout] ? _currentIndex == 0 : _currentIndex == maxIndex;
+        BOOL isLastPage = [self isLtrLayout] ? _currentIndex == maxIndex : _currentIndex == 0;
         CGFloat contentOffset =[self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;
         CGFloat topBound = [self isHorizontal] ? scrollView.bounds.size.width : scrollView.bounds.size.height;
         
@@ -421,8 +423,7 @@
     
     NSInteger position = self.currentIndex;
     
-    BOOL isHorizontalRtl = [self isHorizontalRtlLayout];
-    BOOL isAnimatingBackwards = isHorizontalRtl ? offset > 0.05f : offset < 0;
+    BOOL isAnimatingBackwards = ([self isLtrLayout] && offset<0) || (![self isLtrLayout] && offset > 0.05f);
     
     if (scrollView.isDragging) {
         _destinationIndex = isAnimatingBackwards ? _currentIndex - 1 : _currentIndex + 1;
@@ -435,8 +436,8 @@
     
     if (!_overdrag) {
         NSInteger maxIndex = self.reactSubviews.count - 1;
-        NSInteger firstPageIndex = !isHorizontalRtl ? 0 : maxIndex;
-        NSInteger lastPageIndex = !isHorizontalRtl ? maxIndex : 0;
+        NSInteger firstPageIndex = [self isLtrLayout] ?  0 :  maxIndex;
+        NSInteger lastPageIndex = [self isLtrLayout] ?  maxIndex :  0;
         BOOL isFirstPage = _currentIndex == firstPageIndex;
         BOOL isLastPage = _currentIndex == lastPageIndex;
         CGFloat contentOffset =[self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;
@@ -499,5 +500,4 @@
 - (BOOL)isLtrLayout {
     return [_layoutDirection isEqualToString:@"ltr"];
 }
-
 @end
