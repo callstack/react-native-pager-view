@@ -1,0 +1,39 @@
+name: One-Click NPM Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        description: 'Release type (patch/minor/major)'
+        required: true
+        default: 'patch'
+# Remove before merge
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/install-dependencies
+
+      - name: Configure Git
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+      - name: Run release-it
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          yarn release ${{ github.event.inputs.release_type }} \
+            --ci \
+            --github.release \
+            --npm.publish \
+            --no-git.requireCleanWorkingDir \
+            --dry-run \
+            --verbose \
+            --npm.tag=test
