@@ -12,7 +12,8 @@
     "mkdist": "node -e \"require('node:fs').mkdirSync('dist', { recursive: true, mode: 0o755 })\"",
     "start": "react-native start",
     "test": "jest",
-    "visionos": "react-native run-visionos"
+    "visionos": "react-native run-visionos",
+    "pods": "pod-install --quiet"
   },
   "dependencies": {
     "@callstack/react-native-visionos": "^0.76.0",
