@@ -20,28 +20,11 @@ jobs:
       group: ${{ github.ref }}-ios
       cancel-in-progress: true
     steps:
+      - uses: oven-sh/setup-bun@v2
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/install-dependencies
 
-      - name: Pull dependencies
-        uses: actions/cache@v4
-        with:
-          path: ./node_modules
-          key: ${{ hashFiles('./package.json') }}
-
-      - name: Cache example node modules
-        id: cache-example-npm
-        uses: actions/cache@v4
-        env:
-          cache-name: cached-example-npm-deps
-        with:
-          path: example/node_modules
-          key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
-
-      - name: Install required example dependencies on yarn.lock change
-        if: steps.cache-example-npm.outputs.cache-hit != 'true'
-        run: yarn install --frozen-lockfile
-        working-directory: example
+      - name: Install dependencies
+        uses: ./.github/actions/install-dependencies
 
       - name: Cache Pods
         id: cache-pods
@@ -53,8 +36,8 @@ jobs:
           key: ${{ hashFiles('./example/ios/Podfile.lock') }}
 
       - name: Bundle app
-        run: yarn build:ios
-        working-directory: example/ios
+        run: bun run build:ios
+        working-directory: example
 
       - name: Install example Pods
         run: pod install
@@ -62,7 +45,7 @@ jobs:
 
       - name: Install Maestro CLI
         run: |
-          curl -Ls "https://get.maestro.mobile.dev" | bash
+          export MAESTRO_VERSION=1.39.1; curl -Ls "https://get.maestro.mobile.dev" | bash
           brew tap facebook/fb
           brew install facebook/fb/idb-companion
 
@@ -71,8 +54,8 @@ jobs:
 
       - name: Build iOS App
         run: |
-          yarn run-example-ios
+          bun run-example-ios
 
       - name: Run tests
         run: |
-          yarn test:e2e:ios
+          bun test:e2e:ios

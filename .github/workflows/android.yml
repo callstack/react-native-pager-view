@@ -19,27 +19,11 @@ jobs:
       group: ${{ github.ref }}-android
       cancel-in-progress: true
     steps:
+      - uses: oven-sh/setup-bun@v2
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/install-dependencies
 
-      - name: Pull dependencies
-        uses: actions/cache@v4
-        with:
-          path: ./node_modules
-          key: ${{ hashFiles('./package.json') }}
-
-      - name: Cache example node modules
-        id: cache-example-npm
-        uses: actions/cache@v4
-        env:
-          cache-name: cached-example-npm-deps
-        with:
-          path: example/node_modules
-          key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
-
-      - name: Install required example dependencies on yarn.lock change
-        if: steps.cache-example-npm.outputs.cache-hit != 'true'
-        run: yarn bootstrap-no-pods --frozen-lockfile
+      - name: Install dependencies
+        uses: ./.github/actions/install-dependencies
 
       - uses: actions/setup-java@v4
         with:
@@ -48,10 +32,17 @@ jobs:
           cache: 'gradle'
 
       - name: Install Maestro CLI
-        run: export MAESTRO_VERSION=1.31.0; curl -Ls "https://get.maestro.mobile.dev" | bash
+        run: |
+          export MAESTRO_VERSION=1.39.1; curl -Ls "https://get.maestro.mobile.dev" | bash
+          brew tap facebook/fb
+          brew install facebook/fb/idb-companion
 
       - name: Add Maestro to path
         run: echo "${HOME}/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Bundle app
+        run: bun run build:android
+        working-directory: example
 
       - name: Run Android Emulator and app
         uses: reactivecircus/android-emulator-runner@v2
@@ -65,8 +56,8 @@ jobs:
           avd-name: e2e_emulator
           arch: x86_64
           script: |
-            yarn run-example-android
-            yarn test:e2e:android
+            bun run-example-android
+            bun test:e2e:android
 
       - name: Upload report
         if: always()

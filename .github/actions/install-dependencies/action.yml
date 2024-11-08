@@ -6,7 +6,7 @@ runs:
   steps:
     - name: Install dependencies
       shell: bash
-      run: yarn install --frozen-lockfile
+      run: bun install
 
     - name: Cache
       uses: actions/cache@v3
@@ -21,10 +21,10 @@ runs:
         cache-name: cached-example-npm-deps
       with:
         path: example/node_modules
-        key: ${{ hashFiles('./example/yarn.lock') }}-${{ hashFiles('./yarn.lock') }}
+        key: ${{ hashFiles('./example/bun.lockb') }}-${{ hashFiles('./bun.lockb') }}
 
-    - name: Install required example dependencies on yarn.lock change
+    - name: Install required example dependencies on bun.lockb change
       if: steps.cache-example-npm.outputs.cache-hit != 'true'
       shell: bash
-      run: yarn install --frozen-lockfile
+      run: bun install
       working-directory: example
