@@ -14,7 +14,7 @@ on:
 
 jobs:
   android-build:
-    runs-on: macos-12
+    runs-on: macos-14
     concurrency:
       group: ${{ github.ref }}-android
       cancel-in-progress: true
