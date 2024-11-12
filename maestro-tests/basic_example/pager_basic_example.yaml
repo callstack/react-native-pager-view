@@ -1,9 +1,5 @@
 appId: ${APP_ID}
-name: Verify prev and next buttons work
-onFlowStart:
-  - startRecording: recording
-onFlowComplete: # <- and this
-  - stopRecording
+name: Verify Basic Example flow
 ---
 - launchApp
 - assertVisible: 'PagerView Example (Fabric)'
