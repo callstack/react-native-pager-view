@@ -33,7 +33,7 @@ jobs:
 
       - name: Install Maestro CLI
         run: |
-          export MAESTRO_VERSION=1.39.1; curl -Ls "https://get.maestro.mobile.dev" | bash
+          export MAESTRO_VERSION=1.31.0; curl -Ls "https://get.maestro.mobile.dev" | bash
           brew tap facebook/fb
           brew install facebook/fb/idb-companion
 
