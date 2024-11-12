@@ -24,7 +24,13 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
-        uses: ./.github/actions/install-dependencies
+        shell: bash
+        run: bun install
+
+      - name: Install example dependencies
+        shell: bash
+        run: bun install
+        working-directory: example
 
       - name: Cache Pods
         id: cache-pods
