@@ -1,6 +1,7 @@
 package com.reactnativepagerview
 
 import android.view.View
+import android.view.ViewGroup
 import androidx.viewpager2.widget.ViewPager2
 import com.facebook.react.uimanager.PixelUtil
 
@@ -69,12 +70,19 @@ object PagerViewViewManagerImpl {
     fun removeViewAt(parent: NestedScrollableHost, index: Int) {
         val pager = getViewPager(parent)
         val adapter = pager.adapter as ViewPagerAdapter?
+
+        val child = adapter?.getChildAt(index)
+
+        if (child != null && child.parent != null) {
+            (child.parent as? ViewGroup)?.removeView(child)
+        }
+
         adapter?.removeChildAt(index)
 
-        // Required so ViewPager actually animates the removed view right away (otherwise
-        // a white screen is shown until the next user interaction).
-        // https://github.com/facebook/react-native/issues/17968#issuecomment-697136929
-        refreshViewChildrenLayout(pager)
+        pager.post {
+            pager.invalidate() 
+            pager.requestLayout() 
+        }
     }
 
     fun needsCustomLayoutForChildren(): Boolean {
