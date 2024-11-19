@@ -261,9 +261,10 @@ export default function HeadphonesCarouselExample() {
           }
         )}
       >
-        {data.map((item, index) => (
+        {data.map(({ key, ...item }, index) => (
           <View collapsable={false} key={index}>
             <Item
+              key={key}
               {...item}
               scrollOffsetAnimatedValue={scrollOffsetAnimatedValue}
               positionAnimatedValue={positionAnimatedValue}

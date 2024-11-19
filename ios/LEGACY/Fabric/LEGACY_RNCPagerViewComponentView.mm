@@ -92,14 +92,13 @@ using namespace facebook::react;
 #pragma mark - React API
 
 - (void)mountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
-    UIViewController *wrapper = [[UIViewController alloc] initWithView:childComponentView];
-    [_nativeChildrenViewControllers insertObject:wrapper atIndex:index];
-    [self goTo:_currentIndex animated:NO];
+    UIViewController *vc = [UIViewController new];
+    [vc.view addSubview:childComponentView];
+    [_nativeChildrenViewControllers insertObject:vc atIndex:index];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
-    [[_nativeChildrenViewControllers objectAtIndex:index].view removeFromSuperview];
-    [_nativeChildrenViewControllers objectAtIndex:index].view = nil;
+    [childComponentView removeFromSuperview];
     [_nativeChildrenViewControllers removeObjectAtIndex:index];
  
     NSInteger maxPage = _nativeChildrenViewControllers.count - 1;
@@ -119,11 +118,7 @@ using namespace facebook::react;
 
 -(void)prepareForRecycle {
     [super prepareForRecycle];
-    
-    _nativeChildrenViewControllers = [[NSMutableArray alloc] init];
-    [_nativePageViewController.view removeFromSuperview];
     _nativePageViewController = nil;
-    
     _currentIndex = -1;
 }
 
