@@ -60,7 +60,7 @@ jobs:
 
       - name: Build iOS App
         run: |
-          bun run-example-ios
+          bun example:ios:release
 
       - name: Run tests
         run: |

@@ -4,52 +4,58 @@ We want this community to be friendly and respectful to each other. Please follo
 
 ## Development workflow
 
-To get started with the project, run `yarn` in the root directory to install the required dependencies for each package:
+To get started with the project, run `bun install` in the root directory to install the required dependencies for each package:
 
 ```sh
-yarn
+bun install
 ```
 
-> While it's possible to use [`npm`](https://github.com/npm/cli), the tooling is built around [`yarn`](https://classic.yarnpkg.com/), so you'll have an easier time if you use `yarn` for development.
+> While it's possible to use [`npm`](https://github.com/npm/cli) or [`yarn`](https://yarnpkg.com/cli), the tooling is built around [`bun`](https://bun.sh/), so you'll have an easier time if you use `bun` for development.
 
 While developing, you can run the [example app](/example/) to test your changes. Any changes you make in your library's JavaScript code will be reflected in the example app without a rebuild. If you change any native code, then you'll need to rebuild the example app.
+
+To install dependencies and pods in example directory:
+
+```sh
+bun bootstrap
+```
 
 To start the packager:
 
 ```sh
-yarn example start
+bun example:start
 ```
 
 To run the example app on Android:
 
 ```sh
-yarn example android
+bun example:android
 ```
 
 To run the example app on iOS:
 
 ```sh
-yarn example ios
+bun example:ios
 ```
 
 
 Make sure your code passes TypeScript and ESLint. Run the following to verify:
 
 ```sh
-yarn typescript
-yarn lint
+bun typescript
+bun lint
 ```
 
 To fix formatting errors, run the following:
 
 ```sh
-yarn lint --fix
+bun lint --fix
 ```
 
 Remember to add tests for your change if possible. Run the unit tests by:
 
 ```sh
-yarn test
+bun test
 ```
 To edit the Objective-C files, open `example/ios/PagerViewExample.xcworkspace` in XCode and find the source files at `Pods > Development Pods > react-native-pager-view`.
 
@@ -82,20 +88,22 @@ We use [release-it](https://github.com/release-it/release-it) to make it easier 
 To publish new versions, run the following:
 
 ```sh
-yarn release
+bun release
 ```
 
 ### Scripts
 
 The `package.json` file contains various scripts for common tasks:
 
-- `yarn bootstrap`: setup project by installing all dependencies and pods.
-- `yarn typescript`: type-check files with TypeScript.
-- `yarn lint`: lint files with ESLint.
-- `yarn test`: run unit tests with Jest.
-- `yarn example start`: start the Metro server for the example app.
-- `yarn example android`: run the example app on Android.
-- `yarn example ios`: run the example app on iOS.
+- `bun bootstrap`: setup project by installing all dependencies and pods.
+- `bun typescript`: type-check files with TypeScript.
+- `bun lint`: lint files with ESLint.
+- `bun test`: run unit tests with Jest.
+- `bun example:start`: start the Metro server for the example app.
+- `bun example:android`: run the example app on Android.
+- `bun example:ios`: run the example app on iOS.
+- `bun example:android:release`: run the example app on Android in release mode.
+- `bun example:ios:release`: run the example app on iOS in release mode.
 
 ### Sending a pull request
 
