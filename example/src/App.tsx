@@ -11,8 +11,7 @@ import {
   Button,
   Alert,
   I18nManager,
-  DevSettings,
-  Platform,
+  DevSettings
 } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
