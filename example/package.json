@@ -3,17 +3,17 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "android": "react-native run-android --appId com.pagerviewexample --list-devices",
-    "build:android": "npm run mkdist && react-native bundle --entry-file index.js --platform android --dev true --bundle-output dist/main.android.jsbundle --assets-dest dist/res",
-    "build:ios": "npm run mkdist && react-native bundle --entry-file index.js --platform ios --dev false --bundle-output dist/main.ios.jsbundle --assets-dest dist",
-    "build:visionos": "npm run mkdist && react-native bundle --entry-file index.js --platform ios --dev true --bundle-output dist/main.visionos.jsbundle --assets-dest dist",
-    "ios": "react-native run-ios --list-devices",
+    "start": "react-native start",
+    "pods": "pod-install --quiet",
+    "test": "jest",
     "lint": "eslint .",
     "mkdist": "node -e \"require('node:fs').mkdirSync('dist', { recursive: true, mode: 0o755 })\"",
-    "start": "react-native start",
-    "test": "jest",
+    "android": "react-native run-android --appId com.pagerviewexample --list-devices",
+    "ios": "react-native run-ios --list-devices",
     "visionos": "react-native run-visionos",
-    "pods": "pod-install --quiet"
+    "build:android": "bun mkdist && react-native bundle --entry-file index.js --platform android --dev true --bundle-output dist/main.android.jsbundle --assets-dest dist/res",
+    "build:ios": "bun mkdist && react-native bundle --entry-file index.js --platform ios --dev false --bundle-output dist/main.ios.jsbundle --assets-dest dist",
+    "build:visionos": "bun mkdist && react-native bundle --entry-file index.js --platform ios --dev true --bundle-output dist/main.visionos.jsbundle --assets-dest dist"
   },
   "dependencies": {
     "@callstack/react-native-visionos": "^0.76.0",
