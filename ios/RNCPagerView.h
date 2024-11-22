@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface RNCPagerView: UIView <RtlLayoutProtocol>
 
-- (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher;
+- (instancetype)initWithEventDispatcher:(id<RCTEventDispatcherProtocol> )eventDispatcher;
 
 @property(nonatomic) NSInteger initialPage;
 @property(nonatomic) NSInteger lastReportedIndex;
