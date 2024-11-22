@@ -95,6 +95,7 @@ using namespace facebook::react;
     UIViewController *vc = [UIViewController new];
     [vc.view addSubview:childComponentView];
     [_nativeChildrenViewControllers insertObject:vc atIndex:index];
+    [self goTo:_currentIndex animated:NO];
 }
 
 - (void)unmountChildComponentView:(UIView<RCTComponentViewProtocol> *)childComponentView index:(NSInteger)index {
