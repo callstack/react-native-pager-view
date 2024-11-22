@@ -31,8 +31,13 @@ In version **6.x** support for `transitionStyle` property has been dropped. More
 `"@react-native-community/viewpager"` library has been changed to `react-native-pager-view`. Here you can find more information, how to migrate pager view to the latest [version](https://github.com/callstack/react-native-pager-view/blob/master/MIGRATION.md)
 
 ## Getting started
+Bun: 
 
-`yarn add react-native-pager-view`
+`bun add react-native-pager-view`
+
+Yarn:
+
+ `yarn add react-native-pager-view`
 
 ## Linking
 
