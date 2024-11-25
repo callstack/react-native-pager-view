@@ -36,8 +36,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { NextBasicPagerViewExample } from './NextBasicPagerViewExample';
 import { PagerHookExample } from './PagerHookExample';
+import { NestedTabViewExample } from './tabView/NestedTabViewExample';
 
 const examples = [
+  { component: NestedTabViewExample, name: 'Nested TabView Example' },
   { component: BasicPagerViewExample, name: 'Basic Example' },
   { component: PagerHookExample, name: 'Pager Hook Example' },
   { component: KeyboardExample, name: 'Keyboard Example' },
