@@ -14,7 +14,9 @@
 
 using namespace facebook::react;
 
-@interface LEGACY_RNCPagerViewComponentView () <RCTLEGACY_RNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
+@interface LEGACY_RNCPagerViewComponentView () <RCTLEGACY_RNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>
+
+@property(nonatomic, assign) UIPanGestureRecognizer* panGestureRecognizer;
 
 @end
 
@@ -69,6 +71,11 @@ using namespace facebook::react;
         _destinationIndex = -1;
         _layoutDirection = @"ltr";
         _overdrag = NO;
+        UIPanGestureRecognizer* panGestureRecognizer = [UIPanGestureRecognizer new];
+        self.panGestureRecognizer = panGestureRecognizer;
+        panGestureRecognizer.delegate = self;
+        [self addGestureRecognizer: panGestureRecognizer];
+
     }
     
     return self;
@@ -400,6 +407,30 @@ using namespace facebook::react;
 + (ComponentDescriptorProvider)componentDescriptorProvider
 {
     return concreteComponentDescriptorProvider<LEGACY_RNCViewPagerComponentDescriptor>();
+}
+
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+
+    // Recognize simultaneously only if the other gesture is RN Screen's pan gesture (one that is used to perform fullScreenGestureEnabled)
+    if (gestureRecognizer == self.panGestureRecognizer && [NSStringFromClass([otherGestureRecognizer class]) isEqual: @"RNSPanGestureRecognizer"]) {
+        UIPanGestureRecognizer* panGestureRecognizer = (UIPanGestureRecognizer*) gestureRecognizer;
+        CGPoint velocity = [panGestureRecognizer velocityInView:self];
+        BOOL isLTR = [self isLtrLayout];
+        BOOL isBackGesture = (isLTR && velocity.x > 0) || (!isLTR && velocity.x < 0);
+        
+        if (self.currentIndex == 0 && isBackGesture) {
+            scrollView.panGestureRecognizer.enabled = false;
+        } else {
+            const auto &viewProps = *std::static_pointer_cast<const LEGACY_RNCViewPagerProps>(_props);
+            scrollView.panGestureRecognizer.enabled = viewProps.scrollEnabled;
+        }
+        
+        return YES;
+    }
+    const auto &viewProps = *std::static_pointer_cast<const LEGACY_RNCViewPagerProps>(_props);
+    scrollView.panGestureRecognizer.enabled = viewProps.scrollEnabled;
+    return NO;
 }
 
 @end
