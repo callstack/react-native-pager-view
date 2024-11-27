@@ -36,7 +36,7 @@
     "example:android":"cd example; bun android",
     "example:ios":"cd example; bun ios",
     "example:android:release": "cd example;react-native run-android --mode \"Release\" --appId com.pagerviewexample",
-    "example:ios:release": "cd example;react-native run-ios --mode \"Release\" --simulator \"iPhone 13 (15.2)\""
+    "example:ios:release": "cd example;react-native run-ios --mode \"Release\" --simulator \"iPhone 15 (18.0)\""
   },
   "keywords": [
     "react-native",
