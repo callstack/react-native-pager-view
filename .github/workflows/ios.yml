@@ -42,11 +42,11 @@ jobs:
           key: ${{ hashFiles('./example/ios/Podfile.lock') }}
 
       - name: Bundle app
-        run: bun run build:ios
+        run: bun build:ios
         working-directory: example
 
       - name: Install example Pods
-        run: pod install
+        run: bun pods
         working-directory: example/ios
 
       - name: Install Maestro CLI
