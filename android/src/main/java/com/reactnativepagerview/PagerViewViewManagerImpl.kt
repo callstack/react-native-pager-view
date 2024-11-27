@@ -78,11 +78,8 @@ object PagerViewViewManagerImpl {
         }
 
         adapter?.removeChildAt(index)
-
-        pager.post {
-            pager.invalidate() 
-            pager.requestLayout() 
-        }
+        
+        refreshViewChildrenLayout(pager)
     }
 
     fun needsCustomLayoutForChildren(): Boolean {
