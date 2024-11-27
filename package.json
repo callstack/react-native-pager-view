@@ -120,8 +120,8 @@
   },
   "codegenConfig": {
     "name": "pagerview",
-    "type": "all",
-    "jsSrcsDir": "./src/specs",
+    "type": "components",
+    "jsSrcsDir": "src",
     "android": {
       "javaPackageName": "com.reactnativepagerview"
     }

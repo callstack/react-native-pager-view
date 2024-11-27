@@ -12,6 +12,6 @@ class PagerViewPackage : ReactPackage {
     }
 
     override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
-        return listOf(PagerViewViewManager(), LEGACY_PagerViewViewManager())
+        return listOf(PagerViewViewManager())
     }
 }

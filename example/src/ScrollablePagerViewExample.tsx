@@ -28,8 +28,6 @@ export function ScrollablePagerViewExample() {
           {...navigationPanel}
           testID={'pager-view'}
           ref={ref}
-          // todo fix it
-          useLegacy
           style={{ height: HEIGHT }}
         >
           {navigationPanel.pages.map((page) => (
