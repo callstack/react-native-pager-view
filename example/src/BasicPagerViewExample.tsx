@@ -15,20 +15,12 @@ export function BasicPagerViewExample() {
   return (
     <SafeAreaView style={styles.container}>
       <AnimatedPagerView
-        // @ts-ignore
+        {...navigationPanel}
         testID="pager-view"
         ref={ref}
         style={styles.PagerView}
         initialPage={0}
-        layoutDirection="ltr"
-        overdrag={navigationPanel.overdragEnabled}
-        scrollEnabled={navigationPanel.scrollEnabled}
-        onPageScroll={navigationPanel.onPageScroll}
-        onPageSelected={navigationPanel.onPageSelected}
-        onPageScrollStateChanged={navigationPanel.onPageScrollStateChanged}
         pageMargin={10}
-        // Lib does not support dynamically orientation change
-        orientation="horizontal"
       >
         {useMemo(
           () =>
