@@ -326,7 +326,7 @@ using namespace facebook::react;
     NSInteger position = self.currentIndex;
     
     BOOL isHorizontalRtl = [self isHorizontalRtlLayout];
-    BOOL isAnimatingBackwards = offset<0;
+    BOOL isAnimatingBackwards = isHorizontalRtl ? offset > 0.05f : offset < 0;
     
     if (scrollView.isDragging) {
         _destinationIndex = isAnimatingBackwards ? _currentIndex - 1 : _currentIndex + 1;
