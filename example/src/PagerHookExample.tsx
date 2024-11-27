@@ -11,20 +11,12 @@ export function PagerHookExample() {
   return (
     <SafeAreaView style={styles.container}>
       <AnimatedPagerView
-        // @ts-ignore
         testID="pager-view"
         ref={ref}
         style={styles.PagerView}
         initialPage={0}
-        layoutDirection="ltr"
-        overdrag={rest.overdragEnabled}
-        scrollEnabled={rest.scrollEnabled}
-        onPageScroll={rest.onPageScroll}
-        onPageSelected={rest.onPageSelected}
-        onPageScrollStateChanged={rest.onPageScrollStateChanged}
+        {...rest}
         pageMargin={10}
-        // Lib does not support dynamically orientation change
-        orientation="horizontal"
       >
         {useMemo(
           () =>
@@ -49,7 +41,6 @@ export function PagerHookExample() {
           [rest.pages]
         )}
       </AnimatedPagerView>
-      {/*@ts-ignore*/}
       <NavigationPanel {...rest} />
     </SafeAreaView>
   );
