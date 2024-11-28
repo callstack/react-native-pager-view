@@ -5,6 +5,8 @@ name: Verify Basic Example flow
 - assertVisible: 'PagerView Example (Fabric)'
 - tapOn: 'Basic Example'
 - assertVisible: 'Basic Example'
+- assertVisible: 'Controls'
+- assertVisible: 'Last'
 - tapOn: 'Last'
 - assertVisible: 'page number 9'
 - assertVisible: 'Page 10 / 10 '
