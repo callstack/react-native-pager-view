@@ -48,11 +48,7 @@ export function usePagerView(
 
   const addPage = useCallback(() => {
     setPages((prevPages) => {
-      const lastPageNumber = prevPages[prevPages.length - 1];
-      if (lastPageNumber) {
-        return [...prevPages, lastPageNumber + 1];
-      }
-      return prevPages;
+      return [...prevPages, prevPages.length];
     });
   }, []);
 
@@ -92,6 +88,12 @@ export function usePagerView(
           },
         ],
         {
+          listener: ({ nativeEvent: { offset, position } }) => {
+            setProgress({
+              position,
+              offset,
+            });
+          },
           useNativeDriver: true,
         }
       ),
