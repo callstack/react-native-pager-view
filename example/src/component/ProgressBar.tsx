@@ -17,11 +17,6 @@ export class ProgressBar extends React.Component<Props> {
     const clampedSize = Math.max(0, Math.min(1, size));
     return (
       <View
-        accessibilityValue={{
-          min: 0,
-          max: 100,
-          now: clampedSize * 100,
-        }}
         style={styles.progressBarContainer}
       >
         <View
