@@ -47,7 +47,7 @@ jobs:
 
       - name: Install example Pods
         run: bun pods
-        working-directory: example/ios
+        working-directory: example
 
       - name: Install Maestro CLI
         run: |
