@@ -1,6 +1,6 @@
 {
   "name": "react-native-pager-view",
-  "version": "6.5.1",
+  "version": "6.6.0",
   "description": "React Native wrapper for Android and iOS ViewPager",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -33,8 +33,8 @@
     "test:e2e:android": "bash ./scripts/run-maestro-tests.sh android",
     "test:e2e:ios": "bash ./scripts/run-maestro-tests.sh ios",
     "example:start": "cd example; bun start",
-    "example:android":"cd example; bun android",
-    "example:ios":"cd example; bun ios",
+    "example:android": "cd example; bun android",
+    "example:ios": "cd example; bun ios",
     "example:android:release": "cd example;react-native run-android --mode \"Release\" --appId com.pagerviewexample",
     "example:ios:release": "cd example;react-native run-ios --mode \"Release\" --simulator \"iPhone 15 (18.0)\""
   },
