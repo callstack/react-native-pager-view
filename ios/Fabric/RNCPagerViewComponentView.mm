@@ -22,7 +22,9 @@ using namespace facebook::react;
 
 @implementation RNCPagerViewComponentView {
     LayoutMetrics _layoutMetrics;
+    LayoutMetrics _oldLayoutMetrics;
     UIScrollView *scrollView;
+    BOOL transitioning;
 }
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
@@ -111,9 +113,14 @@ using namespace facebook::react;
 
 
 -(void)updateLayoutMetrics:(const facebook::react::LayoutMetrics &)layoutMetrics oldLayoutMetrics:(const facebook::react::LayoutMetrics &)oldLayoutMetrics {
-    [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:_layoutMetrics];
-    self.contentView.frame = RCTCGRectFromRect(layoutMetrics.getContentFrame());
+    _oldLayoutMetrics = oldLayoutMetrics;
     _layoutMetrics = layoutMetrics;
+  
+    if (transitioning) {
+      return;
+    }
+  
+    [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:_layoutMetrics];
 }
 
 
@@ -223,12 +230,15 @@ using namespace facebook::react;
         [self enableSwipe];
         return;
     }
-    
+  
+    transitioning = YES;
+
     __weak RNCPagerViewComponentView *weakSelf = self;
     [_nativePageViewController setViewControllers:@[[_nativeChildrenViewControllers objectAtIndex:index]]
                                         direction:direction
                                          animated:animated
                                        completion:^(BOOL finished) {
+        self->transitioning = NO;
         __strong RNCPagerViewComponentView *strongSelf = weakSelf;
         [strongSelf enableSwipe];
         if (strongSelf->_eventEmitter != nullptr ) {
@@ -237,6 +247,7 @@ using namespace facebook::react;
             strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
             strongSelf->_currentIndex = index;
         }
+        [strongSelf updateLayoutMetrics:strongSelf->_layoutMetrics oldLayoutMetrics:strongSelf->_oldLayoutMetrics];
     }];
 }
 
