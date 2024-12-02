@@ -2,3 +2,4 @@
 #import <React/RCTUIManager.h>
 #import <React/UIView+React.h>
 #import <React/RCTUtils.h>
+#import <React/RCTAssert.h>
