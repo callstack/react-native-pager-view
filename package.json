@@ -12,7 +12,6 @@
     "lib",
     "android",
     "ios",
-    "common",
     "react-native-pager-view.podspec",
     "!lib/typescript/example",
     "!android/build",
