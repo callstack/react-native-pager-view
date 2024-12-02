@@ -4,7 +4,6 @@
 
 #import "UIViewController+CreateExtension.h"
 #import "RCTOnPageScrollStateChanged.h"
-#import "RCTOnPageSelected.h"
 #import <math.h>
 
 #if __has_include("react_native_pager_view/react_native_pager_view-Swift.h")
