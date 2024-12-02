@@ -17,14 +17,6 @@ Pod::Spec.new do |s|
 
   s.source_files = "ios/**/*.{h,m,mm}"
 
-  if new_arch_enabled
-    s.subspec "common" do |ss|
-      ss.source_files         = "common/cpp/**/*.{cpp,h}"
-      ss.header_dir           = "RNCViewPager"
-      ss.pod_target_xcconfig  = { "HEADER_SEARCH_PATHS" => "\"$(PODS_TARGET_SRCROOT)/common/cpp\"" }
-    end
-  end
-
   # install_modules_dependencies has been defined in RN 0.70
   # This check ensure that the library can work on older versions of RN
   if defined?(install_modules_dependencies)
