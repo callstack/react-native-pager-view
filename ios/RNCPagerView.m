@@ -3,10 +3,16 @@
 #import <React/RCTViewManager.h>
 
 #import "UIViewController+CreateExtension.h"
-#import "RCTOnPageScrollEvent.h"
 #import "RCTOnPageScrollStateChanged.h"
 #import "RCTOnPageSelected.h"
 #import <math.h>
+
+#if __has_include("react_native_pager_view/react_native_pager_view-Swift.h")
+#import "react_native_pager_view/react_native_pager_view-Swift.h"
+#else
+#import "react_native_pager_view-Swift.h"
+#endif
+
 
 @interface RNCPagerView () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>
 
@@ -342,7 +348,7 @@
         self.currentIndex = currentIndex;
         self.currentView = currentVC.view;
         [self.eventDispatcher sendEvent:[[RCTOnPageSelected alloc] initWithReactTag:self.reactTag position:@(currentIndex) coalescingKey:_coalescingKey++]];
-        [self.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:@(currentIndex) offset:@(0.0)]];
+        [self.eventDispatcher sendEvent:[[RCTOnPageScroll alloc] initWithReactTag:self.reactTag position:@(currentIndex) offset:@(0.0) coalescingKey:0]];
         self.lastReportedIndex = currentIndex;
     }
 }
@@ -453,7 +459,7 @@
     float interpolatedOffset = absoluteOffset * labs(_destinationIndex - _currentIndex);
     
     self.lastContentOffset = scrollView.contentOffset;
-    [self.eventDispatcher sendEvent:[[RCTOnPageScrollEvent alloc] initWithReactTag:self.reactTag position:@(position) offset:@(interpolatedOffset)]];
+    [self.eventDispatcher sendEvent:[[RCTOnPageScroll alloc] initWithReactTag:self.reactTag position:@(position) offset:@(interpolatedOffset) coalescingKey:0]];
 }
 
 - (NSString *)determineScrollDirection:(UIScrollView *)scrollView {
