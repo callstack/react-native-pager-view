@@ -1,14 +1,14 @@
+#import <React/RCTView.h>
 #import <React/RCTEventDispatcher.h>
 #import <React/RCTShadowView.h>
-#import <React/UIView+React.h>
 #import <UIKit/UIKit.h>
 #import "UIView+isHorizontalRtlLayout.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface RNCPagerView: UIView <RtlLayoutProtocol>
+@interface RNCPagerView: RCTView <RtlLayoutProtocol>
 
-- (instancetype)initWithEventDispatcher:(id<RCTEventDispatcherProtocol> )eventDispatcher;
+- (instancetype)initWithBridge:(RCTBridge *)bridge;
 
 @property(nonatomic) NSInteger initialPage;
 @property(nonatomic) NSInteger lastReportedIndex;
@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy) RCTDirectEventBlock onPageScrollStateChanged;
 @property(nonatomic) BOOL overdrag;
 @property(nonatomic) NSString* layoutDirection;
-@property(nonatomic, assign) BOOL animating;
+@property(nonatomic, assign) BOOL transitioning;
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated;
 - (void)shouldScroll:(BOOL)scrollEnabled;
