@@ -17,6 +17,7 @@ class ViewPagerAdapter() : Adapter<ViewPagerViewHolder>() {
   override fun onBindViewHolder(holder: ViewPagerViewHolder, index: Int) {
     val container: FrameLayout = holder.container
     val child = getChildAt(index)
+    holder.setIsRecyclable(false)
 
     if (container.childCount > 0) {
       container.removeAllViews()
