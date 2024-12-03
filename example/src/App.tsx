@@ -30,6 +30,7 @@ import TabBarIconExample from './tabView/TabBarIconExample';
 import CustomIndicatorExample from './tabView/CustomIndicatorExample';
 import CustomTabBarExample from './tabView/CustomTabBarExample';
 import CoverflowExample from './tabView/CoverflowExample';
+import { TabViewInsideScrollViewExample } from './tabView/TabViewInsideScrollViewExample';
 import ReanimatedOnPageScrollExample from './ReanimatedOnPageScrollExample';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -47,6 +48,7 @@ const examples = [
     component: ScrollablePagerViewExample,
     name: 'Scrollable PagerView Example',
   },
+  { component: TabViewInsideScrollViewExample, name: 'TabView inside ScrollView Example' },
   {
     component: ScrollViewInsideExample,
     name: 'ScrollView inside PagerView Example',
