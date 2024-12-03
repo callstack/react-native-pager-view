@@ -44,7 +44,6 @@ const PostAuthScreen = (props: any) => {
     const [showTab2, setShowTab2] = useState(true);
 
     const onLogout = () => {
-        setShowTab2(false);
         setTimeout(() => {
             props.setIsSignedIn(false);
         }, 0)
