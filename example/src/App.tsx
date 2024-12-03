@@ -44,7 +44,7 @@ const examples = [
   { component: OnPageSelectedExample, name: 'OnPageSelected Example' },
   { component: HeadphonesCarouselExample, name: 'Headphones Carousel Example' },
   { component: PaginationDotsExample, name: 'Pagination Dots Example' },
-  {component: MaterialTopBarExample, name: 'MaterialTopBarExample'},
+  { component: MaterialTopBarExample, name: 'MaterialTopBarExample' },
   {
     component: ScrollablePagerViewExample,
     name: 'Scrollable PagerView Example',
