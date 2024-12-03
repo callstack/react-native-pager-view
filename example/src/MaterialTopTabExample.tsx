@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React, { useState } from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
-import { View, Text, Button } from "react-native";
+import { View, Text, Button } from 'react-native';
 
 
 
@@ -28,7 +28,7 @@ function Tab2(props: any) {
 const PreAuthScreen = (props: any) => {
 
     return (
-        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Button
                 title="Login"
                 onPress={() => props.setIsSignedIn(true)}
@@ -41,23 +41,22 @@ const PreAuthScreen = (props: any) => {
 const PostAuthScreen = (props: any) => {
     const { Navigator, Screen } = createMaterialTopTabNavigator();
 
-    const [showTab2, setShowTab2] = useState(true);
 
     const onLogout = () => {
         setTimeout(() => {
             props.setIsSignedIn(false);
-        }, 0)
+        }, 0);
     };
 
     return (
         <View style={{ flex: 1 }}>
             <Navigator>
                 <Screen name="Tab1" component={Tab1} />
-                {showTab2 &&
+
                     <Screen
                         name="Tab2">
                         {(props: any) => <Tab2 {...props} onLogout={onLogout} />}
-                    </Screen>}
+                    </Screen>
             </Navigator>
         </View>
     );
@@ -69,7 +68,7 @@ export function MaterialTopBarExample() {
     const [isSignedIn, setIsSignedIn] = useState(false);
 
     return (
-        
+
             <Navigator>
                 {!isSignedIn ?
                     <Screen
@@ -84,4 +83,4 @@ export function MaterialTopBarExample() {
                 }
             </Navigator>
     );
-};
+}
