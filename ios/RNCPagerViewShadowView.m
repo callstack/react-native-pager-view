@@ -6,6 +6,8 @@
 
 - (void)layoutWithMetrics:(RCTLayoutMetrics)layoutMetrics
             layoutContext:(RCTLayoutContext)layoutContext {
+    // Prevent layout updates during a transition, as they cause the `setViewControllers`
+    // method to skip calling its completion block.
     if (_transitioning) {
       return;
     }
