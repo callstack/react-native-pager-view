@@ -18,6 +18,7 @@
   "dependencies": {
     "@callstack/react-native-visionos": "^0.76.0",
     "@react-native-community/masked-view": "^0.1.10",
+    "@react-navigation/material-top-tabs": "^6.6.14",
     "@react-navigation/native": "^6.0.13",
     "@react-navigation/native-stack": "^6.9.1",
     "@react-navigation/stack": "^6.3.2",

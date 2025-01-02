@@ -11,7 +11,7 @@ import {
   Button,
   Alert,
   I18nManager,
-  DevSettings
+  DevSettings,
 } from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -31,6 +31,7 @@ import CustomIndicatorExample from './tabView/CustomIndicatorExample';
 import CustomTabBarExample from './tabView/CustomTabBarExample';
 import CoverflowExample from './tabView/CoverflowExample';
 import ReanimatedOnPageScrollExample from './ReanimatedOnPageScrollExample';
+import { MaterialTopBarExample } from './MaterialTopTabExample';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PagerHookExample } from './PagerHookExample';
@@ -43,6 +44,7 @@ const examples = [
   { component: OnPageSelectedExample, name: 'OnPageSelected Example' },
   { component: HeadphonesCarouselExample, name: 'Headphones Carousel Example' },
   { component: PaginationDotsExample, name: 'Pagination Dots Example' },
+  { component: MaterialTopBarExample, name: 'MaterialTopBarExample' },
   {
     component: ScrollablePagerViewExample,
     name: 'Scrollable PagerView Example',
