@@ -126,6 +126,11 @@
     "jsSrcsDir": "src",
     "android": {
       "javaPackageName": "com.reactnativepagerview"
+    },
+    "ios": {
+      "componentProvider": {
+        "RNCViewPager": "RNCPagerViewComponentView"
+      }
     }
   },
   "react-native-builder-bob": {
