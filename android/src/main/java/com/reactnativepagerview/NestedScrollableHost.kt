@@ -8,6 +8,7 @@ import android.view.ViewConfiguration
 import android.widget.FrameLayout
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL
+import com.facebook.react.uimanager.events.NativeGestureUtil
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
@@ -57,17 +58,14 @@ class NestedScrollableHost : FrameLayout {
   }
 
   private fun handleInterceptTouchEvent(e: MotionEvent) {
-    val orientation = parentViewPager?.orientation ?: return
-
-    // Early return if child can't scroll in same direction as parent
-    if (!canChildScroll(orientation, -1f) && !canChildScroll(orientation, 1f)) {
-      return
-    }
+    val orientation = parentViewPager?.orientation
 
     if (e.action == MotionEvent.ACTION_DOWN) {
       initialX = e.x
       initialY = e.y
-      parent.requestDisallowInterceptTouchEvent(true)
+      if (orientation != null) {
+        parent.requestDisallowInterceptTouchEvent(true)
+      }
     } else if (e.action == MotionEvent.ACTION_MOVE) {
       val dx = e.x - initialX
       val dy = e.y - initialY
@@ -78,6 +76,9 @@ class NestedScrollableHost : FrameLayout {
       val scaledDy = dy.absoluteValue * if (isVpHorizontal) 1f else .5f
 
       if (scaledDx > touchSlop || scaledDy > touchSlop) {
+        NativeGestureUtil.notifyNativeGestureStarted(this, e)
+
+        if (orientation == null) return
         if (isVpHorizontal == (scaledDy > scaledDx)) {
           // Gesture is perpendicular, allow all parents to intercept
           parent.requestDisallowInterceptTouchEvent(false)
