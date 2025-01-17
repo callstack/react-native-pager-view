@@ -53,12 +53,17 @@ jobs:
       - name: Run Android Emulator and app
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
-          force-avd-creation: false
-          arch: 'x86_64'
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          api-level: 31
+          target: aosp_atd
+          profile: pixel_2
+          ram-size: '4096M'
+          disk-size: '10G'
           disable-animations: false
-          script: echo "Generated AVD snapshot for caching."
+          avd-name: e2e_emulator
+          arch: x86
+          script: |
+            bun example:android:release
+            bun test:e2e:android
 
       - name: Upload report
         if: always()
