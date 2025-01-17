@@ -14,7 +14,7 @@ on:
 
 jobs:
   android-build:
-    runs-on: macos-15
+    runs-on: macos-13 # emulator never starts on macOS 14 https://github.com/ReactiveCircus/android-emulator-runner/issues/392#issuecomment-2106167725
     concurrency:
       group: ${{ github.ref }}-android
       cancel-in-progress: true
