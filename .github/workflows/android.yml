@@ -14,7 +14,7 @@ on:
 
 jobs:
   android-build:
-    runs-on: macos-12
+    runs-on: macos-13 # emulator never starts on macOS 14 https://github.com/ReactiveCircus/android-emulator-runner/issues/392#issuecomment-2106167725
     concurrency:
       group: ${{ github.ref }}-android
       cancel-in-progress: true
@@ -50,17 +50,27 @@ jobs:
         run: bun run build:android
         working-directory: example
 
-      - name: Run Android Emulator and app
+      - name: Create AVD and generate snapshot for caching
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 31
+          # Use the slimmer aosp_atd images for working
+          # around "System UI isn't responding" ANR
+          # (Application Not Responding) error
+          #
+          # https://android-developers.googleblog.com/2021/10/whats-new-in-scalable-automated-testing.html#:~:text=Slimmer%20Emulator%20System%20Images
+          # https://github.com/ReactiveCircus/android-emulator-runner/issues/129
+          # https://github.com/upleveled/hotline-bling-codealong/pull/26#issuecomment-1094659722
           target: aosp_atd
-          profile: pixel_2
-          ram-size: '4096M'
-          disk-size: '10G'
+          api-level: 30
+          arch: x86
+          ram-size: 4096M
+          channel: canary
+          profile: pixel
+          avd-name: Pixel_3a_API_30_AOSP
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-boot-timeout: 12000
           disable-animations: false
-          avd-name: e2e_emulator
-          arch: x86_64
           script: |
             bun example:android:release
             bun test:e2e:android
