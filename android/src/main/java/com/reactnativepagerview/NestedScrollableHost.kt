@@ -28,6 +28,7 @@ class NestedScrollableHost : FrameLayout {
   private var touchSlop = 0
   private var initialX = 0f
   private var initialY = 0f
+  private var nativeGestureStarted: Boolean = false
   private val parentViewPager: ViewPager2?
     get() {
       var v: View? = parent as? View
@@ -77,6 +78,7 @@ class NestedScrollableHost : FrameLayout {
 
       if (scaledDx > touchSlop || scaledDy > touchSlop) {
         NativeGestureUtil.notifyNativeGestureStarted(this, e)
+        nativeGestureStarted = true
 
         if (orientation == null) return
         if (isVpHorizontal == (scaledDy > scaledDx)) {
@@ -94,5 +96,15 @@ class NestedScrollableHost : FrameLayout {
         }
       }
     }
+  }
+
+  override fun onTouchEvent(e: MotionEvent): Boolean {
+    if (e.actionMasked == MotionEvent.ACTION_UP) {
+      if (nativeGestureStarted) {
+        NativeGestureUtil.notifyNativeGestureEnded(this, e)
+        nativeGestureStarted = false
+      }
+    }
+    return super.onTouchEvent(e)
   }
 }
