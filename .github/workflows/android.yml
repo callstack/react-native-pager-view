@@ -53,7 +53,7 @@ jobs:
       - name: Run Android Emulator and app
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 29
+          api-level: 31
           script: |
             bun example:android:release
             bun test:e2e:android
