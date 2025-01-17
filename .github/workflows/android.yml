@@ -50,9 +50,6 @@ jobs:
         run: bun run build:android
         working-directory: example
 
-      - name: Install system image
-        run: sdkmanager "system-images;android-31;google_apis;arm64-v8a"
-
       - name: Run Android Emulator and app
         uses: reactivecircus/android-emulator-runner@v2
         with:
