@@ -60,7 +60,7 @@ jobs:
           disk-size: '10G'
           disable-animations: false
           avd-name: e2e_emulator
-          arch: aarch64
+          arch: x86
           script: |
             bun example:android:release
             bun test:e2e:android
