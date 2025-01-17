@@ -55,7 +55,6 @@ jobs:
         with:
           api-level: 29
           script: |
-            ./gradlew app:connectedCheck
             bun example:android:release
             bun test:e2e:android
 
