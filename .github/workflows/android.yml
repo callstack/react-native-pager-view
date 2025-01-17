@@ -71,7 +71,9 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           emulator-boot-timeout: 12000
           disable-animations: false
-          script: echo "Generated AVD snapshot for caching"
+          script: |
+            bun example:android:release
+            bun test:e2e:android
 
       - name: Upload report
         if: always()
