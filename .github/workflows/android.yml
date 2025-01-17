@@ -14,7 +14,7 @@ on:
 
 jobs:
   android-build:
-    runs-on: macos-14
+    runs-on: macos-15
     concurrency:
       group: ${{ github.ref }}-android
       cancel-in-progress: true
@@ -60,7 +60,7 @@ jobs:
           disk-size: '10G'
           disable-animations: false
           avd-name: e2e_emulator
-          arch: x86
+          arch: x86_64
           script: |
             bun example:android:release
             bun test:e2e:android
