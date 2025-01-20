@@ -1,6 +1,7 @@
 #import "RNCPagerView.h"
 #import <React/RCTLog.h>
 #import <React/RCTViewManager.h>
+#import <React/RCTUIManager.h>
 
 #import "UIViewController+CreateExtension.h"
 #import "RCTOnPageScrollEvent.h"
@@ -13,7 +14,7 @@
 @property(nonatomic, assign) UIPanGestureRecognizer* panGestureRecognizer;
 
 @property(nonatomic, strong) UIPageViewController *reactPageViewController;
-@property(nonatomic, strong) RCTEventDispatcher *eventDispatcher;
+@property(nonatomic, strong) id<RCTEventDispatcherProtocol> eventDispatcher;
 
 @property(nonatomic, weak) UIScrollView *scrollView;
 @property(nonatomic, weak) UIView *currentView;
@@ -30,10 +31,12 @@
 
 @implementation RNCPagerView {
     uint16_t _coalescingKey;
+  __weak RCTBridge * _bridge;
 }
 
-- (instancetype)initWithEventDispatcher:(RCTEventDispatcher *)eventDispatcher {
+- (instancetype)initWithBridge:(RCTBridge *)bridge {
     if (self = [super init]) {
+        _bridge = bridge;
         _scrollEnabled = YES;
         _pageMargin = 0;
         _lastReportedIndex = -1;
@@ -44,7 +47,7 @@
         _dismissKeyboard = UIScrollViewKeyboardDismissModeNone;
 #endif
         _coalescingKey = 0;
-        _eventDispatcher = eventDispatcher;
+        _eventDispatcher = bridge.eventDispatcher;
         _cachedControllers = [NSHashTable hashTableWithOptions:NSHashTableStrongMemory];
         _overdrag = NO;
         _layoutDirection = @"ltr";
@@ -178,7 +181,7 @@
     uint16_t coalescingKey = _coalescingKey++;
     
     if (animated == YES) {
-        self.animating = YES;
+      [self setTransitioning:YES];
     }
     
     [self.reactPageViewController setViewControllers:@[controller]
@@ -190,10 +193,8 @@
         strongSelf.currentView = controller.view;
         
         [strongSelf enableSwipe];
-        
-        if (finished) {
-            strongSelf.animating = NO;
-        }
+
+        [strongSelf setTransitioning:NO];
         
         if (strongSelf.eventDispatcher) {
             if (strongSelf.lastReportedIndex != strongSelf.currentIndex) {
@@ -245,6 +246,11 @@
     self.reactPageViewController.view.userInteractionEnabled = YES;
 }
 
+- (void)setTransitioning:(BOOL)transitioning {
+  _transitioning = transitioning;
+  [_bridge.uiManager setLocalData:@{@"transitioning": @(transitioning)} forView:self];
+}
+
 - (void)goTo:(NSInteger)index animated:(BOOL)animated {
     NSInteger numberOfPages = self.reactSubviews.count;
     
@@ -267,7 +273,7 @@
     
     long diff = labs(index - _currentIndex);
     
-    [self goToViewController:index direction:direction animated:(!self.animating && animated) shouldCallOnPageSelected: YES];
+    [self goToViewController:index direction:direction animated:(!_transitioning && animated) shouldCallOnPageSelected: YES];
     
     if (diff == 0) {
         [self goToViewController:index direction:direction animated:NO shouldCallOnPageSelected:YES];
