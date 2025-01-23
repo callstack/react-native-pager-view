@@ -39,6 +39,11 @@ Yarn:
 
  `yarn add react-native-pager-view`
 
+Expo:
+
+`npx expo install react-native-pager-view`
+
+
 ## Linking
 
 ### >= 0.60
