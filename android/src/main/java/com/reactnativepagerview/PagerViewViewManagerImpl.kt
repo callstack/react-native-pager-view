@@ -63,21 +63,35 @@ object PagerViewViewManagerImpl {
     fun removeAllViews(parent: NestedScrollableHost) {
         val pager = getViewPager(parent)
         pager.isUserInputEnabled = false
+
+        // Get the RecyclerView inside ViewPager2
+        val recyclerView = pager.getChildAt(0) as? androidx.recyclerview.widget.RecyclerView
+        
+        // Clear any pending animations/operations
+        recyclerView?.suppressLayout(true)
+        
         val adapter = pager.adapter as ViewPagerAdapter?
         adapter?.removeAll()
+        
+        // Re-enable layout after cleanup
+        recyclerView?.suppressLayout(false)
     }
 
     fun removeViewAt(parent: NestedScrollableHost, index: Int) {
         val pager = getViewPager(parent)
+        pager.isUserInputEnabled = false
+
+        // Get the RecyclerView inside ViewPager2
+        val recyclerView = pager.getChildAt(0) as? androidx.recyclerview.widget.RecyclerView
+
+        // Clear any pending animations/operations
+        recyclerView?.suppressLayout(true)
+
         val adapter = pager.adapter as ViewPagerAdapter?
-
-        val child = adapter?.getChildAt(index)
-
-        if (child != null && child.parent != null) {
-            (child.parent as? ViewGroup)?.removeView(child)
-        }
-
         adapter?.removeChildAt(index)
+        
+        // Re-enable layout after cleanup
+        recyclerView?.suppressLayout(false)
         
         refreshViewChildrenLayout(pager)
     }
@@ -156,10 +170,30 @@ object PagerViewViewManagerImpl {
 
     private fun refreshViewChildrenLayout(view: View) {
         view.post {
-            view.measure(
-                    View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY),
-                    View.MeasureSpec.makeMeasureSpec(view.height, View.MeasureSpec.EXACTLY))
-            view.layout(view.left, view.top, view.right, view.bottom)
+            try {
+                if (view is ViewPager2) {
+                    // Get the RecyclerView inside ViewPager2
+                    val recyclerView = view.getChildAt(0) as? androidx.recyclerview.widget.RecyclerView
+                    
+                    // Temporarily suppress layout operations
+                    recyclerView?.suppressLayout(true)
+                    
+                    view.measure(
+                        View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.makeMeasureSpec(view.height, View.MeasureSpec.EXACTLY))
+                    view.layout(view.left, view.top, view.right, view.bottom)
+                    
+                    // Re-enable layout operations
+                    recyclerView?.suppressLayout(false)
+                } else {
+                    view.measure(
+                        View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.makeMeasureSpec(view.height, View.MeasureSpec.EXACTLY))
+                    view.layout(view.left, view.top, view.right, view.bottom)
+                }
+            } catch (e: Exception) {
+                // Ignore layout errors during cleanup
+            }
         }
     }
 }
