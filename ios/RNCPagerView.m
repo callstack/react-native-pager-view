@@ -1,12 +1,12 @@
 
 #import "RNCPagerView.h"
-#import "React/RCTLog.h"
+#import <React/RCTLog.h>
 #import <React/RCTViewManager.h>
 
 #import "UIViewController+CreateExtension.h"
 #import "RCTOnPageScrollEvent.h"
 #import "RCTOnPageScrollStateChanged.h"
-#import "React/RCTUIManagerObserverCoordinator.h"
+#import <React/RCTUIManagerObserverCoordinator.h>
 #import "RCTOnPageSelected.h"
 #import <math.h>
 

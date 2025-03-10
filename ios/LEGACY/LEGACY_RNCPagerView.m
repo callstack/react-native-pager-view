@@ -1,5 +1,5 @@
 #import "LEGACY_RNCPagerView.h"
-#import "React/RCTLog.h"
+#import <React/RCTLog.h>
 #import <React/RCTViewManager.h>
 
 #import "UIViewController+CreateExtension.h"
