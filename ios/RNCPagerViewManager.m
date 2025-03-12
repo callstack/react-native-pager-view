@@ -1,6 +1,6 @@
 
 #import "RNCPagerViewManager.h"
-
+#import "RNCPagerViewShadowView.h"
 @implementation RNCPagerViewManager
 
 #pragma mark - RTC
@@ -30,7 +30,7 @@ RCT_EXPORT_VIEW_PROPERTY(layoutDirection, NSString)
             RCTLogError(@"Cannot find RNCPagerView with tag #%@", reactTag);
             return;
         }
-        if (!animated || !view.animating) {
+        if (!animated || !view.transitioning) {
             [view goTo:index.integerValue animated:animated];
         }
     }];
@@ -80,7 +80,12 @@ RCT_CUSTOM_VIEW_PROPERTY(keyboardDismissMode, NSString, RNCPagerView) {
 
 
 - (UIView *)view {
-    return [[RNCPagerView alloc] initWithEventDispatcher:self.bridge.eventDispatcher];
+    return [[RNCPagerView alloc] initWithBridge: self.bridge];
+}
+
+
+- (RCTShadowView *)shadowView {
+  return [RNCPagerViewShadowView new];
 }
 
 @end
