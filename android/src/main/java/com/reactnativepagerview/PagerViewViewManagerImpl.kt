@@ -156,10 +156,15 @@ object PagerViewViewManagerImpl {
 
     private fun refreshViewChildrenLayout(view: View) {
         view.post {
-            view.measure(
-                    View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY),
-                    View.MeasureSpec.makeMeasureSpec(view.height, View.MeasureSpec.EXACTLY))
-            view.layout(view.left, view.top, view.right, view.bottom)
+            try {
+                view.measure(
+                        View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY),
+                        View.MeasureSpec.makeMeasureSpec(view.height, View.MeasureSpec.EXACTLY))
+                view.layout(view.left, view.top, view.right, view.bottom)
+            } catch (e: IllegalArgumentException) {
+                // Temporarily ignore view recycled error.
+                e.printStackTrace()
+            }
         }
     }
 }
