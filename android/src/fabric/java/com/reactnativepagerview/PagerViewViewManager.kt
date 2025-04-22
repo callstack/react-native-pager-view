@@ -37,7 +37,7 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
         return PagerViewViewManagerImpl.NAME
     }
 
-    override fun receiveCommand(root: NestedScrollableHost, commandId: String?, args: ReadableArray?) {
+    override fun receiveCommand(root: NestedScrollableHost, commandId: String, args: ReadableArray?) {
         mDelegate.receiveCommand(root, commandId, args)
     }
 
