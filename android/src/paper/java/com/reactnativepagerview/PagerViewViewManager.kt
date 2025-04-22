@@ -132,7 +132,7 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
                 PageSelectedEvent.EVENT_NAME, MapBuilder.of("registrationName", "onPageSelected"))
     }
 
-    override fun receiveCommand(root: NestedScrollableHost, commandId: String?, args: ReadableArray?) {
+    override fun receiveCommand(root: NestedScrollableHost, commandId: String, args: ReadableArray?) {
         super.receiveCommand(root, commandId, args)
         val view = PagerViewViewManagerImpl.getViewPager(root)
         Assertions.assertNotNull(view)
