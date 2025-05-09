@@ -439,6 +439,12 @@ using namespace facebook::react;
         
         return YES;
     }
+
+    // Allow nested scroll views to scroll simultaneously with the pager
+    if ([otherGestureRecognizer.view isKindOfClass: UIScrollView.class]) {
+        return YES;
+    }
+
     const auto &viewProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
     scrollView.panGestureRecognizer.enabled = viewProps.scrollEnabled;
     return NO;
