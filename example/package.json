@@ -16,23 +16,20 @@
     "build:visionos": "bun mkdist && react-native bundle --entry-file index.js --platform ios --dev true --bundle-output dist/main.visionos.jsbundle --assets-dest dist"
   },
   "dependencies": {
-    "@callstack/react-native-visionos": "^0.76.0",
-    "@react-native-community/masked-view": "^0.1.10",
-    "@react-navigation/material-top-tabs": "^6.6.14",
-    "@react-navigation/native": "^6.0.13",
-    "@react-navigation/native-stack": "^6.9.1",
-    "@react-navigation/stack": "^6.3.2",
-    "babel-plugin-module-resolver": "^5.0.2",
-    "metro-react-native-babel-preset": "^0.77.0",
-    "react": "18.3.1",
-    "react-native": "0.76.3",
+    "@callstack/react-native-visionos": "^0.78.0",
+    "@react-navigation/material-top-tabs": "^7.2.13",
+    "@react-navigation/native": "^7.1.9",
+    "@react-navigation/native-stack": "^7.3.13",
+    "@react-navigation/stack": "^7.3.2",
+    "react": "19.0.0",
+    "react-native": "0.79.2",
     "react-native-animated-pagination-dots": "^0.1.73",
-    "react-native-gesture-handler": "2.20.2",
-    "react-native-reanimated": "3.16.1",
-    "react-native-safe-area-context": "4.14.0",
-    "react-native-screens": "4.0.0",
-    "react-native-svg": "15.8.0",
-    "react-native-tab-view": "^3.3.0"
+    "react-native-gesture-handler": "2.25.0",
+    "react-native-reanimated": "3.17.5",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "4.10.0",
+    "react-native-svg": "15.12.0",
+    "react-native-tab-view": "^4.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -41,22 +38,25 @@
     "@react-native-community/cli": "15.0.1",
     "@react-native-community/cli-platform-android": "15.0.1",
     "@react-native-community/cli-platform-ios": "15.0.1",
-    "@react-native/babel-preset": "0.76.3",
-    "@react-native/eslint-config": "0.76.3",
-    "@react-native/metro-config": "0.76.3",
-    "@react-native/typescript-config": "0.76.3",
-    "@rnx-kit/metro-config": "^1.3.15",
-    "@types/react": "^18.2.6",
-    "@types/react-test-renderer": "^18.0.0",
-    "babel-jest": "^29.6.3",
+    "@react-native/babel-preset": "0.79.2",
+    "@react-native/eslint-config": "0.79.2",
+    "@react-native/metro-config": "0.79.2",
+    "@react-native/typescript-config": "0.79.2",
+    "@rnx-kit/metro-config": "^2.0.1",
+    "@types/react": "^19.0.0",
+    "@types/react-test-renderer": "^19.0.0",
+    "@types/jest": "^29.5.13",
     "eslint": "^8.19.0",
     "jest": "^29.6.3",
-    "prettier": "2.4.1",
-    "react-native-test-app": "^3.7.6",
-    "react-test-renderer": "18.2.0",
+    "prettier": "2.8.8",
+    "react-native-test-app": "^4.3.0",
+    "react-test-renderer": "19.0.0",
     "typescript": "5.0.4"
   },
+  "overrides": {
+    "use-latest-callback": "0.1.9"
+  },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   }
 }
