@@ -4,9 +4,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager2.widget.ViewPager2
 import com.facebook.react.uimanager.PixelUtil
+import android.os.Handler
+import android.os.Looper
+import android.view.Choreographer
 
 object PagerViewViewManagerImpl {
     const val NAME = "RNCViewPager"
+
+    private var refreshFrameCallback: Choreographer.FrameCallback? = null
 
     fun getViewPager(view: NestedScrollableHost): ViewPager2 {
         if (view.getChildAt(0) is ViewPager2) {
@@ -78,8 +83,8 @@ object PagerViewViewManagerImpl {
         }
 
         adapter?.removeChildAt(index)
-        
-        refreshViewChildrenLayout(pager)
+
+        debouncedRefreshViewChildrenLayout(pager)
     }
 
     fun needsCustomLayoutForChildren(): Boolean {
@@ -157,9 +162,26 @@ object PagerViewViewManagerImpl {
     private fun refreshViewChildrenLayout(view: View) {
         view.post {
             view.measure(
-                    View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY),
-                    View.MeasureSpec.makeMeasureSpec(view.height, View.MeasureSpec.EXACTLY))
+                View.MeasureSpec.makeMeasureSpec(view.width, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(view.height, View.MeasureSpec.EXACTLY))
             view.layout(view.left, view.top, view.right, view.bottom)
         }
+    }
+
+    private fun debouncedRefreshViewChildrenLayout(view: View) {
+        // Fixes https://github.com/callstack/react-native-pager-view/issues/946
+        refreshFrameCallback?.let { Choreographer.getInstance().removeFrameCallback(it) }
+
+        val adapter = (view as? ViewPager2)?.adapter as? ViewPagerAdapter
+        if (adapter == null || adapter.itemCount == 0) {
+            // Do not call refreshViewChildrenLayout on pager unmount
+            return
+        }
+
+        refreshFrameCallback = Choreographer.FrameCallback {
+            refreshViewChildrenLayout(view)
+            refreshFrameCallback = null
+        }
+        Choreographer.getInstance().postFrameCallback(refreshFrameCallback)
     }
 }

@@ -95,7 +95,7 @@ const Stack = createStackNavigator();
 const NativeStack = createNativeStackNavigator();
 
 export function Navigation() {
-  const [mode, setMode] = React.useState<'native' | 'js'>('js');
+  const [mode, setMode] = React.useState<'native' | 'js'>('native');
   const NavigationStack = mode === 'js' ? Stack : NativeStack;
   return (
     <SafeAreaProvider>
