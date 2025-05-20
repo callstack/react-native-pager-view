@@ -420,6 +420,10 @@ using namespace facebook::react;
     return concreteComponentDescriptorProvider<RNCViewPagerComponentDescriptor>();
 }
 
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+  const auto &viewProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
+  return viewProps.scrollEnabled;
+}
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
 
