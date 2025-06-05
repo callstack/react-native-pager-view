@@ -1,3 +1,10 @@
+
+<a href="https://www.callstack.com/open-source" align="center">
+   <picture>
+     <img alt="React Native PagerView" src="https://github.com/user-attachments/assets/1f0f7b9f-5723-4a9c-b0f1-99ed472f3122">
+   </picture>
+</a>
+
 # react-native-pager-view <img src="img/viewpager-logo.png" alt="ViewPager" width="24" height="24">
 
 [![npm package](https://badge.fury.io/js/react-native-pager-view.svg)](https://badge.fury.io/js/react-native-pager-view)
