@@ -1,5 +1,5 @@
 {
-  "name": "react-native-pager-view",
+  "name": "@sigmela/react-native-pager-view",
   "version": "6.8.1",
   "description": "React Native wrapper for Android and iOS ViewPager",
   "main": "lib/commonjs/index",
