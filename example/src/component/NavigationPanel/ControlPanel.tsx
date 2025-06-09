@@ -10,6 +10,8 @@ export function ControlsPanel({
   pages,
   scrollState,
   scrollEnabled,
+  scrollLeftEnabled,
+  scrollRightEnabled,
   progress,
   disablePagesAmountManagement,
   overdragEnabled,
@@ -17,6 +19,8 @@ export function ControlsPanel({
   addPage,
   removePage,
   toggleScroll,
+  toggleLeftScroll,
+  toggleRightScroll,
   toggleAnimation,
   toggleOverdrag,
 }: NavigationPanelProps) {
@@ -35,6 +39,24 @@ export function ControlsPanel({
   );
   return (
     <>
+      <View style={styles.buttons}>
+        <Button
+          testID="scroll-left-enabled-button"
+          text={
+            scrollLeftEnabled ? 'Scroll Left Enabled' : 'Scroll Left Disabled'
+          }
+          onPress={toggleLeftScroll}
+        />
+        <Button
+          testID="scroll-right-enabled-button"
+          text={
+            scrollRightEnabled
+              ? 'Scroll Right Enabled'
+              : 'Scroll Right Disabled'
+          }
+          onPress={toggleRightScroll}
+        />
+      </View>
       <View style={styles.buttons}>
         <Button
           testID="scroll-enabled-button"

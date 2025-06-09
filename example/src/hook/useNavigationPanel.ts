@@ -31,6 +31,8 @@ export function useNavigationPanel(
   const [isAnimated, setIsAnimated] = useState(true);
   const [overdragEnabled, setOverdragEnabled] = useState(false);
   const [scrollEnabled, setScrollEnabled] = useState(true);
+  const [scrollLeftEnabled, setScrollLeftEnabled] = useState(true);
+  const [scrollRightEnabled, setScrollRightEnabled] = useState(true);
   const [scrollState, setScrollState] = useState('idle');
   const [logs, setLogs] = useState<EventLog[]>([]);
   const [progress, setProgress] = useState({ position: 0, offset: 0 });
@@ -68,6 +70,14 @@ export function useNavigationPanel(
   );
   const toggleScroll = useCallback(
     () => setScrollEnabled((enabled) => !enabled),
+    []
+  );
+  const toggleLeftScroll = useCallback(
+    () => setScrollLeftEnabled((enabled) => !enabled),
+    []
+  );
+  const toggleRightScroll = useCallback(
+    () => setScrollRightEnabled((enabled) => !enabled),
     []
   );
   const toggleOverdrag = useCallback(
@@ -146,12 +156,16 @@ export function useNavigationPanel(
     pages,
     scrollState,
     scrollEnabled,
+    scrollLeftEnabled,
+    scrollRightEnabled,
     progress,
     overdragEnabled,
     setPage,
     addPage,
     removePage,
     toggleScroll,
+    toggleLeftScroll,
+    toggleRightScroll,
     toggleAnimation,
     setProgress,
     onPageScroll,

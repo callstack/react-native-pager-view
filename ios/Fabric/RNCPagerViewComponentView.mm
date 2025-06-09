@@ -70,6 +70,8 @@ using namespace facebook::react;
         _currentIndex = -1;
         _destinationIndex = -1;
         _layoutDirection = @"ltr";
+        _scrollLeftEnabled = YES;
+        _scrollRightEnabled = YES;
         _overdrag = NO;
     }
     
@@ -162,6 +164,14 @@ using namespace facebook::react;
     
     if (newScreenProps.scrollEnabled != scrollView.scrollEnabled) {
         scrollView.scrollEnabled = newScreenProps.scrollEnabled;
+    }
+
+    if (newScreenProps.scrollLeftEnabled != _scrollLeftEnabled) {
+        _scrollLeftEnabled = newScreenProps.scrollLeftEnabled;
+    }
+
+    if (newScreenProps.scrollRightEnabled != _scrollRightEnabled) {
+        _scrollRightEnabled = newScreenProps.scrollRightEnabled;
     }
     
     if (newScreenProps.overdrag != _overdrag) {
@@ -345,6 +355,15 @@ using namespace facebook::react;
         NSInteger maxIndex = _nativeChildrenViewControllers.count - 1;
         NSInteger firstPageIndex = !isHorizontalRtl ? 0 :  maxIndex;
         NSInteger lastPageIndex = !isHorizontalRtl ? maxIndex :  0;
+
+        if (!_scrollLeftEnabled && scrollView.isDragging) { 
+            firstPageIndex = _currentIndex;
+        }
+
+        if (!_scrollRightEnabled && scrollView.isDragging) {
+            lastPageIndex = _currentIndex;
+        }
+        
         BOOL isFirstPage = _currentIndex == firstPageIndex;
         BOOL isLastPage = _currentIndex == lastPageIndex;
         CGFloat contentOffset =[self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;

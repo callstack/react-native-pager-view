@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) NSInteger currentIndex;
 @property(nonatomic) NSInteger pageMargin;
 @property(nonatomic, readonly) BOOL scrollEnabled;
+@property(nonatomic, readonly) BOOL scrollLeftEnabled;
+@property(nonatomic, readonly) BOOL scrollRightEnabled;
 #if !TARGET_OS_VISION
 @property(nonatomic, readonly) UIScrollViewKeyboardDismissMode dismissKeyboard;
 #endif
@@ -29,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)goTo:(NSInteger)index animated:(BOOL)animated;
 - (void)shouldScroll:(BOOL)scrollEnabled;
+- (void)shouldLeftScroll:(BOOL)scrollEnabled;
+- (void)shouldRightScroll:(BOOL)scrollEnabled;
 - (void)shouldDismissKeyboard:(NSString *)dismissKeyboard;
 
 @end

@@ -100,6 +100,16 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>() {
         PagerViewViewManagerImpl.setScrollEnabled(host, value)
     }
 
+    @ReactProp(name = "scrollLeftEnabled", defaultBoolean = true)
+    fun setScrollLeftEnabled(host: NestedScrollableHost, value: Boolean) {
+        // TODO: 
+    }
+
+    @ReactProp(name = "scrollRightEnabled", defaultBoolean = true)
+    fun setScrollRightEnabled(host: NestedScrollableHost, value: Boolean) {
+        // TODO: 
+    }
+
     @ReactProp(name = "initialPage", defaultInt = 0)
     fun setInitialPage(host: NestedScrollableHost, value: Int) {
         PagerViewViewManagerImpl.setInitialPage(host, value)

@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) NSInteger currentIndex;
 @property(nonatomic) NSInteger destinationIndex;
 @property(nonatomic) NSString* layoutDirection;
+@property(nonatomic) BOOL scrollLeftEnabled;
+@property(nonatomic) BOOL scrollRightEnabled;
 @property(nonatomic) BOOL overdrag;
 
 - (void)setPage:(NSInteger)number;

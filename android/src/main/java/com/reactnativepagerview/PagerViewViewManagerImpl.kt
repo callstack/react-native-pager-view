@@ -95,6 +95,14 @@ object PagerViewViewManagerImpl {
         getViewPager(host).isUserInputEnabled = value
     }
 
+    fun setScrollLeftEnabled(host: NestedScrollableHost, value: Boolean) {
+        // TODO:
+    }
+
+    fun setScrollRightEnabled(host: NestedScrollableHost, value: Boolean) {
+        // TODO:
+    }
+
     fun setLayoutDirection(host: NestedScrollableHost, value: String) {
         val view = getViewPager(host)
         when (value) {

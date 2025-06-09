@@ -36,6 +36,8 @@
     if (self = [super init]) {
         _bridge = bridge;
         _scrollEnabled = YES;
+        _scrollLeftEnabled = YES;
+        _scrollRightEnabled = YES;
         _pageMargin = 0;
         _lastReportedIndex = -1;
         _destinationIndex = -1;
@@ -125,6 +127,15 @@
     if (self.reactPageViewController.view) {
         self.scrollView.scrollEnabled = scrollEnabled;
     }
+}
+
+
+- (void)shouldLeftScroll:(BOOL)scrollEnabled {
+    _scrollLeftEnabled = scrollEnabled;
+}
+
+- (void)shouldRightScroll:(BOOL)scrollEnabled {
+    _scrollRightEnabled = scrollEnabled;
 }
 
 - (void)shouldDismissKeyboard:(NSString *)dismissKeyboard {
@@ -437,6 +448,15 @@
         NSInteger maxIndex = self.reactSubviews.count - 1;
         NSInteger firstPageIndex = !isHorizontalRtl ? 0 : maxIndex;
         NSInteger lastPageIndex = !isHorizontalRtl ? maxIndex : 0;
+
+        if (!_scrollLeftEnabled && scrollView.isDragging) { 
+            firstPageIndex = _currentIndex;
+        }
+
+        if (!_scrollRightEnabled && scrollView.isDragging) {
+            lastPageIndex = _currentIndex;
+        }
+        
         BOOL isFirstPage = _currentIndex == firstPageIndex;
         BOOL isLastPage = _currentIndex == lastPageIndex;
         CGFloat contentOffset =[self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;

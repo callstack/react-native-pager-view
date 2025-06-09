@@ -121,6 +121,16 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
         }
     }
 
+    @ReactProp(name = "scrollLeftEnabled", defaultBoolean = true)
+    override fun setScrollLeftEnabled(view: NestedScrollableHost?, value: Boolean) {
+        // TODO:
+    }
+
+    @ReactProp(name = "scrollRightEnabled", defaultBoolean = true)
+    override fun setScrollRightEnabled(view: NestedScrollableHost?, value: Boolean) {
+        // TODO:
+    }
+
     @ReactProp(name = "layoutDirection")
     override fun setLayoutDirection(view: NestedScrollableHost?, value: String?) {
         if (view != null && value != null) {

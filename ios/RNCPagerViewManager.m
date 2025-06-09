@@ -75,6 +75,14 @@ RCT_CUSTOM_VIEW_PROPERTY(scrollEnabled, BOOL, RNCPagerView) {
     [view shouldScroll:[RCTConvert BOOL:json]];
 }
 
+RCT_CUSTOM_VIEW_PROPERTY(scrollLeftEnabled, BOOL, RNCPagerView) {
+    [view shouldLeftScroll:[RCTConvert BOOL:json]];
+}
+
+RCT_CUSTOM_VIEW_PROPERTY(scrollRightEnabled, BOOL, RNCPagerView) {
+    [view shouldRightScroll:[RCTConvert BOOL:json]];
+}
+
 RCT_CUSTOM_VIEW_PROPERTY(keyboardDismissMode, NSString, RNCPagerView) {
     [view shouldDismissKeyboard:[RCTConvert NSString:json]];
 }
