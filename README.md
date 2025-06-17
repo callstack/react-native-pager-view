@@ -1,5 +1,5 @@
 
-<a href="https://www.callstack.com/open-source" align="center">
+<a href="https://www.callstack.com/open-source?utm_campaign=generic&utm_source=github&utm_medium=referral&utm_content=react-native-pager-view" align="center">
    <picture>
      <img alt="React Native PagerView" src="https://github.com/user-attachments/assets/1f0f7b9f-5723-4a9c-b0f1-99ed472f3122">
    </picture>
