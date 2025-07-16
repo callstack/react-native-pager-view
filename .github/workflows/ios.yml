@@ -20,8 +20,8 @@ jobs:
       group: ${{ github.ref }}-ios
       cancel-in-progress: true
     steps:
-      - uses: oven-sh/setup-bun@v2
-      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Install dependencies
         shell: bash
@@ -34,7 +34,7 @@ jobs:
 
       - name: Cache Pods
         id: cache-pods
-        uses: actions/cache@v4
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         env:
           cache-name: cached-ios-pods-deps
         with:
