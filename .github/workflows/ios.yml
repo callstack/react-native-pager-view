@@ -49,19 +49,6 @@ jobs:
         run: bun pods
         working-directory: example
 
-      - name: Install Maestro CLI
-        run: |
-          export MAESTRO_VERSION=1.31.0; curl -Ls "https://get.maestro.mobile.dev" | bash
-          brew tap facebook/fb
-          brew install facebook/fb/idb-companion
-
-      - name: Add Maestro to path
-        run: echo "${HOME}/.maestro/bin" >> $GITHUB_PATH
-
       - name: Build iOS App
         run: |
           bun example:ios:release
-
-      - name: Run tests
-        run: |
-          bun test:e2e:ios

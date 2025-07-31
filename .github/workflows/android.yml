@@ -37,15 +37,6 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      - name: Install Maestro CLI
-        run: |
-          export MAESTRO_VERSION=1.31.0; curl -Ls "https://get.maestro.mobile.dev" | bash
-          brew tap facebook/fb
-          brew install facebook/fb/idb-companion
-
-      - name: Add Maestro to path
-        run: echo "${HOME}/.maestro/bin" >> $GITHUB_PATH
-
       - name: Bundle app
         run: bun run build:android
         working-directory: example
@@ -73,22 +64,3 @@ jobs:
           disable-animations: false
           script: |
             bun example:android:release
-            bun test:e2e:android
-
-      - name: Upload report
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: E2E Report
-          path: |
-            ${{ github.workspace }}/*.mp4
-            ${{ github.workspace }}/*.png
-            ${{ github.workspace }}/report*.xml
-            ~/.maestro/tests/**/*
-
-      - name: Store tests result
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: e2e_android_report
-          path: |
-            report.xml

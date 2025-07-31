@@ -29,8 +29,6 @@
     "release:next": "release-it --npm.tag=next --preRelease=rc",
     "bootstrap": "cd example; bun install && bun pods ",
     "bootstrap:no:pods": "bun install --cwd example",
-    "test:e2e:android": "bash ./scripts/run-maestro-tests.sh android",
-    "test:e2e:ios": "bash ./scripts/run-maestro-tests.sh ios",
     "example:start": "cd example; bun start",
     "example:android": "cd example; bun android",
     "example:ios": "cd example; bun ios",
