@@ -1,5 +1,3 @@
-#ifdef RCT_NEW_ARCH_ENABLED
-
 #import <Foundation/Foundation.h>
 #import "RNCPagerViewComponentView.h"
 #import <react/renderer/components/pagerview/ComponentDescriptors.h>
@@ -16,6 +14,9 @@ using namespace facebook::react;
 
 @interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
 
+@property(nonatomic, strong) UIPageViewController *nativePageViewController;
+@property(nonatomic, strong) NSMutableArray<UIViewController *> *nativeChildrenViewControllers;
+
 @end
 
 @implementation RNCPagerViewComponentView {
@@ -23,6 +24,10 @@ using namespace facebook::react;
     LayoutMetrics _oldLayoutMetrics;
     UIScrollView *scrollView;
     BOOL transitioning;
+    NSInteger _currentIndex;
+    NSInteger _destinationIndex;
+    BOOL _overdrag;
+    NSString *_layoutDirection;
 }
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
@@ -99,7 +104,7 @@ using namespace facebook::react;
  
     NSInteger maxPage = _nativeChildrenViewControllers.count - 1;
     
-    if (self.currentIndex >= maxPage) {
+    if (_currentIndex >= maxPage) {
         [self goTo:maxPage animated:NO];
     }
 }
@@ -152,8 +157,8 @@ using namespace facebook::react;
     const auto newLayoutDirectionStr = RCTNSStringFromString(toString(newScreenProps.layoutDirection));
     
     
-    if (self.layoutDirection != newLayoutDirectionStr) {
-        self.layoutDirection = newLayoutDirectionStr;
+    if (_layoutDirection != newLayoutDirectionStr) {
+        _layoutDirection = newLayoutDirectionStr;
     }
     
     if (oldScreenProps.keyboardDismissMode != newScreenProps.keyboardDismissMode) {
@@ -185,6 +190,10 @@ using namespace facebook::react;
     [self goTo:index animated:NO];
 }
 
+- (void)setScrollEnabledImperatively:(BOOL)scrollEnabled {
+    [scrollView setScrollEnabled:scrollEnabled];
+}
+
 - (void)disableSwipe {
     self.nativePageViewController.view.userInteractionEnabled = NO;
 }
@@ -205,7 +214,7 @@ using namespace facebook::react;
         return;
     }
     
-    BOOL isForward = (index > self.currentIndex && [self isLtrLayout]) || (index < self.currentIndex && ![self isLtrLayout]);
+    BOOL isForward = (index > _currentIndex && [self isLtrLayout]) || (index < _currentIndex && ![self isLtrLayout]);
     UIPageViewControllerNavigationDirection direction = isForward ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
     
     long diff = labs(index - _currentIndex);
@@ -302,6 +311,10 @@ using namespace facebook::react;
     strongEventEmitter.onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Idle });
 }
 
+- (BOOL)isHorizontalRtlLayout {
+    return self.isHorizontal && !self.isLtrLayout;
+}
+
 - (BOOL)isHorizontal {
     return _nativePageViewController.navigationOrientation == UIPageViewControllerNavigationOrientationHorizontal;
 }
@@ -327,7 +340,7 @@ using namespace facebook::react;
     
     float absoluteOffset = fabs(offset);
     
-    NSInteger position = self.currentIndex;
+    NSInteger position = _currentIndex;
     
     BOOL isHorizontalRtl = [self isHorizontalRtlLayout];
     BOOL isAnimatingBackwards = isHorizontalRtl ? offset > 0.05f : offset < 0;
@@ -419,5 +432,3 @@ Class<RCTComponentViewProtocol> RNCViewPagerCls(void)
 {
     return RNCPagerViewComponentView.class;
 }
-
-#endif
