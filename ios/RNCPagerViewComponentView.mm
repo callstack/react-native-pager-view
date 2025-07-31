@@ -296,52 +296,50 @@ using namespace facebook::react;
 
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    CGFloat contentOffset = [self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;
-    CGFloat frameSize = [self isHorizontal] ? scrollView.frame.size.width : scrollView.frame.size.height;
-  
+    BOOL isHorizontal = [self isHorizontal];
+    CGFloat contentOffset = isHorizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y;
+    CGFloat frameSize = isHorizontal ? scrollView.frame.size.width : scrollView.frame.size.height;
+    
     if (frameSize == 0) {
         return;
     }
 
-    float offset = (contentOffset - frameSize)/frameSize;
-    
+    float offset = (contentOffset - frameSize) / frameSize;
     float absoluteOffset = fabs(offset);
-    
     NSInteger position = _currentIndex;
     
     BOOL isHorizontalRtl = [self isHorizontalRtlLayout];
     BOOL isAnimatingBackwards = isHorizontalRtl ? offset > 0.05f : offset < 0;
-    
-    if (scrollView.isDragging) {
+    BOOL isBeingMovedByNestedScrollView = !scrollView.isDragging && !scrollView.isTracking;
+    if (scrollView.isDragging || isBeingMovedByNestedScrollView) {
         _destinationIndex = isAnimatingBackwards ? _currentIndex - 1 : _currentIndex + 1;
     }
     
     if (isAnimatingBackwards) {
-        position =  _destinationIndex;
-        absoluteOffset =  fmax(0, 1 - absoluteOffset);
+        position = _destinationIndex;
+        absoluteOffset = fmax(0, 1 - absoluteOffset);
     }
     
     if (!_overdrag) {
         NSInteger maxIndex = _nativeChildrenViewControllers.count - 1;
-        NSInteger firstPageIndex = !isHorizontalRtl ? 0 :  maxIndex;
-        NSInteger lastPageIndex = !isHorizontalRtl ? maxIndex :  0;
+        NSInteger firstPageIndex = isHorizontalRtl ? maxIndex : 0;
+        NSInteger lastPageIndex = isHorizontalRtl ? 0 : maxIndex;
         BOOL isFirstPage = _currentIndex == firstPageIndex;
         BOOL isLastPage = _currentIndex == lastPageIndex;
-        CGFloat contentOffset =[self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;
-        CGFloat topBound = [self isHorizontal] ? scrollView.bounds.size.width : scrollView.bounds.size.height;
+        CGFloat topBound = isHorizontal ? scrollView.bounds.size.width : scrollView.bounds.size.height;
         
         if ((isFirstPage && contentOffset <= topBound) || (isLastPage && contentOffset >= topBound)) {
-            CGPoint croppedOffset = [self isHorizontal] ? CGPointMake(topBound, 0) : CGPointMake(0, topBound);
+            CGPoint croppedOffset = isHorizontal ? CGPointMake(topBound, 0) : CGPointMake(0, topBound);
             scrollView.contentOffset = croppedOffset;
-            absoluteOffset=0;
+            absoluteOffset = 0;
             position = isLastPage ? lastPageIndex : firstPageIndex;
         }
     }
     
     float interpolatedOffset = absoluteOffset * labs(_destinationIndex - _currentIndex);
-  
     [self sendScrollEventsForPosition:position offset:interpolatedOffset];
 }
+
 
 #pragma mark - UIPageViewControllerDelegate
 
@@ -356,7 +354,6 @@ using namespace facebook::react;
         int position = (int) currentIndex;
         const auto eventEmitter = [self pagerEventEmitter];
         eventEmitter->onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
-        eventEmitter->onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(position), .offset =  0.0});
     }
 }
 
