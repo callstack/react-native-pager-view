@@ -36,6 +36,7 @@ import { MaterialTopBarExample } from './MaterialTopTabExample';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PagerHookExample } from './PagerHookExample';
+import { NestedHorizontalScrollViewExample } from './NestedHorizontalScrollViewExample';
 
 const examples = [
   { component: BasicPagerViewExample, name: 'Basic Example' },
@@ -50,7 +51,10 @@ const examples = [
     component: ScrollablePagerViewExample,
     name: 'Scrollable PagerView Example',
   },
-  { component: TabViewInsideScrollViewExample, name: 'TabView inside ScrollView Example' },
+  {
+    component: TabViewInsideScrollViewExample,
+    name: 'TabView inside ScrollView Example',
+  },
   {
     component: ScrollViewInsideExample,
     name: 'ScrollView inside PagerView Example',
@@ -60,6 +64,10 @@ const examples = [
     name: 'Nest PagerView Example',
   },
   { component: ScrollableTabBarExample, name: 'ScrollableTabBarExample' },
+  {
+    component: NestedHorizontalScrollViewExample,
+    name: 'NestedHorizontalScrollViewExample',
+  },
   { component: AutoWidthTabBarExample, name: 'AutoWidthTabBarExample' },
   { component: TabBarIconExample, name: 'TabBarIconExample' },
   { component: CustomIndicatorExample, name: 'CustomIndicatorExample' },
