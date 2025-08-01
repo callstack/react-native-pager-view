@@ -71,6 +71,7 @@ using namespace facebook::react;
         _destinationIndex = -1;
         _layoutDirection = @"ltr";
         _overdrag = NO;
+        _isDragging = NO;
     }
     
     return self;
@@ -83,6 +84,27 @@ using namespace facebook::react;
     }
 }
 
+-(void) didMoveToWindow {
+    UIPanGestureRecognizer* gesture = [UIPanGestureRecognizer new];
+    gesture.delegate = self;
+    [self addGestureRecognizer: gesture];
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    if (otherGestureRecognizer == self->scrollView.panGestureRecognizer) {
+        UIPanGestureRecognizer* p = (UIPanGestureRecognizer*) gestureRecognizer;
+        CGPoint velocity = [p velocityInView:self];
+        if (!_isDragging && self.currentIndex == 0 && velocity.x > 0) {
+            self->scrollView.panGestureRecognizer.enabled = false;
+            return NO;
+        } else {
+            self->scrollView.panGestureRecognizer.enabled = self->scrollView.scrollEnabled;
+        }
+    } else {
+        self->scrollView.panGestureRecognizer.enabled = self->scrollView.scrollEnabled;
+    }
+    return YES;
+}
 
 #pragma mark - React API
 
@@ -270,6 +292,7 @@ using namespace facebook::react;
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    _isDragging = YES;
     const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
     strongEventEmitter.onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Dragging });
 }
@@ -298,6 +321,7 @@ using namespace facebook::react;
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    _isDragging = NO;
     const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
     strongEventEmitter.onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Idle });
 }
