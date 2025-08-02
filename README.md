@@ -1,3 +1,10 @@
+
+<a href="https://www.callstack.com/open-source?utm_campaign=generic&utm_source=github&utm_medium=referral&utm_content=react-native-pager-view" align="center">
+   <picture>
+     <img alt="React Native PagerView" src="https://github.com/user-attachments/assets/1f0f7b9f-5723-4a9c-b0f1-99ed472f3122">
+   </picture>
+</a>
+
 # react-native-pager-view <img src="img/viewpager-logo.png" alt="ViewPager" width="24" height="24">
 
 [![npm package](https://badge.fury.io/js/react-native-pager-view.svg)](https://badge.fury.io/js/react-native-pager-view)
@@ -156,6 +163,7 @@ For advanced usage please take a look into our [example project](https://github.
 | `offscreenPageLimit: number`                                         | Set the number of pages that should be retained to either side of the currently visible page(s). Pages beyond this limit will be recreated from the adapter when needed. Defaults to RecyclerView's caching strategy. The given value must either be larger than 0. | Android  |
 | `overdrag: boolean`                                                  |                                                                                   Allows for overscrolling after reaching the end or very beginning or pages. Defaults to `false`                                                                                   |   iOS    |
 | `layoutDirection: ('ltr' / 'rtl' / 'locale')`                        |                                                      Specifies layout direction. Use `ltr` or `rtl` to set explicitly or `locale` to deduce from the default language script of a locale. Defaults to `locale`                                                      |   both   |
+| `allowNavFullscreenGesture: boolean`                                  |                                                                                   Allows navigation swipe-back gestures to pass through when PagerView is at index 0. If `overdrag` is set to `true`, it will have higher priority. Defaults to `false`                                                                                   |   iOS    |
 
 | Method                                     |                                                                                                         Description                                                                                                          | Platform |
 | ------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------: |

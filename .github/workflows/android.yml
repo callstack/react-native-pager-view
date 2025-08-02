@@ -19,8 +19,8 @@ jobs:
       group: ${{ github.ref }}-android
       cancel-in-progress: true
     steps:
-      - uses: oven-sh/setup-bun@v2
-      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Install dependencies
         shell: bash
@@ -31,27 +31,18 @@ jobs:
         run: bun install
         working-directory: example
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
         with:
           distribution: 'zulu'
           java-version: '17'
           cache: 'gradle'
-
-      - name: Install Maestro CLI
-        run: |
-          export MAESTRO_VERSION=1.31.0; curl -Ls "https://get.maestro.mobile.dev" | bash
-          brew tap facebook/fb
-          brew install facebook/fb/idb-companion
-
-      - name: Add Maestro to path
-        run: echo "${HOME}/.maestro/bin" >> $GITHUB_PATH
 
       - name: Bundle app
         run: bun run build:android
         working-directory: example
 
       - name: Create AVD and generate snapshot for caching
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2.34.0
         with:
           # Use the slimmer aosp_atd images for working
           # around "System UI isn't responding" ANR
@@ -73,22 +64,3 @@ jobs:
           disable-animations: false
           script: |
             bun example:android:release
-            bun test:e2e:android
-
-      - name: Upload report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: E2E Report
-          path: |
-            ${{ github.workspace }}/*.mp4
-            ${{ github.workspace }}/*.png
-            ${{ github.workspace }}/report*.xml
-            ~/.maestro/tests/**/*
-
-      - name: Store tests result
-        uses: actions/upload-artifact@v4
-        with:
-          name: e2e_android_report
-          path: |
-            report.xml

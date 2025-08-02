@@ -107,9 +107,6 @@ export function Navigation() {
             name="PagerView Example"
             component={App}
             options={{
-              title: global?.nativeFabricUIManager
-                ? 'PagerView Example (Fabric)'
-                : 'PagerView Example',
               headerRight: () => (
                 <Button
                   onPress={() =>

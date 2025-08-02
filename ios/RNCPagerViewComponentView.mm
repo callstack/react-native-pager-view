@@ -1,5 +1,3 @@
-#ifdef RCT_NEW_ARCH_ENABLED
-
 #import <Foundation/Foundation.h>
 #import "RNCPagerViewComponentView.h"
 #import <react/renderer/components/pagerview/ComponentDescriptors.h>
@@ -14,7 +12,10 @@
 
 using namespace facebook::react;
 
-@interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
+@interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>
+
+@property(nonatomic, strong) UIPageViewController *nativePageViewController;
+@property(nonatomic, strong) NSMutableArray<UIViewController *> *nativeChildrenViewControllers;
 
 @end
 
@@ -23,6 +24,13 @@ using namespace facebook::react;
     LayoutMetrics _oldLayoutMetrics;
     UIScrollView *scrollView;
     BOOL transitioning;
+    NSInteger _currentIndex;
+    NSInteger _destinationIndex;
+    BOOL _overdrag;
+    NSString *_layoutDirection;
+    BOOL _isDragging;
+    BOOL _allowNavFullscreenGesture;
+    UIPanGestureRecognizer *_navGestureRecognizer;
 }
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
@@ -72,6 +80,8 @@ using namespace facebook::react;
         _layoutDirection = @"ltr";
         _overdrag = NO;
         _isDragging = NO;
+        _allowNavFullscreenGesture = NO;
+        _navGestureRecognizer = nil;
     }
     
     return self;
@@ -84,25 +94,21 @@ using namespace facebook::react;
     }
 }
 
--(void) didMoveToWindow {
-    UIPanGestureRecognizer* gesture = [UIPanGestureRecognizer new];
-    gesture.delegate = self;
-    [self addGestureRecognizer: gesture];
-}
-
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
     if (otherGestureRecognizer == self->scrollView.panGestureRecognizer) {
         UIPanGestureRecognizer* p = (UIPanGestureRecognizer*) gestureRecognizer;
         CGPoint velocity = [p velocityInView:self];
-        if (!_isDragging && self.currentIndex == 0 && velocity.x > 0) {
+        BOOL shouldPagerGestureFail = !_overdrag && !_isDragging && _currentIndex == 0 && velocity.x > 0;
+        if (shouldPagerGestureFail) {
             self->scrollView.panGestureRecognizer.enabled = false;
             return NO;
         } else {
             self->scrollView.panGestureRecognizer.enabled = self->scrollView.scrollEnabled;
         }
     } else {
-        self->scrollView.panGestureRecognizer.enabled = self->scrollView.scrollEnabled;
+      self->scrollView.panGestureRecognizer.enabled = self->scrollView.scrollEnabled;
     }
+
     return YES;
 }
 
@@ -121,7 +127,7 @@ using namespace facebook::react;
  
     NSInteger maxPage = _nativeChildrenViewControllers.count - 1;
     
-    if (self.currentIndex >= maxPage) {
+    if (_currentIndex >= maxPage) {
         [self goTo:maxPage animated:NO];
     }
 }
@@ -143,6 +149,11 @@ using namespace facebook::react;
     [super prepareForRecycle];
     _nativePageViewController = nil;
     _currentIndex = -1;
+    _allowNavFullscreenGesture = NO;
+    if (_navGestureRecognizer) {
+        [self removeGestureRecognizer:_navGestureRecognizer];
+        _navGestureRecognizer = nil;
+    }
 }
 
 - (void)shouldDismissKeyboard:(RNCViewPagerKeyboardDismissMode)dismissKeyboard {
@@ -174,8 +185,8 @@ using namespace facebook::react;
     const auto newLayoutDirectionStr = RCTNSStringFromString(toString(newScreenProps.layoutDirection));
     
     
-    if (self.layoutDirection != newLayoutDirectionStr) {
-        self.layoutDirection = newLayoutDirectionStr;
+    if (_layoutDirection != newLayoutDirectionStr) {
+        _layoutDirection = newLayoutDirectionStr;
     }
     
     if (oldScreenProps.keyboardDismissMode != newScreenProps.keyboardDismissMode) {
@@ -190,22 +201,27 @@ using namespace facebook::react;
         _overdrag = newScreenProps.overdrag;
     }
     
+    if (newScreenProps.allowNavFullscreenGesture != _allowNavFullscreenGesture) {
+        _allowNavFullscreenGesture = newScreenProps.allowNavFullscreenGesture;
+        
+        if (_allowNavFullscreenGesture) {
+            _navGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
+            _navGestureRecognizer.delegate = self;
+            [self addGestureRecognizer:_navGestureRecognizer];
+            _isDragging = NO;
+        } else {
+            if (_navGestureRecognizer) {
+                [self removeGestureRecognizer:_navGestureRecognizer];
+                _navGestureRecognizer = nil;
+            }
+        }
+    }
+    
     [super updateProps:props oldProps:oldProps];
 }
 
-- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args {
-   RCTRNCViewPagerHandleCommand(self, commandName, args);
-}
 
 #pragma mark - Internal methods
-
-- (void)setPage:(NSInteger)index {
-    [self goTo:index animated:YES];
-}
-
-- (void)setPageWithoutAnimation:(NSInteger)index {
-    [self goTo:index animated:NO];
-}
 
 - (void)disableSwipe {
     self.nativePageViewController.view.userInteractionEnabled = NO;
@@ -227,7 +243,7 @@ using namespace facebook::react;
         return;
     }
     
-    BOOL isForward = (index > self.currentIndex && [self isLtrLayout]) || (index < self.currentIndex && ![self isLtrLayout]);
+    BOOL isForward = (index > _currentIndex && [self isLtrLayout]) || (index < _currentIndex && ![self isLtrLayout]);
     UIPageViewControllerNavigationDirection direction = isForward ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
     
     long diff = labs(index - _currentIndex);
@@ -257,9 +273,9 @@ using namespace facebook::react;
         __strong RNCPagerViewComponentView *strongSelf = weakSelf;
         [strongSelf enableSwipe];
         if (strongSelf->_eventEmitter != nullptr ) {
-            const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(strongSelf->_eventEmitter);
+            const auto eventEmitter = [strongSelf pagerEventEmitter];
             int position = (int) index;
-            strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
+            eventEmitter->onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
             strongSelf->_currentIndex = index;
         }
         [strongSelf updateLayoutMetrics:strongSelf->_layoutMetrics oldLayoutMetrics:strongSelf->_oldLayoutMetrics];
@@ -293,14 +309,14 @@ using namespace facebook::react;
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     _isDragging = YES;
-    const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
-    strongEventEmitter.onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Dragging });
+    const auto eventEmitter = [self pagerEventEmitter];
+    eventEmitter->onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Dragging });
 }
 
 - (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset {
     
-    const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
-    strongEventEmitter.onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Settling });
+    const auto eventEmitter = [self pagerEventEmitter];
+    eventEmitter->onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Settling });
     
     if (!_overdrag) {
         NSInteger maxIndex = _nativeChildrenViewControllers.count - 1;
@@ -313,45 +329,31 @@ using namespace facebook::react;
             CGPoint croppedOffset = [self isHorizontal] ? CGPointMake(topBound, 0) : CGPointMake(0, topBound);
             *targetContentOffset = croppedOffset;
             
-            strongEventEmitter.onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Idle });
+            eventEmitter->onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Idle });
         }
     }
-    
-   
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
     _isDragging = NO;
-    const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
-    strongEventEmitter.onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Idle });
+    const auto eventEmitter = [self pagerEventEmitter];
+    eventEmitter->onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Idle });
 }
 
-- (BOOL)isHorizontal {
-    return _nativePageViewController.navigationOrientation == UIPageViewControllerNavigationOrientationHorizontal;
-}
-
-- (BOOL)isLtrLayout {
-    return [_layoutDirection isEqualToString: @"ltr"];
-}
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    CGPoint point = scrollView.contentOffset;
-    
-    float offset = 0;
-    
-    if (self.isHorizontal) {
-        if (scrollView.frame.size.width != 0) {
-            offset = (point.x - scrollView.frame.size.width)/scrollView.frame.size.width;
-        }
-    } else {
-        if (scrollView.frame.size.height != 0) {
-            offset = (point.y - scrollView.frame.size.height)/scrollView.frame.size.height;
-        }
+    CGFloat contentOffset = [self isHorizontal] ? scrollView.contentOffset.x : scrollView.contentOffset.y;
+    CGFloat frameSize = [self isHorizontal] ? scrollView.frame.size.width : scrollView.frame.size.height;
+  
+    if (frameSize == 0) {
+        return;
     }
+
+    float offset = (contentOffset - frameSize)/frameSize;
     
     float absoluteOffset = fabs(offset);
     
-    NSInteger position = self.currentIndex;
+    NSInteger position = _currentIndex;
     
     BOOL isHorizontalRtl = [self isHorizontalRtlLayout];
     BOOL isAnimatingBackwards = isHorizontalRtl ? offset > 0.05f : offset < 0;
@@ -383,20 +385,9 @@ using namespace facebook::react;
     }
     
     float interpolatedOffset = absoluteOffset * labs(_destinationIndex - _currentIndex);
-    
-    const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
-    int eventPosition = (int) position;
-    strongEventEmitter.onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(eventPosition), .offset = interpolatedOffset});
-
-    // This is temporary workaround to allow animations based on onPageScroll event
-    // until Fabric implements proper NativeAnimationDriver,
-    // see: https://github.com/facebook/react-native/blob/44f431b471c243c92284aa042d3807ba4d04af65/packages/react-native/React/Fabric/Mounting/ComponentViews/ScrollView/RCTScrollViewComponentView.mm#L59
-    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:[[RCTOnPageScrollEvent alloc] initWithReactTag:[NSNumber numberWithInt:self.tag] position:@(position) offset:@(interpolatedOffset)], @"event", nil];
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
-                                                        object:nil
-                                                      userInfo:userInfo];
+  
+    [self sendScrollEventsForPosition:position offset:interpolatedOffset];
 }
-
 
 #pragma mark - UIPageViewControllerDelegate
 
@@ -409,9 +400,9 @@ using namespace facebook::react;
         NSUInteger currentIndex = [_nativeChildrenViewControllers indexOfObject:currentVC];
         _currentIndex = currentIndex;
         int position = (int) currentIndex;
-        const auto strongEventEmitter = *std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
-        strongEventEmitter.onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
-        strongEventEmitter.onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(position), .offset =  0.0});
+        const auto eventEmitter = [self pagerEventEmitter];
+        eventEmitter->onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
+        eventEmitter->onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{.position =  static_cast<double>(position), .offset =  0.0});
     }
 }
 
@@ -430,6 +421,67 @@ using namespace facebook::react;
     return [self nextControllerForController:viewController inDirection:direction];
 }
 
+#pragma mark - Imperative methods exposed to React Native
+
+- (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args {
+   RCTRNCViewPagerHandleCommand(self, commandName, args);
+}
+
+- (void)setPage:(NSInteger)index {
+    [self goTo:index animated:YES];
+}
+
+- (void)setPageWithoutAnimation:(NSInteger)index {
+    [self goTo:index animated:NO];
+}
+
+- (void)setScrollEnabledImperatively:(BOOL)scrollEnabled {
+    [scrollView setScrollEnabled:scrollEnabled];
+}
+
+#pragma mark - Helpers
+
+- (BOOL)isHorizontalRtlLayout {
+    return self.isHorizontal && !self.isLtrLayout;
+}
+
+- (BOOL)isHorizontal {
+    return _nativePageViewController.navigationOrientation == UIPageViewControllerNavigationOrientationHorizontal;
+}
+
+- (BOOL)isLtrLayout {
+    return [_layoutDirection isEqualToString: @"ltr"];
+}
+
+- (std::shared_ptr<const RNCViewPagerEventEmitter>)pagerEventEmitter
+{
+  if (!_eventEmitter) {
+    return nullptr;
+  }
+
+  assert(std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter));
+  return std::static_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
+}
+
+- (void)sendScrollEventsForPosition:(NSInteger)position offset:(CGFloat)offset {
+    const auto eventEmitter = [self pagerEventEmitter];
+    eventEmitter->onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{
+        .position = static_cast<double>(position),
+        .offset = offset
+    });
+  
+    // This is temporary workaround to allow animations based on onPageScroll event
+    // until Fabric implements proper NativeAnimationDriver,
+    // see: https://github.com/facebook/react-native/blob/44f431b471c243c92284aa042d3807ba4d04af65/packages/react-native/React/Fabric/Mounting/ComponentViews/ScrollView/RCTScrollViewComponentView.mm#L59
+    RCTOnPageScrollEvent *event = [[RCTOnPageScrollEvent alloc] initWithReactTag:@(self.tag)
+                                                                        position:@(position)
+                                                                          offset:@(offset)];
+    NSDictionary *userInfo = @{@"event": event};
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
+                                                        object:nil
+                                                      userInfo:userInfo];
+}
+
 #pragma mark - RCTComponentViewProtocol
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
@@ -443,5 +495,3 @@ Class<RCTComponentViewProtocol> RNCViewPagerCls(void)
 {
     return RNCPagerViewComponentView.class;
 }
-
-#endif

@@ -1332,7 +1332,7 @@ PODS:
     - React-jsiexecutor
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
-  - react-native-pager-view (6.7.1):
+  - react-native-pager-view (6.8.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2321,7 +2321,7 @@ SPEC CHECKSUMS:
   React-logger: 8edfcedc100544791cd82692ca5a574240a16219
   React-Mapbuffer: c3f4b608e4a59dd2f6a416ef4d47a14400194468
   React-microtasksnativemodule: 054f34e9b82f02bd40f09cebd4083828b5b2beb6
-  react-native-pager-view: f238ed7fb53458bd03366944a33686f067c83e9a
+  react-native-pager-view: 919534782a0489f7e2aeeb9a8b8959edfd3f067a
   react-native-safe-area-context: 562163222d999b79a51577eda2ea8ad2c32b4d06
   React-NativeModulesApple: 2c4377e139522c3d73f5df582e4f051a838ff25e
   React-oscompat: ef5df1c734f19b8003e149317d041b8ce1f7d29c
