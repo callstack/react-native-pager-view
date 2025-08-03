@@ -95,6 +95,10 @@ using namespace facebook::react;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    if (!_allowNavFullscreenGesture) {
+        return NO;
+    }
+
     if (otherGestureRecognizer == self->scrollView.panGestureRecognizer) {
         UIPanGestureRecognizer* p = (UIPanGestureRecognizer*) gestureRecognizer;
         CGPoint velocity = [p velocityInView:self];
