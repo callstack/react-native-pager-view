@@ -26,7 +26,6 @@ This component allows the user to swipe left and right through pages of data. Un
 
 ## Migration
 
-```suggestion
 > [!WARNING]
 > In version **6.9.x** support for React Native old architecture has been dropped.
 
