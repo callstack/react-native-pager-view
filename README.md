@@ -26,7 +26,9 @@ This component allows the user to swipe left and right through pages of data. Un
 
 ## Migration
 
-In version **6.9.x** support for React Native old architecture has been dropped.
+```suggestion
+> [!WARNING]
+> In version **6.9.x** support for React Native old architecture has been dropped.
 
 In version **6.x** support for `transitionStyle` property has been dropped. More information [here](https://github.com/callstack/react-native-pager-view/blob/master/MIGRATION.md).
 
