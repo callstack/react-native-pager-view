@@ -163,7 +163,7 @@ For advanced usage please take a look into our [example project](https://github.
 | `offscreenPageLimit: number`                                         | Set the number of pages that should be retained to either side of the currently visible page(s). Pages beyond this limit will be recreated from the adapter when needed. Defaults to RecyclerView's caching strategy. The given value must either be larger than 0. | Android  |
 | `overdrag: boolean`                                                  |                                                                                   Allows for overscrolling after reaching the end or very beginning or pages. Defaults to `false`                                                                                   |   iOS    |
 | `layoutDirection: ('ltr' / 'rtl' / 'locale')`                        |                                                      Specifies layout direction. Use `ltr` or `rtl` to set explicitly or `locale` to deduce from the default language script of a locale. Defaults to `locale`                                                      |   both   |
-| `allowNavFullscreenGesture: boolean`                                  |                                                                                   Allows navigation swipe-back gestures to pass through when PagerView is at index 0. If `overdrag` is set to `true`, it will have higher priority. Defaults to `false`                                                                                   |   iOS    |
+| `allowNavigationBackGesture: boolean`                                  |                                                                                   Allows navigation swipe-back gestures to pass through when PagerView is at index 0. If `overdrag` is set to `true`, it will have higher priority. Defaults to `false`                                                                                   |   iOS    |
 
 | Method                                     |                                                                                                         Description                                                                                                          | Platform |
 | ------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------: |
@@ -243,6 +243,7 @@ const pageScrollHandler = usePageScrollHandler({
 ```
 
 ## usePagerView Hook Usage
+
 The `usePagerView` hook is a convenient way to manage the state and control the behavior of the `<PagerView />` component. It provides functions and variables to interact with the pager, such as navigating between pages and enabling/disabling scrolling.
 
 Below is an example of how to use the usePager hook:
@@ -295,7 +296,8 @@ export function PagerHookExample() {
   );
 }
 ```
-### How the Example Works:
+
+### How the Example Works
 
 - **Pager View Setup**: The `AnimatedPagerView` component wraps `PagerView` in React Native's animation capabilities. It accepts multiple props from the `usePager` hook, such as `overdragEnabled`, `scrollEnabled`, `onPageScroll`, `onPageSelected`, and others to manage pager behavior.
 
@@ -304,7 +306,6 @@ export function PagerHookExample() {
 ### Conclusion
 
 The `usePager` hook makes it easy to handle pagination with dynamic views. This example demonstrates how to set up a simple paginated interface where users can scroll through pages, interact with page elements, and control the pager with external navigation.
-
 
 ## License
 

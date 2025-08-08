@@ -163,8 +163,8 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
         }
     }
 
-    @ReactProp(name = "allowNavFullscreenGesture")
-    override fun setAllowNavFullscreenGesture(view: NestedScrollableHost?, value: Boolean) {
+    @ReactProp(name = "allowNavigationBackGesture")
+    override fun setAllowNavigationBackGesture(view: NestedScrollableHost?, value: Boolean) {
         return
     }
 

@@ -28,8 +28,7 @@ using namespace facebook::react;
     NSInteger _destinationIndex;
     BOOL _overdrag;
     NSString *_layoutDirection;
-    BOOL _isDragging;
-    BOOL _allowNavFullscreenGesture;
+    BOOL _allowNavigationBackGesture;
     UIPanGestureRecognizer *_navGestureRecognizer;
 }
 
@@ -79,8 +78,7 @@ using namespace facebook::react;
         _destinationIndex = -1;
         _layoutDirection = @"ltr";
         _overdrag = NO;
-        _isDragging = NO;
-        _allowNavFullscreenGesture = NO;
+        _allowNavigationBackGesture = NO;
         _navGestureRecognizer = nil;
     }
     
@@ -95,16 +93,16 @@ using namespace facebook::react;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
-    if (!_allowNavFullscreenGesture) {
+    if (!_allowNavigationBackGesture) {
         return NO;
     }
 
     if (otherGestureRecognizer == self->scrollView.panGestureRecognizer) {
-        UIPanGestureRecognizer* p = (UIPanGestureRecognizer*) gestureRecognizer;
-        CGPoint velocity = [p velocityInView:self];
-        BOOL shouldPagerGestureFail = !_overdrag && !_isDragging && _currentIndex == 0 && velocity.x > 0;
+        UIPanGestureRecognizer* panGestureRecognizer = (UIPanGestureRecognizer*) gestureRecognizer;
+        CGPoint velocity = [panGestureRecognizer velocityInView:self];
+        BOOL shouldPagerGestureFail = !_overdrag && !scrollView.isDecelerating && _currentIndex == 0 && velocity.x > 0;
         if (shouldPagerGestureFail) {
-            self->scrollView.panGestureRecognizer.enabled = false;
+            self->scrollView.panGestureRecognizer.enabled = NO;
             return NO;
         } else {
             self->scrollView.panGestureRecognizer.enabled = self->scrollView.scrollEnabled;
@@ -148,16 +146,12 @@ using namespace facebook::react;
     [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:_layoutMetrics];
 }
 
-
 -(void)prepareForRecycle {
     [super prepareForRecycle];
     _nativePageViewController = nil;
     _currentIndex = -1;
-    _allowNavFullscreenGesture = NO;
-    if (_navGestureRecognizer) {
-        [self removeGestureRecognizer:_navGestureRecognizer];
-        _navGestureRecognizer = nil;
-    }
+    _allowNavigationBackGesture = NO;
+    [self cleanupGestureRecognizer];
 }
 
 - (void)shouldDismissKeyboard:(RNCViewPagerKeyboardDismissMode)dismissKeyboard {
@@ -205,19 +199,15 @@ using namespace facebook::react;
         _overdrag = newScreenProps.overdrag;
     }
     
-    if (newScreenProps.allowNavFullscreenGesture != _allowNavFullscreenGesture) {
-        _allowNavFullscreenGesture = newScreenProps.allowNavFullscreenGesture;
+    if (newScreenProps.allowNavigationBackGesture != _allowNavigationBackGesture) {
+        _allowNavigationBackGesture = newScreenProps.allowNavigationBackGesture;
         
-        if (_allowNavFullscreenGesture) {
+        if (_allowNavigationBackGesture) {
             _navGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
             _navGestureRecognizer.delegate = self;
             [self addGestureRecognizer:_navGestureRecognizer];
-            _isDragging = NO;
         } else {
-            if (_navGestureRecognizer) {
-                [self removeGestureRecognizer:_navGestureRecognizer];
-                _navGestureRecognizer = nil;
-            }
+            [self cleanupGestureRecognizer];
         }
     }
     
@@ -312,7 +302,6 @@ using namespace facebook::react;
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
-    _isDragging = YES;
     const auto eventEmitter = [self pagerEventEmitter];
     eventEmitter->onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Dragging });
 }
@@ -339,7 +328,6 @@ using namespace facebook::react;
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
-    _isDragging = NO;
     const auto eventEmitter = [self pagerEventEmitter];
     eventEmitter->onPageScrollStateChanged(RNCViewPagerEventEmitter::OnPageScrollStateChanged{.pageScrollState =  RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState::Idle });
 }
@@ -455,6 +443,13 @@ using namespace facebook::react;
 
 - (BOOL)isLtrLayout {
     return [_layoutDirection isEqualToString: @"ltr"];
+}
+
+- (void)cleanupGestureRecognizer {
+    if (_navGestureRecognizer) {
+        [self removeGestureRecognizer:_navGestureRecognizer];
+        _navGestureRecognizer = nil;
+    }
 }
 
 - (std::shared_ptr<const RNCViewPagerEventEmitter>)pagerEventEmitter
