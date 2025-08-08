@@ -33,6 +33,7 @@ export interface NativeProps extends ViewProps {
   overScrollMode?: WithDefault<'auto' | 'always' | 'never', 'auto'>;
   overdrag?: WithDefault<boolean, false>;
   keyboardDismissMode?: WithDefault<'none' | 'on-drag', 'none'>;
+  allowNavigationBackGesture?: WithDefault<boolean, false>;
   onPageScroll?: DirectEventHandler<OnPageScrollEventData>;
   onPageSelected?: DirectEventHandler<OnPageSelectedEventData>;
   onPageScrollStateChanged?: DirectEventHandler<OnPageScrollStateChangedEventData>;
