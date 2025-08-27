@@ -14,7 +14,7 @@ on:
 
 jobs:
   android-build:
-    runs-on: macos-13 # emulator never starts on macOS 14 https://github.com/ReactiveCircus/android-emulator-runner/issues/392#issuecomment-2106167725
+    runs-on: macos-15
     concurrency:
       group: ${{ github.ref }}-android
       cancel-in-progress: true
@@ -48,7 +48,7 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-30-x86
+          key: avd-35-arm64-v8a
 
       - name: Create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -62,8 +62,8 @@ jobs:
           # https://github.com/ReactiveCircus/android-emulator-runner/issues/129
           # https://github.com/upleveled/hotline-bling-codealong/pull/26#issuecomment-1094659722
           target: aosp_atd
-          api-level: 30
-          arch: x86
+          api-level: 35
+          arch: arm64-v8a
           ram-size: 4096M
           channel: canary
           profile: pixel
@@ -85,8 +85,8 @@ jobs:
           # https://github.com/ReactiveCircus/android-emulator-runner/issues/129
           # https://github.com/upleveled/hotline-bling-codealong/pull/26#issuecomment-1094659722
           target: aosp_atd
-          api-level: 30
-          arch: x86
+          api-level: 35
+          arch: arm64-v8a
           channel: canary
           profile: pixel
           avd-name: Pixel_3a_API_30_AOSP
