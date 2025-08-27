@@ -41,7 +41,17 @@ jobs:
         run: bun run build:android
         working-directory: example
 
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-30-x86
+
       - name: Create AVD and generate snapshot for caching
+        if: steps.avd-cache.outputs.cache-hit != 'true'
         uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2.34.0
         with:
           # Use the slimmer aosp_atd images for working
@@ -60,6 +70,28 @@ jobs:
           avd-name: Pixel_3a_API_30_AOSP
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          emulator-boot-timeout: 12000
+          disable-animations: false
+          script: echo "Generated AVD snapshot for caching."
+
+      - name: Run build
+        uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2.34.0
+        with:
+          # Use the slimmer aosp_atd images for working
+          # around "System UI isn't responding" ANR
+          # (Application Not Responding) error
+          #
+          # https://android-developers.googleblog.com/2021/10/whats-new-in-scalable-automated-testing.html#:~:text=Slimmer%20Emulator%20System%20Images
+          # https://github.com/ReactiveCircus/android-emulator-runner/issues/129
+          # https://github.com/upleveled/hotline-bling-codealong/pull/26#issuecomment-1094659722
+          target: aosp_atd
+          api-level: 30
+          arch: x86
+          channel: canary
+          profile: pixel
+          avd-name: Pixel_3a_API_30_AOSP
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           emulator-boot-timeout: 12000
           disable-animations: false
           script: |
