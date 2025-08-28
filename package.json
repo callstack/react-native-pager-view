@@ -32,7 +32,7 @@
     "example:start": "cd example; bun start",
     "example:android": "cd example; bun android",
     "example:ios": "cd example; bun ios",
-    "example:android:release": "cd example;react-native run-android --mode \"Release\" --appId com.pagerviewexample",
+    "example:android:release": "cd example;react-native run-android --mode \"Release\" --appId com.pagerviewexample --active-arch-only",
     "example:ios:release": "cd example;react-native run-ios --mode \"Release\""
   },
   "keywords": [

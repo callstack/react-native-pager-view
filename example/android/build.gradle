@@ -11,8 +11,8 @@ buildscript {
     }())
 
     repositories {
-        mavenCentral()
         google()
+        mavenCentral()
     }
 
     dependencies {
