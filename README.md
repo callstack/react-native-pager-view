@@ -5,7 +5,7 @@
    </picture>
 </a>
 
-# react-native-pager-view <img src="img/viewpager-logo.png" alt="ViewPager" width="24" height="24">
+# react-native-pager-view
 
 [![npm package](https://badge.fury.io/js/react-native-pager-view.svg)](https://badge.fury.io/js/react-native-pager-view)
 [![Lean Core Extracted](https://img.shields.io/badge/Lean%20Core-Extracted-brightgreen.svg)](https://github.com/facebook/react-native/issues/23313)
