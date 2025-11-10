@@ -10,7 +10,7 @@ export const childrenWithOverriddenStyle = (children?: ReactNode) => {
         {React.cloneElement(element, {
           ...element.props,
           // Override styles so that each page will fill the parent.
-          style: [element.props.style, StyleSheet.absoluteFill],
+          style: [element.props.style, { width: '100%', height: '100%' }],
         })}
       </View>
     );

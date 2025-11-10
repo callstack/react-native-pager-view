@@ -3,9 +3,7 @@ import { Platform, Keyboard } from 'react-native';
 import { I18nManager } from 'react-native';
 import type * as ReactNative from 'react-native';
 
-import {
-  childrenWithOverriddenStyle,
-} from './utils';
+import { childrenWithOverriddenStyle } from './utils';
 
 import PagerViewNativeComponent, {
   Commands as PagerViewNativeCommands,
@@ -14,7 +12,6 @@ import PagerViewNativeComponent, {
   OnPageSelectedEventData,
   NativeProps,
 } from './PagerViewNativeComponent';
-
 
 /**
  * Container that allows to flip left and right between child views. Each
@@ -61,7 +58,6 @@ import PagerViewNativeComponent, {
 export class PagerView extends React.Component<NativeProps> {
   private isScrolling = false;
   pagerView: React.ElementRef<typeof PagerViewNativeComponent> | null = null;
-
 
   private get deducedLayoutDirection() {
     if (
@@ -149,22 +145,20 @@ export class PagerView extends React.Component<NativeProps> {
   };
 
   render() {
-      return (
-        <PagerViewNativeComponent
-          {...this.props}
-          ref={(ref) => {
-            this.pagerView = ref;
-          }}
-          style={this.props.style}
-          layoutDirection={this.deducedLayoutDirection}
-          onPageScroll={this._onPageScroll}
-          onPageScrollStateChanged={this._onPageScrollStateChanged}
-          onPageSelected={this._onPageSelected}
-          onMoveShouldSetResponderCapture={
-            this._onMoveShouldSetResponderCapture
-          }
-          children={childrenWithOverriddenStyle(this.props.children)}
-        />
-      );
+    return (
+      <PagerViewNativeComponent
+        {...this.props}
+        ref={(ref) => {
+          this.pagerView = ref;
+        }}
+        style={this.props.style}
+        layoutDirection={this.deducedLayoutDirection}
+        onPageScroll={this._onPageScroll}
+        onPageScrollStateChanged={this._onPageScrollStateChanged}
+        onPageSelected={this._onPageSelected}
+        onMoveShouldSetResponderCapture={this._onMoveShouldSetResponderCapture}
+        children={childrenWithOverriddenStyle(this.props.children)}
+      />
+    );
   }
 }
