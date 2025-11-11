@@ -20,7 +20,7 @@ export type OnPageSelectedEventData = Readonly<{
 }>;
 
 export type OnPageScrollStateChangedEventData = Readonly<{
-  pageScrollState: 'idle' | 'dragging' | 'settling';
+  pageScrollState: string; //'idle' | 'dragging' | 'settling';
 }>;
 
 export interface NativeProps extends ViewProps {
