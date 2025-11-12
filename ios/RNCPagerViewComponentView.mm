@@ -12,7 +12,7 @@
 
 using namespace facebook::react;
 
-@interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
+@interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate, UIGestureRecognizerDelegate>
 
 @property(nonatomic, strong) UIPageViewController *nativePageViewController;
 @property(nonatomic, strong) NSMutableArray<UIViewController *> *nativeChildrenViewControllers;
@@ -28,6 +28,8 @@ using namespace facebook::react;
     NSInteger _destinationIndex;
     BOOL _overdrag;
     NSString *_layoutDirection;
+    BOOL _allowNavigationBackGesture;
+    UIPanGestureRecognizer *_navGestureRecognizer;
 }
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
@@ -76,6 +78,8 @@ using namespace facebook::react;
         _destinationIndex = -1;
         _layoutDirection = @"ltr";
         _overdrag = NO;
+        _allowNavigationBackGesture = NO;
+        _navGestureRecognizer = nil;
     }
     
     return self;
@@ -88,6 +92,27 @@ using namespace facebook::react;
     }
 }
 
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer {
+    if (!_allowNavigationBackGesture) {
+        return NO;
+    }
+
+    if (otherGestureRecognizer == self->scrollView.panGestureRecognizer) {
+        UIPanGestureRecognizer* panGestureRecognizer = (UIPanGestureRecognizer*) gestureRecognizer;
+        CGPoint velocity = [panGestureRecognizer velocityInView:self];
+        BOOL shouldPagerGestureFail = !_overdrag && !scrollView.isDecelerating && _currentIndex == 0 && velocity.x > 0;
+        if (shouldPagerGestureFail) {
+            self->scrollView.panGestureRecognizer.enabled = NO;
+            return NO;
+        } else {
+            self->scrollView.panGestureRecognizer.enabled = self->scrollView.scrollEnabled;
+        }
+    } else {
+      self->scrollView.panGestureRecognizer.enabled = self->scrollView.scrollEnabled;
+    }
+
+    return YES;
+}
 
 #pragma mark - React API
 
@@ -121,11 +146,12 @@ using namespace facebook::react;
     [super updateLayoutMetrics:layoutMetrics oldLayoutMetrics:_layoutMetrics];
 }
 
-
 -(void)prepareForRecycle {
     [super prepareForRecycle];
     _nativePageViewController = nil;
     _currentIndex = -1;
+    _allowNavigationBackGesture = NO;
+    [self cleanupGestureRecognizer];
 }
 
 - (void)shouldDismissKeyboard:(RNCViewPagerKeyboardDismissMode)dismissKeyboard {
@@ -171,6 +197,18 @@ using namespace facebook::react;
     
     if (newScreenProps.overdrag != _overdrag) {
         _overdrag = newScreenProps.overdrag;
+    }
+    
+    if (newScreenProps.allowNavigationBackGesture != _allowNavigationBackGesture) {
+        _allowNavigationBackGesture = newScreenProps.allowNavigationBackGesture;
+        
+        if (_allowNavigationBackGesture) {
+            _navGestureRecognizer = [[UIPanGestureRecognizer alloc] init];
+            _navGestureRecognizer.delegate = self;
+            [self addGestureRecognizer:_navGestureRecognizer];
+        } else {
+            [self cleanupGestureRecognizer];
+        }
     }
     
     [super updateProps:props oldProps:oldProps];
@@ -402,6 +440,13 @@ using namespace facebook::react;
 
 - (BOOL)isLtrLayout {
     return [_layoutDirection isEqualToString: @"ltr"];
+}
+
+- (void)cleanupGestureRecognizer {
+    if (_navGestureRecognizer) {
+        [self removeGestureRecognizer:_navGestureRecognizer];
+        _navGestureRecognizer = nil;
+    }
 }
 
 - (std::shared_ptr<const RNCViewPagerEventEmitter>)pagerEventEmitter
