@@ -52,7 +52,7 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
         vp.isSaveEnabled = false
 
         vp.post {
-            vp.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+            val callback = object : OnPageChangeCallback() {
                 override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
                     super.onPageScrolled(position, positionOffset, positionOffsetPixels)
                     UIManagerHelper.getEventDispatcherForReactTag(reactContext, host.id)?.dispatchEvent(
@@ -79,7 +79,9 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
                             PageScrollStateChangedEvent(host.id, pageScrollState)
                     )
                 }
-            })
+            }
+            host.pageChangeCallback = callback
+            vp.registerOnPageChangeCallback(callback)
             UIManagerHelper.getEventDispatcherForReactTag(reactContext, host.id)?.dispatchEvent(
                     PageSelectedEvent(host.id, vp.currentItem)
             )
@@ -198,6 +200,20 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
         if (view != null) {
             PagerViewViewManagerImpl.setScrollEnabled(view, scrollEnabled)
         }
+    }
+
+    override fun onDropViewInstance(view: NestedScrollableHost) {
+        // Unregister the page change callback to prevent memory leaks
+        val viewPager = PagerViewViewManagerImpl.getViewPager(view)
+        view.pageChangeCallback?.let { callback ->
+            viewPager.unregisterOnPageChangeCallback(callback)
+            view.pageChangeCallback = null
+        }
+        
+        // Clear the adapter to release references to child views
+        viewPager.adapter = null
+        
+        super.onDropViewInstance(view)
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Map<String, String>> {
