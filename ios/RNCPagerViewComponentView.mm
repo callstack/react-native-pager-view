@@ -28,6 +28,7 @@ using namespace facebook::react;
     NSInteger _destinationIndex;
     BOOL _overdrag;
     NSString *_layoutDirection;
+    BOOL _scrollEnabled;
 }
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
@@ -64,6 +65,8 @@ using namespace facebook::react;
             scrollView = (UIScrollView *)subview;
         }
     }
+    
+    [self applyScrollEnabled];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -76,6 +79,7 @@ using namespace facebook::react;
         _destinationIndex = -1;
         _layoutDirection = @"ltr";
         _overdrag = NO;
+        _scrollEnabled = YES;
     }
     
     return self;
@@ -126,6 +130,7 @@ using namespace facebook::react;
     [super prepareForRecycle];
     _nativePageViewController = nil;
     _currentIndex = -1;
+    _scrollEnabled = YES;
 }
 
 - (void)shouldDismissKeyboard:(RNCViewPagerKeyboardDismissMode)dismissKeyboard {
@@ -141,6 +146,10 @@ using namespace facebook::react;
     }
     scrollView.keyboardDismissMode = dismissKeyboardMode;
 #endif
+}
+
+- (void)applyScrollEnabled {
+  scrollView.scrollEnabled = _scrollEnabled;
 }
 
 
@@ -165,8 +174,9 @@ using namespace facebook::react;
         [self shouldDismissKeyboard: newScreenProps.keyboardDismissMode];
     }
     
-    if (newScreenProps.scrollEnabled != scrollView.scrollEnabled) {
-        scrollView.scrollEnabled = newScreenProps.scrollEnabled;
+    if (oldScreenProps.scrollEnabled != newScreenProps.scrollEnabled) {
+        _scrollEnabled = newScreenProps.scrollEnabled;
+        [self applyScrollEnabled];
     }
     
     if (newScreenProps.overdrag != _overdrag) {
@@ -387,7 +397,8 @@ using namespace facebook::react;
 }
 
 - (void)setScrollEnabledImperatively:(BOOL)scrollEnabled {
-    [scrollView setScrollEnabled:scrollEnabled];
+    _scrollEnabled = scrollEnabled;
+    [self applyScrollEnabled];
 }
 
 #pragma mark - Helpers

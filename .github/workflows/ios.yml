@@ -12,7 +12,6 @@ on:
     branches:
       - master
 
-
 jobs:
   ios-build:
     runs-on: macos-14
@@ -39,7 +38,7 @@ jobs:
           cache-name: cached-ios-pods-deps
         with:
           path: example/ios/Pods
-          key: ${{ hashFiles('./example/ios/Podfile.lock') }}
+          key: ${{ hashFiles('example/ios/Podfile.lock') }}
 
       - name: Bundle app
         run: bun build:ios
