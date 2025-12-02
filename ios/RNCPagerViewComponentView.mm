@@ -130,7 +130,6 @@ using namespace facebook::react;
     [super prepareForRecycle];
     _nativePageViewController = nil;
     _currentIndex = -1;
-    _scrollEnabled = YES;
 }
 
 - (void)shouldDismissKeyboard:(RNCViewPagerKeyboardDismissMode)dismissKeyboard {
@@ -161,6 +160,8 @@ using namespace facebook::react;
     if (_currentIndex == -1) {
         _currentIndex = newScreenProps.initialPage;
         [self shouldDismissKeyboard: newScreenProps.keyboardDismissMode];
+        _scrollEnabled = newScreenProps.scrollEnabled;
+        [self applyScrollEnabled];
     }
     
     const auto newLayoutDirectionStr = RCTNSStringFromString(toString(newScreenProps.layoutDirection));
