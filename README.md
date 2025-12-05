@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
 ```
 
 **Attention:** Note that you can only use `View` components as children of `PagerView` (cf. folder _/example_)
-. For Android if `View` has own children, set prop `collapsable` to false <https://reactnative.dev/docs/view#collapsable-android>, otherwise react-native might remove those children views and and its children will be rendered as separate pages
+. For Android if `View` has own children, set prop `collapsable` to false <https://reactnative.dev/docs/view#collapsable-android>, otherwise react-native might remove those children views and its children will be rendered as separate pages
 
 ## Advanced usage
 
