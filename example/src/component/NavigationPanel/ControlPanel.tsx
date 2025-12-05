@@ -12,7 +12,7 @@ export function ControlsPanel({
   scrollEnabled,
   progress,
   disablePagesAmountManagement,
-  overdragEnabled,
+  overdrag,
   setPage,
   addPage,
   removePage,
@@ -43,7 +43,7 @@ export function ControlsPanel({
         />
         <Button
           style={styles.buttonAdjustment}
-          text={overdragEnabled ? 'Overdrag Enabled' : 'Overdrag Disabled'}
+          text={overdrag ? 'Overdrag Enabled' : 'Overdrag Disabled'}
           onPress={() => toggleOverdrag()}
         />
       </View>

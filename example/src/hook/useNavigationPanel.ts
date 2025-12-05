@@ -147,7 +147,7 @@ export function useNavigationPanel(
     scrollState,
     scrollEnabled,
     progress,
-    overdragEnabled,
+    overdrag: overdragEnabled,
     setPage,
     addPage,
     removePage,

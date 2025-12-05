@@ -131,7 +131,7 @@ export function usePagerView(
     scrollState,
     scrollEnabled,
     progress,
-    overdragEnabled,
+    overdrag: overdragEnabled,
     setPage,
     addPage,
     removePage,
