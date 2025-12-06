@@ -85,10 +85,32 @@ using namespace facebook::react;
     return self;
 }
 
+- (void)dealloc {
+    // Clean up delegates to prevent memory leaks
+    if (_nativePageViewController) {
+        _nativePageViewController.dataSource = nil;
+        _nativePageViewController.delegate = nil;
+    }
+    
+    if (scrollView) {
+        scrollView.delegate = nil;
+    }
+}
+
 - (void)willMoveToSuperview:(UIView *)newSuperview {
     if (newSuperview != nil) {
         [self initializeNativePageViewController];
         [self goTo:_currentIndex animated:NO];
+    } else {
+        // Component is being removed from view hierarchy, clean up delegates
+        if (_nativePageViewController) {
+            _nativePageViewController.dataSource = nil;
+            _nativePageViewController.delegate = nil;
+        }
+        
+        if (scrollView) {
+            scrollView.delegate = nil;
+        }
     }
 }
 
@@ -128,6 +150,21 @@ using namespace facebook::react;
 
 -(void)prepareForRecycle {
     [super prepareForRecycle];
+    
+    // Clear delegates to prevent memory leaks
+    if (_nativePageViewController) {
+        _nativePageViewController.dataSource = nil;
+        _nativePageViewController.delegate = nil;
+    }
+    
+    if (scrollView) {
+        scrollView.delegate = nil;
+        scrollView = nil;
+    }
+    
+    // Clear view controllers array
+    [_nativeChildrenViewControllers removeAllObjects];
+    
     _nativePageViewController = nil;
     _currentIndex = -1;
 }

@@ -30,6 +30,12 @@ class ViewPagerAdapter() : Adapter<ViewPagerViewHolder>() {
     container.addView(child)
   }
 
+  override fun onViewRecycled(holder: ViewPagerViewHolder) {
+    super.onViewRecycled(holder)
+    // Clean up the holder's container to prevent memory leaks
+    holder.container.removeAllViews()
+  }
+
   override fun getItemCount(): Int {
     return childrenViews.size
   }

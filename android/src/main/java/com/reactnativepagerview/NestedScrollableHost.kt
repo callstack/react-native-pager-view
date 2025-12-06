@@ -25,6 +25,7 @@ class NestedScrollableHost : FrameLayout {
   constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
   public var initialIndex: Int? = null
   public var didSetInitialIndex = false
+  public var pageChangeCallback: ViewPager2.OnPageChangeCallback? = null
   private var touchSlop = 0
   private var initialX = 0f
   private var initialY = 0f
