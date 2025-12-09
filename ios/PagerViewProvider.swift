@@ -1,8 +1,6 @@
 import SwiftUI
 import UIKit
 
-
-
 @objc public enum PageScrollState: Int {
   case idle
   case dragging
@@ -70,10 +68,6 @@ import UIKit
     self.delegate = delegate
   }
 
-  override public func didUpdateReactSubviews() {
-    props.children = reactSubviews().map(IdentifiablePlatformView.init)
-  }
-
   @objc(insertChild:atIndex:)
   public func insertChild(_ child: UIView, at index: Int) {
     guard index >= 0 && index <= props.children.count else {
@@ -110,13 +104,17 @@ import UIKit
       return
     }
 
-    self.hostingController = UIHostingController(rootView: PagerView(props: props, delegate: delegate))
-    if let hostingController = self.hostingController, let parentViewController = reactViewController() {
+    self.hostingController = UIHostingController(
+      rootView: PagerView(props: props, delegate: delegate),
+      ignoreSafeArea: true
+    )
+    if let hostingController, let parentViewController = reactViewController() {
       parentViewController.addChild(hostingController)
       hostingController.view.backgroundColor = .clear
       addSubview(hostingController.view)
-      hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-      hostingController.view.pinEdges(to: self)
+      hostingController.view.frame = bounds
+
+      hostingController.didMove(toParent: parentViewController)
     }
   }
 }
