@@ -84,9 +84,11 @@ import UIKit
     props.children.remove(at: index)
   }
 
-  override public func layoutSubviews() {
-    super.layoutSubviews()
-    setupView()
+  override public func didMoveToWindow() {
+    super.didMoveToWindow()
+    if window != nil {
+      setupView()
+    }
   }
 
   @objc public func goTo(index: Int, animated: Bool) {
