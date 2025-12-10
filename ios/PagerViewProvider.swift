@@ -112,7 +112,9 @@ import UIKit
       parentViewController.addChild(hostingController)
       hostingController.view.backgroundColor = .clear
       addSubview(hostingController.view)
-      hostingController.view.frame = bounds
+
+      hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+      hostingController.view.pinEdges(to: self)
 
       hostingController.didMove(toParent: parentViewController)
     }

@@ -4,10 +4,20 @@ import UIKit
  Scroll delegate used to control underlying TabView's collection view.
  */
 class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDelegate {
-  // Store the original delegate to forward calls
   weak var originalDelegate: UICollectionViewDelegate?
   weak var delegate: PagerViewProviderDelegate?
   var orientation: UICollectionView.ScrollDirection = .horizontal
+  
+  private let handledSelectors: Set<Selector> = [
+    #selector(scrollViewDidScroll(_:)),
+    #selector(scrollViewWillBeginDragging(_:)),
+    #selector(scrollViewWillBeginDecelerating(_:)),
+    #selector(scrollViewDidEndDecelerating(_:)),
+    #selector(scrollViewDidEndScrollingAnimation(_:)),
+    #selector(scrollViewDidEndDragging(_:willDecelerate:)),
+    #selector(collectionView(_:didEndDisplaying:forItemAt:)),
+    #selector(collectionView(_:willDisplay:forItemAt:))
+  ]
   
   func scrollViewDidScroll(_ scrollView: UIScrollView) {
     let isHorizontal = orientation == .horizontal
@@ -60,39 +70,11 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   }
   
   override func responds(to aSelector: Selector!) -> Bool {
-    let handledSelectors: [Selector] = [
-      #selector(scrollViewDidScroll(_:)),
-      #selector(scrollViewWillBeginDragging(_:)),
-      #selector(scrollViewWillBeginDecelerating(_:)),
-      #selector(scrollViewDidEndDecelerating(_:)),
-      #selector(scrollViewDidEndScrollingAnimation(_:)),
-      #selector(scrollViewDidEndDragging(_:willDecelerate:)),
-      #selector(collectionView(_:didEndDisplaying:forItemAt:)),
-      #selector(collectionView(_:willDisplay:forItemAt:))
-    ]
-    
-    if handledSelectors.contains(aSelector) {
-      return true
-    }
-    return originalDelegate?.responds(to: aSelector) ?? false
+    handledSelectors.contains(aSelector) || (originalDelegate?.responds(to: aSelector) ?? false)
   }
   
   override func forwardingTarget(for aSelector: Selector!) -> Any? {
-    let handledSelectors: [Selector] = [
-      #selector(scrollViewDidScroll(_:)),
-      #selector(scrollViewWillBeginDragging(_:)),
-      #selector(scrollViewWillBeginDecelerating(_:)),
-      #selector(scrollViewDidEndDecelerating(_:)),
-      #selector(scrollViewDidEndScrollingAnimation(_:)),
-      #selector(scrollViewDidEndDragging(_:willDecelerate:)),
-      #selector(collectionView(_:didEndDisplaying:forItemAt:)),
-      #selector(collectionView(_:willDisplay:forItemAt:))
-    ]
-    
-    if handledSelectors.contains(aSelector) {
-      return nil
-    }
-    return originalDelegate
+    handledSelectors.contains(aSelector) ? nil : originalDelegate
   }
 }
 
