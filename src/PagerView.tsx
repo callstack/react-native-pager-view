@@ -151,13 +151,23 @@ export class PagerView extends React.Component<NativeProps> {
         ref={(ref) => {
           this.pagerView = ref;
         }}
-        style={this.props.style}
+        style={[
+          this.props.style,
+          Platform.OS === 'ios' && this.props.pageMargin
+            ? {
+                marginHorizontal: -this.props.pageMargin / 2,
+              }
+            : null,
+        ]}
         layoutDirection={this.deducedLayoutDirection}
         onPageScroll={this._onPageScroll}
         onPageScrollStateChanged={this._onPageScrollStateChanged}
         onPageSelected={this._onPageSelected}
         onMoveShouldSetResponderCapture={this._onMoveShouldSetResponderCapture}
-        children={childrenWithOverriddenStyle(this.props.children)}
+        children={childrenWithOverriddenStyle(
+          this.props.children,
+          this.props.pageMargin
+        )}
       />
     );
   }
