@@ -13,7 +13,6 @@ struct PagerView: View {
       ForEach(props.children) { child in
         if let index = props.children.firstIndex(of: child) {
           RepresentableView(view: child.view)
-            .ignoresSafeArea(.container, edges: .vertical)
             .tag(index)
         }
       }
@@ -21,7 +20,6 @@ struct PagerView: View {
     .id(props.children.count)
     .background(.clear)
     .tabViewStyle(.page(indexDisplayMode: .never))
-    .ignoresSafeArea(.all, edges: .all)
     .environment(\.layoutDirection, props.layoutDirection.converted)
     .introspect(.tabView(style: .page), on: .iOS(.v14...)) { collectionView in
       self.collectionView = collectionView
