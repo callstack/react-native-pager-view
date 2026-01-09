@@ -4,6 +4,7 @@ import SwiftUI
 struct PagerView: View {
   @ObservedObject var props: PagerViewProps
   @State private var scrollDelegate = PagerScrollDelegate()
+  @State private var gestureDelegate = PagerGestureDelegate()
   weak var delegate: PagerViewProviderDelegate?
 
   @Weak var collectionView: UICollectionView?
@@ -37,6 +38,13 @@ struct PagerView: View {
         scrollDelegate.orientation = props.orientation
         collectionView.delegate = scrollDelegate
       }
+      
+      // Set up gesture delegate for iOS 26+ back gesture handling
+      gestureDelegate.collectionView = collectionView
+      gestureDelegate.currentPage = props.currentPage
+      gestureDelegate.scrollEnabled = props.scrollEnabled
+      gestureDelegate.layoutDirection = props.layoutDirection
+      collectionView.panGestureRecognizer.delegate = gestureDelegate
     }
     .onChange(of: props.children) { newValue in
       if props.currentPage >= newValue.count && !newValue.isEmpty {
@@ -45,15 +53,20 @@ struct PagerView: View {
     }
     .onChange(of: props.currentPage) { newValue in
       delegate?.onPageSelected(position: newValue)
+      gestureDelegate.currentPage = newValue
     }
     .onChange(of: props.scrollEnabled) { newValue in
       collectionView?.isScrollEnabled = newValue
+      gestureDelegate.scrollEnabled = newValue
     }
     .onChange(of: props.overdrag) { newValue in
       collectionView?.bounces = newValue
     }
     .onChange(of: props.keyboardDismissMode) { newValue in
       collectionView?.keyboardDismissMode = newValue
+    }
+    .onChange(of: props.layoutDirection) { newValue in
+      gestureDelegate.layoutDirection = newValue
     }
   }
 }
