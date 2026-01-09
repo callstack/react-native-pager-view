@@ -101,7 +101,8 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
       }
       
       // Check if otherGestureRecognizer is the new iOS 26 interactiveContentPopGestureRecognizer
-      // Since iOS 26 (18.2) introduces this new gesture recognizer
+      // NOTE: Using KVC to access private API 'interactiveContentPopGestureRecognizer' which is not
+      // yet publicly documented. The responds(to:) check ensures this won't crash if the API changes.
       if gestureRecognizer == collectionView.panGestureRecognizer,
          otherGestureRecognizer == navigationController.interactivePopGestureRecognizer ||
          (navigationController.responds(to: Selector(("interactiveContentPopGestureRecognizer"))) &&
