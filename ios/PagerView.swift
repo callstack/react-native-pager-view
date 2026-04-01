@@ -36,6 +36,13 @@ struct PagerView: View {
         scrollDelegate.delegate = delegate
         scrollDelegate.orientation = props.orientation
         collectionView.delegate = scrollDelegate
+        
+        // Set up gesture recognizer delegate for iOS 26 back gesture support
+        scrollDelegate.collectionView = collectionView
+        scrollDelegate.currentPage = props.currentPage
+        scrollDelegate.layoutDirection = props.layoutDirection
+        scrollDelegate.scrollEnabled = props.scrollEnabled
+        collectionView.panGestureRecognizer.delegate = scrollDelegate
       }
     }
     .onChange(of: props.children) { newValue in
@@ -45,15 +52,20 @@ struct PagerView: View {
     }
     .onChange(of: props.currentPage) { newValue in
       delegate?.onPageSelected(position: newValue)
+      scrollDelegate.currentPage = newValue
     }
     .onChange(of: props.scrollEnabled) { newValue in
       collectionView?.isScrollEnabled = newValue
+      scrollDelegate.scrollEnabled = newValue
     }
     .onChange(of: props.overdrag) { newValue in
       collectionView?.bounces = newValue
     }
     .onChange(of: props.keyboardDismissMode) { newValue in
       collectionView?.keyboardDismissMode = newValue
+    }
+    .onChange(of: props.layoutDirection) { newValue in
+      scrollDelegate.layoutDirection = newValue
     }
   }
 }
