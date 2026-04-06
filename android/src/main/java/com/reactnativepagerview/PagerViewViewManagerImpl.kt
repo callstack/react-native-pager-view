@@ -74,16 +74,7 @@ object PagerViewViewManagerImpl {
 
     fun removeViewAt(parent: NestedScrollableHost, index: Int) {
         val pager = getViewPager(parent)
-        val adapter = pager.adapter as ViewPagerAdapter?
-
-        val child = adapter?.getChildAt(index)
-
-        if (child != null && child.parent != null) {
-            (child.parent as? ViewGroup)?.removeView(child)
-        }
-
-        adapter?.removeChildAt(index)
-
+        (pager.adapter as? ViewPagerAdapter)?.removeChildAt(index)
         debouncedRefreshViewChildrenLayout(pager)
     }
 

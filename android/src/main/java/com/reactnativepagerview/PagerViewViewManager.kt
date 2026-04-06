@@ -2,6 +2,7 @@ package com.reactnativepagerview
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.facebook.infer.annotation.Assertions
@@ -88,6 +89,18 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
         return host
     }
 
+    private fun stopScrollIfNeeded(host: NestedScrollableHost) {
+        val recyclerView = (host.getChildAt(0) as? ViewPager2)?.getChildAt(0) as? RecyclerView
+        recyclerView?.stopScroll()
+    }
+
+    override fun onDropViewInstance(view: NestedScrollableHost) {
+        stopScrollIfNeeded(view)
+        val recyclerView = (view.getChildAt(0) as? ViewPager2)?.getChildAt(0) as? RecyclerView
+        recyclerView?.swapAdapter(null, false)
+        super.onDropViewInstance(view)
+    }
+
     override fun addView(host: NestedScrollableHost, child: View, index: Int) {
         PagerViewViewManagerImpl.addView(host, child, index)
     }
@@ -99,14 +112,17 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
     }
 
     override fun removeView(parent: NestedScrollableHost, view: View) {
+        stopScrollIfNeeded(parent)
         PagerViewViewManagerImpl.removeView(parent, view)
     }
 
     override fun removeAllViews(parent: NestedScrollableHost) {
+        stopScrollIfNeeded(parent)
         PagerViewViewManagerImpl.removeAllViews(parent)
     }
 
     override fun removeViewAt(parent: NestedScrollableHost, index: Int) {
+        stopScrollIfNeeded(parent)
         PagerViewViewManagerImpl.removeViewAt(parent, index)
     }
 
