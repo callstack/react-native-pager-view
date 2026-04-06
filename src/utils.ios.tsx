@@ -3,7 +3,11 @@ import { StyleSheet, View } from 'react-native';
 
 export const childrenWithOverriddenStyle = (
   children?: ReactNode,
-  pageMargin = 0
+  pageMargin = 0,
+  _pageWidth?: number,
+  _pageHeight?: number,
+  _offscreenPageLimit?: number,
+  _currentPage?: number
 ) => {
   return Children.map(children, (child) => {
     const element = child as React.ReactElement<any>;
