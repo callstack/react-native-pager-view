@@ -44,7 +44,11 @@ struct PagerView: View {
       }
     }
     .onChange(of: props.currentPage) { newValue in
-      delegate?.onPageSelected(position: newValue)
+      if scrollDelegate.lastSelectedPage != newValue {
+        scrollDelegate.lastSelectedPage = newValue
+        scrollDelegate.isProgrammaticScroll = true
+        delegate?.onPageSelected(position: newValue)
+      }
     }
     .onChange(of: props.scrollEnabled) { newValue in
       collectionView?.isScrollEnabled = newValue

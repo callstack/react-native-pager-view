@@ -67,6 +67,12 @@ using namespace facebook::react;
 
   if (_pagerViewProvider.currentPage == -1) {
      _pagerViewProvider.currentPage = newScreenProps.initialPage;
+     // Defer initial onPageSelected until event emitter is available
+     if (newScreenProps.initialPage > 0) {
+       dispatch_async(dispatch_get_main_queue(), ^{
+         [self onPageSelectedWithPosition:newScreenProps.initialPage];
+       });
+     }
    }
 
   if (oldScreenProps.scrollEnabled != newScreenProps.scrollEnabled) {
@@ -103,16 +109,19 @@ using namespace facebook::react;
 
 - (void)onPageScrollWithData:(OnPageScrollEventData *)data {
   const auto eventEmitter = [self pagerEventEmitter];
+  if (!eventEmitter) return;
   [self sendScrollEventsForPosition:data.position offset:data.offset];
 }
 
 - (void)onPageSelectedWithPosition:(NSInteger)position {
   const auto eventEmitter = [self pagerEventEmitter];
+  if (!eventEmitter) return;
   eventEmitter->onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
 }
 
 - (void)onPageScrollStateChangedWithState:(enum PageScrollState)state {
   const auto eventEmitter = [self pagerEventEmitter];
+  if (!eventEmitter) return;
 
   RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState scrollState;
 
