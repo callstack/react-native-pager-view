@@ -145,14 +145,17 @@ object PagerViewViewManagerImpl {
     fun setPageMargin(host: NestedScrollableHost, margin: Int) {
         val pager = getViewPager(host)
         val pageMargin = PixelUtil.toPixelFromDIP(margin.toDouble()).toInt()
+        if (pageMargin == 0) {
+            pager.setPageTransformer(null)
+            return
+        }
         /**
-         * Don't use MarginPageTransformer to be able to support negative margins
+         * Don't use MarginPageTransformer to be able to support negative margins.
          */
         pager.setPageTransformer { page, position ->
             val offset = pageMargin * position
             if (pager.orientation == ViewPager2.ORIENTATION_HORIZONTAL) {
-                val isRTL = pager.layoutDirection == View.LAYOUT_DIRECTION_RTL
-                page.translationX = if (isRTL) -offset else offset
+                page.translationX = offset
             } else {
                 page.translationY = offset
             }
