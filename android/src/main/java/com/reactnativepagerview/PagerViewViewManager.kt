@@ -95,9 +95,17 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
     }
 
     override fun onDropViewInstance(view: NestedScrollableHost) {
-        stopScrollIfNeeded(view)
-        val recyclerView = (view.getChildAt(0) as? ViewPager2)?.getChildAt(0) as? RecyclerView
-        recyclerView?.swapAdapter(null, false)
+        val vp = view.getChildAt(0) as? ViewPager2
+        val recyclerView = vp?.getChildAt(0) as? RecyclerView
+        recyclerView?.stopScroll()
+        try {
+            // Clear adapter to prevent post-teardown fling callbacks.
+            // setAdapter(null) internally calls removeAndRecycleAllViews which
+            // can throw if views are still attached during mid-scroll teardown.
+            recyclerView?.adapter = null
+        } catch (_: IllegalArgumentException) {
+            // Safe to ignore during teardown — view is being destroyed
+        }
         super.onDropViewInstance(view)
     }
 
