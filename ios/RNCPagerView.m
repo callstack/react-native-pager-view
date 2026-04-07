@@ -8,6 +8,7 @@
 #import "RCTOnPageScrollStateChanged.h"
 #import "RCTOnPageSelected.h"
 #import <math.h>
+#import "UIPageViewController+SafeSet.h"
 
 @interface RNCPagerView () <UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIScrollViewDelegate>
 
@@ -178,10 +179,10 @@
       [self setTransitioning:YES];
     }
     
-    [self.reactPageViewController setViewControllers:@[controller]
-                                           direction:direction
-                                            animated:animated
-                                          completion:^(BOOL finished) {
+    [self.reactPageViewController safeSetViewControllers:@[controller]
+                                               direction:direction
+                                                animated:animated
+                                              completion:^(BOOL finished) {
         __strong typeof(self) strongSelf = weakSelf;
         strongSelf.currentIndex = index;
         strongSelf.currentView = controller.view;
@@ -257,6 +258,7 @@
     _destinationIndex = index;
     
     if (numberOfPages == 0 || index < 0 || index > numberOfPages - 1) {
+        [self enableSwipe];
         return;
     }
     
