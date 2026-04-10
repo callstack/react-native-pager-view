@@ -75,6 +75,13 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
                         ViewPager2.SCROLL_STATE_SETTLING -> "settling"
                         else -> throw IllegalStateException("Unsupported pageScrollState")
                     }
+                    // Emit a final onPageScroll with offset 0 when idle to clear
+                    // any residual floating-point offset from the scroll animation
+                    if (state == ViewPager2.SCROLL_STATE_IDLE) {
+                        UIManagerHelper.getEventDispatcherForReactTag(reactContext, host.id)?.dispatchEvent(
+                                PageScrollEvent(host.id, vp.currentItem, 0f)
+                        )
+                    }
                     UIManagerHelper.getEventDispatcherForReactTag(reactContext, host.id)?.dispatchEvent(
                             PageScrollStateChangedEvent(host.id, pageScrollState)
                     )
