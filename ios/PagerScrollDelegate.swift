@@ -35,6 +35,22 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
     delegate?.onPageScroll(data: eventData)
     originalDelegate?.scrollViewDidScroll?(scrollView)
   }
+
+  /// Emits a final onPageScroll with offset 0 before transitioning to idle,
+  /// clearing any residual floating-point offset from the scroll animation.
+  private func emitIdleWithCleanOffset(_ scrollView: UIScrollView) {
+    let isHorizontal = orientation == .horizontal
+    let pageSize = isHorizontal ? scrollView.frame.width : scrollView.frame.height
+    let contentOffset = isHorizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
+
+    if pageSize > 0 {
+      let page = Int(round(contentOffset / pageSize))
+      let eventData = OnPageScrollEventData(position: Double(page), offset: 0)
+      delegate?.onPageScroll(data: eventData)
+    }
+
+    delegate?.onPageScrollStateChanged(state: .idle)
+  }
   
   func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
     delegate?.onPageScrollStateChanged(state: .dragging)
@@ -49,12 +65,14 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
     emitPageSelectedIfNeeded(scrollView)
     delegate?.onPageScrollStateChanged(state: .idle)
+    emitIdleWithCleanOffset(scrollView)
     originalDelegate?.scrollViewDidEndDecelerating?(scrollView)
   }
 
   func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
     emitPageSelectedIfNeeded(scrollView)
     delegate?.onPageScrollStateChanged(state: .idle)
+    emitIdleWithCleanOffset(scrollView)
     originalDelegate?.scrollViewDidEndScrollingAnimation?(scrollView)
   }
 
@@ -62,6 +80,7 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
     if !decelerate {
       emitPageSelectedIfNeeded(scrollView)
       delegate?.onPageScrollStateChanged(state: .idle)
+      emitIdleWithCleanOffset(scrollView)
     }
     originalDelegate?.scrollViewDidEndDragging?(scrollView, willDecelerate: decelerate)
   }

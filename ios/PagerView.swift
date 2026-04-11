@@ -26,6 +26,8 @@ struct PagerView: View {
       collectionView.bounces = props.overdrag
       collectionView.isScrollEnabled = props.scrollEnabled
       collectionView.keyboardDismissMode = props.keyboardDismissMode
+      collectionView.showsVerticalScrollIndicator = false
+      collectionView.showsHorizontalScrollIndicator = false
 
       if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
         layout.scrollDirection = props.orientation
@@ -36,6 +38,14 @@ struct PagerView: View {
         scrollDelegate.delegate = delegate
         scrollDelegate.orientation = props.orientation
         collectionView.delegate = scrollDelegate
+      }
+    }
+    .onAppear {
+      // Apply initial prop values that .onChange won't catch
+      // (.onChange only fires on changes, not on initial values)
+      DispatchQueue.main.async {
+        collectionView?.isScrollEnabled = props.scrollEnabled
+        collectionView?.bounces = props.overdrag
       }
     }
     .onChange(of: props.children) { newValue in
