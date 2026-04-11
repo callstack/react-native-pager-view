@@ -40,6 +40,14 @@ struct PagerView: View {
         collectionView.delegate = scrollDelegate
       }
     }
+    .onAppear {
+      // Apply initial prop values that .onChange won't catch
+      // (.onChange only fires on changes, not on initial values)
+      DispatchQueue.main.async {
+        collectionView?.isScrollEnabled = props.scrollEnabled
+        collectionView?.bounces = props.overdrag
+      }
+    }
     .onChange(of: props.children) { newValue in
       if props.currentPage >= newValue.count && !newValue.isEmpty {
         props.currentPage = newValue.count - 1
