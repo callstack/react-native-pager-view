@@ -26,6 +26,8 @@ struct PagerView: View {
       collectionView.bounces = props.overdrag
       collectionView.isScrollEnabled = props.scrollEnabled
       collectionView.keyboardDismissMode = props.keyboardDismissMode
+      collectionView.showsVerticalScrollIndicator = false
+      collectionView.showsHorizontalScrollIndicator = false
 
       if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
         layout.scrollDirection = props.orientation
