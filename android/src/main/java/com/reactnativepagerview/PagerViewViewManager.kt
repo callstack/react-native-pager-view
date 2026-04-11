@@ -2,6 +2,7 @@ package com.reactnativepagerview
 
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.facebook.infer.annotation.Assertions
@@ -95,6 +96,26 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
         return host
     }
 
+    private fun stopScrollIfNeeded(host: NestedScrollableHost) {
+        val recyclerView = (host.getChildAt(0) as? ViewPager2)?.getChildAt(0) as? RecyclerView
+        recyclerView?.stopScroll()
+    }
+
+    override fun onDropViewInstance(view: NestedScrollableHost) {
+        val vp = view.getChildAt(0) as? ViewPager2
+        val recyclerView = vp?.getChildAt(0) as? RecyclerView
+        recyclerView?.stopScroll()
+        try {
+            // Clear adapter to prevent post-teardown fling callbacks.
+            // setAdapter(null) internally calls removeAndRecycleAllViews which
+            // can throw if views are still attached during mid-scroll teardown.
+            recyclerView?.adapter = null
+        } catch (_: IllegalArgumentException) {
+            // Safe to ignore during teardown — view is being destroyed
+        }
+        super.onDropViewInstance(view)
+    }
+
     override fun addView(host: NestedScrollableHost, child: View, index: Int) {
         PagerViewViewManagerImpl.addView(host, child, index)
     }
@@ -106,14 +127,17 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
     }
 
     override fun removeView(parent: NestedScrollableHost, view: View) {
+        stopScrollIfNeeded(parent)
         PagerViewViewManagerImpl.removeView(parent, view)
     }
 
     override fun removeAllViews(parent: NestedScrollableHost) {
+        stopScrollIfNeeded(parent)
         PagerViewViewManagerImpl.removeAllViews(parent)
     }
 
     override fun removeViewAt(parent: NestedScrollableHost, index: Int) {
+        stopScrollIfNeeded(parent)
         PagerViewViewManagerImpl.removeViewAt(parent, index)
     }
 

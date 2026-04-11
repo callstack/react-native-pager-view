@@ -6,6 +6,9 @@ import android.widget.FrameLayout
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import java.util.*
 
+private fun View.detachFromParent() {
+  (parent as? ViewGroup)?.removeView(this)
+}
 
 class ViewPagerAdapter() : Adapter<ViewPagerViewHolder>() {
   private val childrenViews: ArrayList<View> = ArrayList()
@@ -17,17 +20,24 @@ class ViewPagerAdapter() : Adapter<ViewPagerViewHolder>() {
   override fun onBindViewHolder(holder: ViewPagerViewHolder, index: Int) {
     val container: FrameLayout = holder.container
     val child = getChildAt(index)
-    holder.setIsRecyclable(false)
 
     if (container.childCount > 0) {
       container.removeAllViews()
     }
 
-    if (child.parent != null) {
-      (child.parent as FrameLayout).removeView(child)
-    }
+    child.detachFromParent()
 
     container.addView(child)
+  }
+
+  override fun onViewRecycled(holder: ViewPagerViewHolder) {
+    super.onViewRecycled(holder)
+    holder.container.removeAllViews()
+  }
+
+  override fun onFailedToRecycleView(holder: ViewPagerViewHolder): Boolean {
+    holder.container.removeAllViews()
+    return true
   }
 
   override fun getItemCount(): Int {
@@ -45,18 +55,15 @@ class ViewPagerAdapter() : Adapter<ViewPagerViewHolder>() {
 
   fun removeChild(child: View) {
     val index = childrenViews.indexOf(child)
-    
-    if(index > -1) {
+
+    if (index > -1) {
       removeChildAt(index)
     }
   }
 
   fun removeAll() {
-    for (index in 1..childrenViews.size) {
-      val child = childrenViews[index-1]
-      if (child.parent?.parent != null) {
-        (child.parent.parent as ViewGroup).removeView(child.parent as View)
-      }
+    for (child in childrenViews) {
+      child.detachFromParent()
     }
     val removedChildrenCount = childrenViews.size
     childrenViews.clear()
@@ -64,7 +71,8 @@ class ViewPagerAdapter() : Adapter<ViewPagerViewHolder>() {
   }
 
   fun removeChildAt(index: Int) {
-    if (index >= 0 && index < childrenViews.size) { 
+    if (index >= 0 && index < childrenViews.size) {
+      childrenViews[index].detachFromParent()
       childrenViews.removeAt(index)
       notifyItemRemoved(index)
     }
