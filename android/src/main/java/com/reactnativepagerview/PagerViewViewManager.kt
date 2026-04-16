@@ -124,78 +124,25 @@ class PagerViewViewManager :
     }
 
     override fun onDropViewInstance(view: NestedScrollableHost) {
+        val vp = view.getChildAt(0) as? ViewPager2
+        val recyclerView = vp?.getChildAt(0) as? RecyclerView
+
+        // Stop any in-progress scroll/fling
+        recyclerView?.stopScroll()
+
+        // Disable item animations to prevent animator callbacks during teardown
+        recyclerView?.itemAnimator = null
+
+        // Clear cached views in the recycled pool
+        recyclerView?.recycledViewPool?.clear()
+
         try {
-            val viewPager = PagerViewViewManagerImpl.getViewPager(view)
-            // Access private mRecyclerView field using reflection
-            val recyclerViewField = ViewPager2::class.java.getDeclaredField("mRecyclerView")
-            recyclerViewField.isAccessible = true
-            val recyclerView = recyclerViewField.get(viewPager) as RecyclerView
-
-            // Stop any scroll/drag in progress first
-            recyclerView.stopScroll()
-
-            // Suppress layout to prevent any pending layout operations from executing
-            recyclerView.suppressLayout(true)
-
-            // Access and stop the ViewFlinger directly via reflection - do this early
-            try {
-                val viewFlingerField = RecyclerView::class.java.getDeclaredField("mViewFlinger")
-                viewFlingerField.isAccessible = true
-                val viewFlinger = viewFlingerField.get(recyclerView) as? Runnable
-                viewFlinger?.let {
-                    recyclerView.removeCallbacks(it)
-                    // Also try to stop it via reflection if it has a stop method
-                    try {
-                        val stopMethod = viewFlinger.javaClass.getDeclaredMethod("stop")
-                        stopMethod.isAccessible = true
-                        stopMethod.invoke(viewFlinger)
-                    } catch (ignored: Exception) {}
-                }
-            } catch (ignored: Exception) {
-                // ViewFlinger reflection may fail on some versions
-            }
-
-            // Clear the recycler's scrap views before clearing adapter
-            try {
-                val recyclerField = RecyclerView::class.java.getDeclaredField("mRecycler")
-                recyclerField.isAccessible = true
-                val recycler = recyclerField.get(recyclerView)
-
-                // Clear scrap heaps
-                val clearScrapMethod = recycler.javaClass.getDeclaredMethod("clear")
-                clearScrapMethod.isAccessible = true
-                clearScrapMethod.invoke(recycler)
-            } catch (ignored: Exception) {
-                // Recycler reflection may fail on some versions
-            }
-
-            // Clear any pending animations and layout transitions
-            recyclerView.clearAnimation()
-            recyclerView.itemAnimator = null
-            recyclerView.layoutTransition = null
-            recyclerView.recycledViewPool.clear()
-
-            // Remove all pending operations and choreographer callbacks
-            recyclerView.removeCallbacks(null)
-
-            // Try to clear any pending adapter updates
-            try {
-                val adapterHelperField = RecyclerView::class.java.getDeclaredField("mAdapterHelper")
-                adapterHelperField.isAccessible = true
-                val adapterHelper = adapterHelperField.get(recyclerView)
-                val resetMethod = adapterHelper.javaClass.getDeclaredMethod("reset")
-                resetMethod.isAccessible = true
-                resetMethod.invoke(adapterHelper)
-            } catch (ignored: Exception) {}
-
-            // Clear the adapter to prevent recycling during teardown
-            viewPager.adapter = null
-
-            // Unsuppress layout after clearing adapter (won't do anything as view is being
-            // destroyed)
-            recyclerView.suppressLayout(false)
-        } catch (e: Exception) {
-            // View might already be in an invalid state
+            // Clear adapter to prevent post-teardown fling callbacks.
+            // setAdapter(null) internally calls removeAndRecycleAllViews which
+            // can throw if views are still attached during mid-scroll teardown.
+            recyclerView?.adapter = null
+        } catch (_: IllegalArgumentException) {
+            // Safe to ignore during teardown — view is being destroyed
         }
         super.onDropViewInstance(view)
     }
