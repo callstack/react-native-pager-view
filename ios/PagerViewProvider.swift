@@ -73,10 +73,10 @@ import UIKit
     guard index >= 0 && index <= props.children.count else {
       return
     }
-    props.children.insert(IdentifiablePlatformView(child), at: index)
-    if index <= props.currentPage {
+    if index <= props.currentPage && props.currentPage < props.children.count {
       props.currentPage += 1
     }
+    props.children.insert(IdentifiablePlatformView(child), at: index)
   }
 
   @objc(removeChildAtIndex:)
