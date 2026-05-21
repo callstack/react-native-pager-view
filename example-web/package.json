@@ -1,0 +1,24 @@
+{
+  "name": "pager-view-web-example",
+  "version": "1.0.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start --web",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "expo": "~55.0.0",
+    "expo-router": "~5.0.0",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "react-native": "0.79.2",
+    "react-native-web": "~0.19.13",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "~4.11.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.0",
+    "typescript": "~5.3.3"
+  }
+}

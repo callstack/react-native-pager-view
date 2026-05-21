@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "PagerView Web Example",
+    "slug": "pager-view-web-example",
+    "version": "1.0.0",
+    "scheme": "pager-view-web-example",
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": ["expo-router"]
+  }
+}
