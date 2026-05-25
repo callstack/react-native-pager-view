@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
@@ -42,8 +41,8 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private var initialPage = 0
   private var didEmitInitialPage = false
   private var currentPage = 0
-  private val animatedPageTargetState = mutableStateOf<Int?>(null)
-  private val immediatePageTargetState = mutableStateOf<Int?>(null)
+  private var nextScrollCommandId = 0
+  private val scrollCommandState = mutableStateOf<ScrollCommand?>(null)
   private var lastEmittedScrollState: String? = null
   private var didSetContent = false
 
@@ -147,14 +146,14 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   fun setCurrentItem(selectedPage: Int, animated: Boolean) {
-    if (selectedPage < 0 || selectedPage >= pages.size) {
+    if (selectedPage < 0 || pages.isNotEmpty() && selectedPage >= pages.size) {
       return
     }
-    if (animated) {
-      animatedPageTargetState.value = selectedPage
-    } else {
-      immediatePageTargetState.value = selectedPage
-    }
+    scrollCommandState.value = ScrollCommand(
+      id = nextScrollCommandId++,
+      page = selectedPage,
+      animated = animated
+    )
   }
 
   private fun dispatchPageSelected(position: Int) {
@@ -189,7 +188,6 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     val pagerState = rememberPagerState(initialPage = initialPage.coerceIn(0, pageCount - 1)) {
       pages.size
     }
-    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(pageCount) {
       if (!didEmitInitialPage) {
@@ -206,19 +204,21 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       }
     }
 
-    LaunchedEffect(animatedPageTargetState.value) {
-      val target = animatedPageTargetState.value ?: return@LaunchedEffect
-      animatedPageTargetState.value = null
-      if (target in 0 until pageCount) {
-        pagerState.animateScrollToPage(target)
+    LaunchedEffect(scrollCommandState.value, pageCount) {
+      val command = scrollCommandState.value ?: return@LaunchedEffect
+      if (command.page !in 0 until pageCount) {
+        if (scrollCommandState.value == command) {
+          scrollCommandState.value = null
+        }
+        return@LaunchedEffect
       }
-    }
-
-    LaunchedEffect(immediatePageTargetState.value) {
-      val target = immediatePageTargetState.value ?: return@LaunchedEffect
-      immediatePageTargetState.value = null
-      if (target in 0 until pageCount) {
-        pagerState.scrollToPage(target)
+      if (command.animated) {
+        pagerState.animateScrollToPage(command.page)
+      } else {
+        pagerState.scrollToPage(command.page)
+      }
+      if (scrollCommandState.value == command) {
+        scrollCommandState.value = null
       }
     }
 
@@ -344,4 +344,10 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     Ltr,
     Rtl
   }
+
+  private data class ScrollCommand(
+    val id: Int,
+    val page: Int,
+    val animated: Boolean
+  )
 }
