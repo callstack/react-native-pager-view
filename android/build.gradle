@@ -11,6 +11,7 @@ buildscript {
     classpath 'com.android.tools.build:gradle:4.2.1'
     // noinspection DifferentKotlinGradleVersion
     classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath "org.jetbrains.kotlin:compose-compiler-gradle-plugin:$kotlin_version"
   }
 }
 
@@ -20,6 +21,7 @@ def isNewArchitectureEnabled() {
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 
 
 if (isNewArchitectureEnabled()) {
@@ -136,6 +138,9 @@ android {
     sourceCompatibility JavaVersion.VERSION_1_8
     targetCompatibility JavaVersion.VERSION_1_8
   }
+  buildFeatures {
+    compose true
+  }
   sourceSets {
     main {
       if (isNewArchitectureEnabled()) {
@@ -221,12 +226,17 @@ repositories {
 }
 
 def kotlin_version = getExtOrDefault('kotlinVersion')
+def compose_version = getExtOrDefault('composeVersion')
 
 dependencies {
     //noinspection GradleDynamicVersion
   api "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
   implementation 'androidx.viewpager2:viewpager2:1.1.0'
+  implementation "androidx.compose.foundation:foundation:$compose_version"
+  implementation "androidx.compose.runtime:runtime:$compose_version"
+  implementation "androidx.compose.ui:ui:$compose_version"
+  implementation "androidx.compose.ui:ui-viewbinding:$compose_version"
 }
 
 if (isNewArchitectureEnabled()) {
