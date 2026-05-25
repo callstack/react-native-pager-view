@@ -59,6 +59,9 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     super.onAttachedToWindow()
     if (composeView.parent == null) {
       super.addView(composeView)
+      post {
+        measureAndLayoutComposeView()
+      }
     }
     if (!didSetContent) {
       didSetContent = true
@@ -74,6 +77,44 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       didSetContent = false
     }
     super.onDetachedFromWindow()
+  }
+
+  override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    measureComposeView()
+  }
+
+  override fun onSizeChanged(width: Int, height: Int, oldWidth: Int, oldHeight: Int) {
+    super.onSizeChanged(width, height, oldWidth, oldHeight)
+    measureAndLayoutComposeView()
+  }
+
+  override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+    super.onLayout(changed, left, top, right, bottom)
+    measureAndLayoutComposeView()
+  }
+
+  private fun measureAndLayoutComposeView() {
+    val width = width.takeIf { it > 0 } ?: measuredWidth
+    val height = height.takeIf { it > 0 } ?: measuredHeight
+    if (measureComposeView(width, height)) {
+      composeView.layout(0, 0, width, height)
+    }
+  }
+
+  private fun measureComposeView(
+    width: Int = measuredWidth,
+    height: Int = measuredHeight
+  ): Boolean {
+    if (composeView.parent !== this || width <= 0 || height <= 0) {
+      return false
+    }
+
+    composeView.measure(
+      MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+      MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+    )
+    return true
   }
 
   override fun addView(child: View?, index: Int) {
