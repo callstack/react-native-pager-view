@@ -1,6 +1,7 @@
 package com.reactnativepagerview
 
 import android.content.Context
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -38,6 +39,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private val layoutDirectionState = mutableStateOf(LayoutDirection.Ltr)
   private val pageMarginState = mutableStateOf(0)
   private val offscreenPageLimitState = mutableStateOf(0)
+  private val sameOrientationChildGestureState = mutableStateOf(false)
   private var initialPage = 0
   private var didEmitInitialPage = false
   private var currentPage = 0
@@ -72,11 +74,21 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   override fun onDetachedFromWindow() {
+    updateSameOrientationAncestorsGestureState(false)
     if (composeView.parent === this) {
       super.removeView(composeView)
       didSetContent = false
     }
     super.onDetachedFromWindow()
+  }
+
+  override fun dispatchTouchEvent(event: MotionEvent): Boolean {
+    when (event.actionMasked) {
+      MotionEvent.ACTION_DOWN -> updateSameOrientationAncestorsGestureState(true)
+      MotionEvent.ACTION_UP,
+      MotionEvent.ACTION_CANCEL -> updateSameOrientationAncestorsGestureState(false)
+    }
+    return super.dispatchTouchEvent(event)
   }
 
   override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -184,6 +196,21 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 
   fun setPageMargin(value: Int) {
     pageMarginState.value = value
+  }
+
+  private fun setSameOrientationChildGestureActive(value: Boolean) {
+    sameOrientationChildGestureState.value = value
+  }
+
+  private fun updateSameOrientationAncestorsGestureState(value: Boolean) {
+    val orientation = orientationState.value
+    var ancestor = parent
+    while (ancestor != null) {
+      if (ancestor is ComposePagerView && ancestor.orientationState.value == orientation) {
+        ancestor.setSameOrientationChildGestureActive(value)
+      }
+      ancestor = (ancestor as? View)?.parent
+    }
   }
 
   fun setCurrentItem(selectedPage: Int, animated: Boolean) {
@@ -310,7 +337,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     val reverseLayout = layoutDirectionState.value == LayoutDirection.Rtl
     val pageSpacing = pageMarginState.value.dp
     val beyondViewportPageCount = offscreenPageLimitState.value
-    val userScrollEnabled = scrollEnabledState.value
+    val userScrollEnabled = scrollEnabledState.value && !sameOrientationChildGestureState.value
 
     if (orientationState.value == Orientation.Vertical) {
       VerticalPager(
