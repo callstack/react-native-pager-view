@@ -21,3 +21,4 @@ Use `bun run maestro:smoke` to run only the smoke flow.
 
 The smoke flow targets the example app ID `com.pagerviewexample` and verifies the Basic Example pager using stable `testID` selectors.
 Additional Basic Example regression flows live in `.maestro/basic_example`.
+Nested PagerView regression flows live in `.maestro/nested_pager_view_example`.
