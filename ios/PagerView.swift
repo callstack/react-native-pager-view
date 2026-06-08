@@ -10,11 +10,9 @@ struct PagerView: View {
 
   var body: some View {
     TabView(selection: $props.currentPage) {
-      ForEach(props.children) { child in
-        if let index = props.children.firstIndex(of: child) {
-          RepresentableView(view: child.view)
-            .tag(index)
-        }
+      ForEach(Array(props.children.enumerated()), id: \.element.id) { index, child in
+        RepresentableView(view: child.view)
+          .tag(index)
       }
     }
     .id(props.children.count)
