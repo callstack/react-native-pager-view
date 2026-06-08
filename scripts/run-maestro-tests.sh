@@ -45,7 +45,7 @@ if [ -n "$SHARD_COUNT" ]; then
 fi
 
 shopt -s nullglob
-allTestFiles=(.maestro/*.yaml .maestro/"$PLATFORM"-only/*.yaml)
+allTestFiles=(.maestro/basic_example/*.yaml .maestro/"$PLATFORM"-only/*.yaml)
 
 if [ ${#allTestFiles[@]} -eq 0 ]; then
   echo "Error! No Maestro test files found for platform '$PLATFORM'."

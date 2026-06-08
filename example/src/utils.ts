@@ -9,6 +9,8 @@ export const IMAGE_URIS = [
   'https://apod.nasa.gov/apod/image/1409/PupAmulti_rot0.jpg',
   'https://apod.nasa.gov/apod/image/1510/lunareclipse_27Sep_beletskycrop4.jpg',
 ];
+
+// Unicodes issue on iOS 26.3 https://github.com/facebook/react-native/issues/56183
 export const thumbsUp = '\uD83D\uDC4D';
 export const logoUrl =
   'https://raw.githubusercontent.com/callstack/react-native-pager-view/master/img/viewpager-logo.png';

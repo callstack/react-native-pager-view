@@ -34,13 +34,12 @@
     "example:ios": "cd example; bun ios",
     "example:android:release": "cd example;react-native run-android --mode \"Release\" --appId com.pagerviewexample --active-arch-only",
     "example:ios:release": "cd example;react-native run-ios --mode \"Release\"",
-    "maestro:test": "maestro test .maestro",
-    "maestro:test:android": "maestro test -p android .maestro",
-    "maestro:test:ios": "maestro test  -p ios .maestro",
+    "maestro:test:android": "bash ./scripts/run-maestro-tests.sh android",
+    "maestro:test:ios": "bash ./scripts/run-maestro-tests.sh ios",
     "maestro:smoke": "maestro test .maestro/smoke-test.yaml",
     "maestro:debug": "maestro test --debug-output .maestro/debug-output --flatten-debug-output .maestro/smoke-test.yaml",
-    "e2e:ios": "bun run example:ios:release && bash ./scripts/run-maestro-tests.sh ios",
-    "e2e:android": "bun run example:android:release && bash ./scripts/run-maestro-tests.sh android"
+    "e2e:ios": "bun run example:ios:release && bun run maestro:test:ios",
+    "e2e:android": "bun run example:android:release && bun run maestro:test:android"
   },
   "keywords": [
     "react-native",

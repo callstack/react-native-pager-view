@@ -20,3 +20,4 @@ Use `bun run maestro:smoke` to run only the smoke flow.
 `maestro:debug` writes failure artifacts to `.maestro/debug-output`.
 
 The smoke flow targets the example app ID `com.pagerviewexample` and verifies the Basic Example pager using stable `testID` selectors.
+Additional Basic Example regression flows live in `.maestro/basic_example`.
