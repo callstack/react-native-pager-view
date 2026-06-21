@@ -4,19 +4,60 @@ import UIKit
 
 /**
  Helper used to render UIView inside of SwiftUI.
+ Uses UIViewControllerRepresentable to re-inject safe area insets
+ that SwiftUI's .ignoresSafeArea() strips from child UIKit views.
  */
-struct RepresentableView: UIViewRepresentable {
+struct RepresentableView: UIViewControllerRepresentable {
   var view: UIView
 
-  // Adding a wrapper UIView to avoid SwiftUI directly managing React Native views.
-  // This fixes issues with incorrect layout rendering.
-  func makeUIView(context: Context) -> UIView {
-    let wrapper = UIView()
-    wrapper.addSubview(view)
-    return wrapper
+  func makeUIViewController(context: Context) -> PageChildViewController {
+    let viewController = PageChildViewController()
+    viewController.wrappedView = view
+    return viewController
   }
 
-  func updateUIView(_ uiView: UIView, context: Context) {}
+  func updateUIViewController(_ uiViewController: PageChildViewController, context: Context) {}
+}
+
+class PageChildViewController: UIViewController {
+  var wrappedView: UIView?
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.backgroundColor = .clear
+    if let wrappedView {
+      view.addSubview(wrappedView)
+    }
+  }
+
+  override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    propagateHostingSafeArea()
+  }
+
+  /// Traverses up to the _UIHostingView and re-applies its bottom safe area
+  /// as additionalSafeAreaInsets on this child VC, since .ignoresSafeArea()
+  /// causes UIKit to report safeAreaInsets = .zero for embedded views.
+  private func propagateHostingSafeArea() {
+    var current: UIView? = view.superview
+    while let v = current {
+      if String(describing: type(of: v)).contains("_UIHostingView") {
+        let hosting = v.safeAreaInsets
+        let delta = UIEdgeInsets(
+          top: hosting.top, left: hosting.left,
+          bottom: hosting.bottom, right: hosting.right
+        )
+        if abs(additionalSafeAreaInsets.top - delta.top) > 0.5
+            || abs(additionalSafeAreaInsets.left - delta.left) > 0.5
+            || abs(additionalSafeAreaInsets.bottom - delta.bottom) > 0.5
+            || abs(additionalSafeAreaInsets.right - delta.right) > 0.5 {
+          additionalSafeAreaInsets = delta
+        }
+        return
+      }
+      current = v.superview
+    }
+  }
 }
 
 extension Collection {
