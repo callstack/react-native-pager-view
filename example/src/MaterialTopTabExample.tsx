@@ -6,24 +6,41 @@ import { View, Text, Button } from 'react-native';
 
 function Tab1() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Tab 1</Text>
+    <View
+      testID="material-top-bar-tab-1"
+      style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+    >
+      <Text testID="material-top-bar-tab-1-text">Tab 1</Text>
     </View>
   );
 }
 
 function Tab2(props: any) {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Button title="Logout" onPress={props.onLogout} />
+    <View
+      testID="material-top-bar-tab-2"
+      style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+    >
+      <Button
+        testID="material-top-bar-logout-button"
+        title="Logout"
+        onPress={props.onLogout}
+      />
     </View>
   );
 }
 
 const PreAuthScreen = (props: any) => {
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Button title="Login" onPress={() => props.setIsSignedIn(true)} />
+    <View
+      testID="material-top-bar-pre-auth-screen"
+      style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
+    >
+      <Button
+        testID="material-top-bar-login-button"
+        title="Login"
+        onPress={() => props.setIsSignedIn(true)}
+      />
     </View>
   );
 };
@@ -37,7 +54,7 @@ const PostAuthScreen = (props: any) => {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View testID="material-top-bar-post-auth-screen" style={{ flex: 1 }}>
       <Navigator>
         <Screen name="Tab1" component={Tab1} />
         <Screen name="Tab2">

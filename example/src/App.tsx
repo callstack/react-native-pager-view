@@ -23,11 +23,8 @@ import { ScrollablePagerViewExample } from './ScrollablePagerViewExample';
 import { ScrollViewInsideExample } from './ScrollViewInsideExample';
 import HeadphonesCarouselExample from './HeadphonesCarouselExample';
 import PaginationDotsExample from './PaginationDotsExample';
-import { NestPagerView } from './NestPagerView';
-import ScrollableTabBarExample from './tabView/ScrollableTabBarExample';
-import AutoWidthTabBarExample from './tabView/AutoWidthTabBarExample';
+import { NestedPagerView } from './NestedPagerView';
 import TabBarIconExample from './tabView/TabBarIconExample';
-import CustomIndicatorExample from './tabView/CustomIndicatorExample';
 import CustomTabBarExample from './tabView/CustomTabBarExample';
 import CoverflowExample from './tabView/CoverflowExample';
 import { TabViewInsideScrollViewExample } from './tabView/TabViewInsideScrollViewExample';
@@ -38,52 +35,105 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PagerHookExample } from './PagerHookExample';
 import { NestedHorizontalScrollViewExample } from './NestedHorizontalScrollViewExample';
 
+function BasicPagerViewExampleScreen() {
+  return <BasicPagerViewExample isHorizontal={true} />;
+}
+
+function VerticalBasicPagerViewExampleScreen() {
+  return <BasicPagerViewExample isHorizontal={false} />;
+}
+
 const examples = [
-  { component: BasicPagerViewExample, name: 'Basic Example' },
-  { component: PagerHookExample, name: 'Pager Hook Example' },
-  { component: KeyboardExample, name: 'Keyboard Example' },
+  {
+    component: BasicPagerViewExampleScreen,
+    name: 'Basic Example',
+  },
+  {
+    component: VerticalBasicPagerViewExampleScreen,
+    name: 'Vertical Basic Example',
+  },
+
   { component: OnPageScrollExample, name: 'OnPageScroll Example' },
   { component: OnPageSelectedExample, name: 'OnPageSelected Example' },
-  { component: HeadphonesCarouselExample, name: 'Headphones Carousel Example' },
-  { component: PaginationDotsExample, name: 'Pagination Dots Example' },
-  { component: MaterialTopBarExample, name: 'MaterialTopBarExample' },
+
   {
     component: ScrollablePagerViewExample,
     name: 'Scrollable PagerView Example',
   },
   {
-    component: TabViewInsideScrollViewExample,
-    name: 'TabView inside ScrollView Example',
+    component: NestedPagerView,
+    name: 'Nested PagerView Example',
   },
-  {
-    component: ScrollViewInsideExample,
-    name: 'ScrollView inside PagerView Example',
-  },
-  {
-    component: NestPagerView,
-    name: 'Nest PagerView Example',
-  },
-  { component: ScrollableTabBarExample, name: 'ScrollableTabBarExample' },
   {
     component: NestedHorizontalScrollViewExample,
     name: 'NestedHorizontalScrollViewExample',
   },
-  { component: AutoWidthTabBarExample, name: 'AutoWidthTabBarExample' },
+
+  {
+    component: ScrollViewInsideExample,
+    name: 'ScrollView inside PagerView Example',
+  },
+
+  {
+    component: TabViewInsideScrollViewExample,
+    name: 'TabView inside ScrollView Example',
+  },
+];
+
+const tabViewExamples = [
+  { component: MaterialTopBarExample, name: 'MaterialTopBarExample' },
   { component: TabBarIconExample, name: 'TabBarIconExample' },
-  { component: CustomIndicatorExample, name: 'CustomIndicatorExample' },
   { component: CustomTabBarExample, name: 'CustomTabBarExample' },
+  { component: CoverflowExample, name: 'CoverflowExample' },
+];
+
+const additionalExamples = [
+  { component: PagerHookExample, name: 'Pager Hook Example' },
+  { component: KeyboardExample, name: 'Keyboard Example' },
+  { component: HeadphonesCarouselExample, name: 'Headphones Carousel Example' },
+  { component: PaginationDotsExample, name: 'Pagination Dots Example' },
   {
     component: ReanimatedOnPageScrollExample,
     name: 'Reanimated onPageScroll example',
   },
-  { component: CoverflowExample, name: 'CoverflowExample' },
 ];
+
+const allExamples = [...examples, ...tabViewExamples, ...additionalExamples];
 
 function App() {
   const navigation = useNavigation();
   return (
     <ScrollView>
+      <Text>Fundamental Examples</Text>
       {examples.map((example) => (
+        <TouchableOpacity
+          key={example.name}
+          testID={example.name}
+          style={styles.exampleTouchable}
+          onPress={() => {
+            //@ts-ignore
+            navigation.navigate(example.name);
+          }}
+        >
+          <Text style={styles.exampleText}>{example.name}</Text>
+        </TouchableOpacity>
+      ))}
+      <Text>TabView Examples</Text>
+      {tabViewExamples.map((example) => (
+        <TouchableOpacity
+          key={example.name}
+          testID={example.name}
+          style={styles.exampleTouchable}
+          onPress={() => {
+            //@ts-ignore
+            navigation.navigate(example.name);
+          }}
+        >
+          <Text style={styles.exampleText}>{example.name}</Text>
+        </TouchableOpacity>
+      ))}
+      <Text>Additional Examples</Text>
+      {additionalExamples.map((example) => (
         <TouchableOpacity
           key={example.name}
           testID={example.name}
@@ -150,7 +200,7 @@ export function Navigation() {
               ),
             }}
           />
-          {examples.map((example, index) => (
+          {allExamples.map((example, index) => (
             <NavigationStack.Screen
               key={index}
               name={example.name}

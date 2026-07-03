@@ -1,0 +1,61 @@
+appId: com.pagerviewexample
+---
+- runFlow: on_page_selected_example_setup.yaml
+
+- tapOn: 'OK'
+
+- extendedWaitUntil:
+    visible:
+      id: 'pager'
+    timeout: 10000
+
+- assertVisible:
+    text: 'Page Index: 0'
+
+- tapOn:
+    id: 'next-page-button'
+
+- extendedWaitUntil:
+    visible:
+      text: 'You are on 2 page'
+    timeout: 5000
+
+- assertVisible:
+    text: 'Hey'
+
+- tapOn: 'OK'
+
+- extendedWaitUntil:
+    visible:
+      text: 'Page Index: 1'
+    timeout: 5000
+
+- tapOn:
+    id: 'last-page-button'
+
+- extendedWaitUntil:
+    visible:
+      text: 'You are on 10 page'
+    timeout: 5000
+
+- tapOn: 'OK'
+
+- extendedWaitUntil:
+    visible:
+      text: 'Page Index: 9'
+    timeout: 5000
+
+- tapOn:
+    id: 'prev-page-button'
+
+- extendedWaitUntil:
+    visible:
+      text: 'You are on 9 page'
+    timeout: 5000
+
+- tapOn: 'OK'
+
+- extendedWaitUntil:
+    visible:
+      text: 'Page Index: 8'
+    timeout: 5000

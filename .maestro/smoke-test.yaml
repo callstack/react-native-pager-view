@@ -1,0 +1,50 @@
+appId: com.pagerviewexample
+tags:
+  - smoke
+---
+- launchApp
+
+- swipe:
+    direction: DOWN
+    duration: 100
+
+- extendedWaitUntil:
+    visible:
+      id: 'Basic Example'
+    timeout: 15000
+
+- tapOn:
+    id: 'Basic Example'
+
+- extendedWaitUntil:
+    visible:
+      id: 'pager-view'
+    timeout: 10000
+
+- assertVisible:
+    id: 'pageNumber0'
+
+- assertVisible:
+    text: 'page number 0\s*'
+
+- tapOn:
+    id: 'next-page-button'
+
+- extendedWaitUntil:
+    visible:
+      id: 'pageNumber1'
+    timeout: 5000
+
+- assertVisible:
+    text: 'page number 1\s*'
+
+- tapOn:
+    id: 'prev-page-button'
+
+- extendedWaitUntil:
+    visible:
+      id: 'pageNumber0'
+    timeout: 5000
+
+- assertVisible:
+    text: 'page number 0\s*'

@@ -1,0 +1,109 @@
+appId: com.pagerviewexample
+---
+- launchApp
+
+- extendedWaitUntil:
+    visible:
+      text: 'PagerView Example'
+    timeout: 15000
+
+- tapOn: 'LTR'
+
+- extendedWaitUntil:
+    visible:
+      text: 'PagerView Example'
+    timeout: 15000
+
+- extendedWaitUntil:
+    visible:
+      text: 'RTL'
+    timeout: 15000
+
+- tapOn: 'Vertical Basic Example'
+
+- extendedWaitUntil:
+    visible:
+      id: 'pager-view'
+    timeout: 10000
+
+- assertVisible: '7 likes'
+
+- tapOn: 'Scroll Enabled'
+
+- swipe:
+    from:
+      id: 'pager-view'
+    direction: UP
+    duration: 100
+
+- assertVisible:
+    text: 'page number 0'
+
+- tapOn: 'Scroll Disabled'
+
+- swipe:
+    from:
+      id: 'pager-view'
+    direction: UP
+    duration: 100
+
+- assertVisible:
+    text: 'page number 1'
+
+- tapOn:
+    id: 'next-page-button'
+
+- assertVisible:
+    text: 'page number 2'
+
+- tapOn:
+    id: 'prev-page-button'
+
+- assertVisible:
+    text: 'page number 1'
+
+- tapOn:
+    id: 'start-page-button'
+
+- assertVisible:
+    text: 'page number 0'
+
+- tapOn:
+    id: 'last-page-button'
+
+- assertVisible:
+    text: 'page number 9'
+
+- tapOn:
+    id: 'remove-page-button'
+
+- assertVisible:
+    text: 'page number 8'
+
+- tapOn:
+    id: 'add-page-button'
+
+- tapOn:
+    id: 'next-page-button'
+
+- assertVisible:
+    text: 'page number 9'
+
+- tapOn: 'Navigate up'
+
+- extendedWaitUntil:
+    visible:
+      text: 'PagerView Example'
+    timeout: 10000
+
+- tapOn: 'RTL'
+
+- extendedWaitUntil:
+    visible:
+      text: 'PagerView Example'
+    timeout: 15000
+
+- extendedWaitUntil:
+    visible:
+      text: 'LTR'
+    timeout: 15000
