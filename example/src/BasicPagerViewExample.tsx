@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, View, SafeAreaView, Animated, Text } from 'react-native';
+import { StyleSheet, SafeAreaView, Animated } from 'react-native';
 
 import PagerView from 'react-native-pager-view';
 
-import { LikeCount } from './component/LikeCount';
 import { NavigationPanel } from './component/NavigationPanel';
 import { useNavigationPanel } from './hook/useNavigationPanel';
 import { PagerViewContent } from './component/PagerViewContent';

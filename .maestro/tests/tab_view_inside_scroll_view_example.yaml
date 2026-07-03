@@ -1,0 +1,44 @@
+appId: com.pagerviewexample
+---
+- runFlow: tab_view_inside_scroll_view_example_setup.yaml
+
+- swipe:
+    start: 90%, 45%
+    end: 10%, 45%
+    duration: 100
+
+- extendedWaitUntil:
+    visible:
+      text: 'Second Route'
+    timeout: 5000
+
+- swipe:
+    from:
+      id: 'tab-view-scroll-view'
+    start: 50%, 85%
+    end: 50%, 20%
+    duration: 500
+
+- extendedWaitUntil:
+    visible:
+      id: 'tab-view-second-route-bottom'
+    timeout: 5000
+
+- swipe:
+    from:
+      id: 'tab-view-scroll-view'
+    start: 50%, 20%
+    end: 50%, 85%
+    duration: 500
+
+- extendedWaitUntil:
+    visible:
+      text: 'Second Route'
+    timeout: 5000
+
+- tapOn: 'First'
+
+- extendedWaitUntil:
+    visible:
+      text: 'First Route'
+    timeout: 5000

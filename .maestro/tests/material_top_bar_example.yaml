@@ -1,0 +1,40 @@
+appId: com.pagerviewexample
+---
+- runFlow: material_top_bar_example_setup.yaml
+
+- tapOn:
+    id: 'material-top-bar-login-button'
+
+- extendedWaitUntil:
+    visible:
+      id: 'material-top-bar-post-auth-screen'
+    timeout: 10000
+
+- extendedWaitUntil:
+    visible:
+      id: 'material-top-bar-tab-1'
+    timeout: 5000
+
+- assertVisible:
+    text: 'Tab1'
+
+- tapOn: 'Tab2'
+
+- extendedWaitUntil:
+    visible:
+      id: 'material-top-bar-tab-2'
+    timeout: 5000
+
+- assertVisible:
+    id: 'material-top-bar-logout-button'
+
+- tapOn:
+    id: 'material-top-bar-logout-button'
+
+- extendedWaitUntil:
+    visible:
+      id: 'material-top-bar-pre-auth-screen'
+    timeout: 10000
+
+- assertVisible:
+    id: 'material-top-bar-login-button'

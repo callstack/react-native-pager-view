@@ -1,6 +1,6 @@
 appId: com.pagerviewexample
 ---
-- runFlow: tc1_on_page_selected_example.yaml
+- runFlow: on_page_selected_example_setup.yaml
 
 - tapOn: 'OK'
 

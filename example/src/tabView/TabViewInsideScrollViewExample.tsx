@@ -1,20 +1,32 @@
 import * as React from 'react';
-import { View, useWindowDimensions, Text, ScrollView } from 'react-native';
+import {
+  View,
+  useWindowDimensions,
+  Text,
+  ScrollView,
+  StyleSheet,
+} from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import { Header } from 'react-native/Libraries/NewAppScreen';
 
 function FirstRoute() {
   return (
-    <View style={{ flex: 1, padding: 20, backgroundColor: 'blue' }}>
-      <Text style={{color: 'white'}}>First Route</Text>
+    <View testID="tab-view-first-route" style={styles.firstRoute}>
+      <Text style={styles.routeText}>First Route</Text>
+      <Text testID="tab-view-first-route-bottom" style={styles.routeText}>
+        First Route Bottom
+      </Text>
     </View>
   );
 }
 
 function SecondRoute() {
   return (
-    <View style={{ flex: 1, padding: 20, backgroundColor: 'purple' }}>
-      <Text style={{color: 'white'}}>Second Route</Text>
+    <View testID="tab-view-second-route" style={styles.secondRoute}>
+      <Text style={styles.routeText}>Second Route</Text>
+      <Text testID="tab-view-second-route-bottom" style={styles.routeText}>
+        Second Route Bottom
+      </Text>
     </View>
   );
 }
@@ -35,7 +47,8 @@ export function TabViewInsideScrollViewExample() {
 
   return (
     <ScrollView
-      contentContainerStyle={{flexGrow: 1, backgroundColor: 'red'}}
+      testID="tab-view-scroll-view"
+      contentContainerStyle={styles.contentContainer}
       nestedScrollEnabled={false}
       scrollEnabled={true}
     >
@@ -43,7 +56,8 @@ export function TabViewInsideScrollViewExample() {
 
       <View>
         <TabView
-          style={{height: 1200}}
+          testID="tab-view"
+          style={styles.tabView}
           navigationState={{ index, routes }}
           renderScene={renderScene}
           onIndexChange={setIndex}
@@ -53,3 +67,28 @@ export function TabViewInsideScrollViewExample() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  contentContainer: {
+    flexGrow: 1,
+    backgroundColor: 'red',
+  },
+  tabView: {
+    height: 1200,
+  },
+  firstRoute: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: 'blue',
+    justifyContent: 'space-between',
+  },
+  secondRoute: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: 'purple',
+    justifyContent: 'space-between',
+  },
+  routeText: {
+    color: 'white',
+  },
+});

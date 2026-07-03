@@ -1,6 +1,6 @@
 appId: com.pagerviewexample
 ---
-- runFlow: tc99_nested_pagerView_example.yaml
+- runFlow: nested_pagerView_example_setup.yaml
 
 - swipe:
     from:

@@ -1,0 +1,15 @@
+appId: ${APP_ID}
+---
+- launchApp
+- assertVisible: 'PagerView Example'
+- tapOn: 'Scrollable PagerView Example'
+- extendedWaitUntil:
+    visible:
+      id: 'pager-view'
+    timeout: 10000
+- assertVisible:
+    id: 'scroll-view'
+- assertVisible:
+    id: 'pageNumber0'
+- assertVisible:
+    text: 'page number 0'

@@ -46,8 +46,7 @@ fi
 
 shopt -s nullglob
 allTestFiles=(
-  .maestro/basic_example/*.yaml
-  .maestro/nest_pager_view_example/*.yaml
+  .maestro/tests/*.yaml
   .maestro/"$PLATFORM"-only/*.yaml
 )
 

@@ -1,0 +1,56 @@
+appId: com.pagerviewexample
+---
+- runFlow: scrollable_pagerView_example_setup.yaml
+
+- swipe:
+    start: 90%, 30%
+    end: 10%, 30%
+    duration: 100
+
+- extendedWaitUntil:
+    visible:
+      id: 'pageNumber1'
+    timeout: 5000
+
+- assertVisible:
+    text: 'page number 1'
+
+- swipe:
+    from:
+      id: 'scroll-view'
+    start: 50%, 85%
+    end: 50%, 20%
+    duration: 500
+
+- extendedWaitUntil:
+    visible:
+      id: 'scrollable-spacer-2'
+    timeout: 5000
+
+- swipe:
+    from:
+      id: 'scroll-view'
+    start: 50%, 20%
+    end: 50%, 85%
+    duration: 500
+
+- extendedWaitUntil:
+    visible:
+      id: 'pageNumber1'
+    timeout: 5000
+
+- assertVisible:
+    text: 'page number 1'
+
+- swipe:
+    start: 90%, 30%
+    end: 10%, 30%
+    duration: 100
+
+- extendedWaitUntil:
+    visible:
+      id: 'pageNumber2'
+    timeout: 5000
+
+- assertVisible:
+    text: 'page number 2'
