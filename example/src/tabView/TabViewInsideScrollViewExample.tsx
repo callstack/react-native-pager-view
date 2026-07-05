@@ -7,7 +7,6 @@ import {
   StyleSheet,
 } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
-import { Header } from 'react-native/Libraries/NewAppScreen';
 
 function FirstRoute() {
   return (
@@ -52,7 +51,7 @@ export function TabViewInsideScrollViewExample() {
       nestedScrollEnabled={false}
       scrollEnabled={true}
     >
-      <Header />
+      <View style={{width:"100%", height:300, backgroundColor:"purple"}} />
 
       <View>
         <TabView
