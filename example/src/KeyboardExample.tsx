@@ -11,7 +11,6 @@ import {
   Animated,
   KeyboardAvoidingView,
 } from 'react-native';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
 import PagerView from 'react-native-pager-view';
 import { logoUrl } from './utils';
 
@@ -126,7 +125,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 24,
     fontWeight: '600',
-    color: Colors.black,
   },
   textInput: {
     borderWidth: 1,
@@ -137,13 +135,11 @@ const styles = StyleSheet.create({
     marginVertical: 16,
     fontSize: 18,
     fontWeight: '400',
-    color: Colors.dark,
   },
   highlight: {
     fontWeight: '700',
   },
   footer: {
-    color: Colors.dark,
     fontSize: 12,
     fontWeight: '600',
     padding: 4,
