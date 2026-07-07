@@ -32,31 +32,36 @@ class PageChildViewController: UIViewController {
 
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
-    propagateHostingSafeArea()
+    propagateSafeArea()
   }
 
-  /// Traverses up to the _UIHostingView and re-applies its bottom safe area
-  /// as additionalSafeAreaInsets on this child VC, since .ignoresSafeArea()
-  /// causes UIKit to report safeAreaInsets = .zero for embedded views.
-  private func propagateHostingSafeArea() {
-    var current: UIView? = view.superview
-    while let v = current {
-      if String(describing: type(of: v)).contains("_UIHostingView") {
-        let hosting = v.safeAreaInsets
-        let delta = UIEdgeInsets(
-          top: hosting.top, left: hosting.left,
-          bottom: hosting.bottom, right: hosting.right
-        )
-        if abs(additionalSafeAreaInsets.top - delta.top) > 0.5
-            || abs(additionalSafeAreaInsets.left - delta.left) > 0.5
-            || abs(additionalSafeAreaInsets.bottom - delta.bottom) > 0.5
-            || abs(additionalSafeAreaInsets.right - delta.right) > 0.5 {
-          additionalSafeAreaInsets = delta
-        }
-        return
-      }
-      current = v.superview
+  override func viewSafeAreaInsetsDidChange() {
+    super.viewSafeAreaInsetsDidChange()
+    propagateSafeArea()
+  }
+
+  /// Re-applies safe area insets from a stable UIKit source, since SwiftUI's
+  /// .ignoresSafeArea() causes embedded UIKit views to report .zero.
+  private func propagateSafeArea() {
+    let insets = nearestNonZeroSafeAreaInsets() ?? view.window?.safeAreaInsets ?? .zero
+    if abs(additionalSafeAreaInsets.top - insets.top) > 0.5
+        || abs(additionalSafeAreaInsets.left - insets.left) > 0.5
+        || abs(additionalSafeAreaInsets.bottom - insets.bottom) > 0.5
+        || abs(additionalSafeAreaInsets.right - insets.right) > 0.5 {
+      additionalSafeAreaInsets = insets
     }
+  }
+
+  private func nearestNonZeroSafeAreaInsets() -> UIEdgeInsets? {
+    var current = view.superview
+    while let candidate = current {
+      let insets = candidate.safeAreaInsets
+      if insets.top > 0 || insets.left > 0 || insets.bottom > 0 || insets.right > 0 {
+        return insets
+      }
+      current = candidate.superview
+    }
+    return nil
   }
 }
 
@@ -112,4 +117,3 @@ extension UIHostingController {
     }
   }
 }
-
