@@ -34,6 +34,8 @@ const config = makeMetroConfig({
   },
 });
 
-delete config.server.tls;
+ if (config.server && config.server.tls) {
+  delete config.server.tls;
+}
 
 module.exports = config;

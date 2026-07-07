@@ -51,7 +51,7 @@ export function TabViewInsideScrollViewExample() {
       nestedScrollEnabled={false}
       scrollEnabled={true}
     >
-      <View style={{width:"100%", height:300, backgroundColor:"purple"}} />
+      <View style={styles.header} />
 
       <View>
         <TabView
@@ -89,5 +89,10 @@ const styles = StyleSheet.create({
   },
   routeText: {
     color: 'white',
+  },
+  header:{
+    width:'100%',
+    height:300,
+    backgroundColor:'purple',
   },
 });
