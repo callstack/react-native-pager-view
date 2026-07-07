@@ -8,7 +8,7 @@ trap 'exit 130' INT TERM
 PLATFORM=${1:-}
 APPID="com.pagerviewexample"
 MAX_ATTEMPTS=${MAX_ATTEMPTS:-3}
-RETRY_DELAYS=(30 120)
+RETRY_DELAYS=(5 15)
 DEVICE_ID=${MAESTRO_DEVICE:-${DEVICE_ID:-}}
 SHARD_COUNT=${SHARD_COUNT:-}
 SHARD_INDEX=${SHARD_INDEX:-}
@@ -48,6 +48,7 @@ shopt -s nullglob
 allTestFiles=(
   .maestro/tests/*.yaml
   .maestro/"$PLATFORM"-only/*.yaml
+  .maestro/tests/rtl/*.yaml
 )
 
 if [ ${#allTestFiles[@]} -eq 0 ]; then
