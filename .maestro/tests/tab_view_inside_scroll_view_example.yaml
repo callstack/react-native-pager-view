@@ -1,6 +1,6 @@
 appId: com.pagerviewexample
 ---
-- runFlow: tab_view_inside_scroll_view_example_setup.yaml
+- runFlow: ../setup/tab_view_inside_scroll_view_example_setup.yaml
 
 - swipe:
     start: 90%, 45%

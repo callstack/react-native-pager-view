@@ -1,6 +1,6 @@
 appId: com.pagerviewexample
 ---
-- runFlow: pager_vertical_basic_example_setup.yaml
+- runFlow: ../setup/pager_vertical_basic_example_setup.yaml
 - tapOn: 'Scroll Enabled'
 - swipe:
     from:

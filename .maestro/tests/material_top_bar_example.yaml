@@ -1,6 +1,6 @@
 appId: com.pagerviewexample
 ---
-- runFlow: material_top_bar_example_setup.yaml
+- runFlow: ../setup/material_top_bar_example_setup.yaml
 
 - tapOn:
     id: 'material-top-bar-login-button'
