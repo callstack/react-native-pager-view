@@ -18,6 +18,9 @@ struct PagerView: View {
     .id(props.children.count)
     .background(.clear)
     .tabViewStyle(.page(indexDisplayMode: .never))
+    // Opt out of SwiftUI's automatic keyboard avoidance: layout is fully driven
+    // by React Native, so pages must not shrink when the keyboard appears.
+    .ignoresSafeArea(.keyboard)
     .environment(\.layoutDirection, props.layoutDirection.converted)
     .introspect(.tabView(style: .page), on: .iOS(.v14...)) { collectionView in
       self.collectionView = collectionView
