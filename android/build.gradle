@@ -14,17 +14,9 @@ buildscript {
   }
 }
 
-def isNewArchitectureEnabled() {
-  return rootProject.hasProperty("newArchEnabled") &&  rootProject.getProperty("newArchEnabled") == "true"
-}
-
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-
-
-if (isNewArchitectureEnabled()) {
-  apply plugin: 'com.facebook.react'
-}
+apply plugin: 'com.facebook.react'
 
 def getExtOrDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['PagerView_' + name]
@@ -42,7 +34,7 @@ if(shouldUseNameSpace){
       manifestContent = manifestContent.replaceAll(
         PACKAGE_PROP,
         ''
-    )  
+    )
 } else {
     if(!manifestContent.contains("$PACKAGE_PROP")){
         manifestContent = manifestContent.replace(
@@ -89,11 +81,11 @@ android {
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault('minSdkVersion')
     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
-    buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+    buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", "true"
 
-    buildConfigField "String", "CODEGEN_MODULE_REGISTRATION", (isNewArchitectureEnabled() && registrationCompat ? "\"${codegenViewModuleName}_registration\"" : "null")
+    buildConfigField "String", "CODEGEN_MODULE_REGISTRATION", (registrationCompat ? "\"${codegenViewModuleName}_registration\"" : "null")
 
-    if (isNewArchitectureEnabled() && registrationCompat) {
+    if (registrationCompat) {
       def reactAndroidProject = project(':ReactAndroid')
       externalNativeBuild {
         ndkBuild {
@@ -113,8 +105,8 @@ android {
     }
   }
 
-  if (isNewArchitectureEnabled() && registrationCompat) {
-    // We configure the NDK build only if you decide to opt-in for the New Architecture.
+  if (registrationCompat) {
+    // We configure the NDK build when registrationCompat is enabled.
     externalNativeBuild {
       ndkBuild {
         path "Android.mk"
@@ -138,14 +130,10 @@ android {
   }
   sourceSets {
     main {
-      if (isNewArchitectureEnabled()) {
-          java.srcDirs += [
-            "src/fabric/java",
-            "${project.buildDir}/generated/source/codegen/java"
-          ]
-      } else {
-          java.srcDirs += ["src/paper/java"]
-      }
+      java.srcDirs += [
+        "src/fabric/java",
+        "${project.buildDir}/generated/source/codegen/java"
+      ]
     }
   }
 }
@@ -229,10 +217,8 @@ dependencies {
   implementation 'androidx.viewpager2:viewpager2:1.1.0'
 }
 
-if (isNewArchitectureEnabled()) {
-  react {
-    jsRootDir = file("../src")
-    libraryName = codegenViewLibraryName
-    codegenJavaPackageName = "com.reactnativepagerview"
-  }
+react {
+  jsRootDir = file("../src")
+  libraryName = codegenViewLibraryName
+  codegenJavaPackageName = "com.reactnativepagerview"
 }
