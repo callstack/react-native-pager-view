@@ -18,6 +18,7 @@ struct PagerView: View {
     .id(props.children.count)
     .background(.clear)
     .tabViewStyle(.page(indexDisplayMode: .never))
+    .ignoresSafeArea()
     .environment(\.layoutDirection, props.layoutDirection.converted)
     .introspect(.tabView(style: .page), on: .iOS(.v14...)) { collectionView in
       self.collectionView = collectionView

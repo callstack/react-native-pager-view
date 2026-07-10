@@ -113,22 +113,12 @@ import UIKit
       return
     }
 
-    // Only create the hosting controller once it can actually be attached to the
-    // React view-controller hierarchy. `reactViewController()` can be nil on the
-    // first `didMoveToWindow` pass (e.g. when the pager is mounted inside a screen
-    // that is still being attached). Previously `self.hostingController` was
-    // assigned before this check, so when `reactViewController()` was nil the
-    // SwiftUI host was never added/pinned (its view frame stayed `.zero`, leaving
-    // the page blank) while the early-return above prevented any later retry.
-    // Deferring keeps `hostingController` nil so a subsequent window/layout pass
-    // can attach it once the view controller is available.
     guard let parentViewController = reactViewController() else {
       return
     }
 
     let hostingController = UIHostingController(
-      rootView: PagerView(props: props, delegate: delegate),
-      ignoreSafeArea: true
+      rootView: PagerView(props: props, delegate: delegate)
     )
     self.hostingController = hostingController
 
