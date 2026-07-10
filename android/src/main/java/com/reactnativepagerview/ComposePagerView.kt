@@ -7,11 +7,13 @@ import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +43,8 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private val orientationState = mutableStateOf(Orientation.Horizontal)
   private val layoutDirectionState = mutableStateOf(LayoutDirection.Ltr)
   private val pageMarginState = mutableStateOf(0)
-  private val offscreenPageLimitState = mutableStateOf(0)
+  private val offscreenPageLimitState = mutableStateOf(DEFAULT_OFFSCREEN_PAGE_LIMIT)
+  private val overScrollModeState = mutableStateOf(OverScrollMode.Auto)
   private val sameOrientationChildGestureState = mutableStateOf(false)
   private var initialPage = 0
   private var didEmitInitialPage = false
@@ -224,11 +227,19 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   fun setOffscreenPageLimit(value: Int) {
-    offscreenPageLimitState.value = value.coerceAtLeast(0)
+    offscreenPageLimitState.value = value
   }
 
   fun setPageMargin(value: Int) {
     pageMarginState.value = value
+  }
+
+  fun setOverScrollMode(value: String) {
+    overScrollModeState.value = when (value) {
+      "never" -> OverScrollMode.Never
+      "always" -> OverScrollMode.Always
+      else -> OverScrollMode.Auto
+    }
   }
 
   private fun setSameOrientationChildGestureActive(value: Boolean) {
@@ -393,6 +404,9 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         return@LaunchedEffect
       }
       if (command.animated) {
+        if (command.page != pagerState.currentPage) {
+          dispatchScrollState("settling")
+        }
         pagerState.animateScrollToPage(command.page)
       } else {
         pagerState.scrollToPage(command.page)
@@ -447,30 +461,37 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     }
 
     val pageSpacing = pageMarginState.value.dp
-    val beyondViewportPageCount = offscreenPageLimitState.value
+    val beyondViewportPageCount = offscreenPageLimitState.value.coerceAtLeast(0)
     val userScrollEnabled = scrollEnabledState.value && !sameOrientationChildGestureState.value
-
-    if (orientationState.value == Orientation.Vertical) {
-      VerticalPager(
-        state = pagerState,
-        modifier = Modifier.fillMaxSize(),
-        pageSpacing = pageSpacing,
-        userScrollEnabled = userScrollEnabled,
-        reverseLayout = false,
-        beyondViewportPageCount = beyondViewportPageCount
-      ) { page ->
-        PageHost(pages[page])
-      }
+    val overscrollConfiguration = if (overScrollModeState.value == OverScrollMode.Never) {
+      null
     } else {
-      HorizontalPager(
-        state = pagerState,
-        modifier = Modifier.fillMaxSize(),
-        pageSpacing = pageSpacing,
-        userScrollEnabled = userScrollEnabled,
-        reverseLayout = false,
-        beyondViewportPageCount = beyondViewportPageCount
-      ) { page ->
-        PageHost(pages[page])
+      LocalOverscrollConfiguration.current
+    }
+
+    CompositionLocalProvider(LocalOverscrollConfiguration provides overscrollConfiguration) {
+      if (orientationState.value == Orientation.Vertical) {
+        VerticalPager(
+          state = pagerState,
+          modifier = Modifier.fillMaxSize(),
+          pageSpacing = pageSpacing,
+          userScrollEnabled = userScrollEnabled,
+          reverseLayout = false,
+          beyondViewportPageCount = beyondViewportPageCount
+        ) { page ->
+          PageHost(pages[page])
+        }
+      } else {
+        HorizontalPager(
+          state = pagerState,
+          modifier = Modifier.fillMaxSize(),
+          pageSpacing = pageSpacing,
+          userScrollEnabled = userScrollEnabled,
+          reverseLayout = false,
+          beyondViewportPageCount = beyondViewportPageCount
+        ) { page ->
+          PageHost(pages[page])
+        }
       }
     }
   }
@@ -524,9 +545,19 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     Rtl
   }
 
+  private enum class OverScrollMode {
+    Auto,
+    Always,
+    Never
+  }
+
   private data class ScrollCommand(
     val id: Int,
     val page: Int,
     val animated: Boolean
   )
+
+  private companion object {
+    const val DEFAULT_OFFSCREEN_PAGE_LIMIT = -1
+  }
 }

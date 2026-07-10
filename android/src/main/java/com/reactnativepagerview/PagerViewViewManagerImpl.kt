@@ -50,7 +50,7 @@ object PagerViewViewManagerImpl {
     }
 
     fun setOverScrollMode(host: ComposePagerView, value: String) {
-        return
+        host.setOverScrollMode(value)
     }
 
     fun setPageMargin(host: ComposePagerView, margin: Int) {
