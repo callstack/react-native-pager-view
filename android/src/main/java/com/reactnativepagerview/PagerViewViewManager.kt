@@ -131,6 +131,9 @@ class PagerViewViewManager : ViewGroupManager<ComposePagerView>(), RNCViewPagerM
         if (root == null) {
             return
         }
+        if (selectedPage < 0 || selectedPage >= root.getPageCount()) {
+            return
+        }
         root.setCurrentItem(selectedPage, scrollWithAnimation)
     }
 

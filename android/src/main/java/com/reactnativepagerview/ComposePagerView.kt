@@ -337,7 +337,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   fun setCurrentItem(selectedPage: Int, animated: Boolean) {
-    if (selectedPage < 0 || pages.isNotEmpty() && selectedPage >= pages.size) {
+    if (selectedPage < 0 || selectedPage >= pages.size) {
       return
     }
     scrollCommandState.value = ScrollCommand(
@@ -461,7 +461,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     }
 
     val pageSpacing = pageMarginState.value.dp
-    val beyondViewportPageCount = offscreenPageLimitState.value.coerceAtLeast(0)
+    val beyondViewportPageCount = getBeyondViewportPageCount()
     val userScrollEnabled = scrollEnabledState.value && !sameOrientationChildGestureState.value
     val overscrollConfiguration = if (overScrollModeState.value == OverScrollMode.Never) {
       null
@@ -559,5 +559,14 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 
   private companion object {
     const val DEFAULT_OFFSCREEN_PAGE_LIMIT = -1
+    const val DEFAULT_BEYOND_VIEWPORT_PAGE_COUNT = 1
+  }
+
+  private fun getBeyondViewportPageCount(): Int {
+    return if (offscreenPageLimitState.value == DEFAULT_OFFSCREEN_PAGE_LIMIT) {
+      DEFAULT_BEYOND_VIEWPORT_PAGE_COUNT
+    } else {
+      offscreenPageLimitState.value.coerceAtLeast(0)
+    }
   }
 }
