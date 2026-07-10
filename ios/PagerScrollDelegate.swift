@@ -7,6 +7,8 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   weak var originalDelegate: UICollectionViewDelegate?
   weak var delegate: PagerViewProviderDelegate?
   var orientation: UICollectionView.ScrollDirection = .horizontal
+  var lastSelectedPage: Int = -1
+  var isProgrammaticScroll: Bool = false
   
   private let handledSelectors: Set<Selector> = [
     #selector(scrollViewDidScroll(_:)),
@@ -61,20 +63,47 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   }
   
   func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+    emitPageSelectedIfNeeded(scrollView)
+    delegate?.onPageScrollStateChanged(state: .idle)
     emitIdleWithCleanOffset(scrollView)
     originalDelegate?.scrollViewDidEndDecelerating?(scrollView)
   }
 
   func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+    emitPageSelectedIfNeeded(scrollView)
+    delegate?.onPageScrollStateChanged(state: .idle)
     emitIdleWithCleanOffset(scrollView)
     originalDelegate?.scrollViewDidEndScrollingAnimation?(scrollView)
   }
 
   func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
     if !decelerate {
+      emitPageSelectedIfNeeded(scrollView)
+      delegate?.onPageScrollStateChanged(state: .idle)
       emitIdleWithCleanOffset(scrollView)
     }
     originalDelegate?.scrollViewDidEndDragging?(scrollView, willDecelerate: decelerate)
+  }
+
+  private func emitPageSelectedIfNeeded(_ scrollView: UIScrollView) {
+    // Skip during programmatic navigation — .onChange handles that
+    if isProgrammaticScroll {
+      isProgrammaticScroll = false
+      return
+    }
+
+    let isHorizontal = orientation == .horizontal
+    let pageSize = isHorizontal ? scrollView.frame.width : scrollView.frame.height
+    let contentOffset = isHorizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
+
+    guard pageSize > 0 else { return }
+
+    let page = Int(round(contentOffset / pageSize))
+
+    if page != lastSelectedPage {
+      lastSelectedPage = page
+      delegate?.onPageSelected(position: page)
+    }
   }
   
   func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
