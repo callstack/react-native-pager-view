@@ -91,6 +91,13 @@ import UIKit
     }
   }
 
+  override public func layoutSubviews() {
+    super.layoutSubviews()
+    if window != nil {
+      setupView()
+    }
+  }
+
   @objc public func goTo(index: Int, animated: Bool) {
     if animated {
       withAnimation {
@@ -106,19 +113,22 @@ import UIKit
       return
     }
 
-    self.hostingController = UIHostingController(
-      rootView: PagerView(props: props, delegate: delegate),
-      ignoreSafeArea: true
-    )
-    if let hostingController, let parentViewController = reactViewController() {
-      parentViewController.addChild(hostingController)
-      hostingController.view.backgroundColor = .clear
-      addSubview(hostingController.view)
-
-      hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-      hostingController.view.pinEdges(to: self)
-
-      hostingController.didMove(toParent: parentViewController)
+    guard let parentViewController = reactViewController() else {
+      return
     }
+
+    let hostingController = UIHostingController(
+      rootView: PagerView(props: props, delegate: delegate)
+    )
+    self.hostingController = hostingController
+
+    parentViewController.addChild(hostingController)
+    hostingController.view.backgroundColor = .clear
+    addSubview(hostingController.view)
+
+    hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+    hostingController.view.pinEdges(to: self)
+
+    hostingController.didMove(toParent: parentViewController)
   }
 }

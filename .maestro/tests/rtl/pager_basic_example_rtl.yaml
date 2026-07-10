@@ -7,7 +7,11 @@ appId: com.pagerviewexample
       text: 'PagerView Example'
     timeout: 15000
 
-- tapOn: 'LTR'
+- runFlow:
+    when:
+      visible: 'LTR'
+    commands:
+      - tapOn: 'LTR'
 
 - extendedWaitUntil:
     visible:

@@ -1,6 +1,6 @@
 appId: com.pagerviewexample
 ---
-- runFlow: scrollable_pagerView_example_setup.yaml
+- runFlow: ../setup/scrollable_pagerView_example_setup.yaml
 
 - swipe:
     start: 90%, 30%

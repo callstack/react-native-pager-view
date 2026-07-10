@@ -4,19 +4,65 @@ import UIKit
 
 /**
  Helper used to render UIView inside of SwiftUI.
+ Uses UIViewControllerRepresentable to re-inject safe area insets
+ that SwiftUI's .ignoresSafeArea() strips from child UIKit views.
  */
-struct RepresentableView: UIViewRepresentable {
+struct RepresentableView: UIViewControllerRepresentable {
   var view: UIView
 
-  // Adding a wrapper UIView to avoid SwiftUI directly managing React Native views.
-  // This fixes issues with incorrect layout rendering.
-  func makeUIView(context: Context) -> UIView {
-    let wrapper = UIView()
-    wrapper.addSubview(view)
-    return wrapper
+  func makeUIViewController(context: Context) -> PageChildViewController {
+    let viewController = PageChildViewController()
+    viewController.wrappedView = view
+    return viewController
   }
 
-  func updateUIView(_ uiView: UIView, context: Context) {}
+  func updateUIViewController(_ uiViewController: PageChildViewController, context: Context) {}
+}
+
+class PageChildViewController: UIViewController {
+  var wrappedView: UIView?
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+    view.backgroundColor = .clear
+    if let wrappedView {
+      view.addSubview(wrappedView)
+    }
+  }
+
+  override func viewDidLayoutSubviews() {
+    super.viewDidLayoutSubviews()
+    propagateSafeArea()
+  }
+
+  override func viewSafeAreaInsetsDidChange() {
+    super.viewSafeAreaInsetsDidChange()
+    propagateSafeArea()
+  }
+
+  /// Re-applies safe area insets from a stable UIKit source, since SwiftUI's
+  /// .ignoresSafeArea() causes embedded UIKit views to report .zero.
+  private func propagateSafeArea() {
+    let insets = nearestNonZeroSafeAreaInsets() ?? view.window?.safeAreaInsets ?? .zero
+    if abs(additionalSafeAreaInsets.top - insets.top) > 0.5
+        || abs(additionalSafeAreaInsets.left - insets.left) > 0.5
+        || abs(additionalSafeAreaInsets.bottom - insets.bottom) > 0.5
+        || abs(additionalSafeAreaInsets.right - insets.right) > 0.5 {
+      additionalSafeAreaInsets = insets
+    }
+  }
+
+  private func nearestNonZeroSafeAreaInsets() -> UIEdgeInsets? {
+    var current = view.superview
+    while let candidate = current {
+      let insets = candidate.safeAreaInsets
+      if insets.top > 0 || insets.left > 0 || insets.bottom > 0 || insets.right > 0 {
+        return insets
+      }
+      current = candidate.superview
+    }
+    return nil
+  }
 }
 
 extension Collection {
@@ -71,4 +117,3 @@ extension UIHostingController {
     }
   }
 }
-
