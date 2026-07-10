@@ -269,9 +269,18 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     val canScroll = canScrollInDirection(direction)
     updateSameOrientationAncestorsGestureState(canScroll)
 
-    if (!canScroll && !didDelegateGestureToAncestor) {
+    if (shouldHandleRtlHorizontalGesture(canScroll)) {
+      didDelegateGestureToAncestor = scrollInDirection(direction)
+    } else if (!canScroll && !didDelegateGestureToAncestor) {
       didDelegateGestureToAncestor = scrollSameOrientationAncestorInDirection(direction)
     }
+  }
+
+  private fun shouldHandleRtlHorizontalGesture(canScroll: Boolean): Boolean {
+    return canScroll &&
+      !didDelegateGestureToAncestor &&
+      orientationState.value == Orientation.Horizontal &&
+      layoutDirectionState.value == LayoutDirection.Rtl
   }
 
   private fun canScrollInDirection(direction: Int): Boolean {
@@ -437,7 +446,6 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       }
     }
 
-    val reverseLayout = layoutDirectionState.value == LayoutDirection.Rtl
     val pageSpacing = pageMarginState.value.dp
     val beyondViewportPageCount = offscreenPageLimitState.value
     val userScrollEnabled = scrollEnabledState.value && !sameOrientationChildGestureState.value
@@ -448,7 +456,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         modifier = Modifier.fillMaxSize(),
         pageSpacing = pageSpacing,
         userScrollEnabled = userScrollEnabled,
-        reverseLayout = reverseLayout,
+        reverseLayout = false,
         beyondViewportPageCount = beyondViewportPageCount
       ) { page ->
         PageHost(pages[page])
@@ -459,7 +467,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         modifier = Modifier.fillMaxSize(),
         pageSpacing = pageSpacing,
         userScrollEnabled = userScrollEnabled,
-        reverseLayout = reverseLayout,
+        reverseLayout = false,
         beyondViewportPageCount = beyondViewportPageCount
       ) { page ->
         PageHost(pages[page])
