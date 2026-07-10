@@ -224,6 +224,13 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 
   fun setLayoutDirection(value: String) {
     layoutDirectionState.value = if (value == "rtl") LayoutDirection.Rtl else LayoutDirection.Ltr
+    val androidLayoutDirection = if (layoutDirectionState.value == LayoutDirection.Rtl) {
+      View.LAYOUT_DIRECTION_RTL
+    } else {
+      View.LAYOUT_DIRECTION_LTR
+    }
+    layoutDirection = androidLayoutDirection
+    composeView.layoutDirection = androidLayoutDirection
   }
 
   fun setOffscreenPageLimit(value: Int) {
@@ -240,6 +247,17 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       "always" -> OverScrollMode.Always
       else -> OverScrollMode.Auto
     }
+    applyOverScrollMode()
+  }
+
+  private fun applyOverScrollMode() {
+    val androidOverScrollMode = when (overScrollModeState.value) {
+      OverScrollMode.Never -> View.OVER_SCROLL_NEVER
+      OverScrollMode.Always -> View.OVER_SCROLL_ALWAYS
+      OverScrollMode.Auto -> View.OVER_SCROLL_IF_CONTENT_SCROLLS
+    }
+    overScrollMode = androidOverScrollMode
+    composeView.overScrollMode = androidOverScrollMode
   }
 
   private fun setSameOrientationChildGestureActive(value: Boolean) {
