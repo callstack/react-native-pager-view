@@ -3,9 +3,6 @@ package com.reactnativepagerview
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager2.widget.ViewPager2
-import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
-import com.facebook.infer.annotation.Assertions
-import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
@@ -20,7 +17,7 @@ import com.reactnativepagerview.event.PageSelectedEvent
 
 
 @ReactModule(name = PagerViewViewManagerImpl.NAME)
-class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPagerManagerInterface<NestedScrollableHost> {
+class PagerViewViewManager : ViewGroupManager<ComposePagerView>(), RNCViewPagerManagerInterface<ComposePagerView> {
     companion object {
         init {
             if (BuildConfig.CODEGEN_MODULE_REGISTRATION != null) {
@@ -29,7 +26,7 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
         }
     }
 
-    private val mDelegate: ViewManagerDelegate<NestedScrollableHost> = RNCViewPagerManagerDelegate(this)
+    private val mDelegate: ViewManagerDelegate<ComposePagerView> = RNCViewPagerManagerDelegate(this)
 
     override fun getDelegate() = mDelegate
 
@@ -37,83 +34,33 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
         return PagerViewViewManagerImpl.NAME
     }
 
-    override fun receiveCommand(root: NestedScrollableHost, commandId: String, args: ReadableArray?) {
+    override fun receiveCommand(root: ComposePagerView, commandId: String, args: ReadableArray?) {
         mDelegate.receiveCommand(root, commandId, args)
     }
 
-    public override fun createViewInstance(reactContext: ThemedReactContext): NestedScrollableHost {
-        val host = NestedScrollableHost(reactContext)
-        host.id = View.generateViewId()
-        host.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        host.isSaveEnabled = false
-        val vp = ViewPager2(reactContext)
-        vp.adapter = ViewPagerAdapter()
-        //https://github.com/callstack/react-native-viewpager/issues/183
-        vp.isSaveEnabled = false
-
-        vp.post {
-            vp.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-                override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                    super.onPageScrolled(position, positionOffset, positionOffsetPixels)
-                    UIManagerHelper.getEventDispatcherForReactTag(reactContext, host.id)?.dispatchEvent(
-                            PageScrollEvent(host.id, position, positionOffset)
-                    )
-                }
-
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    UIManagerHelper.getEventDispatcherForReactTag(reactContext, host.id)?.dispatchEvent(
-                            PageSelectedEvent(host.id, position)
-                    )
-                }
-
-                override fun onPageScrollStateChanged(state: Int) {
-                    super.onPageScrollStateChanged(state)
-                    val pageScrollState: String = when (state) {
-                        ViewPager2.SCROLL_STATE_IDLE -> "idle"
-                        ViewPager2.SCROLL_STATE_DRAGGING -> "dragging"
-                        ViewPager2.SCROLL_STATE_SETTLING -> "settling"
-                        else -> throw IllegalStateException("Unsupported pageScrollState")
-                    }
-                    // Emit a final onPageScroll with offset 0 when idle to clear
-                    // any residual floating-point offset from the scroll animation
-                    if (state == ViewPager2.SCROLL_STATE_IDLE) {
-                        UIManagerHelper.getEventDispatcherForReactTag(reactContext, host.id)?.dispatchEvent(
-                                PageScrollEvent(host.id, vp.currentItem, 0f)
-                        )
-                    }
-                    UIManagerHelper.getEventDispatcherForReactTag(reactContext, host.id)?.dispatchEvent(
-                            PageScrollStateChangedEvent(host.id, pageScrollState)
-                    )
-                }
-            })
-            UIManagerHelper.getEventDispatcherForReactTag(reactContext, host.id)?.dispatchEvent(
-                    PageSelectedEvent(host.id, vp.currentItem)
-            )
-        }
-        host.addView(vp)
-        return host
+    public override fun createViewInstance(reactContext: ThemedReactContext): ComposePagerView {
+        return ComposePagerView(reactContext)
     }
 
-    override fun addView(host: NestedScrollableHost, child: View, index: Int) {
+    override fun addView(host: ComposePagerView, child: View, index: Int) {
         PagerViewViewManagerImpl.addView(host, child, index)
     }
 
-    override fun getChildCount(parent: NestedScrollableHost) = PagerViewViewManagerImpl.getChildCount(parent)
+    override fun getChildCount(parent: ComposePagerView) = PagerViewViewManagerImpl.getChildCount(parent)
 
-    override fun getChildAt(parent: NestedScrollableHost, index: Int): View {
+    override fun getChildAt(parent: ComposePagerView, index: Int): View {
         return PagerViewViewManagerImpl.getChildAt(parent, index)
     }
 
-    override fun removeView(parent: NestedScrollableHost, view: View) {
+    override fun removeView(parent: ComposePagerView, view: View) {
         PagerViewViewManagerImpl.removeView(parent, view)
     }
 
-    override fun removeAllViews(parent: NestedScrollableHost) {
+    override fun removeAllViews(parent: ComposePagerView) {
         PagerViewViewManagerImpl.removeAllViews(parent)
     }
 
-    override fun removeViewAt(parent: NestedScrollableHost, index: Int) {
+    override fun removeViewAt(parent: ComposePagerView, index: Int) {
         PagerViewViewManagerImpl.removeViewAt(parent, index)
     }
 
@@ -122,86 +69,83 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
     }
 
     @ReactProp(name = "scrollEnabled", defaultBoolean = true)
-    override fun setScrollEnabled(view: NestedScrollableHost?, value: Boolean) {
+    override fun setScrollEnabled(view: ComposePagerView?, value: Boolean) {
         if (view != null) {
             PagerViewViewManagerImpl.setScrollEnabled(view, value)
         }
     }
 
     @ReactProp(name = "layoutDirection")
-    override fun setLayoutDirection(view: NestedScrollableHost?, value: String?) {
+    override fun setLayoutDirection(view: ComposePagerView?, value: String?) {
         if (view != null && value != null) {
             PagerViewViewManagerImpl.setLayoutDirection(view, value)
         }
     }
 
     @ReactProp(name = "initialPage", defaultInt = 0)
-    override fun setInitialPage(view: NestedScrollableHost?, value: Int) {
+    override fun setInitialPage(view: ComposePagerView?, value: Int) {
         if (view != null) {
             PagerViewViewManagerImpl.setInitialPage(view, value)
         }
     }
 
     @ReactProp(name = "orientation")
-    override fun setOrientation(view: NestedScrollableHost?, value: String?) {
+    override fun setOrientation(view: ComposePagerView?, value: String?) {
         if (view != null && value != null) {
             PagerViewViewManagerImpl.setOrientation(view, value)
         }
     }
 
     @ReactProp(name = "offscreenPageLimit", defaultInt = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT)
-    override fun setOffscreenPageLimit(view: NestedScrollableHost?, value: Int) {
+    override fun setOffscreenPageLimit(view: ComposePagerView?, value: Int) {
         if (view != null) {
             PagerViewViewManagerImpl.setOffscreenPageLimit(view, value)
         }
     }
 
     @ReactProp(name = "pageMargin", defaultInt = 0)
-    override fun setPageMargin(view: NestedScrollableHost?, value: Int) {
+    override fun setPageMargin(view: ComposePagerView?, value: Int) {
         if (view != null) {
             PagerViewViewManagerImpl.setPageMargin(view, value)
         }
     }
 
     @ReactProp(name = "overScrollMode")
-    override fun setOverScrollMode(view: NestedScrollableHost?, value: String?) {
+    override fun setOverScrollMode(view: ComposePagerView?, value: String?) {
         if (view != null && value != null) {
             PagerViewViewManagerImpl.setOverScrollMode(view, value)
         }
     }
 
     @ReactProp(name = "overdrag")
-    override fun setOverdrag(view: NestedScrollableHost?, value: Boolean) {
+    override fun setOverdrag(view: ComposePagerView?, value: Boolean) {
         return
     }
 
     @ReactProp(name = "keyboardDismissMode")
-    override fun setKeyboardDismissMode(view: NestedScrollableHost?, value: String?) {
+    override fun setKeyboardDismissMode(view: ComposePagerView?, value: String?) {
         return
     }
 
-    fun goTo(root: NestedScrollableHost?, selectedPage: Int, scrollWithAnimation: Boolean) {
+    fun goTo(root: ComposePagerView?, selectedPage: Int, scrollWithAnimation: Boolean) {
         if (root == null) {
             return
         }
-        val view = PagerViewViewManagerImpl.getViewPager(root)
-        Assertions.assertNotNull(view)
-        val childCount = view.adapter?.itemCount
-        val canScroll = childCount != null && childCount > 0 && selectedPage >= 0 && selectedPage < childCount
-        if (canScroll) {
-            PagerViewViewManagerImpl.setCurrentItem(view, selectedPage, scrollWithAnimation)
+        if (selectedPage < 0 || selectedPage >= root.getPageCount()) {
+            return
         }
+        root.setCurrentItem(selectedPage, scrollWithAnimation)
     }
 
-    override fun setPage(view: NestedScrollableHost?, selectedPage: Int) {
+    override fun setPage(view: ComposePagerView?, selectedPage: Int) {
         goTo(view, selectedPage, true)
     }
 
-    override fun setPageWithoutAnimation(view: NestedScrollableHost?, selectedPage: Int) {
+    override fun setPageWithoutAnimation(view: ComposePagerView?, selectedPage: Int) {
         goTo(view, selectedPage, false)
     }
 
-    override fun setScrollEnabledImperatively(view: NestedScrollableHost?, scrollEnabled: Boolean) {
+    override fun setScrollEnabledImperatively(view: ComposePagerView?, scrollEnabled: Boolean) {
         if (view != null) {
             PagerViewViewManagerImpl.setScrollEnabled(view, scrollEnabled)
         }
