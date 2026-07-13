@@ -65,6 +65,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 
     composeView.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
     composeView.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
+    applyOverScrollMode()
     touchSlop = ViewConfiguration.get(context).scaledTouchSlop
   }
 

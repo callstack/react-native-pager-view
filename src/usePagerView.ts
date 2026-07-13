@@ -4,7 +4,6 @@ import type {
   OnPageSelectedEventData as PagerViewOnPageSelectedEventData,
   OnPageScrollStateChangedEventData as PageScrollStateChangedNativeEventData,
 } from './PagerViewNativeComponent';
-import type { ComponentPropsWithRef, ComponentType } from 'react';
 
 type PageScrollStateChangedNativeEvent =
   ReactNative.NativeSyntheticEvent<PageScrollStateChangedNativeEventData>;
@@ -18,7 +17,7 @@ export type UsePagerViewProps = ReturnType<typeof usePagerView>;
 
 const AnimatedPagerView = Animated.createAnimatedComponent(
   PagerView
-) as ComponentType<ComponentPropsWithRef<typeof PagerView>>;
+);
 
 type UsePagerViewParams = {
   pagesAmount: number;
