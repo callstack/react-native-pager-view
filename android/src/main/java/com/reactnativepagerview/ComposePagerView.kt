@@ -56,6 +56,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private var didDelegateGestureToAncestor = false
   private val scrollCommandState = mutableStateOf<ScrollCommand?>(null)
   private var lastEmittedScrollState: String? = null
+  private var lastEmittedPageSelected: Int? = null
   private var didSetContent = false
 
   init {
@@ -206,6 +207,17 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       (view.parent as? ViewGroup)?.removeView(view)
     }
     pages.clear()
+    resetPagerState()
+  }
+
+  private fun resetPagerState() {
+    didEmitInitialPage = false
+    currentPage = initialPage
+    scrollCommandState.value = null
+    lastEmittedScrollState = null
+    lastEmittedPageSelected = null
+    didDelegateGestureToAncestor = false
+    sameOrientationChildGestureState.value = false
   }
 
   fun setInitialPage(value: Int) {
@@ -367,6 +379,10 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   private fun dispatchPageSelected(position: Int) {
+    if (lastEmittedPageSelected == position) {
+      return
+    }
+    lastEmittedPageSelected = position
     UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)?.dispatchEvent(
       PageSelectedEvent(id, position)
     )
