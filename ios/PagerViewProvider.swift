@@ -105,6 +105,9 @@ import UIKit
       }
     } else {
       props.currentPage = index
+      // For non-animated navigation, no scroll events fire, so emit the
+      // final onPageScroll explicitly to keep consumers in sync.
+      delegate?.onPageScroll(data: OnPageScrollEventData(position: Double(index), offset: 0))
     }
   }
 

@@ -45,6 +45,22 @@ const PreAuthScreen = (props: any) => {
   );
 };
 
+function Tab3() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Tab 3</Text>
+    </View>
+  );
+}
+
+function Tab4() {
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Tab 4</Text>
+    </View>
+  );
+}
+
 const PostAuthScreen = (props: any) => {
   const { Navigator, Screen } = createMaterialTopTabNavigator();
   const onLogout = () => {
@@ -60,6 +76,8 @@ const PostAuthScreen = (props: any) => {
         <Screen name="Tab2">
           {(props: any) => <Tab2 {...props} onLogout={onLogout} />}
         </Screen>
+        <Screen name="Tab3" component={Tab3} />
+        <Screen name="Tab4" component={Tab4} />
       </Navigator>
     </View>
   );
