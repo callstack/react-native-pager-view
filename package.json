@@ -25,7 +25,7 @@
     "typescript": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "prepare": "bob build",
-    "release": "release-it",
+    "release": "release-it --npm.tag=pager-8",
     "release:next": "release-it --npm.tag=next --preRelease=rc",
     "bootstrap": "cd example; bun install && bun pods ",
     "bootstrap:no:pods": "bun install --cwd example",
