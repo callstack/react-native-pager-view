@@ -15,9 +15,11 @@ import com.reactnativepagerview.event.PageScrollStateChangedEvent
 import com.reactnativepagerview.event.PageSelectedEvent
 
 
-@ReactModule(name = PagerViewViewManagerImpl.NAME)
+@ReactModule(name = PagerViewViewManager.NAME)
 class PagerViewViewManager : ViewGroupManager<ComposePagerView>(), RNCViewPagerManagerInterface<ComposePagerView> {
     companion object {
+        const val NAME = "RNCViewPager"
+
         init {
             if (BuildConfig.CODEGEN_MODULE_REGISTRATION != null) {
                 SoLoader.loadLibrary(BuildConfig.CODEGEN_MODULE_REGISTRATION)
@@ -30,7 +32,7 @@ class PagerViewViewManager : ViewGroupManager<ComposePagerView>(), RNCViewPagerM
     override fun getDelegate() = mDelegate
 
     override fun getName(): String {
-        return PagerViewViewManagerImpl.NAME
+        return NAME
     }
 
     override fun receiveCommand(root: ComposePagerView, commandId: String, args: ReadableArray?) {
@@ -42,77 +44,77 @@ class PagerViewViewManager : ViewGroupManager<ComposePagerView>(), RNCViewPagerM
     }
 
     override fun addView(host: ComposePagerView, child: View, index: Int) {
-        PagerViewViewManagerImpl.addView(host, child, index)
+        host.addPage(child, index)
     }
 
-    override fun getChildCount(parent: ComposePagerView) = PagerViewViewManagerImpl.getChildCount(parent)
+    override fun getChildCount(parent: ComposePagerView) = parent.getPageCount()
 
     override fun getChildAt(parent: ComposePagerView, index: Int): View {
-        return PagerViewViewManagerImpl.getChildAt(parent, index)
+        return parent.getPageAt(index)
     }
 
     override fun removeView(parent: ComposePagerView, view: View) {
-        PagerViewViewManagerImpl.removeView(parent, view)
+        parent.removePage(view)
     }
 
     override fun removeAllViews(parent: ComposePagerView) {
-        PagerViewViewManagerImpl.removeAllViews(parent)
+        parent.removeAllPages()
     }
 
     override fun removeViewAt(parent: ComposePagerView, index: Int) {
-        PagerViewViewManagerImpl.removeViewAt(parent, index)
+        parent.removePageAt(index)
     }
 
     override fun needsCustomLayoutForChildren(): Boolean {
-        return PagerViewViewManagerImpl.needsCustomLayoutForChildren()
+        return true
     }
 
     @ReactProp(name = "scrollEnabled", defaultBoolean = true)
     override fun setScrollEnabled(view: ComposePagerView?, value: Boolean) {
         if (view != null) {
-            PagerViewViewManagerImpl.setScrollEnabled(view, value)
+            view.setScrollEnabled(value)
         }
     }
 
     @ReactProp(name = "layoutDirection")
     override fun setLayoutDirection(view: ComposePagerView?, value: String?) {
         if (view != null && value != null) {
-            PagerViewViewManagerImpl.setLayoutDirection(view, value)
+            view.setLayoutDirection(value)
         }
     }
 
     @ReactProp(name = "initialPage", defaultInt = 0)
     override fun setInitialPage(view: ComposePagerView?, value: Int) {
         if (view != null) {
-            PagerViewViewManagerImpl.setInitialPage(view, value)
+            view.setInitialPage(value)
         }
     }
 
     @ReactProp(name = "orientation")
     override fun setOrientation(view: ComposePagerView?, value: String?) {
         if (view != null && value != null) {
-            PagerViewViewManagerImpl.setOrientation(view, value)
+            view.setOrientation(value)
         }
     }
 
     @ReactProp(name = "offscreenPageLimit", defaultInt = -1)
     override fun setOffscreenPageLimit(view: ComposePagerView?, value: Int) {
         if (view != null) {
-            PagerViewViewManagerImpl.setOffscreenPageLimit(view, value)
+            view.setOffscreenPageLimit(value)
         }
     }
 
     @ReactProp(name = "pageMargin", defaultInt = 0)
     override fun setPageMargin(view: ComposePagerView?, value: Int) {
         if (view != null) {
-            PagerViewViewManagerImpl.setPageMargin(view, value)
+            view.setPageMargin(value)
         }
     }
 
     @ReactProp(name = "overScrollMode")
     override fun setOverScrollMode(view: ComposePagerView?, value: String?) {
         if (view != null && value != null) {
-            PagerViewViewManagerImpl.setOverScrollMode(view, value)
+            view.setOverScrollMode(value)
         }
     }
 
@@ -146,7 +148,7 @@ class PagerViewViewManager : ViewGroupManager<ComposePagerView>(), RNCViewPagerM
 
     override fun setScrollEnabledImperatively(view: ComposePagerView?, scrollEnabled: Boolean) {
         if (view != null) {
-            PagerViewViewManagerImpl.setScrollEnabled(view, scrollEnabled)
+            view.setScrollEnabled(scrollEnabled)
         }
     }
 
