@@ -232,7 +232,6 @@ dependencies {
     //noinspection GradleDynamicVersion
   api "com.facebook.react:react-native:+"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation 'androidx.viewpager2:viewpager2:1.1.0'
   implementation "androidx.compose.foundation:foundation:$compose_version"
   implementation "androidx.compose.runtime:runtime:$compose_version"
   implementation "androidx.compose.ui:ui:$compose_version"

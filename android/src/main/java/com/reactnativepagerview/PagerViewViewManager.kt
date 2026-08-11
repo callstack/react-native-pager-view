@@ -2,7 +2,6 @@ package com.reactnativepagerview
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.viewpager2.widget.ViewPager2
 import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
@@ -96,7 +95,7 @@ class PagerViewViewManager : ViewGroupManager<ComposePagerView>(), RNCViewPagerM
         }
     }
 
-    @ReactProp(name = "offscreenPageLimit", defaultInt = ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT)
+    @ReactProp(name = "offscreenPageLimit", defaultInt = -1)
     override fun setOffscreenPageLimit(view: ComposePagerView?, value: Int) {
         if (view != null) {
             PagerViewViewManagerImpl.setOffscreenPageLimit(view, value)
