@@ -1402,7 +1402,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-pager-view (8.0.3):
+  - react-native-pager-view (9.0.0):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1879,7 +1879,7 @@ PODS:
     - React-utils (= 0.85.3)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.85.3)
-  - ReactNativeHost (0.5.19):
+  - ReactNativeHost (0.5.21):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1903,7 +1903,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - ReactTestApp-DevSupport (5.4.1):
+  - ReactTestApp-DevSupport (5.4.4):
     - React-Core
     - React-jsi
   - ReactTestApp-Resources (1.0.0-dev)
@@ -2496,7 +2496,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: 1aa9126122d4247ffc24bf9d28d50ce923499a71
   React-microtasksnativemodule: d86581169e9bb5bb6f5fc3c5052f890016c1bf21
   React-mutationobservernativemodule: 9a0c4e866f1ef2a57acebc902ebacbdf469ae741
-  react-native-pager-view: cf6b0a0ef69c1aca3eeec7c172daf427da4920d9
+  react-native-pager-view: 91a6d37f552b9c47445cc94792ad75cfa08487b2
   react-native-safe-area-context: c1eb308f4b36372a4de4b3bdaa8ed695ec3dd461
   React-NativeModulesApple: cc6ec4767844d610e92cc358bd3ea34937438d56
   React-networking: a8ce15641ed7775d5b54a9d0d32defc367c2216e
@@ -2532,8 +2532,8 @@ SPEC CHECKSUMS:
   ReactCodegen: 9af5798e943781fd2318dab7b60f25337388047c
   ReactCommon: 3ec2a55999d296af90c24beb66c8a77dc660d3ef
   ReactNativeDependencies: 15cf32e2807e82c7dca7ef543c5a095da41dc9e2
-  ReactNativeHost: 4581e6dbba05390331bdf0958c660aad11a62f2a
-  ReactTestApp-DevSupport: a139ca54333640557f2686c1ef85c625aa0677a2
+  ReactNativeHost: 035cd87713a3b8ce508f37d721fc4433011cc200
+  ReactTestApp-DevSupport: 754876d5c25e6dd12e321a87d54bf618c71cbbd1
   ReactTestApp-Resources: 1bd9ff10e4c24f2ad87101a32023721ae923bccf
   RNGestureHandler: 5cbe8c5f54204b2175c5d2b8fe6538b02da3aaf5
   RNReanimated: 516d842d105966ae05a6a1ad7ad2a0dc1e968d6b

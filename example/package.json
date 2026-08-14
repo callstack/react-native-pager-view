@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "react-native start",
-    "pods": "pod install --project-directory=ios",
+    "pods": "bundle install && cd ios && bundle exec pod install && cd ..",
     "test": "jest",
     "lint": "eslint .",
     "mkdist": "node -e \"require('node:fs').mkdirSync('dist', { recursive: true, mode: 0o755 })\"",
@@ -21,6 +21,7 @@
     "@react-navigation/native": "^7.3.7",
     "@react-navigation/native-stack": "^7.17.9",
     "@react-navigation/stack": "^7.10.10",
+    "@rnx-kit/react-native-host": "0.5.21",
     "babel-plugin-module-resolver": "^5.0.3",
     "react": "19.2.3",
     "react-native": "0.85.3",
