@@ -7,6 +7,7 @@ import SwiftUI
 struct PagerView: View {
   @ObservedObject var props: PagerViewProps
   @State private var scrollDelegate = PagerScrollDelegate()
+  @State private var didEmitInitialPageSelection = false
   weak var delegate: PagerViewProviderDelegate?
 
   @Weak var collectionView: UICollectionView?
@@ -59,6 +60,14 @@ struct PagerView: View {
       DispatchQueue.main.async {
         collectionView?.isScrollEnabled = props.scrollEnabled
         collectionView?.bounces = props.overdrag
+      }
+
+      // `onChange` does not fire for the initial `currentPage` value. Emit the
+      // initial selection once so React Native receives `onPageSelected` for
+      // `initialPage`, just as it does for subsequent page changes.
+      if !didEmitInitialPageSelection && props.currentPage >= 0 {
+        didEmitInitialPageSelection = true
+        delegate?.onPageSelected(position: props.currentPage)
       }
     }
     .onChange(of: props.children) { newValue in
