@@ -5,13 +5,36 @@ set -uo pipefail
 
 trap 'exit 130' INT TERM
 
-PLATFORM=${1:-}
+PLATFORM=""
+RETRY_FAILED_TESTS=false
 APPID="com.pagerviewexample"
 MAX_ATTEMPTS=${MAX_ATTEMPTS:-3}
 RETRY_DELAYS=(5 15)
 DEVICE_ID=${MAESTRO_DEVICE:-${DEVICE_ID:-}}
 SHARD_COUNT=${SHARD_COUNT:-}
 SHARD_INDEX=${SHARD_INDEX:-}
+
+for argument in "$@"; do
+  case $argument in
+    ios | android )
+      if [ -n "$PLATFORM" ]; then
+        echo "Error! Only one platform may be passed."
+        exit 1
+      fi
+      PLATFORM=$argument
+      ;;
+
+    --retry )
+      RETRY_FAILED_TESTS=true
+      ;;
+
+    *)
+      echo "Error! Unknown argument '$argument'."
+      echo "Usage: $0 <android|ios> [--retry]"
+      exit 1
+      ;;
+  esac
+done
 
 # Validate passed platform
 case $PLATFORM in
@@ -108,20 +131,22 @@ for file in "${allTestFiles[@]}"; do
   idx=$((idx + 1))
 done
 
-for ((attempt = 2; attempt <= MAX_ATTEMPTS && ${#failedTests[@]} > 0; attempt++)); do
-  delay=${RETRY_DELAYS[$((attempt - 2))]:-120}
-  echo "${#failedTests[@]} test(s) failed. Retrying them in ${delay}s..."
-  sleep "$delay"
+if [ "$RETRY_FAILED_TESTS" = true ]; then
+  for ((attempt = 2; attempt <= MAX_ATTEMPTS && ${#failedTests[@]} > 0; attempt++)); do
+    delay=${RETRY_DELAYS[$((attempt - 2))]:-120}
+    echo "${#failedTests[@]} test(s) failed. Retrying them in ${delay}s..."
+    sleep "$delay"
 
-  retryTests=("${failedTests[@]}")
-  failedTests=()
+    retryTests=("${failedTests[@]}")
+    failedTests=()
 
-  for file in "${retryTests[@]}"; do
-    if ! runTest "$file" "$attempt"; then
-      failedTests+=("$file")
-    fi
+    for file in "${retryTests[@]}"; do
+      if ! runTest "$file" "$attempt"; then
+        failedTests+=("$file")
+      fi
+    done
   done
-done
+fi
 
 if [ ${#failedTests[@]} -eq 0 ]; then
     exit 0
