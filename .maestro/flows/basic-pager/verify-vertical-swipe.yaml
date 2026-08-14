@@ -1,0 +1,27 @@
+appId: com.pagerviewexample
+---
+- tapOn:
+    id: 'scroll-enabled-button'
+
+- swipe:
+    from:
+      id: 'pager-view-vertical'
+    direction: UP
+    duration: 100
+
+- assertVisible:
+    id: 'pageNumber0'
+
+- tapOn:
+    id: 'scroll-enabled-button'
+
+- swipe:
+    from:
+      id: 'pager-view-vertical'
+    direction: UP
+    duration: 100
+
+- extendedWaitUntil:
+    visible:
+      id: 'pageNumber1'
+    timeout: 5000

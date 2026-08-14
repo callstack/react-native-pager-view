@@ -10,15 +10,15 @@ tags:
 
 - extendedWaitUntil:
     visible:
-      id: 'Basic Example'
+      id: 'example-basic-horizontal'
     timeout: 15000
 
 - tapOn:
-    id: 'Basic Example'
+    id: 'example-basic-horizontal'
 
 - extendedWaitUntil:
     visible:
-      id: 'pager-view'
+      id: 'pager-view-horizontal'
     timeout: 10000
 
 - assertVisible:

@@ -43,14 +43,22 @@ function VerticalBasicPagerViewExampleScreen() {
   return <BasicPagerViewExample isHorizontal={false} />;
 }
 
-const examples = [
+type Example = {
+  component: React.ComponentType;
+  name: string;
+  testID?: string;
+};
+
+const examples: Example[] = [
   {
     component: BasicPagerViewExampleScreen,
     name: 'Basic Example',
+    testID: 'example-basic-horizontal',
   },
   {
     component: VerticalBasicPagerViewExampleScreen,
     name: 'Vertical Basic Example',
+    testID: 'example-basic-vertical',
   },
 
   { component: OnPageScrollExample, name: 'OnPageScroll Example' },
@@ -80,14 +88,14 @@ const examples = [
   },
 ];
 
-const tabViewExamples = [
+const tabViewExamples: Example[] = [
   { component: MaterialTopBarExample, name: 'MaterialTopBarExample' },
   { component: TabBarIconExample, name: 'TabBarIconExample' },
   { component: CustomTabBarExample, name: 'CustomTabBarExample' },
   { component: CoverflowExample, name: 'CoverflowExample' },
 ];
 
-const additionalExamples = [
+const additionalExamples: Example[] = [
   { component: PagerHookExample, name: 'Pager Hook Example' },
   { component: KeyboardExample, name: 'Keyboard Example' },
   { component: HeadphonesCarouselExample, name: 'Headphones Carousel Example' },
@@ -108,7 +116,7 @@ function App() {
       {examples.map((example) => (
         <TouchableOpacity
           key={example.name}
-          testID={example.name}
+          testID={example.testID ?? example.name}
           style={styles.exampleTouchable}
           onPress={() => {
             //@ts-ignore
@@ -192,6 +200,9 @@ export function Navigation() {
                 <Button
                   title={I18nManager.getConstants().isRTL ? 'RTL' : 'LTR'}
                   color="orange"
+                  testID={`layout-direction-${
+                    I18nManager.getConstants().isRTL ? 'rtl' : 'ltr'
+                  }`}
                   onPress={() => {
                     I18nManager.forceRTL(!I18nManager.getConstants().isRTL);
                     DevSettings.reload();

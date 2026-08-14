@@ -17,16 +17,17 @@ export function BasicPagerViewExample({
   isHorizontal,
 }: BasicPagerViewExampleProps) {
   const { ref, ...navigationPanel } = useNavigationPanel();
+  const orientation = isHorizontal ? 'horizontal' : 'vertical';
 
   return (
     <SafeAreaView style={styles.container}>
       <AnimatedPagerView
         {...navigationPanel}
-        testID="pager-view"
+        testID={`pager-view-${orientation}`}
         ref={ref}
         style={styles.PagerView}
         initialPage={0}
-        orientation={isHorizontal ? 'horizontal' : 'vertical'}
+        orientation={orientation}
         pageMargin={10}
       >
         {useMemo(

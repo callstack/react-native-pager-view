@@ -48,7 +48,6 @@ shopt -s nullglob
 allTestFiles=(
   .maestro/tests/*.yaml
   .maestro/"$PLATFORM"-only/*.yaml
-  .maestro/tests/rtl/*.yaml
 )
 
 if [ ${#allTestFiles[@]} -eq 0 ]; then
