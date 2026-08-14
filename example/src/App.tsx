@@ -34,6 +34,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PagerHookExample } from './PagerHookExample';
 import { NestedHorizontalScrollViewExample } from './NestedHorizontalScrollViewExample';
+import { Issue1098NestedPagerRepro } from './Issue1098NestedPagerRepro';
+import { Issue1099SafeAreaRepro } from './Issue1099SafeAreaRepro';
 
 function BasicPagerViewExampleScreen() {
   return <BasicPagerViewExample isHorizontal={true} />;
@@ -81,7 +83,6 @@ const examples: Example[] = [
     component: ScrollViewInsideExample,
     name: 'ScrollView inside PagerView Example',
   },
-
   {
     component: TabViewInsideScrollViewExample,
     name: 'TabView inside ScrollView Example',
@@ -106,7 +107,23 @@ const additionalExamples: Example[] = [
   },
 ];
 
-const allExamples = [...examples, ...tabViewExamples, ...additionalExamples];
+const ghIssues: Example[] = [
+  {
+    component: Issue1098NestedPagerRepro,
+    name: 'Issue #1098 Nested Pager Repro',
+  },
+  {
+    component: Issue1099SafeAreaRepro,
+    name: 'Issue #1099 Safe Area Repro',
+  },
+];
+
+const allExamples = [
+  ...examples,
+  ...tabViewExamples,
+  ...additionalExamples,
+  ...ghIssues,
+];
 
 function App() {
   const navigation = useNavigation();
@@ -142,6 +159,20 @@ function App() {
       ))}
       <Text>Additional Examples</Text>
       {additionalExamples.map((example) => (
+        <TouchableOpacity
+          key={example.name}
+          testID={example.name}
+          style={styles.exampleTouchable}
+          onPress={() => {
+            //@ts-ignore
+            navigation.navigate(example.name);
+          }}
+        >
+          <Text style={styles.exampleText}>{example.name}</Text>
+        </TouchableOpacity>
+      ))}
+      <Text>Github Issues Examples</Text>
+      {ghIssues.map((example) => (
         <TouchableOpacity
           key={example.name}
           testID={example.name}
