@@ -1,3 +1,6 @@
+// Vertical pager layout adapted from VTabView by Lorenzo Fiamingo:
+// https://github.com/lorenzofiamingo/swiftui-vertical-tab-view/blob/main/Sources/VTabView/VTabView.swift
+
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
@@ -8,35 +11,46 @@ struct PagerView: View {
 
   @Weak var collectionView: UICollectionView?
 
+  private var isVertical: Bool {
+    props.orientation == .vertical
+  }
+
   var body: some View {
-    TabView(selection: $props.currentPage) {
-      ForEach(Array(props.children.enumerated()), id: \.element.id) { index, child in
-        RepresentableView(view: child.view)
-          .tag(index)
+    GeometryReader { proxy in
+      TabView(selection: $props.currentPage) {
+        ForEach(Array(props.children.enumerated()), id: \.element.id) { index, child in
+          RepresentableView(view: child.view)
+            .frame(width: proxy.size.width, height: proxy.size.height)
+            .rotationEffect(isVertical ? .degrees(-90) : .zero)
+            .tag(index)
+        }
       }
-    }
-    .id(props.children.count)
-    .background(.clear)
-    .tabViewStyle(.page(indexDisplayMode: .never))
-    .ignoresSafeArea()
-    .environment(\.layoutDirection, props.layoutDirection.converted)
-    .introspect(.tabView(style: .page), on: .iOS(.v14...)) { collectionView in
-      self.collectionView = collectionView
-      collectionView.bounces = props.overdrag
-      collectionView.isScrollEnabled = props.scrollEnabled
-      collectionView.keyboardDismissMode = props.keyboardDismissMode
-      collectionView.showsVerticalScrollIndicator = false
-      collectionView.showsHorizontalScrollIndicator = false
+      .id(props.children.count)
+      .background(.clear)
+      .tabViewStyle(.page(indexDisplayMode: .never))
+      .frame(
+        width: isVertical ? proxy.size.height : proxy.size.width,
+        height: isVertical ? proxy.size.width : proxy.size.height
+      )
+      .rotationEffect(isVertical ? .degrees(90) : .zero, anchor: .topLeading)
+      .offset(x: isVertical ? proxy.size.width : 0)
+      .ignoresSafeArea()
+      .environment(\.layoutDirection, props.layoutDirection.converted)
+      .introspect(.tabView(style: .page), on: .iOS(.v14...)) { collectionView in
+        self.collectionView = collectionView
+        collectionView.bounces = props.overdrag
+        collectionView.isScrollEnabled = props.scrollEnabled
+        collectionView.keyboardDismissMode = props.keyboardDismissMode
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.showsHorizontalScrollIndicator = false
 
-      if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout {
-        layout.scrollDirection = props.orientation
-      }
-
-      if scrollDelegate.originalDelegate == nil {
-        scrollDelegate.originalDelegate = collectionView.delegate
-        scrollDelegate.delegate = delegate
-        scrollDelegate.orientation = props.orientation
-        collectionView.delegate = scrollDelegate
+        if scrollDelegate.originalDelegate == nil {
+          scrollDelegate.originalDelegate = collectionView.delegate
+          scrollDelegate.delegate = delegate
+          // VTabView-style rotation preserves TabView's horizontal collection view.
+          scrollDelegate.orientation = .horizontal
+          collectionView.delegate = scrollDelegate
+        }
       }
     }
     .onAppear {
