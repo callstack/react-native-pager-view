@@ -3,7 +3,38 @@
 # Source https://github.com/stripe/stripe-react-native/blob/master/scripts/run-maestro-tests
 set -uo pipefail
 
-trap 'exit 130' INT TERM
+if [ -t 1 ] && [ "${NO_COLOR:-}" != "1" ] && [ "${TERM:-}" != "dumb" ]; then
+  BOLD=$'\033[1m'
+  DIM=$'\033[2m'
+  RESET=$'\033[0m'
+  BLUE=$'\033[34m'
+  GREEN=$'\033[32m'
+  RED=$'\033[31m'
+  YELLOW=$'\033[33m'
+else
+  BOLD=""
+  DIM=""
+  RESET=""
+  BLUE=""
+  GREEN=""
+  RED=""
+  YELLOW=""
+fi
+
+formatDuration() {
+  local seconds=$1
+  printf '%dm %02ds' "$((seconds / 60))" "$((seconds % 60))"
+}
+
+printDivider() {
+  printf '%s%s────────────────────────────────────────────────────────────────%s\n' "$DIM" "$BLUE" "$RESET"
+}
+
+printError() {
+  printf '%sERROR%s %s\n' "$RED$BOLD" "$RESET" "$*" >&2
+}
+
+trap 'printf "\n%sINTERRUPTED%s Maestro run stopped.\n" "$YELLOW$BOLD" "$RESET"; exit 130' INT TERM
 
 PLATFORM=""
 RETRY_FAILED_TESTS=false
@@ -18,7 +49,7 @@ for argument in "$@"; do
   case $argument in
     ios | android )
       if [ -n "$PLATFORM" ]; then
-        echo "Error! Only one platform may be passed."
+        printError "Only one platform may be passed."
         exit 1
       fi
       PLATFORM=$argument
@@ -29,7 +60,7 @@ for argument in "$@"; do
       ;;
 
     *)
-      echo "Error! Unknown argument '$argument'."
+      printError "Unknown argument '$argument'."
       echo "Usage: $0 <android|ios> [--retry]"
       exit 1
       ;;
@@ -42,29 +73,27 @@ case $PLATFORM in
     ;;
 
   *)
-    echo "Error! You must pass either 'android' or 'ios'"
+    printError "You must pass either 'android' or 'ios'."
     echo ""
     exit 1
     ;;
 esac
 
 if { [ -n "$SHARD_COUNT" ] || [ -n "$SHARD_INDEX" ]; } && { [ -z "$SHARD_COUNT" ] || [ -z "$SHARD_INDEX" ]; }; then
-  echo "Error! Both SHARD_COUNT and SHARD_INDEX must be set to enable sharding."
+  printError "Both SHARD_COUNT and SHARD_INDEX must be set to enable sharding."
   exit 1
 fi
 
 if [ -n "$SHARD_COUNT" ]; then
   if ! [[ $SHARD_COUNT =~ ^[0-9]+$ ]] || ! [[ $SHARD_INDEX =~ ^[0-9]+$ ]]; then
-    echo "Error! SHARD_COUNT and SHARD_INDEX must be integers."
+    printError "SHARD_COUNT and SHARD_INDEX must be integers."
     exit 1
   fi
 
   if [ "$SHARD_COUNT" -le 0 ] || [ "$SHARD_INDEX" -lt 0 ] || [ "$SHARD_INDEX" -ge "$SHARD_COUNT" ]; then
-    echo "Error! SHARD_INDEX must satisfy 0 <= SHARD_INDEX < SHARD_COUNT. Got SHARD_INDEX=$SHARD_INDEX, SHARD_COUNT=$SHARD_COUNT"
+    printError "SHARD_INDEX must satisfy 0 <= SHARD_INDEX < SHARD_COUNT. Got SHARD_INDEX=$SHARD_INDEX, SHARD_COUNT=$SHARD_COUNT"
     exit 1
   fi
-
-  echo "Sharding enabled: SHARD_INDEX=$SHARD_INDEX SHARD_COUNT=$SHARD_COUNT"
 fi
 
 shopt -s nullglob
@@ -74,14 +103,28 @@ allTestFiles=(
 )
 
 if [ ${#allTestFiles[@]} -eq 0 ]; then
-  echo "Error! No Maestro test files found for platform '$PLATFORM'."
+  printError "No Maestro test files found for platform '$PLATFORM'."
   exit 1
 fi
 
 mkdir -p .maestro/debug-output
 
+testFiles=()
+for idx in "${!allTestFiles[@]}"; do
+  if [ -z "$SHARD_COUNT" ] || [ "$((idx % SHARD_COUNT))" -eq "$SHARD_INDEX" ]; then
+    testFiles+=("${allTestFiles[$idx]}")
+  fi
+done
+
+if [ ${#testFiles[@]} -eq 0 ]; then
+  printError "Shard $SHARD_INDEX/$SHARD_COUNT has no Maestro tests to run."
+  exit 1
+fi
+
 failedTests=()
-idx=0
+totalTests=${#testFiles[@]}
+runStartedAt=$(date +%s)
+retryCount=0
 
 runTest() {
   local file=$1
@@ -113,45 +156,106 @@ runTest() {
   "${maestroCommand[@]}"
 }
 
+runAndReport() {
+  local file=$1
+  local attempt=$2
+  local position=$3
+  local testName
+  local startedAt
+  local finishedAt
+  local duration
+
+  testName=$(basename "${file%.*}")
+  startedAt=$(date +%s)
+
+  printf '\n%s▶%s %s[%d/%d]%s %s%s%s' \
+    "$BLUE$BOLD" "$RESET" "$DIM" "$position" "$totalTests" "$RESET" "$BOLD" "$testName" "$RESET"
+  if [ "$attempt" -gt 1 ]; then
+    printf ' %s(retry %d/%d)%s' "$YELLOW" "$((attempt - 1))" "$((MAX_ATTEMPTS - 1))" "$RESET"
+  fi
+  printf '\n%s  %s%s\n' "$DIM" "$file" "$RESET"
+
+  if runTest "$file" "$attempt"; then
+    finishedAt=$(date +%s)
+    duration=$((finishedAt - startedAt))
+    printf '%s✓ PASS%s %s%s%s\n' "$GREEN$BOLD" "$RESET" "$DIM" "($(formatDuration "$duration"))" "$RESET"
+    return 0
+  fi
+
+  finishedAt=$(date +%s)
+  duration=$((finishedAt - startedAt))
+  printf '%s✗ FAIL%s %s%s%s\n' "$RED$BOLD" "$RESET" "$DIM" "($(formatDuration "$duration"))" "$RESET"
+  return 1
+}
+
+printDivider
+printf '%sMAESTRO TEST RUN%s\n' "$BOLD" "$RESET"
+printf '  Platform  %s%s%s\n' "$BLUE" "$PLATFORM" "$RESET"
+printf '  Tests     %s%d%s' "$BOLD" "$totalTests" "$RESET"
+if [ -n "$SHARD_COUNT" ]; then
+  printf ' %s(shard %d/%d)%s' "$DIM" "$((SHARD_INDEX + 1))" "$SHARD_COUNT" "$RESET"
+fi
+printf '\n'
+printf '  Device    %s%s%s\n' "$DIM" "${DEVICE_ID:-default}" "$RESET"
+printf '  Retries   %s%s%s\n' "$DIM" "$([ "$RETRY_FAILED_TESTS" = true ] && printf '%d attempts' "$MAX_ATTEMPTS" || printf 'disabled')" "$RESET"
+printf '  Artifacts %s.maestro/debug-output%s\n' "$DIM" "$RESET"
+printDivider
+
 # Run every test once before retrying. This prevents one flaky test from
 # delaying the first attempt of every test after it.
-for file in "${allTestFiles[@]}"; do
-  if [ -n "$SHARD_COUNT" ]; then
-    mod=$((idx % SHARD_COUNT))
-    if [ "$mod" -ne "$SHARD_INDEX" ]; then
-      idx=$((idx + 1))
-      continue
-    fi
-  fi
-
-  if ! runTest "$file" 1; then
+for position in "${!testFiles[@]}"; do
+  file=${testFiles[$position]}
+  if ! runAndReport "$file" 1 "$((position + 1))"; then
     failedTests+=("$file")
   fi
-
-  idx=$((idx + 1))
 done
 
 if [ "$RETRY_FAILED_TESTS" = true ]; then
   for ((attempt = 2; attempt <= MAX_ATTEMPTS && ${#failedTests[@]} > 0; attempt++)); do
     delay=${RETRY_DELAYS[$((attempt - 2))]:-120}
-    echo "${#failedTests[@]} test(s) failed. Retrying them in ${delay}s..."
+    retryCount=$((retryCount + ${#failedTests[@]}))
+    printf '\n%s↻ RETRY%s %d test(s) retrying in %ss (attempt %d/%d)\n' \
+      "$YELLOW$BOLD" "$RESET" "${#failedTests[@]}" "$delay" "$attempt" "$MAX_ATTEMPTS"
     sleep "$delay"
 
     retryTests=("${failedTests[@]}")
     failedTests=()
 
     for file in "${retryTests[@]}"; do
-      if ! runTest "$file" "$attempt"; then
+      for position in "${!testFiles[@]}"; do
+        [ "${testFiles[$position]}" = "$file" ] && break
+      done
+      if ! runAndReport "$file" "$attempt" "$((position + 1))"; then
         failedTests+=("$file")
       fi
     done
   done
 fi
 
+runFinishedAt=$(date +%s)
+runDuration=$((runFinishedAt - runStartedAt))
+passedTests=$((totalTests - ${#failedTests[@]}))
+printDivider
 if [ ${#failedTests[@]} -eq 0 ]; then
-    exit 0
+  printf '%s✓ ALL TESTS PASSED%s %d/%d tests in %s' \
+    "$GREEN$BOLD" "$RESET" "$passedTests" "$totalTests" "$(formatDuration "$runDuration")"
 else
-    echo "These tests failed:"
-    printf '%s\n' "${failedTests[@]}"
-    exit 1
+  printf '%s✗ TEST RUN FAILED%s %d passed, %d failed, %d total in %s' \
+    "$RED$BOLD" "$RESET" "$passedTests" "${#failedTests[@]}" "$totalTests" "$(formatDuration "$runDuration")"
+fi
+if [ "$retryCount" -gt 0 ]; then
+  printf ' %s(%d retried)%s' "$DIM" "$retryCount" "$RESET"
+fi
+printf '\n'
+
+if [ ${#failedTests[@]} -eq 0 ]; then
+  exit 0
+else
+  printf '%sFailed tests:%s\n' "$RED$BOLD" "$RESET"
+  for file in "${failedTests[@]}"; do
+    testName=$(basename "${file%.*}")
+    printf '  %s•%s %s %s(artifacts: .maestro/debug-output/%s)%s\n' \
+      "$RED" "$RESET" "$file" "$DIM" "$testName" "$RESET"
+  done
+  exit 1
 fi
