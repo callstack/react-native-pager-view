@@ -60,6 +60,38 @@ mkdir -p .maestro/debug-output
 failedTests=()
 idx=0
 
+runTest() {
+  local file=$1
+  local attempt=$2
+  local testName
+  local artifactDir
+  local maestroCommand
+
+  testName=$(basename "${file%.*}")
+  if [ "$attempt" -eq 1 ]; then
+    artifactDir=".maestro/debug-output/$testName"
+  else
+    artifactDir=".maestro/debug-output/$testName-retry-$((attempt - 1))"
+  fi
+
+  maestroCommand=(
+    maestro test
+    -p "$PLATFORM"
+    "$file"
+    -e APP_ID="$APPID"
+    --debug-output "$artifactDir"
+    --flatten-debug-output
+  )
+
+  if [ -n "$DEVICE_ID" ]; then
+    maestroCommand+=(--device "$DEVICE_ID")
+  fi
+
+  "${maestroCommand[@]}"
+}
+
+# Run every test once before retrying. This prevents one flaky test from
+# delaying the first attempt of every test after it.
 for file in "${allTestFiles[@]}"; do
   if [ -n "$SHARD_COUNT" ]; then
     mod=$((idx % SHARD_COUNT))
@@ -69,46 +101,26 @@ for file in "${allTestFiles[@]}"; do
     fi
   fi
 
-  testName=$(basename "${file%.*}")
-  success=false
-
-  for attempt in $(seq 1 "$MAX_ATTEMPTS"); do
-    if [ "$attempt" -eq 1 ]; then
-      artifactDir=".maestro/debug-output/$testName"
-    else
-      artifactDir=".maestro/debug-output/$testName-retry-$((attempt - 1))"
-    fi
-
-    maestroCommand=(
-      maestro test
-      -p "$PLATFORM"
-      "$file"
-      -e APP_ID="$APPID"
-      --debug-output "$artifactDir"
-      --flatten-debug-output
-    )
-
-    if [ -n "$DEVICE_ID" ]; then
-      maestroCommand+=(--device "$DEVICE_ID")
-    fi
-
-    if "${maestroCommand[@]}"; then
-      success=true
-      break
-    fi
-
-    if [ "$attempt" -lt "$MAX_ATTEMPTS" ]; then
-      delay=${RETRY_DELAYS[$((attempt - 1))]:-120}
-      echo "Test ${file} failed. Retrying in ${delay}s..."
-      sleep "$delay"
-    fi
-  done
-
-  if [ "$success" = false ]; then
+  if ! runTest "$file" 1; then
     failedTests+=("$file")
   fi
 
   idx=$((idx + 1))
+done
+
+for ((attempt = 2; attempt <= MAX_ATTEMPTS && ${#failedTests[@]} > 0; attempt++)); do
+  delay=${RETRY_DELAYS[$((attempt - 2))]:-120}
+  echo "${#failedTests[@]} test(s) failed. Retrying them in ${delay}s..."
+  sleep "$delay"
+
+  retryTests=("${failedTests[@]}")
+  failedTests=()
+
+  for file in "${retryTests[@]}"; do
+    if ! runTest "$file" "$attempt"; then
+      failedTests+=("$file")
+    fi
+  done
 done
 
 if [ ${#failedTests[@]} -eq 0 ]; then
