@@ -36,6 +36,10 @@ import { PagerHookExample } from './PagerHookExample';
 import { NestedHorizontalScrollViewExample } from './NestedHorizontalScrollViewExample';
 import { Issue1098NestedPagerRepro } from './Issue1098NestedPagerRepro';
 import { Issue1099SafeAreaRepro } from './Issue1099SafeAreaRepro';
+import {
+  ModalSetPageHomeScreen,
+  ModalSetPageModalScreen,
+} from './ModalSetPageExample';
 
 function BasicPagerViewExampleScreen() {
   return <BasicPagerViewExample isHorizontal={true} />;
@@ -109,6 +113,11 @@ const additionalExamples: Example[] = [
 
 const ghIssues: Example[] = [
   {
+    component: ModalSetPageHomeScreen,
+    name: 'Issue #1083 Modal SetPage Repro',
+    testID: 'issue-1083-modal-set-page-repro',
+  },
+  {
     component: Issue1098NestedPagerRepro,
     name: 'Issue #1098 Nested Pager Repro',
   },
@@ -175,7 +184,7 @@ function App() {
       {ghIssues.map((example) => (
         <TouchableOpacity
           key={example.name}
-          testID={example.name}
+          testID={example.testID}
           style={styles.exampleTouchable}
           onPress={() => {
             //@ts-ignore
@@ -249,6 +258,14 @@ export function Navigation() {
               component={example.component}
             />
           ))}
+          <NavigationStack.Screen
+            name="ModalSetPageModal"
+            component={ModalSetPageModalScreen}
+            options={{
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+            }}
+          />
         </NavigationStack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

@@ -1,0 +1,19 @@
+appId: ${APP_ID}
+---
+- launchApp
+
+- scrollUntilVisible:
+    element:
+      id: 'issue-1083-modal-set-page-repro'
+    direction: DOWN
+
+- tapOn:
+    id: 'issue-1083-modal-set-page-repro'
+
+- extendedWaitUntil:
+    visible:
+      id: 'issue-1083-requested-page'
+    timeout: 10000
+
+- assertVisible: 'Last requested page: 0'
+- assertVisible: 'Page 0'

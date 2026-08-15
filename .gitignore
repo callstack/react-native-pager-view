@@ -82,3 +82,4 @@ example/ios/PagerViewExample.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+.agent-device

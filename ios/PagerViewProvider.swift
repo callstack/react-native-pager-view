@@ -118,6 +118,36 @@ import UIKit
   }
 
   @objc public func goTo(index: Int, animated: Bool) {
+    if animated && hasPresentedViewController() {
+      // A native-stack modal can begin its dismissal in the same JavaScript
+      // callback as `setPage`. Starting a SwiftUI TabView animation in that
+      // transaction makes TabView apply the selection twice, landing one page
+      // too far. Let UIKit register the dismissal first, then perform the
+      // pager animation after the transition has completed.
+      // Native-stack begins its transition on a following run-loop pass.
+      // Waiting briefly lets its transition coordinator become observable.
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
+        self?.setPageWhenPresentationTransitionCompletes(index: index)
+      }
+    } else {
+      setPage(index: index, animated: animated)
+    }
+  }
+
+  private func setPageWhenPresentationTransitionCompletes(index: Int) {
+    guard let transitionCoordinator = activeTransitionCoordinator() else {
+      setPage(index: index, animated: true)
+      return
+    }
+
+    transitionCoordinator.animate(alongsideTransition: nil) { [weak self] _ in
+      DispatchQueue.main.async {
+        self?.setPage(index: index, animated: true)
+      }
+    }
+  }
+
+  private func setPage(index: Int, animated: Bool) {
     if animated {
       withAnimation {
         props.currentPage = index
@@ -125,6 +155,40 @@ import UIKit
     } else {
       props.currentPage = index
     }
+  }
+
+  /// Finds the native-stack transition that may be dismissing a modal over
+  /// this pager. The coordinator becomes available only after the imperative
+  /// command has returned to the main run loop.
+  private func activeTransitionCoordinator() -> UIViewControllerTransitionCoordinator? {
+    var viewController = reactViewController()
+    while let current = viewController {
+      if let transitionCoordinator = current.transitionCoordinator {
+        return transitionCoordinator
+      }
+      viewController = current.parent
+    }
+
+    var rootViewController = window?.rootViewController
+    while let current = rootViewController {
+      if let transitionCoordinator = current.transitionCoordinator {
+        return transitionCoordinator
+      }
+      rootViewController = current.presentedViewController
+    }
+
+    return nil
+  }
+
+  private func hasPresentedViewController() -> Bool {
+    var viewController = window?.rootViewController
+    while let current = viewController {
+      if current.presentedViewController != nil {
+        return true
+      }
+      viewController = current.parent
+    }
+    return false
   }
 
   private func setupView() {
