@@ -34,12 +34,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PagerHookExample } from './PagerHookExample';
 import { NestedHorizontalScrollViewExample } from './NestedHorizontalScrollViewExample';
-import { Issue1098NestedPagerRepro } from './Issue1098NestedPagerRepro';
-import { Issue1099SafeAreaRepro } from './Issue1099SafeAreaRepro';
+import { Issue1098NestedPagerRepro } from './gh-issues/Issue1098NestedPagerRepro';
+import { Issue1099SafeAreaRepro } from './gh-issues/Issue1099SafeAreaRepro';
 import {
-  ModalSetPageHomeScreen,
+  Issue1083ModalSetPageExample,
   ModalSetPageModalScreen,
-} from './ModalSetPageExample';
+} from './gh-issues/Issue1083ModalSetPageExample';
 
 function BasicPagerViewExampleScreen() {
   return <BasicPagerViewExample isHorizontal={true} />;
@@ -113,9 +113,8 @@ const additionalExamples: Example[] = [
 
 const ghIssues: Example[] = [
   {
-    component: ModalSetPageHomeScreen,
+    component: Issue1083ModalSetPageExample,
     name: 'Issue #1083 Modal SetPage Repro',
-    testID: 'issue-1083-modal-set-page-repro',
   },
   {
     component: Issue1098NestedPagerRepro,
@@ -184,7 +183,7 @@ function App() {
       {ghIssues.map((example) => (
         <TouchableOpacity
           key={example.name}
-          testID={example.testID}
+          testID={example.name}
           style={styles.exampleTouchable}
           onPress={() => {
             //@ts-ignore

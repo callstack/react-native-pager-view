@@ -20,7 +20,7 @@ export type ModalSetPageParamList = {
 const PAGES = ['Page 0', 'Page 1', 'Page 2'];
 const PAGE_COLORS = ['#fde2e2', '#e2fde6', '#e2e8fd'];
 
-export function ModalSetPageHomeScreen() {
+export function Issue1083ModalSetPageExample() {
   const pagerRef = React.useRef<PagerView>(null);
   const [currentPage, setCurrentPage] = React.useState(0);
   const navigation =
