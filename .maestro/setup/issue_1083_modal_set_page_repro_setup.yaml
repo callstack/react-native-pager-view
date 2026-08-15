@@ -4,11 +4,11 @@ appId: ${APP_ID}
 
 - scrollUntilVisible:
     element:
-      id: 'issue-1083-modal-set-page-repro'
+      id: 'Issue #1083 Modal SetPage Repro'
     direction: DOWN
 
 - tapOn:
-    id: 'issue-1083-modal-set-page-repro'
+    id: 'Issue #1083 Modal SetPage Repro'
 
 - extendedWaitUntil:
     visible:
