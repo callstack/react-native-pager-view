@@ -91,6 +91,25 @@ import UIKit
     }
   }
 
+  override public func willMove(toWindow newWindow: UIWindow?) {
+    super.willMove(toWindow: newWindow)
+    if newWindow != nil {
+      syncParentViewController()
+    }
+  }
+
+  override public func willMove(toSuperview newSuperview: UIView?) {
+    if let parentViewController = newSuperview?.reactViewController() {
+      syncParentViewController(to: parentViewController)
+    }
+    super.willMove(toSuperview: newSuperview)
+  }
+
+  override public func didMoveToSuperview() {
+    super.didMoveToSuperview()
+    syncParentViewController()
+  }
+
   override public func layoutSubviews() {
     super.layoutSubviews()
     if window != nil {
@@ -110,6 +129,7 @@ import UIKit
 
   private func setupView() {
     if self.hostingController != nil {
+      syncParentViewController()
       return
     }
 
@@ -129,6 +149,22 @@ import UIKit
     hostingController.view.translatesAutoresizingMaskIntoConstraints = false
     hostingController.view.pinEdges(to: self)
 
+    hostingController.didMove(toParent: parentViewController)
+  }
+
+  /// SwiftUI can recreate the page controller around this React view while
+  /// preserving the view itself. Keep the hosting controller attached to the
+  /// current page controller so UIKit's view-controller hierarchy stays valid.
+  private func syncParentViewController(to parentViewController: UIViewController? = nil) {
+    guard let hostingController,
+          let parentViewController = parentViewController ?? reactViewController(),
+          hostingController.parent !== parentViewController else {
+      return
+    }
+
+    hostingController.willMove(toParent: nil)
+    hostingController.removeFromParent()
+    parentViewController.addChild(hostingController)
     hostingController.didMove(toParent: parentViewController)
   }
 }

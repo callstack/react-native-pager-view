@@ -19,6 +19,12 @@ bun run maestro:test:android
 Use `bun run maestro:smoke` to run only the smoke flow.
 `maestro:debug` writes failure artifacts to `.maestro/debug-output`.
 
-The smoke flow targets the example app ID `com.pagerviewexample` and verifies the Basic Example pager using stable `testID` selectors.
-Additional Basic Example regression flows live in `.maestro/basic_example`.
-Nested PagerView regression flows live in `.maestro/nested_pager_view_example`.
+The smoke flow targets the example app ID `com.pagerviewexample` and verifies the horizontal pager using stable `testID` selectors.
+
+Basic PagerView regression coverage is split into three deterministic flows:
+
+- `tests/pager_basic_example.yaml` verifies horizontal paging in LTR.
+- `tests/pager_vertical_basic_example.yaml` verifies vertical paging in LTR.
+- `tests/pager_rtl_example.yaml` switches to RTL before verifying the reversed horizontal gesture.
+
+Shared setup and assertions live in `flows/basic-pager`. Each flow resets the app to the required layout direction, so a failed RTL run cannot affect the next test.

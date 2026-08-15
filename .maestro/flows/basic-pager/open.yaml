@@ -1,0 +1,12 @@
+appId: com.pagerviewexample
+---
+- tapOn:
+    id: ${EXAMPLE_ID}
+
+- extendedWaitUntil:
+    visible:
+      id: ${PAGER_ID}
+    timeout: 10000
+
+- assertVisible:
+    id: 'pageNumber0'

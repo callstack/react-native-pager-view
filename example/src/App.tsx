@@ -34,6 +34,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PagerHookExample } from './PagerHookExample';
 import { NestedHorizontalScrollViewExample } from './NestedHorizontalScrollViewExample';
+import { Issue1098NestedPagerRepro } from './Issue1098NestedPagerRepro';
+import { Issue1099SafeAreaRepro } from './Issue1099SafeAreaRepro';
 
 function BasicPagerViewExampleScreen() {
   return <BasicPagerViewExample isHorizontal={true} />;
@@ -43,14 +45,22 @@ function VerticalBasicPagerViewExampleScreen() {
   return <BasicPagerViewExample isHorizontal={false} />;
 }
 
-const examples = [
+type Example = {
+  component: React.ComponentType;
+  name: string;
+  testID?: string;
+};
+
+const examples: Example[] = [
   {
     component: BasicPagerViewExampleScreen,
     name: 'Basic Example',
+    testID: 'example-basic-horizontal',
   },
   {
     component: VerticalBasicPagerViewExampleScreen,
     name: 'Vertical Basic Example',
+    testID: 'example-basic-vertical',
   },
 
   { component: OnPageScrollExample, name: 'OnPageScroll Example' },
@@ -73,21 +83,20 @@ const examples = [
     component: ScrollViewInsideExample,
     name: 'ScrollView inside PagerView Example',
   },
-
   {
     component: TabViewInsideScrollViewExample,
     name: 'TabView inside ScrollView Example',
   },
 ];
 
-const tabViewExamples = [
+const tabViewExamples: Example[] = [
   { component: MaterialTopBarExample, name: 'MaterialTopBarExample' },
   { component: TabBarIconExample, name: 'TabBarIconExample' },
   { component: CustomTabBarExample, name: 'CustomTabBarExample' },
   { component: CoverflowExample, name: 'CoverflowExample' },
 ];
 
-const additionalExamples = [
+const additionalExamples: Example[] = [
   { component: PagerHookExample, name: 'Pager Hook Example' },
   { component: KeyboardExample, name: 'Keyboard Example' },
   { component: HeadphonesCarouselExample, name: 'Headphones Carousel Example' },
@@ -98,7 +107,23 @@ const additionalExamples = [
   },
 ];
 
-const allExamples = [...examples, ...tabViewExamples, ...additionalExamples];
+const ghIssues: Example[] = [
+  {
+    component: Issue1098NestedPagerRepro,
+    name: 'Issue #1098 Nested Pager Repro',
+  },
+  {
+    component: Issue1099SafeAreaRepro,
+    name: 'Issue #1099 Safe Area Repro',
+  },
+];
+
+const allExamples = [
+  ...examples,
+  ...tabViewExamples,
+  ...additionalExamples,
+  ...ghIssues,
+];
 
 function App() {
   const navigation = useNavigation();
@@ -108,7 +133,7 @@ function App() {
       {examples.map((example) => (
         <TouchableOpacity
           key={example.name}
-          testID={example.name}
+          testID={example.testID ?? example.name}
           style={styles.exampleTouchable}
           onPress={() => {
             //@ts-ignore
@@ -134,6 +159,20 @@ function App() {
       ))}
       <Text>Additional Examples</Text>
       {additionalExamples.map((example) => (
+        <TouchableOpacity
+          key={example.name}
+          testID={example.name}
+          style={styles.exampleTouchable}
+          onPress={() => {
+            //@ts-ignore
+            navigation.navigate(example.name);
+          }}
+        >
+          <Text style={styles.exampleText}>{example.name}</Text>
+        </TouchableOpacity>
+      ))}
+      <Text>Github Issues Examples</Text>
+      {ghIssues.map((example) => (
         <TouchableOpacity
           key={example.name}
           testID={example.name}
@@ -192,6 +231,9 @@ export function Navigation() {
                 <Button
                   title={I18nManager.getConstants().isRTL ? 'RTL' : 'LTR'}
                   color="orange"
+                  testID={`layout-direction-${
+                    I18nManager.getConstants().isRTL ? 'rtl' : 'ltr'
+                  }`}
                   onPress={() => {
                     I18nManager.forceRTL(!I18nManager.getConstants().isRTL);
                     DevSettings.reload();

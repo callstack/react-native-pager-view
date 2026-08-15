@@ -10,6 +10,7 @@
         "@react-navigation/native": "^7.3.7",
         "@react-navigation/native-stack": "^7.17.9",
         "@react-navigation/stack": "^7.10.10",
+        "@rnx-kit/react-native-host": "0.5.21",
         "babel-plugin-module-resolver": "^5.0.3",
         "react": "19.2.3",
         "react-native": "0.85.3",
@@ -482,7 +483,7 @@
 
     "@rnx-kit/metro-config": ["@rnx-kit/metro-config@2.2.4", "", { "dependencies": { "@rnx-kit/tools-node": "^3.0.0", "@rnx-kit/tools-react-native": "^2.3.1", "@rnx-kit/tools-workspaces": "^0.2.0" }, "peerDependencies": { "@react-native/metro-config": "*", "react": "*", "react-native": "*" }, "optionalPeers": ["@react-native/metro-config"] }, "sha512-OPdGePL/RuzhbyM8hzUR3qcp1PVNju8G5D9f2evYfiowjorYRAP2lIey/zmbGDNezZSTbAzvHxN3BeEYWR4wKQ=="],
 
-    "@rnx-kit/react-native-host": ["@rnx-kit/react-native-host@0.5.20", "", { "peerDependencies": { "react-native": ">=0.66" } }, "sha512-QOi/D+QuTT6ZCq3DVHiFXqna3uDWZIlpNgdBYT2D2eRspAVOssgkRAOxHMk0JvKUFa8iAh00y7y2sjEAELja/Q=="],
+    "@rnx-kit/react-native-host": ["@rnx-kit/react-native-host@0.5.21", "", { "peerDependencies": { "react-native": ">=0.66" } }, "sha512-iXB8o7j/ervwYQk7tPANpq7/3t6zmji1vt699MRpZR31d/aMfjXTyTogUXBaJxMQtqGlrE8HwGlkJn3F0j3MOw=="],
 
     "@rnx-kit/tools-filesystem": ["@rnx-kit/tools-filesystem@0.2.0", "", { "peerDependencies": { "memfs": ">=4.0.0" }, "optionalPeers": ["memfs"] }, "sha512-r5YTy8yy8DWMGdM8yNFlFdX8gE71CHJ2KtpsdSAQN4mol9FFMoAYMwIHrz1i5TyUbtdLd7N/lwWCAK0ZxJYqyQ=="],
 

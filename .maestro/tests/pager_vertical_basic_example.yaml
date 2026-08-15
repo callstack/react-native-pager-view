@@ -1,45 +1,12 @@
 appId: com.pagerviewexample
 ---
-- runFlow: ../setup/pager_vertical_basic_example_setup.yaml
-- tapOn: 'Scroll Enabled'
-- swipe:
-    from:
-      id: 'pager-view'
-    direction: UP
-    duration: 100
-- assertVisible:
-    text: 'page number 0'
-- tapOn: 'Scroll Disabled'
-- swipe:
-    from:
-      id: 'pager-view'
-    direction: UP
-    duration: 100
-- assertVisible:
-    text: 'page number 1'
-- tapOn:
-    id: 'next-page-button'
-- assertVisible:
-    text: 'page number 2'
-- tapOn:
-    id: 'prev-page-button'
-- assertVisible:
-    text: 'page number 1'
-- tapOn:
-    id: 'start-page-button'
-- assertVisible:
-    text: 'page number 0'
-- tapOn:
-    id: 'last-page-button'
-- assertVisible:
-    text: 'page number 9'
-- tapOn:
-    id: 'remove-page-button'
-- assertVisible:
-    text: 'page number 8'
-- tapOn:
-    id: 'add-page-button'
-- tapOn:
-    id: 'next-page-button'
-- assertVisible:
-    text: 'page number 9'
+- runFlow: ../flows/basic-pager/ensure-ltr.yaml
+
+- runFlow:
+    file: ../flows/basic-pager/open.yaml
+    env:
+      EXAMPLE_ID: 'example-basic-vertical'
+      PAGER_ID: 'pager-view-vertical'
+
+- runFlow: ../flows/basic-pager/verify-vertical-swipe.yaml
+- runFlow: ../flows/basic-pager/verify-controls.yaml
