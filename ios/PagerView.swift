@@ -38,6 +38,11 @@ struct PagerView: View {
       .ignoresSafeArea()
       .environment(\.layoutDirection, props.layoutDirection.converted)
       .introspect(.tabView(style: .page), on: .iOS(.v14...)) { collectionView in
+        if let previousCollectionView = self.collectionView,
+           previousCollectionView !== collectionView,
+           previousCollectionView.delegate === scrollDelegate {
+          previousCollectionView.delegate = scrollDelegate.originalDelegate
+        }
         self.collectionView = collectionView
         collectionView.bounces = props.overdrag
         collectionView.isScrollEnabled = props.scrollEnabled
@@ -45,7 +50,7 @@ struct PagerView: View {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
 
-        if scrollDelegate.originalDelegate == nil {
+        if collectionView.delegate !== scrollDelegate {
           scrollDelegate.originalDelegate = collectionView.delegate
           scrollDelegate.delegate = delegate
           // VTabView-style rotation preserves TabView's horizontal collection view.

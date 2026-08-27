@@ -20,6 +20,7 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   ]
   
   func scrollViewDidScroll(_ scrollView: UIScrollView) {
+    defer { originalDelegate?.scrollViewDidScroll?(scrollView) }
     let isHorizontal = orientation == .horizontal
     let pageSize = isHorizontal ? scrollView.frame.width : scrollView.frame.height
     let contentOffset = isHorizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
@@ -31,7 +32,6 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
     
     let eventData = OnPageScrollEventData(position: position, offset: offset)
     delegate?.onPageScroll(data: eventData)
-    originalDelegate?.scrollViewDidScroll?(scrollView)
   }
 
   /// Emits a final onPageScroll with offset 0 before transitioning to idle,
@@ -86,11 +86,10 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   }
   
   override func responds(to aSelector: Selector!) -> Bool {
-    handledSelectors.contains(aSelector) || (originalDelegate?.responds(to: aSelector) ?? false)
+    super.responds(to: aSelector) || handledSelectors.contains(aSelector) || (originalDelegate?.responds(to: aSelector) ?? false)
   }
   
   override func forwardingTarget(for aSelector: Selector!) -> Any? {
     handledSelectors.contains(aSelector) ? nil : originalDelegate
   }
 }
-
