@@ -118,6 +118,9 @@ import UIKit
   }
 
   @objc public func goTo(index: Int, animated: Bool) {
+    guard props.children.indices.contains(index) else {
+      return
+    }
     if animated {
       withAnimation {
         props.currentPage = index
