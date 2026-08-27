@@ -102,17 +102,22 @@ using namespace facebook::react;
 #pragma mark - PagerViewProviderDelegate
 
 - (void)onPageScrollWithData:(OnPageScrollEventData *)data {
-  const auto eventEmitter = [self pagerEventEmitter];
   [self sendScrollEventsForPosition:data.position offset:data.offset];
 }
 
 - (void)onPageSelectedWithPosition:(NSInteger)position {
   const auto eventEmitter = [self pagerEventEmitter];
+  if (!eventEmitter) {
+    return;
+  }
   eventEmitter->onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
 }
 
 - (void)onPageScrollStateChangedWithState:(enum PageScrollState)state {
   const auto eventEmitter = [self pagerEventEmitter];
+  if (!eventEmitter) {
+    return;
+  }
 
   RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState scrollState;
 
@@ -171,6 +176,9 @@ using namespace facebook::react;
 
 - (void)sendScrollEventsForPosition:(NSInteger)position offset:(CGFloat)offset {
   const auto eventEmitter = [self pagerEventEmitter];
+  if (!eventEmitter) {
+    return;
+  }
   eventEmitter->onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{
     .position = static_cast<double>(position),
     .offset = offset
