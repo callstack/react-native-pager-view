@@ -238,6 +238,7 @@ repositories {
 
 def kotlin_version = getExtOrDefault('kotlinVersion')
 def compose_version = getExtOrDefault('composeVersion')
+def lifecycle_version = getExtOrDefault('lifecycleVersion')
 
 dependencies {
     //noinspection GradleDynamicVersion
@@ -248,7 +249,7 @@ dependencies {
   implementation "androidx.compose.ui:ui:$compose_version"
   // Needed for ComposeViewLifecycleOwner (see ComposePagerView.kt), which
   // gives the ComposeView a self-owned Lifecycle instead of the ambient one.
-  implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.1"
+  implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
 }
 
 if (isNewArchitectureEnabled()) {
