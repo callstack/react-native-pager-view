@@ -21,12 +21,10 @@ const getBasePages = (pages: number) =>
 
 export function useNavigationPanel(
   pagesAmount: number = 10,
-  onPageSelectedCallback: (position: number) => void = () => {}
+  onPageSelectedCallback?: (position: number) => void
 ) {
   const ref = useRef<PagerView>(null);
-  const [pages, setPages] = useState<CreatePage[]>(
-    useMemo(() => getBasePages(pagesAmount), [pagesAmount])
-  );
+  const [pages, setPages] = useState<CreatePage[]>(() => getBasePages(pagesAmount));
   const [activePage, setActivePage] = useState(0);
   const [isAnimated, setIsAnimated] = useState(true);
   const [overdragEnabled, setOverdragEnabled] = useState(false);
@@ -34,9 +32,9 @@ export function useNavigationPanel(
   const [scrollState, setScrollState] = useState('idle');
   const [logs, setLogs] = useState<EventLog[]>([]);
   const [progress, setProgress] = useState({ position: 0, offset: 0 });
-  const onPageScrollOffset = useRef(new Animated.Value(0)).current;
-  const onPageScrollPosition = useRef(new Animated.Value(0)).current;
-  const onPageSelectedPosition = useRef(new Animated.Value(0)).current;
+  const [onPageScrollOffset] = useState(() => new Animated.Value(0));
+  const [onPageScrollPosition] = useState(() => new Animated.Value(0));
+  const [onPageSelectedPosition] = useState(() => new Animated.Value(0));
 
   const setPage = useCallback(
     (page: number) =>
@@ -101,8 +99,7 @@ export function useNavigationPanel(
           useNativeDriver: true,
         }
       ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [addLog, onPageScrollOffset, onPageScrollPosition]
   );
 
   const onPageSelected = useMemo(
@@ -117,13 +114,12 @@ export function useNavigationPanel(
               timestamp: new Date(),
             });
             setActivePage(position);
-            onPageSelectedCallback(position);
+            onPageSelectedCallback?.(position);
           },
           useNativeDriver: true,
         }
       ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [addLog, onPageSelectedCallback, onPageSelectedPosition]
   );
 
   const onPageScrollStateChanged = useCallback(
@@ -135,8 +131,7 @@ export function useNavigationPanel(
       });
       setScrollState(e.nativeEvent.pageScrollState);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [addLog]
   );
 
   return {
