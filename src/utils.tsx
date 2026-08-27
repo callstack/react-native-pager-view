@@ -6,6 +6,9 @@ export const childrenWithOverriddenStyle = (
   _pageMargin = 0
 ) => {
   return Children.map(children, (child) => {
+    if (child == null) {
+      return null;
+    }
     const element = child as React.ReactElement<any>;
     return (
       <View style={StyleSheet.absoluteFill} collapsable={false}>
