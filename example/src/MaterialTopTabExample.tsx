@@ -4,6 +4,9 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 
 import { View, Text, Button } from 'react-native';
 
+const TopTabs = createMaterialTopTabNavigator();
+const Stack = createNativeStackNavigator();
+
 function Tab1() {
   return (
     <View
@@ -46,7 +49,7 @@ const PreAuthScreen = (props: any) => {
 };
 
 const PostAuthScreen = (props: any) => {
-  const { Navigator, Screen } = createMaterialTopTabNavigator();
+  const { Navigator, Screen } = TopTabs;
   const onLogout = () => {
     setTimeout(() => {
       props.setIsSignedIn(false);
@@ -66,7 +69,7 @@ const PostAuthScreen = (props: any) => {
 };
 
 export function MaterialTopBarExample() {
-  const { Screen, Navigator } = createNativeStackNavigator();
+  const { Screen, Navigator } = Stack;
   const [isSignedIn, setIsSignedIn] = useState(false);
 
   return (
