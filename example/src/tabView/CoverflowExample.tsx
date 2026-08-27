@@ -89,7 +89,7 @@ const Scene = ({ route, position, layout, index, length }: Props) => {
 
 export default function CoverflowExample() {
   const [index, onIndexChange] = React.useState(2);
-  const [routes] = React.useState(Object.keys(ALBUMS).map((key) => ({ key })));
+  const [routes] = React.useState(() => Object.keys(ALBUMS).map((key) => ({ key })));
 
   return (
     <TabView

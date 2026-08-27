@@ -235,8 +235,8 @@ const Pagination = ({
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
 export default function HeadphonesCarouselExample() {
-  const scrollOffsetAnimatedValue = React.useRef(new Animated.Value(0)).current;
-  const positionAnimatedValue = React.useRef(new Animated.Value(0)).current;
+  const [scrollOffsetAnimatedValue] = React.useState(() => new Animated.Value(0));
+  const [positionAnimatedValue] = React.useState(() => new Animated.Value(0));
 
   return (
     <View style={styles.container}>

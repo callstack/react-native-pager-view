@@ -50,8 +50,8 @@ const INTRO_DATA = [
 export default function PaginationDotsExample() {
   const width = Dimensions.get('window').width;
   const ref = React.useRef<PagerView>(null);
-  const scrollOffsetAnimatedValue = React.useRef(new Animated.Value(0)).current;
-  const positionAnimatedValue = React.useRef(new Animated.Value(0)).current;
+  const [scrollOffsetAnimatedValue] = React.useState(() => new Animated.Value(0));
+  const [positionAnimatedValue] = React.useState(() => new Animated.Value(0));
   const inputRange = [0, INTRO_DATA.length];
   const scrollX = Animated.add(
     scrollOffsetAnimatedValue,
@@ -76,8 +76,7 @@ export default function PaginationDotsExample() {
           useNativeDriver: false,
         }
       ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [scrollOffsetAnimatedValue, positionAnimatedValue]
   );
 
   return (
