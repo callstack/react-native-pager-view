@@ -100,6 +100,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
+    composeLifecycleOwner.resume()
     if (composeView == null) {
       val view = createComposeView()
       composeView = view
@@ -117,8 +118,12 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     updateSameOrientationAncestorsGestureState(false)
     // composeView is intentionally left attached and alive here: its
     // Lifecycle is self-owned (see composeLifecycleOwner) and only reaches
-    // DESTROYED in dispose(), so there is nothing to tear down on a mere
-    // window detach.
+    // DESTROYED in dispose(). We pause it to CREATED instead, so lifecycle-
+    // aware content within pages (video players, nested Compose effects,
+    // screen-view tracking) stops doing work while covered - this doesn't
+    // dispose the composition, since DisposeOnLifecycleDestroyed only acts
+    // on ON_DESTROY.
+    composeLifecycleOwner.pause()
     super.onDetachedFromWindow()
   }
 
@@ -657,6 +662,18 @@ private class ComposeViewLifecycleOwner : LifecycleOwner {
 
   override val lifecycle: Lifecycle
     get() = registry
+
+  fun resume() {
+    if (registry.currentState != Lifecycle.State.DESTROYED) {
+      registry.currentState = Lifecycle.State.RESUMED
+    }
+  }
+
+  fun pause() {
+    if (registry.currentState != Lifecycle.State.DESTROYED) {
+      registry.currentState = Lifecycle.State.CREATED
+    }
+  }
 
   fun destroy() {
     registry.currentState = Lifecycle.State.DESTROYED
