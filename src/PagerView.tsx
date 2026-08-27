@@ -55,14 +55,18 @@ import PagerViewNativeComponent, {
  * ```
  */
 
-export class PagerView extends React.Component<NativeProps> {
+export interface PagerViewProps extends Omit<NativeProps, 'layoutDirection'> {
+  layoutDirection?: NativeProps['layoutDirection'] | 'locale';
+}
+
+export class PagerView extends React.Component<PagerViewProps> {
+
   private isScrolling = false;
   pagerView: React.ElementRef<typeof PagerViewNativeComponent> | null = null;
 
   private get deducedLayoutDirection() {
     if (
       !this.props.layoutDirection ||
-      //@ts-ignore fix it
       this.props.layoutDirection === 'locale'
     ) {
       return I18nManager.isRTL ? 'rtl' : 'ltr';

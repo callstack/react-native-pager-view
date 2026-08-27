@@ -7,15 +7,14 @@ import type {
   OnPageScrollEventData as PagerViewOnPageScrollEventData,
   OnPageSelectedEventData as PagerViewOnPageSelectedEventData,
   OnPageScrollStateChangedEventData as PageScrollStateChangedNativeEventData,
-  NativeProps,
 } from './PagerViewNativeComponent';
 
 export type {
   PagerViewOnPageScrollEventData,
   PagerViewOnPageSelectedEventData,
   PageScrollStateChangedNativeEventData,
-  NativeProps as PagerViewProps,
 };
+export type { PagerViewProps } from './PagerView';
 
 export type PagerViewOnPageScrollEvent =
   ReactNative.NativeSyntheticEvent<PagerViewOnPageScrollEventData>;
