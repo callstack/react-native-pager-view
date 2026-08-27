@@ -246,6 +246,9 @@ dependencies {
   implementation "androidx.compose.foundation:foundation:$compose_version"
   implementation "androidx.compose.runtime:runtime:$compose_version"
   implementation "androidx.compose.ui:ui:$compose_version"
+  // Needed for ComposeViewLifecycleOwner (see ComposePagerView.kt), which
+  // gives the ComposeView a self-owned Lifecycle instead of the ambient one.
+  implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.1"
 }
 
 if (isNewArchitectureEnabled()) {

@@ -69,6 +69,11 @@ class PagerViewViewManager : ViewGroupManager<ComposePagerView>(), RNCViewPagerM
         return true
     }
 
+    override fun onDropViewInstance(view: ComposePagerView) {
+        view.dispose()
+        super.onDropViewInstance(view)
+    }
+
     @ReactProp(name = "scrollEnabled", defaultBoolean = true)
     override fun setScrollEnabled(view: ComposePagerView?, value: Boolean) {
         if (view != null) {
