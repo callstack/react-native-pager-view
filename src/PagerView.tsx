@@ -154,9 +154,9 @@ export class PagerView extends React.Component<NativeProps> {
         style={[
           this.props.style,
           Platform.OS === 'ios' && this.props.pageMargin
-            ? {
-                marginHorizontal: -this.props.pageMargin / 2,
-              }
+            ? this.props.orientation === 'vertical'
+              ? { marginVertical: -this.props.pageMargin / 2 }
+              : { marginHorizontal: -this.props.pageMargin / 2 }
             : null,
         ]}
         layoutDirection={this.deducedLayoutDirection}
@@ -166,7 +166,8 @@ export class PagerView extends React.Component<NativeProps> {
         onMoveShouldSetResponderCapture={this._onMoveShouldSetResponderCapture}
         children={childrenWithOverriddenStyle(
           this.props.children,
-          this.props.pageMargin
+          this.props.pageMargin,
+          this.props.orientation ?? 'horizontal'
         )}
       />
     );
