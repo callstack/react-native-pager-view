@@ -156,15 +156,19 @@ import UIKit
   /// preserving the view itself. Keep the hosting controller attached to the
   /// current page controller so UIKit's view-controller hierarchy stays valid.
   private func syncParentViewController(to parentViewController: UIViewController? = nil) {
-    guard let hostingController,
-          let parentViewController = parentViewController ?? reactViewController(),
-          hostingController.parent !== parentViewController else {
+    guard let hostingController else {
+      return
+    }
+    let parentViewController = parentViewController ?? reactViewController()
+    guard hostingController.parent !== parentViewController else {
       return
     }
 
     hostingController.willMove(toParent: nil)
     hostingController.removeFromParent()
-    parentViewController.addChild(hostingController)
-    hostingController.didMove(toParent: parentViewController)
+    if let parentViewController {
+      parentViewController.addChild(hostingController)
+      hostingController.didMove(toParent: parentViewController)
+    }
   }
 }
