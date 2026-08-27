@@ -77,13 +77,6 @@ export class PagerView extends React.Component<NativeProps> {
     if (this.props.onPageScroll) {
       this.props.onPageScroll(e);
     }
-
-    // Not implemented on iOS yet
-    if (Platform.OS === 'android') {
-      if (this.props.keyboardDismissMode === 'on-drag') {
-        Keyboard.dismiss();
-      }
-    }
   };
 
   private _onPageScrollStateChanged = (
@@ -92,7 +85,16 @@ export class PagerView extends React.Component<NativeProps> {
     if (this.props.onPageScrollStateChanged) {
       this.props.onPageScrollStateChanged(e);
     }
-    this.isScrolling = e.nativeEvent.pageScrollState === 'dragging';
+    const isDragging = e.nativeEvent.pageScrollState === 'dragging';
+    if (
+      isDragging &&
+      !this.isScrolling &&
+      Platform.OS === 'android' &&
+      this.props.keyboardDismissMode === 'on-drag'
+    ) {
+      Keyboard.dismiss();
+    }
+    this.isScrolling = isDragging;
   };
 
   private _onPageSelected = (
