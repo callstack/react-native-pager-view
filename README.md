@@ -15,7 +15,7 @@
 [![iOS Build](https://github.com/callstack/react-native-pager-view/actions/workflows/ios.yml/badge.svg)](https://github.com/callstack/react-native-pager-view/actions/workflows/ios.yml)
 [![Android Build](https://github.com/callstack/react-native-pager-view/actions/workflows/android.yml/badge.svg)](https://github.com/callstack/react-native-pager-view/actions/workflows/android.yml)
 
-This component allows the user to swipe left and right through pages of data. Under the hood it is using the native [Android ViewPager](https://developer.android.com/jetpack/androidx/releases/viewpager2) and the [iOS UIPageViewController](https://developer.apple.com/documentation/uikit/uipageviewcontroller) implementations. [See it in action!](https://github.com/callstack/react-native-pager-view#preview)
+This component allows the user to swipe through pages of data. The current implementation uses [Jetpack Compose pagers](https://developer.android.com/develop/ui/compose/layouts/pager) on Android and a page-style [SwiftUI TabView](https://developer.apple.com/documentation/swiftui/tabview) on iOS. Both horizontal and vertical orientations are supported. [See it in action!](https://github.com/callstack/react-native-pager-view#preview)
 
 <br/>
 <p align="center">
@@ -156,7 +156,7 @@ For advanced usage please take a look into our [example project](https://github.
 | `keyboardDismissMode: ('none' / 'on-drag')`                          |                                                                                                Determines whether the keyboard gets dismissed in response to a drag                                                                                                 |   both   |
 | `orientation: Orientation`                                           |                                                                                       Set `horizontal` or `vertical` scrolling orientation (it does **not** work dynamically)                                                                                       |   both   |
 | `overScrollMode: OverScrollMode`                                     |                                                                              Used to override default value of overScroll mode. Can be `auto`, `always` or `never`. Defaults to `auto`                                                                              | Android  |
-| `offscreenPageLimit: number`                                         | Set the number of pages that should be retained to either side of the currently visible page(s). Pages beyond this limit will be recreated from the adapter when needed. Defaults to RecyclerView's caching strategy. The given value must either be larger than 0. | Android  |
+| `offscreenPageLimit: number`                                         | Number of pages to compose beyond each side of the visible pages. The default (`-1`) uses one page on each side. `0` disables this extra composition; other negative values are treated as `0`. Large values reduce the benefits of lazy loading. | Android  |
 | `overdrag: boolean`                                                  |                                                                                   Allows for overscrolling after reaching the end or very beginning or pages. Defaults to `false`                                                                                   |   iOS    |
 | `layoutDirection: ('ltr' / 'rtl' / 'locale')`                        |                                                      Specifies layout direction. Use `ltr` or `rtl` to set explicitly or `locale` to deduce from the default language script of a locale. Defaults to `locale`                                                      |   both   |
 
@@ -240,7 +240,7 @@ const pageScrollHandler = usePageScrollHandler({
 ## usePagerView Hook Usage
 The `usePagerView` hook is a convenient way to manage the state and control the behavior of the `<PagerView />` component. It provides functions and variables to interact with the pager, such as navigating between pages and enabling/disabling scrolling.
 
-Below is an example of how to use the usePager hook:
+Below is an example of how to use the usePagerView hook:
 
 ```jsx
 export function PagerHookExample() {
@@ -254,7 +254,7 @@ export function PagerHookExample() {
         style={styles.PagerView}
         initialPage={0}
         layoutDirection="ltr"
-        overdrag={rest.overdragEnabled}
+        overdrag={rest.overdrag}
         scrollEnabled={rest.scrollEnabled}
         onPageScroll={rest.onPageScroll}
         onPageSelected={rest.onPageSelected}
@@ -292,13 +292,13 @@ export function PagerHookExample() {
 ```
 ### How the Example Works:
 
-- **Pager View Setup**: The `AnimatedPagerView` component wraps `PagerView` in React Native's animation capabilities. It accepts multiple props from the `usePager` hook, such as `overdragEnabled`, `scrollEnabled`, `onPageScroll`, `onPageSelected`, and others to manage pager behavior.
+- **Pager View Setup**: The `AnimatedPagerView` component wraps `PagerView` in React Native's animation capabilities. It accepts multiple props from the `usePagerView` hook, such as `overdrag`, `scrollEnabled`, `onPageScroll`, `onPageSelected`, and others to manage pager behavior.
 
-- **Rendering Pages**: The pages are dynamically generated using the `rest.pages` array (initialized by `usePager`). The `useMemo` hook ensures the pages are only recomputed when necessary for performance reasons.
+- **Rendering Pages**: The pages are dynamically generated using the `rest.pages` array (initialized by `usePagerView`). The `useMemo` hook ensures the pages are only recomputed when necessary for performance reasons.
 
 ### Conclusion
 
-The `usePager` hook makes it easy to handle pagination with dynamic views. This example demonstrates how to set up a simple paginated interface where users can scroll through pages, interact with page elements, and control the pager with external navigation.
+The `usePagerView` hook makes it easy to handle pagination with dynamic views. This example demonstrates how to set up a simple paginated interface where users can scroll through pages, interact with page elements, and control the pager with external navigation.
 
 
 ## License
