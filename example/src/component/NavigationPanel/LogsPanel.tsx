@@ -4,7 +4,6 @@ import { FlatList } from 'react-native-gesture-handler';
 import type { LogsPanelProps } from './types';
 
 export function LogsPanel({ logs }: LogsPanelProps) {
-  console.log(logs);
   return (
     <FlatList
       style={styles.container}
