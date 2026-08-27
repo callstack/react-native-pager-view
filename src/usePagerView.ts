@@ -27,7 +27,7 @@ export function usePagerView(
   { pagesAmount }: UsePagerViewParams = { pagesAmount: 0 }
 ) {
   const ref = useRef<PagerView>(null);
-  const [pages, setPages] = useState<number[]>(
+  const [pages, setPages] = useState<number[]>(() =>
     new Array(pagesAmount).fill('').map((_v, index) => index)
   );
   const [activePage, setActivePage] = useState(0);
@@ -36,9 +36,9 @@ export function usePagerView(
   const [scrollEnabled, setScrollEnabled] = useState(true);
   const [scrollState, setScrollState] = useState('idle');
   const [progress, setProgress] = useState({ position: 0, offset: 0 });
-  const onPageScrollOffset = useRef(new Animated.Value(0)).current;
-  const onPageScrollPosition = useRef(new Animated.Value(0)).current;
-  const onPageSelectedPosition = useRef(new Animated.Value(0)).current;
+  const [onPageScrollOffset] = useState(() => new Animated.Value(0));
+  const [onPageScrollPosition] = useState(() => new Animated.Value(0));
+  const [onPageSelectedPosition] = useState(() => new Animated.Value(0));
 
   const setPage = useCallback(
     (page: number) =>
@@ -99,8 +99,7 @@ export function usePagerView(
           useNativeDriver: true,
         }
       ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [onPageScrollOffset, onPageScrollPosition]
   );
 
   const onPageSelected = useMemo(
@@ -114,8 +113,7 @@ export function usePagerView(
           useNativeDriver: true,
         }
       ),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [onPageSelectedPosition]
   );
 
   const onPageScrollStateChanged = useCallback(
