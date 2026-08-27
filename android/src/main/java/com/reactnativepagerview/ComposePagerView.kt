@@ -385,13 +385,13 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     }
     lastEmittedPageSelected = position
     UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)?.dispatchEvent(
-      PageSelectedEvent(id, position)
+      PageSelectedEvent(UIManagerHelper.getSurfaceId(this), id, position)
     )
   }
 
   private fun dispatchPageScroll(position: Int, offset: Float) {
     UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)?.dispatchEvent(
-      PageScrollEvent(id, position, offset)
+      PageScrollEvent(UIManagerHelper.getSurfaceId(this), id, position, offset)
     )
   }
 
@@ -401,7 +401,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     }
     lastEmittedScrollState = state
     UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)?.dispatchEvent(
-      PageScrollStateChangedEvent(id, state)
+      PageScrollStateChangedEvent(UIManagerHelper.getSurfaceId(this), id, state)
     )
   }
 

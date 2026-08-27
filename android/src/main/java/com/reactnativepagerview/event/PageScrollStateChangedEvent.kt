@@ -3,7 +3,6 @@ package com.reactnativepagerview.event
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
-import com.facebook.react.uimanager.events.RCTEventEmitter
 
 
 /**
@@ -12,16 +11,17 @@ import com.facebook.react.uimanager.events.RCTEventEmitter
  * Additional data provided by this event:
  * - pageScrollState - {Idle,Dragging,Settling}
  */
-class PageScrollStateChangedEvent(viewTag: Int, private val mPageScrollState: String) : Event<PageScrollStateChangedEvent>(viewTag) {
+class PageScrollStateChangedEvent(surfaceId: Int, viewTag: Int, private val mPageScrollState: String) : Event<PageScrollStateChangedEvent>(surfaceId, viewTag) {
+    constructor(viewTag: Int, mPageScrollState: String) : this(-1, viewTag, mPageScrollState)
     override fun getEventName(): String {
         return EVENT_NAME
     }
 
-    override fun dispatch(rctEventEmitter: RCTEventEmitter) {
-        rctEventEmitter.receiveEvent(viewTag, eventName, serializeEventData())
+    override fun canCoalesce(): Boolean {
+        return false
     }
 
-    private fun serializeEventData(): WritableMap {
+    override fun getEventData(): WritableMap {
         val eventData = Arguments.createMap()
         eventData.putString("pageScrollState", mPageScrollState)
         return eventData

@@ -3,7 +3,6 @@ package com.reactnativepagerview.event
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
-import com.facebook.react.uimanager.events.RCTEventEmitter
 import java.lang.Float.isInfinite
 import java.lang.Float.isNaN
 
@@ -18,17 +17,14 @@ import java.lang.Float.isNaN
  * (1 - x) fraction of the page at "position" index is visible, and x fraction of the next page
  * is visible.
  */
-class PageScrollEvent(viewTag: Int, private val mPosition: Int, offset: Float) : Event<PageScrollEvent>(viewTag) {
+class PageScrollEvent(surfaceId: Int, viewTag: Int, private val mPosition: Int, offset: Float) : Event<PageScrollEvent>(surfaceId, viewTag) {
+    constructor(viewTag: Int, mPosition: Int, offset: Float) : this(-1, viewTag, mPosition, offset)
     private val mOffset: Float = if (isInfinite(offset) || isNaN(offset)) 0.0f else offset
     override fun getEventName(): String {
         return EVENT_NAME
     }
 
-    override fun dispatch(rctEventEmitter: RCTEventEmitter) {
-        rctEventEmitter.receiveEvent(viewTag, eventName, serializeEventData())
-    }
-
-    private fun serializeEventData(): WritableMap {
+    override fun getEventData(): WritableMap {
         val eventData = Arguments.createMap()
         eventData.putInt("position", mPosition)
         eventData.putDouble("offset", mOffset.toDouble())
@@ -44,4 +40,3 @@ class PageScrollEvent(viewTag: Int, private val mPosition: Int, offset: Float) :
         // folly::toJson default options don't support serialize NaN or Infinite value
     }
 }
-
