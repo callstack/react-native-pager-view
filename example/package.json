@@ -8,7 +8,7 @@
     "test": "jest",
     "lint": "eslint .",
     "mkdist": "node -e \"require('node:fs').mkdirSync('dist', { recursive: true, mode: 0o755 })\"",
-    "android": "react-native run-android --appId com.pagerviewexample --list-devices",
+    "android": "react-native run-android --appId com.pagerviewexample --list-devices --active-arch-only",
     "ios": "react-native run-ios --list-devices",
     "visionos": "react-native run-visionos",
     "build:android": "bun mkdist && react-native bundle --entry-file index.js --platform android --dev true --bundle-output dist/main.android.jsbundle --assets-dest dist/res",
