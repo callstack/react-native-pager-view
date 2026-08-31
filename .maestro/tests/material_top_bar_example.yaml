@@ -18,6 +18,34 @@ appId: com.pagerviewexample
 - assertVisible:
     text: 'Tab1'
 
+- tapOn:
+    id: 'material-top-bar-scroll-list-button'
+
+- extendedWaitUntil:
+    visible:
+      id: 'material-top-bar-list-item-30'
+    timeout: 5000
+
+- tapOn:
+    id: 'material-top-bar-open-detail-button'
+
+- extendedWaitUntil:
+    visible:
+      id: 'material-top-bar-detail-screen'
+    timeout: 5000
+
+- pressKey: Back
+
+- extendedWaitUntil:
+    visible:
+      id: 'material-top-bar-tab-1'
+    timeout: 5000
+
+# The existing ComposeView and AndroidView host must survive the native-stack
+# cover/reveal cycle, including the FlatList's native scroll position.
+- assertVisible:
+    id: 'material-top-bar-list-item-30'
+
 - tapOn: 'Tab2'
 
 - extendedWaitUntil:
