@@ -25,8 +25,10 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
@@ -100,7 +102,11 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
-    composeLifecycleOwner.resume()
+    // Read the ambient owner from our parent before installing the stable
+    // owner on the ComposeView below. This keeps the composition alive across
+    // Fragment view-tree replacement while still following pause/stop events
+    // from the currently active host.
+    composeLifecycleOwner.attach(findViewTreeLifecycleOwner()?.lifecycle)
     if (composeView == null) {
       val view = createComposeView()
       composeView = view
@@ -123,7 +129,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     // screen-view tracking) stops doing work while covered - this doesn't
     // dispose the composition, since DisposeOnLifecycleDestroyed only acts
     // on ON_DESTROY.
-    composeLifecycleOwner.pause()
+    composeLifecycleOwner.detach()
     super.onDetachedFromWindow()
   }
 
@@ -650,32 +656,88 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 }
 
-// A Lifecycle that isn't derived from the ambient Fragment/Activity: it
-// starts RESUMED and only moves to DESTROYED when destroy() is called
-// explicitly, so it survives being covered/revealed by react-native-screens'
-// Fragment remove+re-add (see the composeLifecycleOwner field comment on
-// ComposePagerView above).
-private class ComposeViewLifecycleOwner : LifecycleOwner {
+// A stable Lifecycle that follows the currently attached host through
+// CREATED/STARTED/RESUMED, but only moves to DESTROYED when destroy() is
+// called explicitly. This lets it survive react-native-screens replacing the
+// ambient Fragment view-tree owner (see the field comment above).
+internal class ComposeViewLifecycleOwner : LifecycleOwner, LifecycleEventObserver {
   private val registry = LifecycleRegistry(this).apply {
-    currentState = Lifecycle.State.RESUMED
+    currentState = Lifecycle.State.CREATED
   }
+  private var hostLifecycle: Lifecycle? = null
+  private var isAttached = false
+  private var isDestroyed = false
 
   override val lifecycle: Lifecycle
     get() = registry
 
-  fun resume() {
-    if (registry.currentState != Lifecycle.State.DESTROYED) {
-      registry.currentState = Lifecycle.State.RESUMED
+  fun attach(lifecycle: Lifecycle?) {
+    if (isDestroyed) {
+      return
     }
+
+    isAttached = true
+    setHostLifecycle(lifecycle)
+    updateState()
   }
 
-  fun pause() {
-    if (registry.currentState != Lifecycle.State.DESTROYED) {
-      registry.currentState = Lifecycle.State.CREATED
+  fun detach() {
+    if (isDestroyed) {
+      return
     }
+
+    isAttached = false
+    setHostLifecycle(null)
+    updateState()
   }
 
   fun destroy() {
+    if (isDestroyed) {
+      return
+    }
+
+    isDestroyed = true
+    isAttached = false
+    setHostLifecycle(null)
     registry.currentState = Lifecycle.State.DESTROYED
+  }
+
+  override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+    if (event == Lifecycle.Event.ON_DESTROY && source.lifecycle === hostLifecycle) {
+      setHostLifecycle(null)
+    }
+    updateState()
+  }
+
+  private fun setHostLifecycle(lifecycle: Lifecycle?) {
+    if (hostLifecycle === lifecycle) {
+      return
+    }
+
+    hostLifecycle?.removeObserver(this)
+    hostLifecycle = lifecycle
+    lifecycle?.addObserver(this)
+  }
+
+  private fun updateState() {
+    if (isDestroyed) {
+      return
+    }
+
+    registry.currentState = if (!isAttached) {
+      Lifecycle.State.CREATED
+    } else {
+      when (hostLifecycle?.currentState) {
+        Lifecycle.State.RESUMED -> Lifecycle.State.RESUMED
+        Lifecycle.State.STARTED -> Lifecycle.State.STARTED
+        // INITIALIZED is expected briefly when react-native-screens installs
+        // a replacement Fragment view tree. DESTROYED belongs to the old
+        // tree. Neither should destroy or block the retained composition.
+        Lifecycle.State.INITIALIZED,
+        Lifecycle.State.CREATED,
+        Lifecycle.State.DESTROYED,
+        null -> Lifecycle.State.CREATED
+      }
+    }
   }
 }

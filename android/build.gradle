@@ -250,6 +250,8 @@ dependencies {
   // Needed for ComposeViewLifecycleOwner (see ComposePagerView.kt), which
   // gives the ComposeView a self-owned Lifecycle instead of the ambient one.
   implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+  testImplementation "androidx.arch.core:core-testing:2.2.0"
+  testImplementation "junit:junit:4.13.2"
 }
 
 if (isNewArchitectureEnabled()) {
