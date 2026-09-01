@@ -15,10 +15,6 @@ buildscript {
   }
 }
 
-def isNewArchitectureEnabled() {
-  return rootProject.hasProperty("newArchEnabled") &&  rootProject.getProperty("newArchEnabled") == "true"
-}
-
 apply plugin: 'com.android.library'
 
 def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
@@ -34,11 +30,7 @@ if (!hasBuiltInKotlin) {
   apply plugin: 'kotlin-android'
 }
 apply plugin: 'org.jetbrains.kotlin.plugin.compose'
-
-
-if (isNewArchitectureEnabled()) {
-  apply plugin: 'com.facebook.react'
-}
+apply plugin: 'com.facebook.react'
 
 def getExtOrDefault(name) {
   return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['PagerView_' + name]
@@ -55,7 +47,7 @@ if(shouldUseNameSpace){
       manifestContent = manifestContent.replaceAll(
         PACKAGE_PROP,
         ''
-    )  
+    )
 } else {
     if(!manifestContent.contains("$PACKAGE_PROP")){
         manifestContent = manifestContent.replace(
@@ -102,11 +94,9 @@ android {
   defaultConfig {
     minSdkVersion getExtOrIntegerDefault('minSdkVersion')
     targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
-    buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
+    buildConfigField "String", "CODEGEN_MODULE_REGISTRATION", (registrationCompat ? "\"${codegenViewModuleName}_registration\"" : "null")
 
-    buildConfigField "String", "CODEGEN_MODULE_REGISTRATION", (isNewArchitectureEnabled() && registrationCompat ? "\"${codegenViewModuleName}_registration\"" : "null")
-
-    if (isNewArchitectureEnabled() && registrationCompat) {
+    if (registrationCompat) {
       def reactAndroidProject = project(':ReactAndroid')
       externalNativeBuild {
         ndkBuild {
@@ -126,8 +116,8 @@ android {
     }
   }
 
-  if (isNewArchitectureEnabled() && registrationCompat) {
-    // We configure the NDK build only if you decide to opt-in for the New Architecture.
+  if (registrationCompat) {
+    // We configure the NDK build when registrationCompat is enabled.
     externalNativeBuild {
       ndkBuild {
         path "Android.mk"
@@ -154,14 +144,10 @@ android {
   }
   sourceSets {
     main {
-      if (isNewArchitectureEnabled()) {
-          java.srcDirs += [
-            "src/fabric/java",
-            "${project.buildDir}/generated/source/codegen/java"
-          ]
-      } else {
-          java.srcDirs += ["src/paper/java"]
-      }
+      java.srcDirs += [
+        "src/fabric/java",
+        "${project.buildDir}/generated/source/codegen/java"
+      ]
     }
   }
 }
@@ -238,6 +224,7 @@ repositories {
 
 def kotlin_version = getExtOrDefault('kotlinVersion')
 def compose_version = getExtOrDefault('composeVersion')
+def lifecycle_version = getExtOrDefault('lifecycleVersion')
 
 dependencies {
     //noinspection GradleDynamicVersion
@@ -246,12 +233,15 @@ dependencies {
   implementation "androidx.compose.foundation:foundation:$compose_version"
   implementation "androidx.compose.runtime:runtime:$compose_version"
   implementation "androidx.compose.ui:ui:$compose_version"
+  // Needed for ComposeViewLifecycleOwner (see ComposePagerView.kt), which
+  // gives the ComposeView a self-owned Lifecycle instead of the ambient one.
+  implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+  testImplementation "androidx.arch.core:core-testing:2.2.0"
+  testImplementation "junit:junit:4.13.2"
 }
 
-if (isNewArchitectureEnabled()) {
-  react {
-    jsRootDir = file("../src")
-    libraryName = codegenViewLibraryName
-    codegenJavaPackageName = "com.reactnativepagerview"
-  }
+react {
+  jsRootDir = file("../src")
+  libraryName = codegenViewLibraryName
+  codegenJavaPackageName = "com.reactnativepagerview"
 }

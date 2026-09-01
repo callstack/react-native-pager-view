@@ -24,6 +24,12 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.setViewTreeLifecycleOwner
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.reactnativepagerview.event.PageScrollEvent
@@ -37,7 +43,19 @@ import kotlin.math.sign
 @OptIn(ExperimentalFoundationApi::class)
 class ComposePagerView(context: Context) : FrameLayout(context) {
   private val reactContext = context as ReactContext
-  private val composeView = ComposeView(context)
+  // react-native-screens fully removes and re-adds this screen's Fragment
+  // (rather than merely hiding it) while it's covered by another screen
+  // (see #1103), destroying that Fragment's view-tree Lifecycle. Compose's
+  // default composition-disposal strategies key off that ambient Lifecycle,
+  // so a ComposeView left to use them gets torn down on every cover/reveal
+  // cycle - and rebuilding the composition from scratch each time also
+  // discarded every page's native view host, resetting their state (e.g. a
+  // FlatList's scroll position, see #1104). Giving the ComposeView its own
+  // Lifecycle - one we control instead of the ambient, repeatedly-destroyed
+  // one - lets the composition (and each page's host) survive the cycle
+  // untouched. It only reaches DESTROYED for real in dispose() below.
+  private val composeLifecycleOwner = ComposeViewLifecycleOwner()
+  private var composeView: ComposeView? = null
   private val pages = mutableStateListOf<View>()
   private val scrollEnabledState = mutableStateOf(true)
   private val orientationState = mutableStateOf(Orientation.Horizontal)
@@ -57,43 +75,66 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private val scrollCommandState = mutableStateOf<ScrollCommand?>(null)
   private var lastEmittedScrollState: String? = null
   private var lastEmittedPageSelected: Int? = null
-  private var didSetContent = false
 
   init {
     id = View.generateViewId()
     layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
     isSaveEnabled = false
-
-    composeView.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-    composeView.isSaveEnabled = false
-    composeView.setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnDetachedFromWindow)
     applyOverScrollMode()
     touchSlop = ViewConfiguration.get(context).scaledTouchSlop
   }
 
+  private fun createComposeView(): ComposeView {
+    return ComposeView(context).apply {
+      layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+      isSaveEnabled = false
+      layoutDirection = androidLayoutDirection()
+      overScrollMode = androidOverScrollMode()
+      // Bind our own Lifecycle before the composition is created, so Compose
+      // resolves it instead of walking up to the ambient (and repeatedly
+      // destroyed) Fragment view-tree Lifecycle - see the field comment above.
+      setViewTreeLifecycleOwner(composeLifecycleOwner)
+      setViewCompositionStrategy(
+        ViewCompositionStrategy.DisposeOnLifecycleDestroyed(composeLifecycleOwner)
+      )
+    }
+  }
+
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
-    if (composeView.parent == null) {
-      super.addView(composeView)
-      post {
-        measureAndLayoutComposeView()
-      }
-    }
-    if (!didSetContent) {
-      didSetContent = true
-      composeView.setContent {
+    // Read the ambient owner from our parent before installing the stable
+    // owner on the ComposeView below. This keeps the composition alive across
+    // Fragment view-tree replacement while still following pause/stop events
+    // from the currently active host.
+    composeLifecycleOwner.attach(findViewTreeLifecycleOwner()?.lifecycle)
+    if (composeView == null) {
+      val view = createComposeView()
+      composeView = view
+      super.addView(view)
+      view.setContent {
         PagerContent()
       }
+    }
+    post {
+      measureAndLayoutComposeView()
     }
   }
 
   override fun onDetachedFromWindow() {
     updateSameOrientationAncestorsGestureState(false)
-    if (composeView.parent === this) {
-      super.removeView(composeView)
-      didSetContent = false
-    }
+    // composeView is intentionally left attached and alive here: its
+    // Lifecycle is self-owned (see composeLifecycleOwner) and only reaches
+    // DESTROYED in dispose(). We pause it to CREATED instead, so lifecycle-
+    // aware content within pages (video players, nested Compose effects,
+    // screen-view tracking) stops doing work while covered - this doesn't
+    // dispose the composition, since DisposeOnLifecycleDestroyed only acts
+    // on ON_DESTROY.
+    composeLifecycleOwner.detach()
     super.onDetachedFromWindow()
+  }
+
+  fun dispose() {
+    composeLifecycleOwner.destroy()
   }
 
   override fun dispatchTouchEvent(event: MotionEvent): Boolean {
@@ -149,7 +190,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     val width = width.takeIf { it > 0 } ?: measuredWidth
     val height = height.takeIf { it > 0 } ?: measuredHeight
     if (measureComposeView(width, height)) {
-      composeView.layout(0, 0, width, height)
+      composeView?.layout(0, 0, width, height)
     }
   }
 
@@ -157,11 +198,12 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     width: Int = measuredWidth,
     height: Int = measuredHeight
   ): Boolean {
-    if (composeView.parent !== this || width <= 0 || height <= 0) {
+    val view = composeView
+    if (view == null || view.parent !== this || width <= 0 || height <= 0) {
       return false
     }
 
-    composeView.measure(
+    view.measure(
       MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
       MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
     )
@@ -238,13 +280,16 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 
   fun setLayoutDirection(value: String) {
     layoutDirectionState.value = if (value == "rtl") LayoutDirection.Rtl else LayoutDirection.Ltr
-    val androidLayoutDirection = if (layoutDirectionState.value == LayoutDirection.Rtl) {
+    layoutDirection = androidLayoutDirection()
+    composeView?.layoutDirection = androidLayoutDirection()
+  }
+
+  private fun androidLayoutDirection(): Int {
+    return if (layoutDirectionState.value == LayoutDirection.Rtl) {
       View.LAYOUT_DIRECTION_RTL
     } else {
       View.LAYOUT_DIRECTION_LTR
     }
-    layoutDirection = androidLayoutDirection
-    composeView.layoutDirection = androidLayoutDirection
   }
 
   fun setOffscreenPageLimit(value: Int) {
@@ -265,13 +310,17 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   private fun applyOverScrollMode() {
-    val androidOverScrollMode = when (overScrollModeState.value) {
+    val androidOverScrollMode = androidOverScrollMode()
+    overScrollMode = androidOverScrollMode
+    composeView?.overScrollMode = androidOverScrollMode
+  }
+
+  private fun androidOverScrollMode(): Int {
+    return when (overScrollModeState.value) {
       OverScrollMode.Never -> View.OVER_SCROLL_NEVER
       OverScrollMode.Always -> View.OVER_SCROLL_ALWAYS
       OverScrollMode.Auto -> View.OVER_SCROLL_IF_CONTENT_SCROLLS
     }
-    overScrollMode = androidOverScrollMode
-    composeView.overScrollMode = androidOverScrollMode
   }
 
   private fun setSameOrientationChildGestureActive(value: Boolean) {
@@ -603,6 +652,92 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       DEFAULT_BEYOND_VIEWPORT_PAGE_COUNT
     } else {
       offscreenPageLimitState.value.coerceAtLeast(0)
+    }
+  }
+}
+
+// A stable Lifecycle that follows the currently attached host through
+// CREATED/STARTED/RESUMED, but only moves to DESTROYED when destroy() is
+// called explicitly. This lets it survive react-native-screens replacing the
+// ambient Fragment view-tree owner (see the field comment above).
+internal class ComposeViewLifecycleOwner : LifecycleOwner, LifecycleEventObserver {
+  private val registry = LifecycleRegistry(this).apply {
+    currentState = Lifecycle.State.CREATED
+  }
+  private var hostLifecycle: Lifecycle? = null
+  private var isAttached = false
+  private var isDestroyed = false
+
+  override val lifecycle: Lifecycle
+    get() = registry
+
+  fun attach(lifecycle: Lifecycle?) {
+    if (isDestroyed) {
+      return
+    }
+
+    isAttached = true
+    setHostLifecycle(lifecycle)
+    updateState()
+  }
+
+  fun detach() {
+    if (isDestroyed) {
+      return
+    }
+
+    isAttached = false
+    setHostLifecycle(null)
+    updateState()
+  }
+
+  fun destroy() {
+    if (isDestroyed) {
+      return
+    }
+
+    isDestroyed = true
+    isAttached = false
+    setHostLifecycle(null)
+    registry.currentState = Lifecycle.State.DESTROYED
+  }
+
+  override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+    if (event == Lifecycle.Event.ON_DESTROY && source.lifecycle === hostLifecycle) {
+      setHostLifecycle(null)
+    }
+    updateState()
+  }
+
+  private fun setHostLifecycle(lifecycle: Lifecycle?) {
+    if (hostLifecycle === lifecycle) {
+      return
+    }
+
+    hostLifecycle?.removeObserver(this)
+    hostLifecycle = lifecycle
+    lifecycle?.addObserver(this)
+  }
+
+  private fun updateState() {
+    if (isDestroyed) {
+      return
+    }
+
+    registry.currentState = if (!isAttached) {
+      Lifecycle.State.CREATED
+    } else {
+      when (hostLifecycle?.currentState) {
+        Lifecycle.State.RESUMED -> Lifecycle.State.RESUMED
+        Lifecycle.State.STARTED -> Lifecycle.State.STARTED
+        // INITIALIZED is expected briefly when react-native-screens installs
+        // a replacement Fragment view tree. DESTROYED belongs to the old
+        // tree. Neither should destroy or block the retained composition.
+        Lifecycle.State.INITIALIZED,
+        Lifecycle.State.CREATED,
+        Lifecycle.State.DESTROYED,
+        null -> Lifecycle.State.CREATED
+      }
     }
   }
 }
