@@ -99,6 +99,7 @@ fi
 shopt -s nullglob
 allTestFiles=(
   .maestro/tests/*.yaml
+  .maestro/issues/*.yaml
   .maestro/"$PLATFORM"-only/*.yaml
 )
 

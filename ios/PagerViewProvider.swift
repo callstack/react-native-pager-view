@@ -118,6 +118,57 @@ import UIKit
   }
 
   @objc public func goTo(index: Int, animated: Bool) {
+    if animated && hasPresentedViewController() {
+      // A native-stack modal can begin its dismissal in the same JavaScript
+      // callback as `setPage`. Starting a SwiftUI TabView animation in that
+      // transaction makes TabView apply the selection twice, landing one page
+      // too far. Let UIKit register the dismissal first, then perform the
+      // pager animation after the transition has completed.
+      // Native-stack may need several run-loop passes before its transition
+      // coordinator becomes observable. Check briefly for that coordinator
+      // instead of starting the SwiftUI animation on the very next pass.
+      setPageWhenPresentationTransitionCompletes(
+        index: index,
+        attemptsRemaining: 10
+      )
+    } else {
+      setPage(index: index, animated: animated)
+    }
+  }
+
+  private func setPageWhenPresentationTransitionCompletes(
+    index: Int,
+    attemptsRemaining: Int
+  ) {
+    guard let transitionCoordinator = activeTransitionCoordinator() else {
+      guard attemptsRemaining > 0 && hasPresentedViewController() else {
+        setPage(index: index, animated: true)
+        return
+      }
+
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) { [weak self] in
+        self?.setPageWhenPresentationTransitionCompletes(
+          index: index,
+          attemptsRemaining: attemptsRemaining - 1
+        )
+      }
+      return
+    }
+
+    let didSchedulePageChange = transitionCoordinator.animate(
+      alongsideTransition: nil
+    ) { [weak self] _ in
+      DispatchQueue.main.async {
+        self?.setPage(index: index, animated: true)
+      }
+    }
+
+    if !didSchedulePageChange {
+      setPage(index: index, animated: true)
+    }
+  }
+
+  private func setPage(index: Int, animated: Bool) {
     if animated {
       withAnimation {
         props.currentPage = index
@@ -125,6 +176,40 @@ import UIKit
     } else {
       props.currentPage = index
     }
+  }
+
+  /// Finds the native-stack transition that may be dismissing a modal over
+  /// this pager. The coordinator becomes available only after the imperative
+  /// command has returned to the main run loop.
+  private func activeTransitionCoordinator() -> UIViewControllerTransitionCoordinator? {
+    var viewController = reactViewController()
+    while let current = viewController {
+      if let transitionCoordinator = current.transitionCoordinator {
+        return transitionCoordinator
+      }
+      viewController = current.parent
+    }
+
+    var rootViewController = window?.rootViewController
+    while let current = rootViewController {
+      if let transitionCoordinator = current.transitionCoordinator {
+        return transitionCoordinator
+      }
+      rootViewController = current.presentedViewController
+    }
+
+    return nil
+  }
+
+  private func hasPresentedViewController() -> Bool {
+    var viewController = reactViewController()
+    while let current = viewController {
+      if current.presentedViewController != nil {
+        return true
+      }
+      viewController = current.parent
+    }
+    return false
   }
 
   private func setupView() {

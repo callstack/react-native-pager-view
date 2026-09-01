@@ -34,8 +34,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PagerHookExample } from './PagerHookExample';
 import { NestedHorizontalScrollViewExample } from './NestedHorizontalScrollViewExample';
-import { Issue1098NestedPagerRepro } from './Issue1098NestedPagerRepro';
-import { Issue1099SafeAreaRepro } from './Issue1099SafeAreaRepro';
+import { Issue1098NestedPagerRepro } from './gh-issues/Issue1098NestedPagerRepro';
+import { Issue1099SafeAreaRepro } from './gh-issues/Issue1099SafeAreaRepro';
+import {
+  Issue1083ModalSetPageExample,
+  ModalSetPageModalScreen,
+} from './gh-issues/Issue1083ModalSetPageExample';
 
 function BasicPagerViewExampleScreen() {
   return <BasicPagerViewExample isHorizontal={true} />;
@@ -108,6 +112,10 @@ const additionalExamples: Example[] = [
 ];
 
 const ghIssues: Example[] = [
+  {
+    component: Issue1083ModalSetPageExample,
+    name: 'Issue #1083 Modal SetPage Repro',
+  },
   {
     component: Issue1098NestedPagerRepro,
     name: 'Issue #1098 Nested Pager Repro',
@@ -249,6 +257,14 @@ export function Navigation() {
               component={example.component}
             />
           ))}
+          <NavigationStack.Screen
+            name="ModalSetPageModal"
+            component={ModalSetPageModalScreen}
+            options={{
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+            }}
+          />
         </NavigationStack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

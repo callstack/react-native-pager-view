@@ -2,7 +2,7 @@ import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
-import { IMAGE_URIS } from './utils';
+import { IMAGE_URIS } from '../utils';
 
 const CARD_HEIGHT = 500;
 

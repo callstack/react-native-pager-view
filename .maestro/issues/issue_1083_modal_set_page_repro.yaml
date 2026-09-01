@@ -1,0 +1,58 @@
+appId: com.pagerviewexample
+tags:
+  - ios
+  - regression
+---
+- runFlow: ../setup/issue_1083_modal_set_page_repro_setup.yaml
+
+# This deliberately invokes setPage while the pager is obscured by a native
+# stack modal. Before the fix, React state became 0 while SwiftUI showed Page 1.
+- tapOn:
+    id: 'issue-1083-open-modal'
+
+- extendedWaitUntil:
+    visible: 'Modal screen'
+    timeout: 10000
+
+- tapOn:
+    id: 'issue-1083-submit'
+
+- extendedWaitUntil:
+    visible: 'Last requested page: 1'
+    timeout: 10000
+
+- extendedWaitUntil:
+    visible:
+      id: 'issue-1083-page-1'
+    timeout: 10000
+
+- tapOn:
+    id: 'issue-1083-advance-directly'
+
+- extendedWaitUntil:
+    visible: 'Last requested page: 2'
+    timeout: 10000
+
+- extendedWaitUntil:
+    visible:
+      id: 'issue-1083-page-2'
+    timeout: 10000
+
+- tapOn:
+    id: 'issue-1083-open-modal'
+
+- extendedWaitUntil:
+    visible: 'Modal screen'
+    timeout: 10000
+
+- tapOn:
+    id: 'issue-1083-submit'
+
+- extendedWaitUntil:
+    visible: 'Last requested page: 0'
+    timeout: 10000
+
+- extendedWaitUntil:
+    visible:
+      id: 'issue-1083-page-0'
+    timeout: 10000
