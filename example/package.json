@@ -7,13 +7,9 @@
     "pods": "bundle install && cd ios && bundle exec pod install && cd ..",
     "test": "jest",
     "lint": "eslint .",
-    "mkdist": "node -e \"require('node:fs').mkdirSync('dist', { recursive: true, mode: 0o755 })\"",
-    "android": "react-native run-android --appId com.pagerviewexample --list-devices",
-    "ios": "react-native run-ios --list-devices",
-    "visionos": "react-native run-visionos",
-    "build:android": "bun mkdist && react-native bundle --entry-file index.js --platform android --dev true --bundle-output dist/main.android.jsbundle --assets-dest dist/res",
-    "build:ios": "bun mkdist && react-native bundle --entry-file index.js --platform ios --dev false --bundle-output dist/main.ios.jsbundle --assets-dest dist",
-    "build:visionos": "bun mkdist && react-native bundle --entry-file index.js --platform ios --dev true --bundle-output dist/main.visionos.jsbundle --assets-dest dist"
+    "android": "react-native run-android --appId com.pagerviewexample",
+    "ios": "react-native run-ios",
+    "visionos": "react-native run-visionos"
   },
   "dependencies": {
     "@callstack/react-native-visionos": "^0.79.6",

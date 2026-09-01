@@ -124,26 +124,47 @@ import UIKit
       // transaction makes TabView apply the selection twice, landing one page
       // too far. Let UIKit register the dismissal first, then perform the
       // pager animation after the transition has completed.
-      // Native-stack begins its transition on a following run-loop pass.
-      // Waiting briefly lets its transition coordinator become observable.
-      DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
-        self?.setPageWhenPresentationTransitionCompletes(index: index)
-      }
+      // Native-stack may need several run-loop passes before its transition
+      // coordinator becomes observable. Check briefly for that coordinator
+      // instead of starting the SwiftUI animation on the very next pass.
+      setPageWhenPresentationTransitionCompletes(
+        index: index,
+        attemptsRemaining: 10
+      )
     } else {
       setPage(index: index, animated: animated)
     }
   }
 
-  private func setPageWhenPresentationTransitionCompletes(index: Int) {
+  private func setPageWhenPresentationTransitionCompletes(
+    index: Int,
+    attemptsRemaining: Int
+  ) {
     guard let transitionCoordinator = activeTransitionCoordinator() else {
-      setPage(index: index, animated: true)
+      guard attemptsRemaining > 0 && hasPresentedViewController() else {
+        setPage(index: index, animated: true)
+        return
+      }
+
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) { [weak self] in
+        self?.setPageWhenPresentationTransitionCompletes(
+          index: index,
+          attemptsRemaining: attemptsRemaining - 1
+        )
+      }
       return
     }
 
-    transitionCoordinator.animate(alongsideTransition: nil) { [weak self] _ in
+    let didSchedulePageChange = transitionCoordinator.animate(
+      alongsideTransition: nil
+    ) { [weak self] _ in
       DispatchQueue.main.async {
         self?.setPage(index: index, animated: true)
       }
+    }
+
+    if !didSchedulePageChange {
+      setPage(index: index, animated: true)
     }
   }
 
@@ -181,7 +202,7 @@ import UIKit
   }
 
   private func hasPresentedViewController() -> Bool {
-    var viewController = window?.rootViewController
+    var viewController = reactViewController()
     while let current = viewController {
       if current.presentedViewController != nil {
         return true

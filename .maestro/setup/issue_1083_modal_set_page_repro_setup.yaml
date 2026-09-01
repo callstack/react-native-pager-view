@@ -1,4 +1,4 @@
-appId: ${APP_ID}
+appId: com.pagerviewexample
 ---
 - launchApp
 
@@ -16,4 +16,5 @@ appId: ${APP_ID}
     timeout: 10000
 
 - assertVisible: 'Last requested page: 0'
-- assertVisible: 'Page 0'
+- assertVisible:
+    id: 'issue-1083-page-0'

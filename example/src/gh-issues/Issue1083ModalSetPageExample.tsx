@@ -48,8 +48,16 @@ export function Issue1083ModalSetPageExample() {
         <Text testID="issue-1083-requested-page" style={styles.label}>
           Last requested page: {currentPage}
         </Text>
-        <Button title="Advance pager directly" onPress={advancePager} />
-        <Button title="Open Modal" onPress={openModal} />
+        <Button
+          testID="issue-1083-advance-directly"
+          title="Advance pager directly"
+          onPress={advancePager}
+        />
+        <Button
+          testID="issue-1083-open-modal"
+          title="Open Modal"
+          onPress={openModal}
+        />
       </View>
       <PagerView ref={pagerRef} style={styles.flex}>
         {PAGES.map((label, i) => (
@@ -84,7 +92,11 @@ export function ModalSetPageModalScreen() {
     <SafeAreaView style={styles.flex}>
       <View style={styles.controls}>
         <Text style={styles.label}>Modal screen</Text>
-        <Button title="Submit & advance pager" onPress={submit} />
+        <Button
+          testID="issue-1083-submit"
+          title="Submit & advance pager"
+          onPress={submit}
+        />
       </View>
     </SafeAreaView>
   );
