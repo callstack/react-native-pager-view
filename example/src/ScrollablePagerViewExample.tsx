@@ -1,9 +1,9 @@
 import PagerView from 'react-native-pager-view';
-import React from 'react';
-import { ScrollView, View, Image, StyleSheet, Animated } from 'react-native';
-import { NavigationPanel } from './component/NavigationPanel';
+import React, { useMemo } from 'react';
+import { ScrollView, View, StyleSheet, Animated } from 'react-native';
 import { useNavigationPanel } from './hook/useNavigationPanel';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { PagerViewContent } from './component/PagerViewContent';
 
 const HEIGHT = 300;
 
@@ -30,15 +30,22 @@ export function ScrollablePagerViewExample() {
           ref={ref}
           style={{ height: HEIGHT }}
         >
-          {navigationPanel.pages.map((page) => (
-            <View key={`${page.key}`} style={styles.content}>
-              <Image style={styles.flex} source={page.imgSource} />
-            </View>
-          ))}
+          {useMemo(
+            () =>
+              navigationPanel.pages.map((page, index) => (
+                <PagerViewContent
+                  key={page.key}
+                  style={page.style}
+                  index={index}
+                />
+              )),
+            [navigationPanel.pages]
+          )}
         </AnimatedPagerView>
         {new Array(10).fill(1).map((_, index) => (
           <View
             key={index}
+            testID={`scrollable-spacer-${index}`}
             style={{
               width: '100%',
               height: 200,
@@ -48,7 +55,6 @@ export function ScrollablePagerViewExample() {
           />
         ))}
       </ScrollView>
-      <NavigationPanel {...navigationPanel} />
     </View>
   );
 }

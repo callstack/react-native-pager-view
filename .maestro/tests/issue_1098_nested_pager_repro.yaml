@@ -1,0 +1,47 @@
+appId: com.pagerviewexample
+tags:
+  - ios
+  - regression
+---
+- runFlow: ../setup/issue_1098_nested_pager_repro_setup.yaml
+
+# Changing the outer page count remounts its SwiftUI page controllers while the
+# nested pager remains mounted. The app must remain responsive after each change.
+- tapOn:
+    id: 'issue-1098-refresh-outer-pages'
+
+- extendedWaitUntil:
+    visible: 'Refreshes: 1'
+    timeout: 5000
+
+- swipe:
+    from:
+      id: 'issue-1098-outer-pager'
+    # Percentages are screen-relative in Maestro. 40% is the outer page title,
+    # above the nested pager, so this gesture reaches the outer pager.
+    start: 90%, 40%
+    end: 10%, 40%
+    duration: 500
+
+- extendedWaitUntil:
+    visible: 'Outer page 2'
+    timeout: 5000
+
+- swipe:
+    from:
+      id: 'issue-1098-outer-pager'
+    start: 10%, 40%
+    end: 90%, 40%
+    duration: 500
+
+- extendedWaitUntil:
+    visible:
+      id: 'issue-1098-inner-pager'
+    timeout: 5000
+
+- tapOn:
+    id: 'issue-1098-refresh-outer-pages'
+
+- extendedWaitUntil:
+    visible: 'Refreshes: 2'
+    timeout: 5000

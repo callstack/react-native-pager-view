@@ -24,16 +24,16 @@ export class Button extends React.Component<Props> {
   };
 
   render() {
+    const { accessibilityLabel, disabled, style, testID, text } = this.props;
+
     return (
       <TouchableWithoutFeedback onPress={this._handlePress}>
         <View
-          style={[
-            styles.button,
-            !this.props.disabled ? {} : styles.buttonDisabled,
-            this.props.style,
-          ]}
+          accessibilityLabel={accessibilityLabel}
+          testID={testID}
+          style={[styles.button, !disabled ? {} : styles.buttonDisabled, style]}
         >
-          <Text style={styles.buttonText}>{this.props.text}</Text>
+          <Text style={styles.buttonText}>{text}</Text>
         </View>
       </TouchableWithoutFeedback>
     );

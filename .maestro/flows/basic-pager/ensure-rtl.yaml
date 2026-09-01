@@ -1,0 +1,22 @@
+appId: com.pagerviewexample
+---
+- launchApp:
+    stopApp: true
+
+- extendedWaitUntil:
+    visible:
+      text: 'PagerView Example'
+    timeout: 15000
+
+- runFlow:
+    when:
+      visible:
+        id: 'layout-direction-ltr'
+    commands:
+      - tapOn:
+          id: 'layout-direction-ltr'
+
+- extendedWaitUntil:
+    visible:
+      id: 'layout-direction-rtl'
+    timeout: 15000

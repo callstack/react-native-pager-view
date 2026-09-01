@@ -1,0 +1,52 @@
+appId: com.pagerviewexample
+---
+- tapOn:
+    id: 'next-page-button'
+
+- extendedWaitUntil:
+    visible:
+      id: 'pageNumber2'
+    timeout: 5000
+
+- tapOn:
+    id: 'prev-page-button'
+
+- extendedWaitUntil:
+    visible:
+      id: 'pageNumber1'
+    timeout: 5000
+
+- tapOn:
+    id: 'start-page-button'
+
+- extendedWaitUntil:
+    visible:
+      id: 'pageNumber0'
+    timeout: 5000
+
+- tapOn:
+    id: 'last-page-button'
+
+- extendedWaitUntil:
+    visible:
+      id: 'pageNumber9'
+    timeout: 5000
+
+- tapOn:
+    id: 'remove-page-button'
+
+- extendedWaitUntil:
+    visible:
+      id: 'pageNumber8'
+    timeout: 5000
+
+- tapOn:
+    id: 'add-page-button'
+
+- tapOn:
+    id: 'next-page-button'
+
+- extendedWaitUntil:
+    visible:
+      id: 'pageNumber9'
+    timeout: 5000

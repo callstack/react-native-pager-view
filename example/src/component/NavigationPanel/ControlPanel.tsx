@@ -63,7 +63,7 @@ export function ControlsPanel({
       ) : null}
       <View style={styles.buttons}>
         <Button
-          testID="add-page-button"
+          testID="animation-toggle-button"
           text={isAnimated ? 'Turn off animations' : 'Turn animations back on'}
           onPress={toggleAnimation}
         />

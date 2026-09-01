@@ -1,0 +1,12 @@
+appId: com.pagerviewexample
+---
+- runFlow: ../flows/basic-pager/ensure-rtl.yaml
+
+- runFlow:
+    file: ../flows/basic-pager/open.yaml
+    env:
+      EXAMPLE_ID: 'example-basic-horizontal'
+      PAGER_ID: 'pager-view-horizontal'
+
+- runFlow: ../flows/basic-pager/verify-horizontal-rtl-swipe.yaml
+- runFlow: ../flows/basic-pager/verify-controls.yaml

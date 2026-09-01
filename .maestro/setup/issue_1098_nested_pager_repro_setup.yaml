@@ -1,0 +1,20 @@
+appId: ${APP_ID}
+---
+- launchApp
+
+# The issue examples are below the fundamental examples on the home screen.
+- scrollUntilVisible:
+    element:
+      id: 'Issue #1098 Nested Pager Repro'
+    direction: DOWN
+
+- tapOn:
+    id: 'Issue #1098 Nested Pager Repro'
+
+- extendedWaitUntil:
+    visible:
+      id: 'issue-1098-outer-pager'
+    timeout: 10000
+
+- assertVisible:
+    id: 'issue-1098-refresh-outer-pages'

@@ -1,13 +1,12 @@
-const { makeMetroConfig } = require('@rnx-kit/metro-config');
+const { exclusionList, makeMetroConfig } = require('@rnx-kit/metro-config');
 const path = require('path');
 const escape = require('escape-string-regexp');
-const exclusionList = require('metro-config/src/defaults/exclusionList');
 const pak = require('../package.json');
 
 const root = path.resolve(__dirname, '..');
 const modules = Object.keys({ ...pak.peerDependencies });
 
-module.exports = makeMetroConfig({
+const config = makeMetroConfig({
   transformer: {
     getTransformOptions: async () => ({
       transform: {
@@ -34,3 +33,9 @@ module.exports = makeMetroConfig({
     }, {}),
   },
 });
+
+ if (config.server && config.server.tls) {
+  delete config.server.tls;
+}
+
+module.exports = config;

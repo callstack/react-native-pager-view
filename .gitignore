@@ -58,6 +58,7 @@ lib/
 #e2e
 test-butler-app.apk
 example/vendor
+.maestro/debug-output/
 
 #Example
 example/ios/Pods

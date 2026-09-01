@@ -14,7 +14,7 @@ on:
 
 jobs:
   ios-build:
-    runs-on: macos-14
+    runs-on: macos-26
     concurrency:
       group: ${{ github.ref }}-ios
       cancel-in-progress: true

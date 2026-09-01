@@ -1,0 +1,12 @@
+appId: ${APP_ID}
+---
+- launchApp
+- assertVisible: 'PagerView Example'
+- tapOn: 'TabView inside ScrollView Example'
+- extendedWaitUntil:
+    visible:
+      id: 'tab-view-scroll-view'
+    timeout: 10000
+- assertVisible: 'First'
+- assertVisible: 'Second'
+- assertVisible: 'First Route'
