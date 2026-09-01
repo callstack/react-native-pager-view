@@ -34,7 +34,8 @@ appId: com.pagerviewexample
       id: 'material-top-bar-detail-screen'
     timeout: 5000
 
-- pressKey: Back
+- tapOn:
+    id: 'material-top-bar-back-button'
 
 - extendedWaitUntil:
     visible:

@@ -95,6 +95,17 @@ const DetailScreen = () => (
   </View>
 );
 
+const detailScreenOptions = ({ navigation }: any) => ({
+  headerBackVisible: false,
+  headerLeft: () => (
+    <Button
+      testID="material-top-bar-back-button"
+      title="Back"
+      onPress={navigation.goBack}
+    />
+  ),
+});
+
 export function MaterialTopBarExample() {
   const { Screen, Navigator } = createNativeStackNavigator();
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -118,7 +129,11 @@ export function MaterialTopBarExample() {
           )}
         </Screen>
       )}
-      <Screen name="Detail Screen" component={DetailScreen} />
+      <Screen
+        name="Detail Screen"
+        component={DetailScreen}
+        options={detailScreenOptions}
+      />
     </Navigator>
   );
 }
