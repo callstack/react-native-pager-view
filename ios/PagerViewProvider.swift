@@ -73,6 +73,9 @@ import UIKit
     guard index >= 0 && index <= props.children.count else {
       return
     }
+    if index <= props.currentPage && props.currentPage < props.children.count {
+      props.currentPage += 1
+    }
     props.children.insert(IdentifiablePlatformView(child), at: index)
   }
 
@@ -82,6 +85,9 @@ import UIKit
       return
     }
     props.children.remove(at: index)
+    if index < props.currentPage {
+      props.currentPage -= 1
+    }
   }
 
   override public func didMoveToWindow() {
