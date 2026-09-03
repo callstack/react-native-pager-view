@@ -222,8 +222,14 @@ import UIKit
       return
     }
 
+    // The hosting view must not carry a safe area: `PagerView`'s `GeometryReader`
+    // is measured inside it, and every page is framed to that measurement, so the
+    // pages end up inset by the safe area while React Native's own layout still
+    // has them at full size. `propagateSafeArea()` on `PageChildViewController`
+    // is what gives child UIKit views their insets back; the two are independent.
     let hostingController = UIHostingController(
-      rootView: PagerView(props: props, delegate: delegate)
+      rootView: PagerView(props: props, delegate: delegate),
+      ignoreSafeArea: true
     )
     self.hostingController = hostingController
 
