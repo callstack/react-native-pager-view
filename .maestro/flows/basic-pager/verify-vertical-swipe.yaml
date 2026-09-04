@@ -3,6 +3,10 @@ appId: com.pagerviewexample
 - tapOn:
     id: 'scroll-enabled-button'
 
+- extendedWaitUntil:
+    visible: 'Scroll Disabled'
+    timeout: 5000
+
 - swipe:
     from:
       id: 'pager-view-vertical'
@@ -14,6 +18,10 @@ appId: com.pagerviewexample
 
 - tapOn:
     id: 'scroll-enabled-button'
+
+- extendedWaitUntil:
+    visible: 'Scroll Enabled'
+    timeout: 5000
 
 - swipe:
     from:
