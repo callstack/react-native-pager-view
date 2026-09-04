@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Source https://github.com/stripe/stripe-react-native/blob/master/scripts/run-maestro-tests
+# Runs Maestro-compatible flows with https://github.com/devicelab-dev/maestro-runner
 set -uo pipefail
 
 if [ -t 1 ] && [ "${NO_COLOR:-}" != "1" ] && [ "${TERM:-}" != "dumb" ]; then
@@ -79,6 +79,11 @@ case $PLATFORM in
     ;;
 esac
 
+if ! command -v maestro-runner >/dev/null 2>&1; then
+  printError "maestro-runner is not installed. See https://open.devicelab.dev/install/maestro-runner"
+  exit 1
+fi
+
 if { [ -n "$SHARD_COUNT" ] || [ -n "$SHARD_INDEX" ]; } && { [ -z "$SHARD_COUNT" ] || [ -z "$SHARD_INDEX" ]; }; then
   printError "Both SHARD_COUNT and SHARD_INDEX must be set to enable sharding."
   exit 1
@@ -142,17 +147,21 @@ runTest() {
   fi
 
   maestroCommand=(
-    maestro test
+    maestro-runner
     -p "$PLATFORM"
-    "$file"
-    -e APP_ID="$APPID"
-    --debug-output "$artifactDir"
-    --flatten-debug-output
   )
 
   if [ -n "$DEVICE_ID" ]; then
     maestroCommand+=(--device "$DEVICE_ID")
   fi
+
+  maestroCommand+=(
+    test
+    -e APP_ID="$APPID"
+    --output "$artifactDir"
+    --flatten
+    "$file"
+  )
 
   "${maestroCommand[@]}"
 }

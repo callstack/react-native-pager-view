@@ -1,5 +1,11 @@
 # Maestro
 
+Install [maestro-runner](https://github.com/devicelab-dev/maestro-runner) before running the flows:
+
+```bash
+curl -fsSL https://open.devicelab.dev/install/maestro-runner | bash
+```
+
 Run E2E tests from the repository root:
 
 ```bash
@@ -16,8 +22,11 @@ bun run maestro:test:ios
 bun run maestro:test:android
 ```
 
+Platform test commands retry failed flows up to two times after the initial run.
+
 Use `bun run maestro:smoke` to run only the smoke flow.
-`maestro:debug` writes failure artifacts to `.maestro/debug-output`.
+`maestro:debug` enables verbose logging and captures artifacts for every step.
+HTML, JSON, JUnit, Allure, log, and failure artifacts are written under `.maestro/debug-output`.
 
 The smoke flow targets the example app ID `com.pagerviewexample` and verifies the horizontal pager using stable `testID` selectors.
 
