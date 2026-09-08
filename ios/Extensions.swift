@@ -40,10 +40,21 @@ class PageChildViewController: UIViewController {
     propagateSafeArea()
   }
 
-  /// Re-applies safe area insets from a stable UIKit source, since SwiftUI's
-  /// .ignoresSafeArea() causes embedded UIKit views to report .zero.
+  /// Re-applies the pager's safe area to child UIKit views. SwiftUI's
+  /// `.ignoresSafeArea()` and `UIHostingController(ignoreSafeArea:)` both make
+  /// this controller report `.zero`, which breaks
+  /// `contentInsetAdjustmentBehavior` on embedded scroll views.
+  ///
+  /// Do not walk to the nearest ancestor with a non-zero inset. That source is
+  /// in the ancestor's own coordinate space: an inner `_UIHostingView` often
+  /// has only the home-indicator edge (#1142), and a `UIScrollView` content
+  /// view's inset tracks scroll offset (#1099).
+  ///
+  /// `PagerViewProvider` sits in the React Native hierarchy under the screen
+  /// view controller, so its `safeAreaInsets` include a native search bar and
+  /// are zero when this pager does not overlap the unsafe region.
   private func propagateSafeArea() {
-    let insets = nearestNonZeroSafeAreaInsets() ?? view.window?.safeAreaInsets ?? .zero
+    let insets = targetSafeAreaInsets()
     if abs(additionalSafeAreaInsets.top - insets.top) > 0.5
         || abs(additionalSafeAreaInsets.left - insets.left) > 0.5
         || abs(additionalSafeAreaInsets.bottom - insets.bottom) > 0.5
@@ -52,12 +63,18 @@ class PageChildViewController: UIViewController {
     }
   }
 
-  private func nearestNonZeroSafeAreaInsets() -> UIEdgeInsets? {
+  private func targetSafeAreaInsets() -> UIEdgeInsets {
+    if let pager = enclosingPagerView() {
+      return pager.safeAreaInsets
+    }
+    return view.window?.safeAreaInsets ?? .zero
+  }
+
+  private func enclosingPagerView() -> UIView? {
     var current = view.superview
     while let candidate = current {
-      let insets = candidate.safeAreaInsets
-      if insets.top > 0 || insets.left > 0 || insets.bottom > 0 || insets.right > 0 {
-        return insets
+      if candidate is PagerViewProvider {
+        return candidate
       }
       current = candidate.superview
     }
