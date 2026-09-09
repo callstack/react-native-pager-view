@@ -1,0 +1,36 @@
+appId: com.pagerviewexample
+tags:
+  - ios
+  - regression
+---
+- runFlow: ../setup/issue_1142_search_bar_inset_repro_setup.yaml
+
+# A FlatList inside PagerView on a native-stack screen with a stacked search
+# bar must get the same automatic insets as a bare list. The example reports
+# the first-row and bottom-marker window positions as "safe-area: pass".
+- extendedWaitUntil:
+    visible: 'safe-area: pass'
+    timeout: 15000
+
+- assertVisible:
+    id: 'issue-1142-pager-verdict'
+
+- assertVisible:
+    id: 'issue-1142-pager-first-row'
+
+- assertVisible:
+    id: 'issue-1142-pager-bottom-marker'
+
+- swipe:
+    from:
+      id: 'issue-1142-pager'
+    start: 90%, 60%
+    end: 10%, 60%
+    duration: 500
+
+- extendedWaitUntil:
+    visible:
+      id: 'issue-1142-second-page'
+    timeout: 5000
+
+- assertVisible: 'Second page'

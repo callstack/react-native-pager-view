@@ -40,6 +40,11 @@ import {
   Issue1083ModalSetPageExample,
   ModalSetPageModalScreen,
 } from './gh-issues/Issue1083ModalSetPageExample';
+import {
+  Issue1142PlainListScreen,
+  Issue1142PagerListScreen,
+  Issue1142SearchBarInsetRepro,
+} from './gh-issues/Issue1142SearchBarInsetRepro';
 
 function BasicPagerViewExampleScreen() {
   return <BasicPagerViewExample isHorizontal={true} />;
@@ -123,6 +128,10 @@ const ghIssues: Example[] = [
   {
     component: Issue1099SafeAreaRepro,
     name: 'Issue #1099 Safe Area Repro',
+  },
+  {
+    component: Issue1142SearchBarInsetRepro,
+    name: 'Issue #1142 Search Bar Inset Repro',
   },
 ];
 
@@ -264,6 +273,14 @@ export function Navigation() {
               presentation: 'modal',
               animation: 'slide_from_bottom',
             }}
+          />
+          <NavigationStack.Screen
+            name="Issue #1142 Plain List"
+            component={Issue1142PlainListScreen}
+          />
+          <NavigationStack.Screen
+            name="Issue #1142 Pager List"
+            component={Issue1142PagerListScreen}
           />
         </NavigationStack.Navigator>
       </NavigationContainer>
