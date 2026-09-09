@@ -40,21 +40,23 @@ class PageChildViewController: UIViewController {
     propagateSafeArea()
   }
 
-  /// Re-applies the pager's safe area to child UIKit views. SwiftUI's
-  /// `.ignoresSafeArea()` and `UIHostingController(ignoreSafeArea:)` both make
-  /// this controller report `.zero`, which breaks
-  /// `contentInsetAdjustmentBehavior` on embedded scroll views.
+  /// Makes this page's `safeAreaInsets` match the pager view's overlap with
+  /// the screen safe area, so `contentInsetAdjustmentBehavior` on an embedded
+  /// scroll view matches a list that is not inside `PagerView`.
   ///
-  /// Do not walk to the nearest ancestor with a non-zero inset. That source is
-  /// in the ancestor's own coordinate space: an inner `_UIHostingView` often
-  /// has only the home-indicator edge (#1142), and a `UIScrollView` content
-  /// view's inset tracks scroll offset (#1099).
+  /// `additionalSafeAreaInsets` is *added* to what this controller already
+  /// inherits. The hosting controller is a child of the RN screen, so the
+  /// inherited top is often the full nav + search-bar inset even when React
+  /// Native has already laid the pager out below the header. Copying
+  /// `PagerViewProvider.safeAreaInsets` on top of that (or leaving the
+  /// inherited value untouched when the pager's own top is 0) is the extra
+  /// top inset in #1142. Negative values are required to subtract it.
   ///
-  /// `PagerViewProvider` sits in the React Native hierarchy under the screen
-  /// view controller, so its `safeAreaInsets` include a native search bar and
-  /// are zero when this pager does not overlap the unsafe region.
+  /// Do not walk to the nearest ancestor with a non-zero inset. That source
+  /// is in the ancestor's own coordinate space and can track scroll offset
+  /// (#1099).
   private func propagateSafeArea() {
-    let insets = targetSafeAreaInsets()
+    let insets = additionalInsets(toReach: targetSafeAreaInsets())
     if abs(additionalSafeAreaInsets.top - insets.top) > 0.5
         || abs(additionalSafeAreaInsets.left - insets.left) > 0.5
         || abs(additionalSafeAreaInsets.bottom - insets.bottom) > 0.5
@@ -63,11 +65,27 @@ class PageChildViewController: UIViewController {
     }
   }
 
+  private func additionalInsets(toReach target: UIEdgeInsets) -> UIEdgeInsets {
+    let inherited = UIEdgeInsets(
+      top: view.safeAreaInsets.top - additionalSafeAreaInsets.top,
+      left: view.safeAreaInsets.left - additionalSafeAreaInsets.left,
+      bottom: view.safeAreaInsets.bottom - additionalSafeAreaInsets.bottom,
+      right: view.safeAreaInsets.right - additionalSafeAreaInsets.right
+    )
+    return UIEdgeInsets(
+      top: target.top - inherited.top,
+      left: target.left - inherited.left,
+      bottom: target.bottom - inherited.bottom,
+      right: target.right - inherited.right
+    )
+  }
+
   private func targetSafeAreaInsets() -> UIEdgeInsets {
-    if let pager = enclosingPagerView() {
-      return pager.safeAreaInsets
+    guard let pager = enclosingPagerView() else {
+      return view.window.map { overlap(of: view, withSafeAreaIn: $0) } ?? .zero
     }
-    return view.window?.safeAreaInsets ?? .zero
+    let container = screenView(from: pager) ?? pager.window ?? pager
+    return overlap(of: pager, withSafeAreaIn: container)
   }
 
   private func enclosingPagerView() -> UIView? {
@@ -79,6 +97,36 @@ class PageChildViewController: UIViewController {
       current = candidate.superview
     }
     return nil
+  }
+
+  /// The RN screen view controller — not `PageChildViewController` (this) and
+  /// not the pager's `UIHostingController`, both of which sit in the SwiftUI
+  /// subtree and do not own the navigation/search-bar safe area.
+  private func screenView(from pager: UIView) -> UIView? {
+    var responder: UIResponder? = pager
+    while let current = responder {
+      if let controller = current as? UIViewController,
+         !(controller is PageChildViewController),
+         !(controller is UIHostingController<PagerView>) {
+        return controller.view
+      }
+      responder = current.next
+    }
+    return nil
+  }
+
+  private func overlap(of child: UIView, withSafeAreaIn container: UIView) -> UIEdgeInsets {
+    guard child.bounds.width > 0, child.bounds.height > 0 else {
+      return .zero
+    }
+    let safe = container.safeAreaLayoutGuide.layoutFrame
+    let frame = child.convert(child.bounds, to: container)
+    return UIEdgeInsets(
+      top: max(0, safe.minY - frame.minY),
+      left: max(0, safe.minX - frame.minX),
+      bottom: max(0, frame.maxY - safe.maxY),
+      right: max(0, frame.maxX - safe.maxX)
+    )
   }
 }
 
