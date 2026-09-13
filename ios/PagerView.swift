@@ -45,11 +45,18 @@ struct PagerView: View {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
 
-        if scrollDelegate.originalDelegate == nil {
+        // Install once per collection view. This closure re-runs on every
+        // layout pass, and `originalDelegate == nil` cannot tell "not installed
+        // yet" from "installed, but the weak reference died" - so once it died
+        // we re-adopted `collectionView.delegate`, which by then is this object
+        // (or a proxy forwarding back to it). Either way the delegate chain
+        // becomes a cycle and recurses until the stack overflows.
+        if scrollDelegate.installedCollectionView !== collectionView {
           scrollDelegate.originalDelegate = collectionView.delegate
           scrollDelegate.delegate = delegate
           // VTabView-style rotation preserves TabView's horizontal collection view.
           scrollDelegate.orientation = .horizontal
+          scrollDelegate.installedCollectionView = collectionView
           collectionView.delegate = scrollDelegate
         }
       }
