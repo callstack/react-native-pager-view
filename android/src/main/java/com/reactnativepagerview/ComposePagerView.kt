@@ -57,6 +57,43 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private val composeLifecycleOwner = ComposeViewLifecycleOwner()
   private var composeView: ComposeView? = null
   private val pages = mutableStateListOf<View>()
+  // RN's logical children must update immediately, but screens uses
+  // startViewTransition to keep the old native hierarchy drawing during pop.
+  // Compose must keep the same page hosts alive for that interval too.
+  private val transitionPages = mutableStateOf<List<View>?>(null)
+  private var dropRequested = false
+  private var disposed = false
+
+  override fun startViewTransition(view: View) {
+    super.startViewTransition(view)
+    if (view === composeView && transitionPages.value == null && !disposed) {
+      transitionPages.value = pages.toList()
+    }
+  }
+
+  override fun endViewTransition(view: View) {
+    super.endViewTransition(view)
+    if (view === composeView) {
+      finishPageTransition()
+    }
+  }
+
+  private fun finishPageTransition() {
+    val retained = transitionPages.value ?: return
+    if (dropRequested) {
+      disposeNow()
+    }
+    transitionPages.value = null
+    retained.filterNot { it in pages }.forEach { view ->
+      (view.parent as? ViewGroup)?.removeView(view)
+    }
+  }
+
+  private fun removePageView(view: View) {
+    if (transitionPages.value?.contains(view) != true) {
+      (view.parent as? ViewGroup)?.removeView(view)
+    }
+  }
   private val scrollEnabledState = mutableStateOf(true)
   private val orientationState = mutableStateOf(Orientation.Horizontal)
   private val layoutDirectionState = mutableStateOf(LayoutDirection.Ltr)
@@ -130,10 +167,23 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     // dispose the composition, since DisposeOnLifecycleDestroyed only acts
     // on ON_DESTROY.
     composeLifecycleOwner.detach()
+    // Detach is the fallback when the parent does not deliver endViewTransition.
+    finishPageTransition()
+    if (dropRequested) disposeNow()
     super.onDetachedFromWindow()
   }
 
   fun dispose() {
+    dropRequested = true
+    if (isAttachedToWindow && transitionPages.value != null) {
+      return
+    }
+    disposeNow()
+  }
+
+  private fun disposeNow() {
+    if (disposed) return
+    disposed = true
     composeLifecycleOwner.destroy()
   }
 
@@ -242,15 +292,15 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       return
     }
     val view = pages.removeAt(index)
-    (view.parent as? ViewGroup)?.removeView(view)
+    removePageView(view)
   }
 
   fun removeAllPages() {
     pages.forEach { view ->
-      (view.parent as? ViewGroup)?.removeView(view)
+      removePageView(view)
     }
     pages.clear()
-    resetPagerState()
+    if (transitionPages.value == null) resetPagerState()
   }
 
   private fun resetPagerState() {
@@ -429,6 +479,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   private fun dispatchPageSelected(position: Int) {
+    if (dropRequested) return
     if (lastEmittedPageSelected == position) {
       return
     }
@@ -439,12 +490,14 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   private fun dispatchPageScroll(position: Int, offset: Float) {
+    if (dropRequested) return
     UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)?.dispatchEvent(
       PageScrollEvent(id, position, offset)
     )
   }
 
   private fun dispatchScrollState(state: String) {
+    if (dropRequested) return
     if (lastEmittedScrollState == state) {
       return
     }
@@ -456,13 +509,14 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 
   @Composable
   private fun PagerContent() {
-    val pageCount = pages.size
+    val displayedPages = transitionPages.value ?: pages
+    val pageCount = displayedPages.size
     if (pageCount == 0) {
       return
     }
 
     val pagerState = rememberPagerState(initialPage = initialPage.coerceIn(0, pageCount - 1)) {
-      pages.size
+      (transitionPages.value ?: pages).size
     }
 
     LaunchedEffect(pageCount) {
@@ -564,7 +618,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
           reverseLayout = false,
           beyondViewportPageCount = beyondViewportPageCount
         ) { page ->
-          PageHost(pages[page])
+          PageHost(displayedPages[page])
         }
       } else {
         HorizontalPager(
@@ -575,7 +629,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
           reverseLayout = false,
           beyondViewportPageCount = beyondViewportPageCount
         ) { page ->
-          PageHost(pages[page])
+          PageHost(displayedPages[page])
         }
       }
     }
