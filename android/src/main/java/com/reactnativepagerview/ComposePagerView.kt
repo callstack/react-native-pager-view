@@ -509,14 +509,17 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 
   @Composable
   private fun PagerContent() {
-    val displayedPages = transitionPages.value ?: pages
+    // Lazy page content can run after RN mutates the logical child list but
+    // before this composition is replaced. Capture an immutable snapshot so
+    // an existing item provider never indexes a list that has since shrunk.
+    val displayedPages = transitionPages.value ?: pages.toList()
     val pageCount = displayedPages.size
     if (pageCount == 0) {
       return
     }
 
     val pagerState = rememberPagerState(initialPage = initialPage.coerceIn(0, pageCount - 1)) {
-      (transitionPages.value ?: pages).size
+      pageCount
     }
 
     LaunchedEffect(pageCount) {
