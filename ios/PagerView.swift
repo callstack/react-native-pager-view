@@ -23,6 +23,13 @@ struct PagerView: View {
           RepresentableView(view: child.view)
             .frame(width: proxy.size.width, height: proxy.size.height)
             .rotationEffect(isVertical ? .degrees(-90) : .zero)
+            // Rotation changes rendering, not layout. Match the rotated page's
+            // bounds so TabView cannot center it inside an inset, unrotated frame.
+            .frame(
+              width: isVertical ? proxy.size.height : proxy.size.width,
+              height: isVertical ? proxy.size.width : proxy.size.height
+            )
+            .ignoresSafeArea(isVertical ? .all : [], edges: .all)
             .tag(index)
         }
       }
@@ -45,6 +52,15 @@ struct PagerView: View {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
 
+        // The vertical pager rotates this horizontal scroll view by 90 degrees.
+        // Native edge effects would rotate with it and cover the page sideways.
+        if isVertical, #available(iOS 26.0, *) {
+          collectionView.topEdgeEffect.isHidden = true
+          collectionView.bottomEdgeEffect.isHidden = true
+          collectionView.leftEdgeEffect.isHidden = true
+          collectionView.rightEdgeEffect.isHidden = true
+        }
+
         if scrollDelegate.originalDelegate == nil {
           scrollDelegate.originalDelegate = collectionView.delegate
           scrollDelegate.delegate = delegate
@@ -54,6 +70,8 @@ struct PagerView: View {
         }
       }
     }
+    // Measure the full React Native frame before swapping the pager's axes.
+    .ignoresSafeArea(isVertical ? .all : [], edges: .all)
     .onAppear {
       // Apply initial prop values that .onChange won't catch
       // (.onChange only fires on changes, not on initial values)
