@@ -16,6 +16,49 @@ struct PagerView: View {
     props.orientation == .vertical
   }
 
+  /// SwiftUI's paged `TabView` is backed by a `UICollectionView` whose section relies on
+  /// orthogonal paging. On iOS 15 the horizontal paging is performed by an embedded
+  /// `UIScrollView` subview of that collection view (private class
+  /// `_UICollectionViewOrthogonalScrollerEmbeddedScrollView`), while the collection view
+  /// itself only scrolls vertically. Turning scrolling off on the collection view alone
+  /// therefore leaves the pager swipeable even with `scrollEnabled={false}`.
+  ///
+  /// Scroll views that belong to the pages' React Native content live inside the paging
+  /// cells, so the traversal stops at cell boundaries and never touches the user's own
+  /// scroll views.
+  private var pagingScrollViews: [UIScrollView] {
+    guard let collectionView else { return [] }
+    return PagerView.collectPagingScrollViews(in: collectionView)
+  }
+
+  private static func collectPagingScrollViews(in view: UIView) -> [UIScrollView] {
+    var scrollViews: [UIScrollView] = []
+
+    for subview in view.subviews {
+      if subview is UICollectionViewCell {
+        continue
+      }
+
+      if let scrollView = subview as? UIScrollView {
+        scrollViews.append(scrollView)
+      }
+
+      scrollViews.append(contentsOf: collectPagingScrollViews(in: subview))
+    }
+
+    return scrollViews
+  }
+
+  private func applyScrollEnabled(_ scrollEnabled: Bool) {
+    collectionView?.isScrollEnabled = scrollEnabled
+    pagingScrollViews.forEach { $0.isScrollEnabled = scrollEnabled }
+  }
+
+  private func applyOverdrag(_ overdrag: Bool) {
+    collectionView?.bounces = overdrag
+    pagingScrollViews.forEach { $0.bounces = overdrag }
+  }
+
   var body: some View {
     GeometryReader { proxy in
       TabView(selection: $props.currentPage) {
@@ -39,8 +82,8 @@ struct PagerView: View {
       .environment(\.layoutDirection, props.layoutDirection.converted)
       .introspect(.tabView(style: .page), on: .iOS(.v14...)) { collectionView in
         self.collectionView = collectionView
-        collectionView.bounces = props.overdrag
-        collectionView.isScrollEnabled = props.scrollEnabled
+        applyOverdrag(props.overdrag)
+        applyScrollEnabled(props.scrollEnabled)
         collectionView.keyboardDismissMode = props.keyboardDismissMode
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
@@ -58,8 +101,8 @@ struct PagerView: View {
       // Apply initial prop values that .onChange won't catch
       // (.onChange only fires on changes, not on initial values)
       DispatchQueue.main.async {
-        collectionView?.isScrollEnabled = props.scrollEnabled
-        collectionView?.bounces = props.overdrag
+        applyScrollEnabled(props.scrollEnabled)
+        applyOverdrag(props.overdrag)
       }
 
       // `onChange` does not fire for the initial `currentPage` value. Emit the
@@ -79,10 +122,10 @@ struct PagerView: View {
       delegate?.onPageSelected(position: newValue)
     }
     .onChange(of: props.scrollEnabled) { newValue in
-      collectionView?.isScrollEnabled = newValue
+      applyScrollEnabled(newValue)
     }
     .onChange(of: props.overdrag) { newValue in
-      collectionView?.bounces = newValue
+      applyOverdrag(newValue)
     }
     .onChange(of: props.keyboardDismissMode) { newValue in
       collectionView?.keyboardDismissMode = newValue
