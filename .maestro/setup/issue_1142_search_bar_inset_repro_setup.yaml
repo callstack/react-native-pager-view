@@ -1,0 +1,25 @@
+appId: ${APP_ID}
+---
+- launchApp
+
+# The issue examples sit below the fundamental examples on the home screen.
+- scrollUntilVisible:
+    element:
+      id: 'Issue #1142 Search Bar Inset Repro'
+    direction: DOWN
+
+- tapOn:
+    id: 'Issue #1142 Search Bar Inset Repro'
+
+- extendedWaitUntil:
+    visible:
+      id: 'issue-1142-hub'
+    timeout: 10000
+
+- tapOn:
+    id: 'issue-1142-open-pager'
+
+- extendedWaitUntil:
+    visible:
+      id: 'issue-1142-pager'
+    timeout: 10000
