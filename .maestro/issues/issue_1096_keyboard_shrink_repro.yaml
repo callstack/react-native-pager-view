@@ -22,6 +22,14 @@ tags:
 
 - assertVisible: 'last-row taps: 1'
 
+# Dismiss the keyboard deterministically before checking the sheet drops back
+# down. `hideKeyboard` alone is unreliable here: on iOS it only performs two
+# blind swipes at the screen centre, and this screen has no scroll view with a
+# non-default `keyboardDismissMode` under that point, so the keyboard survives.
+# A single-line TextInput blurs on submit, so Enter is the reliable dismiss.
+- pressKey: Enter
+
+# No-op once the keyboard is already down; still dismisses natively on Android.
 - hideKeyboard
 
 - tapOn:
