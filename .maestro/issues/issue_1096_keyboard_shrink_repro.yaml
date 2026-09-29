@@ -1,0 +1,30 @@
+appId: com.pagerviewexample
+tags:
+  - ios
+  - regression
+---
+- runFlow: ../setup/issue_1096_keyboard_shrink_repro_setup.yaml
+
+# With the keyboard open, SwiftUI keyboard avoidance must not shrink the page.
+# A shrunk page clips Row 5 and moves its native frame, so the tap misses and
+# the counter stays at 0.
+- tapOn:
+    id: 'issue-1096-input'
+
+- waitForAnimationToEnd:
+    timeout: 3000
+
+- assertVisible:
+    id: 'issue-1096-last-row'
+
+- tapOn:
+    id: 'issue-1096-last-row'
+
+- assertVisible: 'last-row taps: 1'
+
+- hideKeyboard
+
+- tapOn:
+    id: 'issue-1096-last-row'
+
+- assertVisible: 'last-row taps: 2'

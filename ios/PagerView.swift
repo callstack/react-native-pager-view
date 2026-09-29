@@ -54,6 +54,9 @@ struct PagerView: View {
         }
       }
     }
+    // GeometryReader is the root since the vertical layout; without this it
+    // honours the keyboard region and pages get framed to the shrunk proxy.
+    .ignoresSafeArea()
     .onAppear {
       // Apply initial prop values that .onChange won't catch
       // (.onChange only fires on changes, not on initial values)
