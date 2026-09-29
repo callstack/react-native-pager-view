@@ -34,6 +34,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PagerHookExample } from './PagerHookExample';
 import { NestedHorizontalScrollViewExample } from './NestedHorizontalScrollViewExample';
+import { Issue1096KeyboardShrinkRepro } from './gh-issues/Issue1096KeyboardShrinkRepro';
 import { Issue1098NestedPagerRepro } from './gh-issues/Issue1098NestedPagerRepro';
 import { Issue1099SafeAreaRepro } from './gh-issues/Issue1099SafeAreaRepro';
 import {
@@ -120,6 +121,10 @@ const ghIssues: Example[] = [
   {
     component: Issue1083ModalSetPageExample,
     name: 'Issue #1083 Modal SetPage Repro',
+  },
+  {
+    component: Issue1096KeyboardShrinkRepro,
+    name: 'Issue #1096 Keyboard Shrink Repro',
   },
   {
     component: Issue1098NestedPagerRepro,
