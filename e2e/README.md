@@ -55,8 +55,10 @@ E2E_DEVICES="iPhone 17,iPhone 16e,iPhone 17 Pro Max,iPhone Air" E2E_IOS_APP_PATH
 
 `targets.ts` turns the list into a device pool. The engine boots every device
 up front, declares one worker per device, and the runner spreads the test
-files across them. 13 tests: about 375 s on one simulator, 190 s on two, 130 s
-on four. Remote devices fit the same shape: one pool entry per device.
+files across them. The suite (13 tests on iOS, 12 on Android) takes about
+145 s on one simulator and 395 s on one emulator; a pool divides the files
+across its devices. Remote devices fit the same shape: one pool entry per
+device.
 
 | Variable | Effect |
 | --- | --- |
