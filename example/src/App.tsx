@@ -52,6 +52,7 @@ import {
   Issue1142PagerListScreen,
   Issue1142SearchBarInsetRepro,
 } from './gh-issues/Issue1142SearchBarInsetRepro';
+import { Issue1154PageChangeFocusRepro } from './gh-issues/Issue1154PageChangeFocusRepro';
 import { colors, radius } from './theme';
 
 function BasicPagerViewExampleScreen() {
@@ -159,6 +160,10 @@ const sections: { title: string; data: Example[] }[] = [
       {
         component: Issue1142SearchBarInsetRepro,
         name: 'Issue #1142 Search Bar Inset Repro',
+      },
+      {
+        component: Issue1154PageChangeFocusRepro,
+        name: 'Issue #1154 Page Change Focus Repro',
       },
     ],
   },

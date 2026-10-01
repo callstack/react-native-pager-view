@@ -5,6 +5,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
@@ -433,9 +434,31 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       return
     }
     lastEmittedPageSelected = position
+    clearFocusOutsidePage(position)
     UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)?.dispatchEvent(
       PageSelectedEvent(id, position)
     )
+  }
+
+  private fun clearFocusOutsidePage(position: Int) {
+    val focused = findFocus() ?: return
+    val selectedPage = pages.getOrNull(position)
+    if (selectedPage?.hasFocus() == true) {
+      return
+    }
+    val inputMethodManager = context.getSystemService(InputMethodManager::class.java)
+    val wasServingFocused = inputMethodManager?.isActive(focused) == true
+    clearFocus()
+    if (hasFocus() && selectedPage?.hasFocus() != true) {
+      if (selectedPage?.requestFocus(View.FOCUS_FORWARD) != true) {
+        composeView?.requestFocus(View.FOCUS_FORWARD)
+      }
+    }
+    // The keyboard has to be hidden manually, since unlike ViewPager2's
+    // RecyclerView in v8, the pager no longer detaches the previous page.
+    if (wasServingFocused && !focused.hasFocus()) {
+      inputMethodManager?.hideSoftInputFromWindow(focused.windowToken, 0)
+    }
   }
 
   private fun dispatchPageScroll(position: Int, offset: Float) {
