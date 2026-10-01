@@ -19,11 +19,15 @@ test('TabView inside a ScrollView swipes tabs and scrolls the page', async ({
   await scrollView.swipe({ direction: 'right', momentum: 'fast' });
   await expect(screen.getByText('Second Route')).toBeVisible();
 
-  // Scroll the ScrollView node, not the viewport: on a short screen the
-  // viewport centre lands inside the TabView pager, which can swallow the
-  // gesture.
+  // Scroll the ScrollView node with slow drags, not viewport flings: on a
+  // short screen the viewport centre lands inside the TabView pager, which
+  // can swallow the gesture, and a fling empties the accessibility tree long
+  // enough on a software-rendered CI emulator for the search to give up.
   const secondRouteBottom = screen.getByTestId('tab-view-second-route-bottom');
-  await scrollView.scrollUntilVisible(secondRouteBottom, { direction: 'down' });
+  await scrollView.scrollUntilVisible(secondRouteBottom, {
+    direction: 'down',
+    momentum: 'slow',
+  });
   await expect(secondRouteBottom).toBeVisible();
 
   // Scroll back until the tab bar itself is on screen: stopping at the route
@@ -32,6 +36,7 @@ test('TabView inside a ScrollView swipes tabs and scrolls the page', async ({
   // getByText is LOCATOR_AMBIGUOUS; both copies share the tab's box.
   await scrollView.scrollUntilVisible(screen.getByText('First').first(), {
     direction: 'up',
+    momentum: 'slow',
   });
   await expect(screen.getByText('Second Route')).toBeVisible();
 
