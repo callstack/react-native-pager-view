@@ -45,6 +45,15 @@ struct PagerView: View {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
 
+        // The vertical pager rotates this horizontal scroll view by 90 degrees.
+        // Native edge effects would rotate with it and cover the page sideways.
+        if isVertical, #available(iOS 26.0, *) {
+          collectionView.topEdgeEffect.isHidden = true
+          collectionView.bottomEdgeEffect.isHidden = true
+          collectionView.leftEdgeEffect.isHidden = true
+          collectionView.rightEdgeEffect.isHidden = true
+        }
+
         // Install once per collection view. This closure re-runs on every
         // layout pass, and `originalDelegate == nil` cannot tell "not installed
         // yet" from "installed, but the weak reference died" - so once it died
@@ -61,6 +70,9 @@ struct PagerView: View {
         }
       }
     }
+    // GeometryReader is the root since the vertical layout; without this it
+    // honours the keyboard region and pages get framed to the shrunk proxy.
+    .ignoresSafeArea()
     .onAppear {
       // Apply initial prop values that .onChange won't catch
       // (.onChange only fires on changes, not on initial values)

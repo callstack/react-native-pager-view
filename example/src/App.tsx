@@ -34,12 +34,18 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PagerHookExample } from './PagerHookExample';
 import { NestedHorizontalScrollViewExample } from './NestedHorizontalScrollViewExample';
+import { Issue1096KeyboardShrinkRepro } from './gh-issues/Issue1096KeyboardShrinkRepro';
 import { Issue1098NestedPagerRepro } from './gh-issues/Issue1098NestedPagerRepro';
 import { Issue1099SafeAreaRepro } from './gh-issues/Issue1099SafeAreaRepro';
 import {
   Issue1083ModalSetPageExample,
   ModalSetPageModalScreen,
 } from './gh-issues/Issue1083ModalSetPageExample';
+import {
+  Issue1142PlainListScreen,
+  Issue1142PagerListScreen,
+  Issue1142SearchBarInsetRepro,
+} from './gh-issues/Issue1142SearchBarInsetRepro';
 
 function BasicPagerViewExampleScreen() {
   return <BasicPagerViewExample isHorizontal={true} />;
@@ -117,12 +123,20 @@ const ghIssues: Example[] = [
     name: 'Issue #1083 Modal SetPage Repro',
   },
   {
+    component: Issue1096KeyboardShrinkRepro,
+    name: 'Issue #1096 Keyboard Shrink Repro',
+  },
+  {
     component: Issue1098NestedPagerRepro,
     name: 'Issue #1098 Nested Pager Repro',
   },
   {
     component: Issue1099SafeAreaRepro,
     name: 'Issue #1099 Safe Area Repro',
+  },
+  {
+    component: Issue1142SearchBarInsetRepro,
+    name: 'Issue #1142 Search Bar Inset Repro',
   },
 ];
 
@@ -264,6 +278,14 @@ export function Navigation() {
               presentation: 'modal',
               animation: 'slide_from_bottom',
             }}
+          />
+          <NavigationStack.Screen
+            name="Issue #1142 Plain List"
+            component={Issue1142PlainListScreen}
+          />
+          <NavigationStack.Screen
+            name="Issue #1142 Pager List"
+            component={Issue1142PagerListScreen}
           />
         </NavigationStack.Navigator>
       </NavigationContainer>

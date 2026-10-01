@@ -117,6 +117,14 @@ import UIKit
     }
   }
 
+  override public func safeAreaInsetsDidChange() {
+    super.safeAreaInsetsDidChange()
+    // The hosting view is forced to `.zero`, so UIKit will not forward this
+    // change into `PageChildViewController`. Relayout so it can re-read our
+    // insets (native search bar, keyboard, stacked header, …).
+    hostingController?.view.setNeedsLayout()
+  }
+
   @objc public func goTo(index: Int, animated: Bool) {
     if animated && hasPresentedViewController() {
       // A native-stack modal can begin its dismissal in the same JavaScript
@@ -222,8 +230,15 @@ import UIKit
       return
     }
 
+    // The hosting view must not carry a safe area: `PagerView`'s `GeometryReader`
+    // is measured inside it, and every page is framed to that measurement, so the
+    // pages end up inset by the safe area while React Native's own layout still
+    // has them at full size. `PageChildViewController` reads *this* view's
+    // insets (the RN screen's, including a native search bar) and re-injects
+    // them; the two are independent.
     let hostingController = UIHostingController(
-      rootView: PagerView(props: props, delegate: delegate)
+      rootView: PagerView(props: props, delegate: delegate),
+      ignoreSafeArea: true
     )
     self.hostingController = hostingController
 
