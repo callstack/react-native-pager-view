@@ -56,6 +56,11 @@ jobs:
         run: bun pods
         working-directory: example
 
+      # Simulator.app attaches the Mac keyboard by default, which hides the
+      # software keyboard and leaves no Return key for the keyboard tests.
+      - name: Detach hardware keyboard from simulator
+        run: defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
+
       - name: Build iOS App
         run: |
           bun example:ios:release

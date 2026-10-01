@@ -5,7 +5,10 @@ freshAppBeforeEach();
 
 test(
   'keyboard avoidance does not shrink the page under the keyboard',
-  { tags: ['regression', 'issue-1096'] },
+  // iOS-only, like the original Maestro flow: the bug is SwiftUI keyboard
+  // avoidance, while Android's adjustResize shrinks the window by design and
+  // covers the last row on short screens.
+  { tags: ['regression', 'issue-1096'], platforms: ['ios'] },
   async ({ app, screen }) => {
     await openExample(app, screen, 'Issue #1096 Keyboard Shrink Repro');
     await expect(screen.getByTestId('issue-1096-pager')).toBeVisible();
@@ -21,8 +24,9 @@ test(
     await lastRow.tap();
     await expect(counter).toHaveText('last-row taps: 1');
 
-    // A single-line TextInput blurs on submit, so Enter is the reliable
-    // keyboard dismiss on iOS, which exposes no dismiss key.
+    // iOS exposes no dismiss key, so submit through the input, refocused
+    // first because the row tap can steal focus.
+    await input.tap();
     await input.press('Enter');
 
     await lastRow.tap();

@@ -48,6 +48,12 @@ export async function ensureLayoutDirection(
   const toggle = screen.getByTestId(`layout-direction-${opposite}`);
   if (await toggle.isVisible()) {
     await toggle.tap();
+    // The toggle reflects the pending direction at once; waiting for the flip
+    // keeps the relaunch's force-stop from racing I18nManager's async
+    // preference write on a loaded Android emulator.
+    await expect(
+      screen.getByTestId(`layout-direction-${direction}`)
+    ).toBeVisible();
     await app.restart();
     await waitForHome(screen);
   }

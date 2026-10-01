@@ -19,15 +19,18 @@ test('TabView inside a ScrollView swipes tabs and scrolls the page', async ({
   await scrollView.swipe({ direction: 'right', momentum: 'fast' });
   await expect(screen.getByText('Second Route')).toBeVisible();
 
+  // Scroll the ScrollView node, not the viewport: on a short screen the
+  // viewport centre lands inside the TabView pager, which can swallow the
+  // gesture.
   const secondRouteBottom = screen.getByTestId('tab-view-second-route-bottom');
-  await screen.scrollUntilVisible(secondRouteBottom, { direction: 'down' });
+  await scrollView.scrollUntilVisible(secondRouteBottom, { direction: 'down' });
   await expect(secondRouteBottom).toBeVisible();
 
   // Scroll back until the tab bar itself is on screen: stopping at the route
   // text can leave the tabs just above the viewport after a long fling.
   // TabView stacks two copies of a tab label for its crossfade, so a bare
   // getByText is LOCATOR_AMBIGUOUS; both copies share the tab's box.
-  await screen.scrollUntilVisible(screen.getByText('First').first(), {
+  await scrollView.scrollUntilVisible(screen.getByText('First').first(), {
     direction: 'up',
   });
   await expect(screen.getByText('Second Route')).toBeVisible();
