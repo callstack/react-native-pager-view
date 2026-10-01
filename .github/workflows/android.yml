@@ -22,6 +22,7 @@ permissions:
 jobs:
   android-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 75
     concurrency:
       group: ${{ github.ref }}-android
       cancel-in-progress: true
@@ -47,6 +48,13 @@ jobs:
       - name: Bundle app
         run: bun run build:android
         working-directory: example
+
+      # Built before the emulator exists: Gradle competing with a swiftshader
+      # emulator for the runner's cores ANRs System UI, and the dialog then
+      # blocks every test.
+      - name: Build release APK
+        run: ./gradlew :app:assembleRelease -PreactNativeArchitectures=x86_64
+        working-directory: example/android
 
       - name: AVD cache
         uses: actions/cache@v4
@@ -83,7 +91,7 @@ jobs:
         run: bun install
         working-directory: e2e
 
-      - name: Build and run e2e tests
+      - name: Run e2e tests
         uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2.34.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -97,7 +105,8 @@ jobs:
           emulator-boot-timeout: 12000
           disable-animations: false
           script: |
-            bun example:android:release
+            adb shell settings put global hide_error_dialogs 1
+            adb install -r example/android/app/build/outputs/apk/release/app-release.apk
             bun run e2e:test:android
 
       - name: Upload e2e report

@@ -22,6 +22,7 @@ permissions:
 jobs:
   ios-build:
     runs-on: macos-26
+    timeout-minutes: 60
     concurrency:
       group: ${{ github.ref }}-ios
       cancel-in-progress: true
