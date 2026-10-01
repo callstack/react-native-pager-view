@@ -59,7 +59,7 @@ lib/
 #e2e
 test-butler-app.apk
 example/vendor
-.maestro/debug-output/
+e2e/.e2e/
 
 #Example
 example/ios/Pods

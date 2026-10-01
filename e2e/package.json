@@ -1,0 +1,20 @@
+{
+  "name": "react-native-pager-view-e2e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "e2e run",
+    "test:ios": "e2e run --target ios",
+    "test:android": "e2e run --target android",
+    "list": "e2e list",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@e2e-dev/github": "^0.3.1",
+    "@e2e-dev/mobile": "^0.8.1",
+    "@types/node": "^26.5.0",
+    "e2e": "^0.15.1",
+    "typescript": "^7.0.2"
+  }
+}
