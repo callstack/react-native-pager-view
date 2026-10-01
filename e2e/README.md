@@ -74,9 +74,8 @@ on four. Remote devices fit the same shape: one pool entry per device.
   `issue-<number>` where a GitHub issue exists.
 - `tests/support/test.ts` re-exports `test` and `expect` (import them from
   there so the engine can change in one place) and exports
-  `freshAppBeforeEach()`, which every test file calls to install the
-  `E2E_*_APP_PATH` build once per device and relaunch the app before each
-  test.
+  `freshAppBeforeEach()`, which every test file calls to relaunch the app
+  before each test (installing the `E2E_*_APP_PATH` build first when set).
 - `tests/support/app.ts` opens an example from the home list and forces the
   layout direction.
 - `tests/support/basic-pager.ts` holds the checks shared by the LTR, vertical,
@@ -92,14 +91,17 @@ on four. Remote devices fit the same shape: one pool entry per device.
   the direction it is given, and every RTL describe block calls
   `restoreLtrAfterEach()`.
 - The engine neither installs nor launches anything on its own, so every
-  test file calls `freshAppBeforeEach()` right after its imports: it installs
-  `E2E_*_APP_PATH` through `device.installApp()` and relaunches the app with
-  `device.openApp(APP_ID, { relaunch: true })`, so every test starts fresh at
-  the home list. A module-level hook in `tests/support/test.ts` would attach
-  only to the first file evaluated in a realm, and `app.open()` or
-  `app.restart()` resume a running app the surface does not know about.
-  State shared between tests must be state the app persists (the layout
-  direction toggle is).
+  test file calls `freshAppBeforeEach()` right after its imports: it
+  relaunches the app with `device.openApp(APP_ID, { relaunch: true })`, so
+  every test starts fresh at the home list. A module-level hook in
+  `tests/support/test.ts` would attach only to the first file evaluated in a
+  realm, and `app.open()` or `app.restart()` resume a running app the
+  surface does not know about. State shared between tests must be state the
+  app persists (the layout direction toggle is).
+- With `E2E_*_APP_PATH` set, the hook runs `device.installApp()` before
+  every relaunch (~2 s each on a simulator) instead of tracking which device
+  already has the build: an install replaces the binary and keeps its data,
+  so repeating it is correct across device pools and realms.
 - A connected physical iPhone joins the default device pool and fails with
   `ENGINE_FAILURE` when it is locked or lacks the app. Pin `E2E_DEVICE` to a
   simulator when a phone is plugged in.
