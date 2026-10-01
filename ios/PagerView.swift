@@ -45,6 +45,15 @@ struct PagerView: View {
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
 
+        // The vertical pager rotates this horizontal scroll view by 90 degrees.
+        // Native edge effects would rotate with it and cover the page sideways.
+        if isVertical, #available(iOS 26.0, *) {
+          collectionView.topEdgeEffect.isHidden = true
+          collectionView.bottomEdgeEffect.isHidden = true
+          collectionView.leftEdgeEffect.isHidden = true
+          collectionView.rightEdgeEffect.isHidden = true
+        }
+
         if scrollDelegate.originalDelegate == nil {
           scrollDelegate.originalDelegate = collectionView.delegate
           scrollDelegate.delegate = delegate
