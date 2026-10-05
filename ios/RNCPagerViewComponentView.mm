@@ -12,6 +12,9 @@
 
 #if __has_include("react_native_pager_view/react_native_pager_view-Swift.h")
 #import "react_native_pager_view/react_native_pager_view-Swift.h"
+#elif __has_include(<ReactNativePagerViewSwift/ReactNativePagerViewSwift-Swift.h>)
+// S11-SPM-SPLIT: the Swift half lives in its own target under SwiftPM.
+#import <ReactNativePagerViewSwift/ReactNativePagerViewSwift-Swift.h>
 #else
 #import "react_native_pager_view-Swift.h"
 #endif

@@ -1,6 +1,7 @@
 // Vertical pager layout adapted from VTabView by Lorenzo Fiamingo:
 // https://github.com/lorenzofiamingo/swiftui-vertical-tab-view/blob/main/Sources/VTabView/VTabView.swift
 
+import React
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
