@@ -1,4 +1,4 @@
-import type { UseNavigationPanelProps } from 'example/src/hook/useNavigationPanel';
+import type { UseNavigationPanelProps } from '../../hook/useNavigationPanel';
 
 export interface NavigationPanelProps
   extends Omit<UseNavigationPanelProps, 'ref'> {

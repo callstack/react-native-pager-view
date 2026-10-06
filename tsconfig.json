@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
+    "rootDir": "./src",
+    "types": ["react-native", "jest"],
     "paths": {
       "react-native-pager-view": ["./src/index"]
     },
@@ -8,10 +9,12 @@
     "allowUnusedLabels": false,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
     "lib": ["esnext"],
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
+    "customConditions": ["react-native"],
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
@@ -24,5 +27,5 @@
     "strict": true,
     "target": "esnext"
   },
-  "exclude": ["example", "e2e"]
+  "exclude": ["example", "e2e", "lib"]
 }

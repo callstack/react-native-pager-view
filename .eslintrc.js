@@ -1,11 +1,9 @@
 module.exports = {
   root: true,
   extends: '@react-native',
+  ignorePatterns: ['node_modules/', 'lib/'],
   globals: {
     expect: true,
-    element: true,
-    by: true,
-    device: true,
     beforeAll: true,
     beforeEach: true,
     describe: true,
@@ -13,7 +11,5 @@ module.exports = {
     afterAll: true,
     jest: true,
     jasmine: true,
-    waitFor: true,
-    detoxCircus: true,
   },
 };

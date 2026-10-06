@@ -5,34 +5,31 @@
   "scripts": {
     "start": "react-native start",
     "pods": "bundle install && cd ios && bundle exec pod install && cd ..",
-    "test": "jest",
     "lint": "eslint .",
-    "mkdist": "node -e \"require('node:fs').mkdirSync('dist', { recursive: true, mode: 0o755 })\"",
     "android": "react-native run-android --appId com.pagerviewexample",
     "ios": "react-native run-ios",
     "visionos": "react-native run-visionos",
+    "mkdist": "node -e \"require('node:fs').mkdirSync('dist', { recursive: true, mode: 0o755 })\"",
     "build:android": "bun mkdist && react-native bundle --entry-file index.js --platform android --dev false --minify true --bundle-output dist/main.android.jsbundle --assets-dest dist/res",
     "build:ios": "bun mkdist && react-native bundle --entry-file index.js --platform ios --dev false --bundle-output dist/main.ios.jsbundle --assets-dest dist",
     "build:visionos": "bun mkdist && react-native bundle --entry-file index.js --platform ios --dev true --bundle-output dist/main.visionos.jsbundle --assets-dest dist"
   },
   "dependencies": {
-    "@callstack/react-native-visionos": "^0.79.6",
-    "@react-navigation/material-top-tabs": "^7.6.6",
-    "@react-navigation/native": "^7.3.7",
-    "@react-navigation/native-stack": "^7.17.9",
-    "@react-navigation/stack": "^7.10.10",
-    "@rnx-kit/react-native-host": "0.5.21",
-    "babel-plugin-module-resolver": "^5.0.3",
+    "@react-navigation/elements": "^2.9.44",
+    "@react-navigation/material-top-tabs": "^7.8.0",
+    "@react-navigation/native": "^7.5.0",
+    "@react-navigation/native-stack": "^7.20.0",
+    "@react-navigation/stack": "^7.12.0",
     "react": "19.2.3",
-    "react-native": "0.85.3",
+    "react-native": "0.87.1",
     "react-native-animated-pagination-dots": "^0.1.73",
-    "react-native-gesture-handler": "3.0.2",
-    "react-native-reanimated": "4.5.1",
-    "react-native-safe-area-context": "5.8.0",
-    "react-native-screens": "4.25.2",
+    "react-native-gesture-handler": "3.3.0",
+    "react-native-reanimated": "4.7.1",
+    "react-native-safe-area-context": "5.10.1",
+    "react-native-screens": "4.28.0",
     "react-native-svg": "15.15.5",
-    "react-native-tab-view": "4.3.1",
-    "react-native-worklets": "0.10.1"
+    "react-native-tab-view": "4.3.3",
+    "react-native-worklets": "0.13.0"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
@@ -41,25 +38,20 @@
     "@react-native-community/cli": "20.2.0",
     "@react-native-community/cli-platform-android": "20.2.0",
     "@react-native-community/cli-platform-ios": "20.2.0",
-    "@react-native/babel-preset": "0.85.3",
-    "@react-native/eslint-config": "0.85.3",
-    "@react-native/metro-config": "0.85.3",
-    "@react-native/typescript-config": "0.85.3",
-    "@rnx-kit/metro-config": "^2.2.4",
+    "@react-native/babel-preset": "0.87.1",
+    "@react-native/eslint-config": "0.87.1",
+    "@react-native/metro-config": "0.87.1",
+    "@react-native/typescript-config": "0.87.1",
     "@types/react": "^19.2.0",
-    "@types/react-test-renderer": "^19.1.0",
-    "@types/jest": "^30.0.0",
-    "eslint": "^9.39.4",
-    "jest": "^30.4.2",
-    "prettier": "3.9.4",
-    "react-native-test-app": "^5.4.1",
-    "react-test-renderer": "19.2.3",
-    "typescript": "6.0.3"
+    "eslint": "^8.57.1",
+    "prettier": "2.8.8",
+    "react-native-monorepo-config": "^0.4.0",
+    "typescript": "^6.0.3"
   },
   "overrides": {
     "use-latest-callback": "0.1.9"
   },
   "engines": {
-    "node": ">=20"
+    "node": "^22.13.0 || ^24.3.0 || >=26.0.0"
   }
 }
