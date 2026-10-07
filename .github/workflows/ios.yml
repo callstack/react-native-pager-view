@@ -7,14 +7,22 @@ on:
     paths:
       - '.github/workflows/ios.yml'
       - 'ios/**'
+      - 'src/**'
       - 'example/ios/**'
+      - 'example/src/**'
+      - 'e2e/**'
   push:
     branches:
       - master
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   ios-build:
     runs-on: macos-26
+    timeout-minutes: 60
     concurrency:
       group: ${{ github.ref }}-ios
       cancel-in-progress: true
@@ -48,6 +56,32 @@ jobs:
         run: bun pods
         working-directory: example
 
+      # Simulator.app attaches the Mac keyboard by default, which hides the
+      # software keyboard and leaves no Return key for the keyboard tests.
+      - name: Detach hardware keyboard from simulator
+        run: defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
+
       - name: Build iOS App
         run: |
           bun example:ios:release
+
+      - name: Install e2e dependencies
+        run: bun install
+        working-directory: e2e
+
+      - name: Run e2e tests
+        run: bun run test:ios
+        working-directory: e2e
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload e2e report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: e2e-report-ios
+          path: |
+            e2e/.e2e/report.json
+            e2e/.e2e/artifacts
+          if-no-files-found: warn
+          retention-days: 7

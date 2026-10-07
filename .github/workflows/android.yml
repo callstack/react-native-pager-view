@@ -7,14 +7,22 @@ on:
     paths:
       - '.github/workflows/android.yml'
       - 'android/**'
+      - 'src/**'
       - 'example/android/**'
+      - 'example/src/**'
+      - 'e2e/**'
   push:
     branches:
       - master
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   android-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 75
     concurrency:
       group: ${{ github.ref }}-android
       cancel-in-progress: true
@@ -41,14 +49,21 @@ jobs:
         run: bun run build:android
         working-directory: example
 
+      # Built before the emulator exists: Gradle competing with a swiftshader
+      # emulator for the runner's cores ANRs System UI, and the dialog then
+      # blocks every test.
+      - name: Build release APK
+        run: ./gradlew :app:assembleRelease -PreactNativeArchitectures=x86_64
+        working-directory: example/android
+
       - name: AVD cache
-        uses: actions/cache@v4
+        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         id: avd-cache
         with:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-35-arm64-x86_64
+          key: avd-35-google-x86_64
 
       - name: Enable KVM group perms
         run: |
@@ -62,26 +77,47 @@ jobs:
         uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2.34.0
         with:
           api-level: 35
+          target: google_apis
           arch: x86_64
           ram-size: 4096M
           profile: pixel
-          avd-name: Pixel_3a_API_30_AOSP
+          avd-name: pager-view-api-35-google
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           emulator-boot-timeout: 12000
           disable-animations: false
           script: echo "Generated AVD snapshot for caching."
 
-      - name: Run build
+      - name: Install e2e dependencies
+        run: bun install
+        working-directory: e2e
+
+      - name: Run e2e tests
         uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2.34.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           api-level: 35
+          target: google_apis
           arch: x86_64
           profile: pixel
-          avd-name: Pixel_3a_API_30_AOSP
+          avd-name: pager-view-api-35-google
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           emulator-boot-timeout: 12000
           disable-animations: false
           script: |
-            bun example:android:release
+            adb shell settings put global hide_error_dialogs 1
+            adb install -r example/android/app/build/outputs/apk/release/app-release.apk
+            bun run e2e:test:android
+
+      - name: Upload e2e report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: e2e-report-android
+          path: |
+            e2e/.e2e/report.json
+            e2e/.e2e/artifacts
+          if-no-files-found: warn
+          retention-days: 7

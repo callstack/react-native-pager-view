@@ -31,7 +31,11 @@ export function NestedPagerView() {
           <LikeCount />
         </View>
         <View key="2" testID="2-nd-nested" collapsable={false}>
-          <AnimatedPagerView style={styles.PagerView} initialPage={0}>
+          <AnimatedPagerView
+            style={styles.PagerView}
+            initialPage={0}
+            testID="nested-horizontal-pager"
+          >
             {useMemo(
               () =>
                 navigationPanel.pages
@@ -51,6 +55,7 @@ export function NestedPagerView() {
             style={styles.PagerView}
             initialPage={0}
             orientation="vertical"
+            testID="nested-vertical-pager"
           >
             {useMemo(
               () =>

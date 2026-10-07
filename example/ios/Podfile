@@ -10,6 +10,17 @@ options = {
   :bridgeless_enabled => true,
   :fabric_enabled => true,
   :hermes_enabled => true,
+  # Xcode 27 rejects deployment targets below 15.0, and RN's own post_install
+  # skips resource-bundle targets, so RNSVG's bundles keep the podspec's 12.4.
+  :post_install => lambda { |installer|
+    installer.pods_project.targets.each do |target|
+      target.build_configurations.each do |config|
+        if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 15.1
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.1'
+        end
+      end
+    end
+  },
 }
 
 use_test_app! options

@@ -1,11 +1,11 @@
 {
   "version": 1,
   "skills": {
-    "maestro-mobile-testing": {
-      "source": "tovimx/maestro-mobile-testing-skill",
+    "e2e": {
+      "source": "tester-army/e2e",
       "sourceType": "github",
-      "skillPath": "SKILL.md",
-      "computedHash": "950a2e7195f37381249c221df70070856ccaab86d2f161fed1297791dcf6ec92"
+      "skillPath": "skills/e2e/SKILL.md",
+      "computedHash": "729dd9bee8b6f144b1d25fcfb7ff6c4fd5e984043a85cc12f07d9c5b569dcf67"
     }
   }
 }

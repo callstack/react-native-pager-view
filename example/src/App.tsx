@@ -211,6 +211,29 @@ function App() {
   );
 }
 
+/**
+ * Flips the layout direction. The button reflects the pending direction right
+ * away, so automation can wait for the flip before relaunching: the direction
+ * itself only applies on the next launch in release builds, and killing the
+ * app straight after the press can race I18nManager's async preference write.
+ */
+function LayoutDirectionToggle() {
+  const [isRTL, setIsRTL] = React.useState(I18nManager.getConstants().isRTL);
+  return (
+    <Button
+      title={isRTL ? 'RTL' : 'LTR'}
+      color="orange"
+      testID={`layout-direction-${isRTL ? 'rtl' : 'ltr'}`}
+      onPress={() => {
+        const next = !I18nManager.getConstants().isRTL;
+        I18nManager.forceRTL(next);
+        setIsRTL(next);
+        DevSettings.reload();
+      }}
+    />
+  );
+}
+
 const Stack = createStackNavigator();
 
 const NativeStack = createNativeStackNavigator();
@@ -249,19 +272,7 @@ export function Navigation() {
                   color="orange"
                 />
               ),
-              headerLeft: () => (
-                <Button
-                  title={I18nManager.getConstants().isRTL ? 'RTL' : 'LTR'}
-                  color="orange"
-                  testID={`layout-direction-${
-                    I18nManager.getConstants().isRTL ? 'rtl' : 'ltr'
-                  }`}
-                  onPress={() => {
-                    I18nManager.forceRTL(!I18nManager.getConstants().isRTL);
-                    DevSettings.reload();
-                  }}
-                />
-              ),
+              headerLeft: () => <LayoutDirectionToggle />,
             }}
           />
           {allExamples.map((example, index) => (
