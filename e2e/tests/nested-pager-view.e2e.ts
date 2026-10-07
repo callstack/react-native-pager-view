@@ -20,9 +20,17 @@ test('nested horizontal and vertical pagers scroll independently', async ({
   const innerHorizontal = screen.getByTestId('nested-horizontal-pager');
   const innerVertical = screen.getByTestId('nested-vertical-pager');
 
-  // A slow drag, not a fling: inner and outer pager share the horizontal
-  // axis, and Android hands a fast fling to the outer one at times.
-  await innerHorizontal.swipe({ direction: 'right', momentum: 'slow' });
+  // A slow drag, not a fling: on Android the inner pager blocks the outer
+  // one a frame after touch down, so a first move past touch slop goes to
+  // the outer pager. Travel past half the page so it lands without a fling.
+  const box = await innerHorizontal.boundingBox();
+  if (!box) throw new Error('nested-horizontal-pager has no bounds');
+  const y = box.y + box.height / 2;
+  await screen.swipe({
+    from: { x: box.x + box.width * 0.85, y },
+    to: { x: box.x + box.width * 0.15, y },
+    duration: 2000,
+  });
   await expect(screen.getByText('Horizontal page number 1')).toBeVisible();
   await expect(screen.getByText('Vertical page number 0')).toBeVisible();
 
