@@ -1,0 +1,10 @@
+{
+  "extends": "@react-native/typescript-config",
+  "compilerOptions": {
+    "paths": {
+      "react-native-pager-view": ["../src/index"]
+    }
+  },
+  "include": ["src", "index.js"],
+  "exclude": ["node_modules", "ios", "android"]
+}

@@ -6,6 +6,7 @@
     "start": "react-native start",
     "pods": "bundle install && cd ios && bundle exec pod install && cd ..",
     "lint": "eslint .",
+    "typescript": "tsc --noEmit",
     "android": "react-native run-android --appId com.pagerviewexample",
     "ios": "react-native run-ios",
     "visionos": "react-native run-visionos",

@@ -20,7 +20,7 @@ import {
   Text,
   View,
   type ListRenderItem,
-  type View as ViewType,
+  type ViewInstance,
 } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
@@ -48,7 +48,7 @@ function useSearchHeader() {
 }
 
 function useWindowY() {
-  const ref = useRef<ViewType>(null);
+  const ref = useRef<ViewInstance>(null);
   const [y, setY] = useState<number | null>(null);
 
   const measure = useCallback(() => {
