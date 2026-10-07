@@ -3,18 +3,26 @@ name: iOS Build
 on:
   pull_request:
     branches:
-      - master
+      - pager-8
     paths:
       - '.github/workflows/ios.yml'
       - 'ios/**'
+      - 'src/**'
       - 'example/ios/**'
+      - 'example/src/**'
+      - '.maestro/**'
+      - 'scripts/run-maestro-tests.sh'
   push:
     branches:
-      - master
+      - pager-8
+
+permissions:
+  contents: read
 
 jobs:
   ios-build:
     runs-on: macos-26
+    timeout-minutes: 60
     concurrency:
       group: ${{ github.ref }}-ios
       cancel-in-progress: true
@@ -48,6 +56,28 @@ jobs:
         run: bun pods
         working-directory: example
 
+      # Simulator.app attaches the Mac keyboard by default, which hides the
+      # software keyboard and leaves no Return key for the keyboard tests.
+      - name: Detach hardware keyboard from simulator
+        run: defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
+
       - name: Build iOS App
         run: |
           bun example:ios:release
+
+      - name: Install Maestro CLI
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "${HOME}/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Run e2e tests
+        run: bun run maestro:test:ios
+
+      - name: Upload e2e report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: e2e-report-ios
+          path: .maestro/debug-output
+          if-no-files-found: warn
+          retention-days: 7

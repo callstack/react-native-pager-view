@@ -3,10 +3,10 @@ name: Lint
 on:
   pull_request:
     branches:
-      - master
+      - pager-8
   push:
     branches:
-      - master
+      - pager-8
 
 concurrency:
   group: ${{ github.ref }}-js
