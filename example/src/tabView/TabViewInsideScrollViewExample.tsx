@@ -90,9 +90,9 @@ const styles = StyleSheet.create({
   routeText: {
     color: 'white',
   },
-  header:{
-    width:'100%',
-    height:200,
-    backgroundColor:'purple',
+  header: {
+    width: '100%',
+    height: 200,
+    backgroundColor: 'purple',
   },
 });

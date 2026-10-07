@@ -23,7 +23,9 @@
   "scripts": {
     "test": "jest",
     "typescript": "tsc --noEmit",
-    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "lint": "eslint .",
+    "format": "prettier --write \"**/*.{js,ts,tsx}\"",
+    "format:check": "prettier --check \"**/*.{js,ts,tsx}\"",
     "prepare": "bob build",
     "release": "release-it",
     "release:next": "release-it --npm.tag=next --preRelease=rc",
@@ -62,7 +64,7 @@
     "@release-it/conventional-changelog": "^2.0.0",
     "@types/jest": "^29.5.13",
     "@types/react": "^19.2.0",
-    "eslint": "^8.57.1",
+    "eslint": "^9.39.0",
     "jest": "^29.6.3",
     "prettier": "2.8.8",
     "react": "19.2.3",
@@ -118,5 +120,8 @@
         }
       ]
     ]
+  },
+  "overrides": {
+    "eslint-plugin-ft-flow": "^3.0.11"
   }
 }

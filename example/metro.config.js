@@ -1,7 +1,5 @@
 const path = require('path');
-const {
-  getDefaultConfig,
-} = require('@react-native/metro-config');
+const { getDefaultConfig } = require('@react-native/metro-config');
 const { withMetroConfig } = require('react-native-monorepo-config');
 
 const root = path.resolve(__dirname, '..');
@@ -23,7 +21,9 @@ module.exports = withMetroConfig(
       blockList: [
         ...[].concat(defaultConfig.resolver.blockList || []),
         new RegExp(
-          `^${escapeRegExp(path.join(__dirname, 'node_modules', 'react-native-pager-view'))}[\\\\/]`
+          `^${escapeRegExp(
+            path.join(__dirname, 'node_modules', 'react-native-pager-view')
+          )}[\\\\/]`
         ),
       ],
     },

@@ -15,9 +15,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 
 export type UsePagerViewProps = ReturnType<typeof usePagerView>;
 
-const AnimatedPagerView = Animated.createAnimatedComponent(
-  PagerView
-);
+const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
 type UsePagerViewParams = {
   pagesAmount: number;
