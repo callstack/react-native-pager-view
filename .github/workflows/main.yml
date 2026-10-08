@@ -39,6 +39,10 @@ jobs:
       - name: Typecheck files
         run: bun run typescript
 
+      - name: Typecheck example
+        run: bun run typescript
+        working-directory: example
+
       - name: Install e2e dependencies
         run: bun install
         working-directory: e2e

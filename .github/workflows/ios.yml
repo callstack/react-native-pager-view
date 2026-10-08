@@ -48,10 +48,6 @@ jobs:
           path: example/ios/Pods
           key: ${{ hashFiles('example/ios/Podfile.lock') }}
 
-      - name: Bundle app
-        run: bun build:ios
-        working-directory: example
-
       - name: Install example Pods
         run: bun pods
         working-directory: example

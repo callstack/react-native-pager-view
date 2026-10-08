@@ -10,8 +10,6 @@
 **/.xcode.env.local
 Pods/
 build/
-dist/*
-!dist/.gitignore
 local.properties
 msbuild.binlog
 node_modules/

@@ -1,8 +1,13 @@
-import type { UseNavigationPanelProps } from 'example/src/hook/useNavigationPanel';
+import type {
+  EventLog,
+  UseNavigationPanelProps,
+} from '../../hook/useNavigationPanel';
 
 export interface NavigationPanelProps
-  extends Omit<UseNavigationPanelProps, 'ref'> {
+  extends Omit<UseNavigationPanelProps, 'ref' | 'logs' | 'pages'> {
   disablePagesAmountManagement?: boolean;
+  logs?: EventLog[];
+  pages: readonly unknown[];
 }
 
-export type LogsPanelProps = Pick<NavigationPanelProps, 'logs'>;
+export type LogsPanelProps = { logs: EventLog[] };

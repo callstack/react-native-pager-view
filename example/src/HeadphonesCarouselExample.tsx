@@ -68,7 +68,7 @@ const Circle = ({
   scrollOffsetAnimatedValue: Animated.Value;
 }) => {
   return (
-    <View style={[StyleSheet.absoluteFillObject, styles.circleContainer]}>
+    <View style={[StyleSheet.absoluteFill, styles.circleContainer]}>
       {data.map(({ color }, index) => {
         const inputRange = [0, 0.5, 0.99];
         const inputRangeOpacity = [0, 0.5, 0.99];

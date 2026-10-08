@@ -1,21 +1,10 @@
-const { configureProjects } = require('react-native-test-app');
 const path = require('path');
+const pkg = require('../package.json');
 
 module.exports = {
   dependencies: {
-    'react-native-pager-view': {
+    [pkg.name]: {
       root: path.join(__dirname, '..'),
     },
   },
-  project: configureProjects({
-    android: {
-      sourceDir: 'android',
-    },
-    ios: {
-      sourceDir: 'ios',
-    },
-    visionos: {
-      sourceDir: 'visionos',
-    },
-  }),
 };

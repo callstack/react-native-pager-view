@@ -66,7 +66,9 @@ export function NavigationPanel(props: NavigationPanelProps) {
         </TouchableOpacity>
       </View>
       {visible === VisibleTab.Controls ? <ControlsPanel {...props} /> : null}
-      {visible === VisibleTab.Logs ? <LogsPanel logs={props.logs} /> : null}
+      {visible === VisibleTab.Logs ? (
+        <LogsPanel logs={props.logs ?? []} />
+      ) : null}
     </View>
   );
 }

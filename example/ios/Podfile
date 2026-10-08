@@ -1,18 +1,38 @@
-ws_dir = Pathname.new(__dir__)
-ws_dir = ws_dir.parent until
-  File.exist?("#{ws_dir}/node_modules/react-native-test-app/test_app.rb") ||
-  ws_dir.expand_path.to_s == '/'
-require "#{ws_dir}/node_modules/react-native-test-app/test_app.rb"
+# Resolve react_native_pods.rb with node to allow for hoisting
+require Pod::Executable.execute_command('node', ['-p',
+  'require.resolve(
+    "react-native/scripts/react_native_pods.rb",
+    {paths: [process.argv[1]]},
+  )', __dir__]).strip
 
-workspace 'PagerViewExample.xcworkspace'
+platform :ios, min_ios_version_supported
+prepare_react_native_project!
 
-options = {
-  :bridgeless_enabled => true,
-  :fabric_enabled => true,
-  :hermes_enabled => true,
-  # Xcode 27 rejects deployment targets below 15.0, and RN's own post_install
-  # skips resource-bundle targets, so RNSVG's bundles keep the podspec's 12.4.
-  :post_install => lambda { |installer|
+linkage = ENV['USE_FRAMEWORKS']
+if linkage != nil
+  Pod::UI.puts "Configuring Pod with #{linkage}ally linked Frameworks".green
+  use_frameworks! :linkage => linkage.to_sym
+end
+
+target 'PagerViewExample' do
+  config = use_native_modules!
+
+  use_react_native!(
+    :path => config[:reactNativePath],
+    # An absolute path to your application root.
+    :app_path => "#{Pod::Config.instance.installation_root}/.."
+  )
+
+  post_install do |installer|
+    react_native_post_install(
+      installer,
+      config[:reactNativePath],
+      :mac_catalyst_enabled => false,
+      # :ccache_enabled => true
+    )
+
+    # Xcode rejects deployment targets below 15.0, and RN's own post_install
+    # skips resource-bundle targets, so RNSVG's bundles keep the podspec's 12.4.
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
         if config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'].to_f < 15.1
@@ -20,7 +40,5 @@ options = {
         end
       end
     end
-  },
-}
-
-use_test_app! options
+  end
+end

@@ -38,7 +38,6 @@ export default function TabBarIconExample() {
       <TabBar
         {...props}
         indicatorStyle={styles.indicator}
-        renderIcon={renderIcon}
         style={styles.tabbar}
       />
     );
@@ -65,6 +64,7 @@ export default function TabBarIconExample() {
         renderScene={renderScene}
         renderTabBar={renderTabBar}
         onIndexChange={setIndex}
+        commonOptions={{ icon: renderIcon }}
       />
     </View>
   );
