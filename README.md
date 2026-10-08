@@ -133,7 +133,7 @@ export function PagerHookExample() {
       style={{ flex: 1 }}
       initialPage={0}
       scrollEnabled={rest.scrollEnabled}
-      overdrag={rest.overdragEnabled}
+      overdrag={rest.overdrag}
       onPageScroll={rest.onPageScroll}
       onPageSelected={rest.onPageSelected}
       onPageScrollStateChanged={rest.onPageScrollStateChanged}
