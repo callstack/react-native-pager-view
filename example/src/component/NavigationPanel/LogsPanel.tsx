@@ -2,23 +2,39 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import type { LogsPanelProps } from './types';
+import type { EventLog } from '../../hook/useNavigationPanel';
+import { colors, radius } from '../../theme';
+
+const eventColors: Record<EventLog['event'], string> = {
+  scroll: '#e0f2fe',
+  select: '#dcfce7',
+  statusChanged: '#fef3c7',
+};
 
 export function LogsPanel({ logs }: LogsPanelProps) {
-  console.log(logs);
   return (
     <FlatList
       style={styles.container}
+      contentContainerStyle={styles.content}
       data={logs}
+      ListEmptyComponent={
+        <Text style={styles.empty}>Swipe the pager to see events.</Text>
+      }
       renderItem={({ item }) => (
-        //@ts-ignore
-        <View style={[styles.item, styles[item.event]]}>
-          <Text style={styles.text}>
-            {item.timestamp.toLocaleTimeString()}
-            <Text style={styles.eventName}>
-              {' | '}
-              {item.event.toLocaleUpperCase()}
+        <View style={styles.item}>
+          <View style={styles.meta}>
+            <View
+              style={[
+                styles.badge,
+                { backgroundColor: eventColors[item.event] },
+              ]}
+            >
+              <Text style={styles.badgeText}>{item.event}</Text>
+            </View>
+            <Text style={styles.time}>
+              {item.timestamp.toLocaleTimeString()}
             </Text>
-          </Text>
+          </View>
           <Text style={styles.text}>{item.text}</Text>
         </View>
       )}
@@ -28,26 +44,45 @@ export function LogsPanel({ logs }: LogsPanelProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'black',
     height: 250,
   },
+  content: {
+    paddingHorizontal: 12,
+    paddingBottom: 12,
+  },
   item: {
+    paddingVertical: 8,
     borderBottomWidth: 1,
-    borderColor: '#ccc',
+    borderBottomColor: colors.border,
   },
-  scroll: {
-    backgroundColor: 'cyan',
+  meta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 4,
   },
-  select: {
-    backgroundColor: 'greenyellow',
+  badge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: radius.full,
   },
-  statusChanged: {
-    backgroundColor: 'tomato',
+  badgeText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.foreground,
+  },
+  time: {
+    fontSize: 11,
+    color: colors.mutedForeground,
   },
   text: {
-    color: '#000',
+    fontSize: 12,
+    color: colors.foreground,
   },
-  eventName: {
-    color: '#595959',
+  empty: {
+    paddingVertical: 24,
+    textAlign: 'center',
+    fontSize: 13,
+    color: colors.mutedForeground,
   },
 });

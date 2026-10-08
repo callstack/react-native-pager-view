@@ -1,60 +1,97 @@
 import React from 'react';
 import {
+  Pressable,
   StyleProp,
   StyleSheet,
   Text,
-  TouchableWithoutFeedback,
-  View,
   ViewProps,
   ViewStyle,
 } from 'react-native';
+import { colors, radius } from '../theme';
 
 interface Props extends ViewProps {
   disabled?: boolean;
   onPress: () => void;
   text: string;
+  variant?: 'default' | 'outline';
   style?: StyleProp<ViewStyle>;
 }
 
-export class Button extends React.Component<Props> {
-  _handlePress = () => {
-    if (!this.props.disabled && this.props.onPress) {
-      this.props.onPress();
-    }
-  };
-
-  render() {
-    const { accessibilityLabel, disabled, style, testID, text } = this.props;
-
-    return (
-      <TouchableWithoutFeedback onPress={this._handlePress}>
-        <View
-          accessibilityLabel={accessibilityLabel}
-          testID={testID}
-          style={[styles.button, !disabled ? {} : styles.buttonDisabled, style]}
-        >
-          <Text style={styles.buttonText}>{text}</Text>
-        </View>
-      </TouchableWithoutFeedback>
-    );
-  }
+export function Button({
+  accessibilityLabel,
+  disabled,
+  onPress,
+  style,
+  testID,
+  text,
+  variant = 'outline',
+}: Props) {
+  const isOutline = variant === 'outline';
+  return (
+    <Pressable
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="button"
+      disabled={disabled}
+      testID={testID}
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.button,
+        isOutline ? styles.outline : styles.primary,
+        pressed && (isOutline ? styles.outlinePressed : styles.primaryPressed),
+        disabled && styles.buttonDisabled,
+        style,
+      ]}
+    >
+      <Text
+        numberOfLines={1}
+        style={[
+          styles.buttonText,
+          isOutline ? styles.outlineText : styles.primaryText,
+        ]}
+      >
+        {text}
+      </Text>
+    </Pressable>
+  );
 }
 
 const styles = StyleSheet.create({
   button: {
     flex: 1,
     width: 0,
-    margin: 5,
-    borderColor: 'gray',
+    height: 36,
+    margin: 4,
+    paddingHorizontal: 12,
+    borderRadius: radius.md,
     borderWidth: 1,
-    backgroundColor: 'gray',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  primary: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  primaryPressed: {
+    opacity: 0.9,
+  },
+  outline: {
+    backgroundColor: colors.background,
+    borderColor: colors.border,
+  },
+  outlinePressed: {
+    backgroundColor: colors.muted,
   },
   buttonDisabled: {
-    backgroundColor: 'black',
     opacity: 0.5,
   },
   buttonText: {
-    color: 'white',
-    margin: 10,
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  primaryText: {
+    color: colors.primaryForeground,
+  },
+  outlineText: {
+    color: colors.foreground,
   },
 });
