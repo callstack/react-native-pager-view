@@ -1,5 +1,6 @@
 package com.reactnativepagerview
 
+import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager2.widget.ViewPager2
@@ -50,6 +51,12 @@ class PagerViewViewManager : ViewGroupManager<NestedScrollableHost>(), RNCViewPa
         vp.adapter = ViewPagerAdapter()
         //https://github.com/callstack/react-native-viewpager/issues/183
         vp.isSaveEnabled = false
+        // After a hardware key leaves touch mode, a blurred input hands focus to
+        // this full-page RecyclerView, and Android's default focus highlight then
+        // tints every page. Page children keep their own focus highlight.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vp.getChildAt(0).defaultFocusHighlightEnabled = false
+        }
 
         vp.post {
             vp.registerOnPageChangeCallback(object : OnPageChangeCallback() {
