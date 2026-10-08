@@ -33,6 +33,9 @@ jobs:
         run: bun install
         working-directory: example
 
+      - name: Check formatting
+        run: bun run format:check
+
       - name: Lint files
         run: bun run lint
 

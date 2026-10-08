@@ -10,7 +10,13 @@
  */
 import { useHeaderHeight } from '@react-navigation/elements';
 import { useNavigation } from '@react-navigation/native';
-import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   Button,
   Dimensions,
@@ -101,8 +107,8 @@ function MeasuredList({ testIDPrefix }: { testIDPrefix: string }) {
   const verdict = measuring
     ? 'safe-area: measuring'
     : topOk && bottomOk
-      ? 'safe-area: pass'
-      : 'safe-area: fail';
+    ? 'safe-area: pass'
+    : 'safe-area: fail';
 
   return (
     <View style={styles.listHost} testID={`${testIDPrefix}-list`}>

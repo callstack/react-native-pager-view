@@ -16,9 +16,7 @@ export class ProgressBar extends React.Component<Props> {
     const size = fractionalPosition / (this.props.numberOfPages - 1);
     const clampedSize = Math.max(0, Math.min(1, size));
     return (
-      <View
-        style={styles.progressBarContainer}
-      >
+      <View style={styles.progressBarContainer}>
         <View
           style={[styles.progressBar, { width: `${clampedSize * 100}%` }]}
         />

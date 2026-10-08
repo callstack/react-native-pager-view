@@ -1,10 +1,6 @@
 import type * as React from 'react';
 import { codegenNativeCommands, codegenNativeComponent } from 'react-native';
-import type {
-  CodegenTypes,
-  HostComponent,
-  ViewProps,
-} from 'react-native';
+import type { CodegenTypes, HostComponent, ViewProps } from 'react-native';
 
 export type OnPageScrollEventData = Readonly<{
   position: CodegenTypes.Double;
@@ -23,10 +19,16 @@ export interface NativeProps extends ViewProps {
   scrollEnabled?: CodegenTypes.WithDefault<boolean, true>;
   layoutDirection?: CodegenTypes.WithDefault<'ltr' | 'rtl', 'ltr'>;
   initialPage?: CodegenTypes.Int32;
-  orientation?: CodegenTypes.WithDefault<'horizontal' | 'vertical', 'horizontal'>;
+  orientation?: CodegenTypes.WithDefault<
+    'horizontal' | 'vertical',
+    'horizontal'
+  >;
   offscreenPageLimit?: CodegenTypes.Int32;
   pageMargin?: CodegenTypes.Int32;
-  overScrollMode?: CodegenTypes.WithDefault<'auto' | 'always' | 'never', 'auto'>;
+  overScrollMode?: CodegenTypes.WithDefault<
+    'auto' | 'always' | 'never',
+    'auto'
+  >;
   overdrag?: CodegenTypes.WithDefault<boolean, false>;
   keyboardDismissMode?: CodegenTypes.WithDefault<'none' | 'on-drag', 'none'>;
   onPageScroll?: CodegenTypes.DirectEventHandler<OnPageScrollEventData>;

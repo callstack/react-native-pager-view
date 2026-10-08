@@ -3,13 +3,7 @@ import { APP_ID } from '../../targets.ts';
 
 export { test };
 export { expect } from 'e2e';
-export type {
-  App,
-  Locator,
-  Screen,
-  ScrollDirection,
-  TextMatch,
-} from 'e2e';
+export type { App, Locator, Screen, ScrollDirection, TextMatch } from 'e2e';
 
 const APP_PATHS: Record<string, string | undefined> = {
   ios: process.env.E2E_IOS_APP_PATH,

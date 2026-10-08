@@ -39,16 +39,18 @@ bun example:ios
 ```
 
 
-Make sure your code passes TypeScript and ESLint. Run the following to verify:
+Make sure your code passes TypeScript, Prettier and ESLint. Run the following to verify:
 
 ```sh
 bun typescript
+bun format:check
 bun lint
 ```
 
-To fix formatting errors, run the following:
+To fix formatting and lint errors, run the following:
 
 ```sh
+bun format
 bun lint --fix
 ```
 
@@ -77,7 +79,7 @@ Our pre-commit hooks verify that your commit message matches this format when co
 
 [ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [TypeScript](https://www.typescriptlang.org/)
 
-We use [TypeScript](https://www.typescriptlang.org/) for type checking, [ESLint](https://eslint.org/) with [Prettier](https://prettier.io/) for linting and formatting the code, and [Jest](https://jestjs.io/) for testing.
+We use [TypeScript](https://www.typescriptlang.org/) for type checking, [Prettier](https://prettier.io/) for formatting, [ESLint](https://eslint.org/) with a flat config (`eslint.config.js`) for linting, and [Jest](https://jestjs.io/) for testing. Formatting and linting are separate steps: Prettier owns style, and ESLint owns correctness.
 
 Our pre-commit hooks verify that the linter and tests pass when committing.
 
@@ -97,7 +99,9 @@ The `package.json` file contains various scripts for common tasks:
 
 - `bun bootstrap`: setup project by installing all dependencies and pods.
 - `bun typescript`: type-check files with TypeScript.
-- `bun lint`: lint files with ESLint.
+- `bun lint`: lint files with ESLint (cached).
+- `bun format`: format files with Prettier.
+- `bun format:check`: check formatting with Prettier without writing changes.
 - `bun test`: run unit tests with Jest.
 - `bun example:start`: start the Metro server for the example app.
 - `bun example:android`: run the example app on Android.

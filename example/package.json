@@ -44,7 +44,7 @@
     "@react-native/metro-config": "0.87.1",
     "@react-native/typescript-config": "0.87.1",
     "@types/react": "^19.2.0",
-    "eslint": "^8.57.1",
+    "eslint": "^9.39.0",
     "prettier": "2.8.8",
     "react-native-monorepo-config": "^0.4.0",
     "typescript": "^6.0.3"

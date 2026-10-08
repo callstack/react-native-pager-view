@@ -21,7 +21,9 @@ test(
       'safe-area: pass',
       { timeout: 15_000 }
     );
-    await expect(screen.getByTestId('issue-1142-pager-first-row')).toBeVisible();
+    await expect(
+      screen.getByTestId('issue-1142-pager-first-row')
+    ).toBeVisible();
     await expect(
       screen.getByTestId('issue-1142-pager-bottom-marker')
     ).toBeVisible();

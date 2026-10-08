@@ -61,7 +61,11 @@ export function Issue1096KeyboardShrinkRepro() {
       <Animated.View
         style={[styles.sheet, { transform: [{ translateY: lift }] }]}
       >
-        <PagerView style={styles.pager} initialPage={0} testID="issue-1096-pager">
+        <PagerView
+          style={styles.pager}
+          initialPage={0}
+          testID="issue-1096-pager"
+        >
           <View key="rows" style={styles.page} collapsable={false}>
             {ROWS.map((row, index) =>
               index === ROWS.length - 1 ? (

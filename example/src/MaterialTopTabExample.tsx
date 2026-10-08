@@ -4,7 +4,10 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 
 import { View, Text, Button, FlatList, StyleSheet } from 'react-native';
 
-const listItems = Array.from({ length: 50 }, (_, index) => `List item ${index}`);
+const listItems = Array.from(
+  { length: 50 },
+  (_, index) => `List item ${index}`
+);
 
 function Tab1(props: { onOpenDetail: () => void }) {
   const listRef = React.useRef<FlatList<string>>(null);
@@ -28,7 +31,10 @@ function Tab1(props: { onOpenDetail: () => void }) {
         data={listItems}
         keyExtractor={(item) => item}
         renderItem={({ item, index }) => (
-          <Text testID={`material-top-bar-list-item-${index}`} style={styles.row}>
+          <Text
+            testID={`material-top-bar-list-item-${index}`}
+            style={styles.row}
+          >
             {item}
           </Text>
         )}
