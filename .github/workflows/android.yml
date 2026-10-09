@@ -3,7 +3,7 @@ name: Android Build
 on:
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - '.github/workflows/android.yml'
       - 'android/**'
@@ -13,7 +13,7 @@ on:
       - 'e2e/**'
   push:
     branches:
-      - master
+      - main
 
 permissions:
   contents: read
