@@ -26,6 +26,11 @@ jobs:
     concurrency:
       group: ${{ github.ref }}-ios
       cancel-in-progress: true
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      CCACHE_BASEDIR: ${{ github.workspace }}
+      CCACHE_MAXSIZE: 2G
+      CCACHE_COMPRESS: true
     steps:
       - uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -39,6 +44,16 @@ jobs:
         run: bun install
         working-directory: example
 
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@14594264cd68ce8a2345dd349bc3d138a4ef85c8 # v1.327.0
+        with:
+          ruby-version: '4.0'
+          bundler-cache: true
+          working-directory: example
+
+      - name: Install ccache
+        run: brew install ccache
+
       - name: Cache Pods
         id: cache-pods
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
@@ -48,9 +63,21 @@ jobs:
           path: example/ios/Pods
           key: ${{ hashFiles('example/ios/Podfile.lock') }}
 
+      # USE_CCACHE makes react_native_post_install route clang through ccache.
       - name: Install example Pods
         run: bun pods
         working-directory: example
+        env:
+          USE_CCACHE: 1
+
+      - name: Restore ccache
+        uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ccache-ios-${{ hashFiles('example/ios/Podfile.lock') }}-${{ github.run_id }}
+          restore-keys: |
+            ccache-ios-${{ hashFiles('example/ios/Podfile.lock') }}-
+            ccache-ios-
 
       # Simulator.app attaches the Mac keyboard by default, which hides the
       # software keyboard and leaves no Return key for the keyboard tests.
@@ -59,7 +86,17 @@ jobs:
 
       - name: Build iOS App
         run: |
-          bun example:ios:release
+          ccache --zero-stats
+          bun example:ios:release --extra-params "COMPILER_INDEX_STORE_ENABLE=NO"
+          ccache --show-stats
+
+      # Saved right after the build so a failing e2e run still warms the cache.
+      - name: Save ccache
+        if: ${{ !cancelled() }}
+        uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ccache-ios-${{ hashFiles('example/ios/Podfile.lock') }}-${{ github.run_id }}
 
       - name: Install e2e dependencies
         run: bun install
