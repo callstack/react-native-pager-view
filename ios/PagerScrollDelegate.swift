@@ -4,9 +4,21 @@ import UIKit
  Scroll delegate used to control underlying TabView's collection view.
  */
 class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDelegate {
-  weak var originalDelegate: UICollectionViewDelegate?
+  weak var originalDelegate: UICollectionViewDelegate? {
+    didSet {
+      // Never proxy to ourselves: that makes `responds(to:)` recurse forever.
+      if originalDelegate === self { originalDelegate = nil }
+    }
+  }
   weak var delegate: PagerViewProviderDelegate?
   var orientation: UICollectionView.ScrollDirection = .horizontal
+  
+  /// The collection view we already installed ourselves into. Identity, not
+  /// `originalDelegate == nil`, is what tells us the install already ran:
+  /// `originalDelegate` is weak and can go nil on its own.
+  weak var installedCollectionView: UICollectionView?
+  
+  private var isQueryingOriginalDelegate = false
   
   private let handledSelectors: Set<Selector> = [
     #selector(scrollViewDidScroll(_:)),
@@ -86,11 +98,25 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   }
   
   override func responds(to aSelector: Selector!) -> Bool {
-    handledSelectors.contains(aSelector) || (originalDelegate?.responds(to: aSelector) ?? false)
+    if handledSelectors.contains(aSelector) { return true }
+  
+    // An analytics SDK may swizzle the collection view's delegate setter and
+    // insert a proxy that forwards `responds(to:)` back to whatever it
+    // replaced - this object. Querying `originalDelegate` then re-enters this
+    // method through that proxy and overflows the stack. Report `false` for a
+    // re-entrant query so the loop terminates; UIKit skips optional delegate
+    // methods that answer `false`. Delegate callbacks are main-thread only.
+    guard !isQueryingOriginalDelegate else { return false }
+    isQueryingOriginalDelegate = true
+    defer { isQueryingOriginalDelegate = false }
+  
+    return originalDelegate?.responds(to: aSelector) ?? false
   }
   
   override func forwardingTarget(for aSelector: Selector!) -> Any? {
-    handledSelectors.contains(aSelector) ? nil : originalDelegate
+    guard !handledSelectors.contains(aSelector) else { return nil }
+    let target = originalDelegate
+    return target === self ? nil : target
   }
 }
 
