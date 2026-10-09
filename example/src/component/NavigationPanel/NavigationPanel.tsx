@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Pressable } from 'react-native';
 import { ControlsPanel } from './ControlPanel';
 import { LogsPanel } from './LogsPanel';
 import type { NavigationPanelProps } from './types';
+import { colors, radius } from '../../theme';
 
 enum VisibleTab {
   None,
@@ -10,60 +11,35 @@ enum VisibleTab {
   Controls,
 }
 
+const tabs = [
+  { tab: VisibleTab.Controls, label: 'Control' },
+  { tab: VisibleTab.Logs, label: 'Logs' },
+];
+
 export function NavigationPanel(props: NavigationPanelProps) {
   const [visible, setVisible] = useState(VisibleTab.Controls);
 
   return (
-    <View>
-      <View style={styles.toggleVisibilityButtonContainer}>
-        <TouchableOpacity
-          style={[
-            styles.toggleVisibilityButton,
-            visible === VisibleTab.Controls &&
-              styles.toggleVisibilityButtonActive,
-          ]}
-          activeOpacity={0.8}
-          onPress={() =>
-            setVisible((prevVisible) =>
-              prevVisible === VisibleTab.Controls
-                ? VisibleTab.None
-                : VisibleTab.Controls
-            )
-          }
-        >
-          <Text
-            style={[
-              styles.toggleVisibilityText,
-              visible === VisibleTab.Controls &&
-                styles.toggleVisibilityTextActive,
-            ]}
-          >
-            Control
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.toggleVisibilityButton,
-            visible === VisibleTab.Logs && styles.toggleVisibilityButtonActive,
-          ]}
-          activeOpacity={0.8}
-          onPress={() => {
-            setVisible((prevVisible) =>
-              prevVisible === VisibleTab.Logs
-                ? VisibleTab.None
-                : VisibleTab.Logs
-            );
-          }}
-        >
-          <Text
-            style={[
-              styles.toggleVisibilityText,
-              visible === VisibleTab.Logs && styles.toggleVisibilityTextActive,
-            ]}
-          >
-            Logs
-          </Text>
-        </TouchableOpacity>
+    <View style={styles.container}>
+      <View style={styles.tabList}>
+        {tabs.map(({ tab, label }) => {
+          const isActive = visible === tab;
+          return (
+            <Pressable
+              key={label}
+              style={[styles.tabTrigger, isActive && styles.tabTriggerActive]}
+              onPress={() =>
+                setVisible((prevVisible) =>
+                  prevVisible === tab ? VisibleTab.None : tab
+                )
+              }
+            >
+              <Text style={[styles.tabText, isActive && styles.tabTextActive]}>
+                {label}
+              </Text>
+            </Pressable>
+          );
+        })}
       </View>
       {visible === VisibleTab.Controls ? <ControlsPanel {...props} /> : null}
       {visible === VisibleTab.Logs ? (
@@ -74,29 +50,38 @@ export function NavigationPanel(props: NavigationPanelProps) {
 }
 
 const styles = StyleSheet.create({
-  toggleVisibilityButtonContainer: {
-    position: 'absolute',
-    left: 8,
-    bottom: '100%',
+  container: {
+    backgroundColor: colors.background,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  tabList: {
     flexDirection: 'row',
+    alignSelf: 'flex-start',
+    margin: 12,
+    padding: 3,
+    borderRadius: radius.lg,
+    backgroundColor: colors.muted,
   },
-  toggleVisibilityButton: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: '#000',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderTopLeftRadius: 5,
-    borderTopRightRadius: 5,
+  tabTrigger: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: radius.md - 1,
   },
-  toggleVisibilityButtonActive: {
-    backgroundColor: '#fff',
+  tabTriggerActive: {
+    backgroundColor: colors.background,
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
   },
-  toggleVisibilityText: {
-    color: '#fff',
-    fontSize: 20,
+  tabText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: colors.mutedForeground,
   },
-  toggleVisibilityTextActive: {
-    color: '#000',
+  tabTextActive: {
+    color: colors.foreground,
   },
 });
