@@ -13,7 +13,7 @@ export const IMAGE_URIS = [
 // Unicodes issue on iOS 26.3 https://github.com/facebook/react-native/issues/56183
 export const thumbsUp = '\uD83D\uDC4D';
 export const logoUrl =
-  'https://raw.githubusercontent.com/callstack/react-native-pager-view/master/img/viewpager-logo.png';
+  'https://raw.githubusercontent.com/callstack/react-native-pager-view/main/img/viewpager-logo.png';
 
 export type CreatePage = {
   key: number;
