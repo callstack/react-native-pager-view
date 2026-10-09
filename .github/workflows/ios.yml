@@ -34,11 +34,6 @@ jobs:
         shell: bash
         run: bun install
 
-      - name: Install example dependencies
-        shell: bash
-        run: bun install
-        working-directory: example
-
       - name: Cache Pods
         id: cache-pods
         uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
@@ -60,10 +55,6 @@ jobs:
       - name: Build iOS App
         run: |
           bun example:ios:release
-
-      - name: Install e2e dependencies
-        run: bun install
-        working-directory: e2e
 
       - name: Run e2e tests
         run: bun run test:ios

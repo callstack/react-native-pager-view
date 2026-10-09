@@ -20,6 +20,10 @@
     "!**/__fixtures__",
     "!**/__mocks__"
   ],
+  "workspaces": [
+    "example",
+    "e2e"
+  ],
   "scripts": {
     "test": "jest",
     "typescript": "tsc --noEmit",
@@ -29,14 +33,12 @@
     "prepare": "bob build",
     "release": "release-it",
     "release:next": "release-it --npm.tag=next --preRelease=rc",
-    "bootstrap": "cd example; bun install && bun pods ",
-    "bootstrap:no:pods": "bun install --cwd example",
+    "bootstrap": "bun install && bun run --cwd example pods",
     "example:start": "cd example; bun start",
     "example:android": "cd example; bun android",
     "example:ios": "cd example; bun ios",
     "example:android:release": "cd example;react-native run-android --mode \"Release\" --appId com.pagerviewexample --active-arch-only",
     "example:ios:release": "cd example;react-native run-ios --mode \"Release\"",
-    "bootstrap:e2e": "bun install --cwd e2e",
     "e2e:test:ios": "cd e2e; bun run test:ios",
     "e2e:test:android": "cd e2e; bun run test:android",
     "e2e:ios": "bun run --cwd example build:ios && bun run example:ios:release && bun run e2e:test:ios",
@@ -84,7 +86,8 @@
       "node_modules/(?!\\.pnpm|((jest-)?react-native|@react-native(-community)?)/)"
     ],
     "modulePathIgnorePatterns": [
-      "<rootDir>/example/node_modules",
+      "<rootDir>/example/",
+      "<rootDir>/e2e/",
       "<rootDir>/lib/"
     ]
   },
@@ -124,6 +127,7 @@
     ]
   },
   "overrides": {
-    "eslint-plugin-ft-flow": "^3.0.11"
+    "eslint-plugin-ft-flow": "^3.0.11",
+    "react-native-pager-view": "link:."
   }
 }

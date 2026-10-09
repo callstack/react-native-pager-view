@@ -28,11 +28,6 @@ jobs:
         shell: bash
         run: bun install
 
-      - name: Install example dependencies
-        shell: bash
-        run: bun install
-        working-directory: example
-
       - name: Check formatting
         run: bun run format:check
 
@@ -45,10 +40,6 @@ jobs:
       - name: Typecheck example
         run: bun run typescript
         working-directory: example
-
-      - name: Install e2e dependencies
-        run: bun install
-        working-directory: e2e
 
       - name: Typecheck e2e
         run: bun run typecheck

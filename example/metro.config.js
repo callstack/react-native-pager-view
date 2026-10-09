@@ -3,8 +3,13 @@ const { getDefaultConfig } = require('@react-native/metro-config');
 const { withMetroConfig } = require('react-native-monorepo-config');
 
 const root = path.resolve(__dirname, '..');
-const defaultConfig = getDefaultConfig(__dirname);
-const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+// react-native-tab-view and @react-navigation/material-top-tabs list
+// react-native-pager-view as a peer dependency, so Bun would install the
+// published copy into node_modules and Metro would resolve it instead of the
+// local source. The `"react-native-pager-view": "link:."` override in the root
+// package.json symlinks node_modules/react-native-pager-view to the repo root
+// instead. (`workspace:*` can't be used: the root isn't one of its workspaces.)
 
 /**
  * Metro configuration
@@ -12,21 +17,7 @@ const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
  *
  * @type {import('@react-native/metro-config').MetroConfig}
  */
-module.exports = withMetroConfig(
-  {
-    ...defaultConfig,
-    resolver: {
-      ...defaultConfig.resolver,
-      // Use the local package at the monorepo root, not the installed peer copy.
-      blockList: [
-        ...[].concat(defaultConfig.resolver.blockList || []),
-        new RegExp(
-          `^${escapeRegExp(
-            path.join(__dirname, 'node_modules', 'react-native-pager-view')
-          )}[\\\\/]`
-        ),
-      ],
-    },
-  },
-  { root, dirname: __dirname, workspaces: ['example'] }
-);
+module.exports = withMetroConfig(getDefaultConfig(__dirname), {
+  root,
+  dirname: __dirname,
+});
