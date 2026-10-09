@@ -4,7 +4,7 @@ We want this community to be friendly and respectful to each other. Please follo
 
 ## Development workflow
 
-To get started with the project, run `bun install` in the root directory to install the required dependencies for each package:
+To get started with the project, run `bun install` in the root directory to install dependencies for the library, the example app and the e2e tests:
 
 ```sh
 bun install

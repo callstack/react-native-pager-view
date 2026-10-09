@@ -8,8 +8,8 @@ tree, so the same file runs on both platforms.
 ## Setup
 
 ```bash
-cd e2e && bun install
-npx agent-device doctor
+bun install # from the repository root
+cd e2e && npx agent-device doctor
 ```
 
 `agent-device doctor` checks for Xcode with a simulator runtime, or the Android

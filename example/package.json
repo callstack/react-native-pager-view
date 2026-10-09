@@ -5,7 +5,6 @@
   "scripts": {
     "start": "react-native start",
     "pods": "bundle install && cd ios && bundle exec pod install && cd ..",
-    "lint": "eslint .",
     "typescript": "tsc --noEmit",
     "android": "react-native run-android --appId com.pagerviewexample",
     "ios": "react-native run-ios",
@@ -39,17 +38,11 @@
     "@react-native-community/cli-platform-android": "20.2.0",
     "@react-native-community/cli-platform-ios": "20.2.0",
     "@react-native/babel-preset": "0.87.1",
-    "@react-native/eslint-config": "0.87.1",
     "@react-native/metro-config": "0.87.1",
     "@react-native/typescript-config": "0.87.1",
     "@types/react": "^19.2.0",
-    "eslint": "^9.39.0",
-    "prettier": "2.8.8",
     "react-native-monorepo-config": "^0.4.0",
     "typescript": "^7.0.2"
-  },
-  "overrides": {
-    "use-latest-callback": "0.1.9"
   },
   "engines": {
     "node": "^22.13.0 || ^24.3.0 || >=26.0.0"
