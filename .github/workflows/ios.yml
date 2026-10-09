@@ -64,6 +64,8 @@ jobs:
           key: ${{ hashFiles('example/ios/Podfile.lock') }}
 
       # USE_CCACHE makes react_native_post_install route clang through ccache.
+      # RN's wrapper scripts are patched (example/patches) to find ccache on
+      # PATH, see https://github.com/facebook/react-native/pull/56612.
       - name: Install example Pods
         run: bun pods
         working-directory: example
@@ -87,8 +89,7 @@ jobs:
       - name: Build iOS App
         run: |
           ccache --zero-stats
-          # Xcode 26 skips RN's ccache CC wrapper when explicit modules are on.
-          bun example:ios:release --extra-params "COMPILER_INDEX_STORE_ENABLE=NO CLANG_ENABLE_EXPLICIT_MODULES=NO"
+          bun example:ios:release --extra-params "COMPILER_INDEX_STORE_ENABLE=NO"
           ccache --show-stats
 
       # Saved right after the build so a failing e2e run still warms the cache.

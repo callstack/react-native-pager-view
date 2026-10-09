@@ -1,0 +1,38 @@
+diff --git a/scripts/xcode/ccache-clang++.sh b/scripts/xcode/ccache-clang++.sh
+index 54ff8ba5816dd9eb7000411871ccb3102fb097bb..b4dee6cfe74bda5a981afa6dfd2c4f985ceceac5 100755
+--- a/scripts/xcode/ccache-clang++.sh
++++ b/scripts/xcode/ccache-clang++.sh
+@@ -11,4 +11,13 @@ REACT_NATIVE_CCACHE_CONFIGPATH=$SCRIPT_DIR/ccache.conf
+ # Provide our config file if none is already provided
+ export CCACHE_CONFIGPATH="${CCACHE_CONFIGPATH:-$REACT_NATIVE_CCACHE_CONFIGPATH}"
+ 
+-exec $CCACHE_BINARY clang++ "$@"
++# Xcode does not export user-defined build settings as environment variables
++# for invoked scripts, so $CCACHE_BINARY may be empty even when set in the
++# project. Fall back to a PATH lookup so ccache is still used.
++CCACHE_BINARY="${CCACHE_BINARY:-$(command -v ccache)}"
++
++if [ -n "$CCACHE_BINARY" ]; then
++    exec "$CCACHE_BINARY" clang++ "$@"
++fi
++
++exec clang++ "$@"
+diff --git a/scripts/xcode/ccache-clang.sh b/scripts/xcode/ccache-clang.sh
+index 9b1a355c2ccef049070060c0648ab020bf81df63..be632004cf10a114f0c286c8916b4b4af66c80d8 100755
+--- a/scripts/xcode/ccache-clang.sh
++++ b/scripts/xcode/ccache-clang.sh
+@@ -11,4 +11,13 @@ REACT_NATIVE_CCACHE_CONFIGPATH=$SCRIPT_DIR/ccache.conf
+ # Provide our config file if none is already provided
+ export CCACHE_CONFIGPATH="${CCACHE_CONFIGPATH:-$REACT_NATIVE_CCACHE_CONFIGPATH}"
+ 
+-exec $CCACHE_BINARY clang "$@"
++# Xcode does not export user-defined build settings as environment variables
++# for invoked scripts, so $CCACHE_BINARY may be empty even when set in the
++# project. Fall back to a PATH lookup so ccache is still used.
++CCACHE_BINARY="${CCACHE_BINARY:-$(command -v ccache)}"
++
++if [ -n "$CCACHE_BINARY" ]; then
++    exec "$CCACHE_BINARY" clang "$@"
++fi
++
++exec clang "$@"
