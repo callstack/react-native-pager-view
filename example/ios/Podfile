@@ -31,6 +31,26 @@ target 'PagerViewExample' do
       # :ccache_enabled => true
     )
 
+    # Xcode's compiler launcher keeps explicit modules enabled, unlike RN's
+    # ccache CC wrapper (USE_CCACHE), so don't combine the two.
+    if ENV['USE_CCACHE_LAUNCHER'] == '1'
+      ccache_path = `command -v ccache`.strip
+      if ccache_path.empty?
+        Pod::UI.warn('[Ccache] USE_CCACHE_LAUNCHER=1 but ccache was not found on PATH')
+      else
+        Pod::UI.puts("[Ccache] Using #{ccache_path} as C_COMPILER_LAUNCHER")
+        projects = [installer.pods_project]
+        projects += installer.aggregate_targets.map(&:user_project).compact
+        projects.uniq { |project| project.path }.each do |project|
+          project.build_configurations.each do |config|
+            config.build_settings['C_COMPILER_LAUNCHER'] = ccache_path
+            config.build_settings['CLANG_ENABLE_EXPLICIT_MODULES_WITH_COMPILER_LAUNCHER'] = 'YES'
+          end
+          project.save
+        end
+      end
+    end
+
     # Xcode rejects deployment targets below 15.0, and RN's own post_install
     # skips resource-bundle targets, so RNSVG's bundles keep the podspec's 12.4.
     installer.pods_project.targets.each do |target|

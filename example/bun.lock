@@ -39,9 +39,6 @@
       },
     },
   },
-  "patchedDependencies": {
-    "react-native@0.87.1": "patches/react-native@0.87.1.patch",
-  },
   "overrides": {
     "use-latest-callback": "0.1.9",
   },

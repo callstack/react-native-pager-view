@@ -26,11 +26,6 @@ jobs:
     concurrency:
       group: ${{ github.ref }}-ios
       cancel-in-progress: true
-    env:
-      CCACHE_DIR: ${{ github.workspace }}/.ccache
-      CCACHE_BASEDIR: ${{ github.workspace }}
-      CCACHE_MAXSIZE: 2G
-      CCACHE_COMPRESS: true
     steps:
       - uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -51,8 +46,17 @@ jobs:
           bundler-cache: true
           working-directory: example
 
-      - name: Install ccache
-        run: brew install ccache
+      # Mirrors RN's scripts/xcode/ccache.conf, which only applies to its CC
+      # wrapper, not to the compiler launcher used here.
+      - name: Install and configure ccache
+        run: |
+          brew install ccache
+          ccache --set-config max_size=2G
+          ccache --set-config base_dir="$GITHUB_WORKSPACE"
+          ccache --set-config sloppiness=clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros
+          ccache --set-config depend_mode=true
+          ccache --set-config file_clone=true
+          ccache --set-config inode_cache=true
 
       - name: Cache Pods
         id: cache-pods
@@ -63,23 +67,20 @@ jobs:
           path: example/ios/Pods
           key: ${{ hashFiles('example/ios/Podfile.lock') }}
 
-      # USE_CCACHE makes react_native_post_install route clang through ccache.
-      # RN's wrapper scripts are patched (example/patches) to find ccache on
-      # PATH, see https://github.com/react/react-native/pull/56612.
+      # Sets ccache as Xcode's C_COMPILER_LAUNCHER, see example/ios/Podfile.
       - name: Install example Pods
         run: bun pods
         working-directory: example
         env:
-          USE_CCACHE: 1
+          USE_CCACHE_LAUNCHER: 1
 
       - name: Restore ccache
         uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
-          path: ${{ env.CCACHE_DIR }}
-          key: ccache-ios-${{ hashFiles('example/ios/Podfile.lock') }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ~/Library/Caches/ccache
+          key: ccache-ios-Release-${{ github.sha }}-${{ github.run_attempt }}
           restore-keys: |
-            ccache-ios-${{ hashFiles('example/ios/Podfile.lock') }}-
-            ccache-ios-
+            ccache-ios-Release-
 
       # Simulator.app attaches the Mac keyboard by default, which hides the
       # software keyboard and leaves no Return key for the keyboard tests.
@@ -90,15 +91,18 @@ jobs:
         run: |
           ccache --zero-stats
           bun example:ios:release --extra-params "COMPILER_INDEX_STORE_ENABLE=NO"
-          ccache --show-stats
+          ccache --show-stats -v
 
-      # Saved right after the build so a failing e2e run still warms the cache.
+      # Only main saves, PRs restore from it. Saved right after the build so a
+      # failing e2e run still warms the cache.
+      # TODO: drop the pull_request condition before merging, it's only here to
+      # measure warm builds on this PR.
       - name: Save ccache
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && (github.ref == 'refs/heads/main' || github.event_name == 'pull_request') }}
         uses: actions/cache/save@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         with:
-          path: ${{ env.CCACHE_DIR }}
-          key: ccache-ios-${{ hashFiles('example/ios/Podfile.lock') }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ~/Library/Caches/ccache
+          key: ccache-ios-Release-${{ github.sha }}-${{ github.run_attempt }}
 
       - name: Install e2e dependencies
         run: bun install

@@ -53,8 +53,5 @@
   },
   "engines": {
     "node": "^22.13.0 || ^24.3.0 || >=26.0.0"
-  },
-  "patchedDependencies": {
-    "react-native@0.87.1": "patches/react-native@0.87.1.patch"
   }
 }
