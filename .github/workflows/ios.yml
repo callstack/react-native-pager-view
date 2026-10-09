@@ -65,7 +65,7 @@ jobs:
 
       # USE_CCACHE makes react_native_post_install route clang through ccache.
       # RN's wrapper scripts are patched (example/patches) to find ccache on
-      # PATH, see https://github.com/facebook/react-native/pull/56612.
+      # PATH, see https://github.com/react/react-native/pull/56612.
       - name: Install example Pods
         run: bun pods
         working-directory: example
