@@ -40,7 +40,7 @@ jobs:
         run: bun run lint
 
       - name: Typecheck files
-        run: bun run typescript
+        run: bun run typecheck
 
       - name: Typecheck example
         run: bun run typescript

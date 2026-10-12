@@ -1,4 +1,4 @@
-import React, { Children, ReactNode } from 'react';
+import React, { Children, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 export const childrenWithOverriddenStyle = (

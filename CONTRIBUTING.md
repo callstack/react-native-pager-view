@@ -42,7 +42,7 @@ bun example:ios
 Make sure your code passes TypeScript, Prettier and ESLint. Run the following to verify:
 
 ```sh
-bun typescript
+bun typecheck
 bun format:check
 bun lint
 ```
@@ -98,7 +98,7 @@ bun release
 The `package.json` file contains various scripts for common tasks:
 
 - `bun bootstrap`: setup project by installing all dependencies and pods.
-- `bun typescript`: type-check files with TypeScript.
+- `bun typecheck`: type-check files with TypeScript.
 - `bun lint`: lint files with ESLint (cached).
 - `bun format`: format files with Prettier.
 - `bun format:check`: check formatting with Prettier without writing changes.

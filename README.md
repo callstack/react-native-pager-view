@@ -39,6 +39,10 @@ The library is autolinked. On iOS, install the pods afterwards:
 cd ios && pod install
 ```
 
+## Compatibility
+
+We support the three latest React Native versions: **0.85**, **0.86** and **0.87**. Only the New Architecture is supported.
+
 ## Usage
 
 ```tsx

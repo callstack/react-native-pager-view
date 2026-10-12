@@ -12,17 +12,22 @@
     "lib",
     "android",
     "ios",
-    "react-native-pager-view.podspec",
-    "!lib/typescript/example",
-    "!android/build",
+    "*.podspec",
     "!ios/build",
+    "!android/build",
+    "!android/gradle",
+    "!android/gradlew",
+    "!android/gradlew.bat",
+    "!android/local.properties",
+    "!android/src/test",
     "!**/__tests__",
     "!**/__fixtures__",
-    "!**/__mocks__"
+    "!**/__mocks__",
+    "!**/.*"
   ],
   "scripts": {
     "test": "jest",
-    "typescript": "tsc --noEmit",
+    "typecheck": "tsc",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{js,ts,tsx}\"",
     "format:check": "prettier --check \"**/*.{js,ts,tsx}\"",
@@ -103,8 +108,10 @@
       "javaPackageName": "com.reactnativepagerview"
     },
     "ios": {
-      "componentProvider": {
-        "RNCViewPager": "RNCPagerViewComponentView"
+      "components": {
+        "RNCViewPager": {
+          "className": "RNCPagerViewComponentView"
+        }
       }
     }
   },
