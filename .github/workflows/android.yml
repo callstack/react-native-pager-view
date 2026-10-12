@@ -10,6 +10,11 @@ on:
       - 'src/**'
       - 'example/android/**'
       - 'example/src/**'
+      - 'example/package.json'
+      - 'example/metro.config.js'
+      - 'package.json'
+      - 'bun.lock'
+      - 'bunfig.toml'
       - 'e2e/**'
   push:
     branches:
