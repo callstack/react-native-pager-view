@@ -4,13 +4,13 @@ We want this community to be friendly and respectful to each other. Please follo
 
 ## Development workflow
 
-To get started with the project, run `bun install` in the root directory to install the required dependencies for each package:
+To get started with the project, run `bun install` in the root directory to install dependencies for the library, the example app and the e2e tests:
 
 ```sh
 bun install
 ```
 
-> While it's possible to use [`npm`](https://github.com/npm/cli) or [`yarn`](https://yarnpkg.com/cli), the tooling is built around [`bun`](https://bun.sh/), so you'll have an easier time if you use `bun` for development.
+> This project requires [`bun`](https://bun.sh/) for development. It uses Bun workspaces and a `link:` override that points `react-native-pager-view` (a peer dependency of the example app's navigation libraries) at the local source, and the scripts invoke `bun` directly, so installing with `npm` or `yarn` is not supported.
 
 While developing, you can run the [example app](/example/) to test your changes. Any changes you make in your library's JavaScript code will be reflected in the example app without a rebuild. If you change any native code, then you'll need to rebuild the example app.
 
