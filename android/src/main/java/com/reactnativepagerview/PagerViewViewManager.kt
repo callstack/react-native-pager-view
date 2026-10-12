@@ -3,13 +3,11 @@ package com.reactnativepagerview
 import android.view.View
 import android.view.ViewGroup
 import com.facebook.react.bridge.ReadableArray
-import com.facebook.react.common.MapBuilder
 import com.facebook.react.module.annotations.ReactModule
 import com.facebook.react.uimanager.*
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNCViewPagerManagerDelegate
 import com.facebook.react.viewmanagers.RNCViewPagerManagerInterface
-import com.facebook.soloader.SoLoader
 import com.reactnativepagerview.event.PageScrollEvent
 import com.reactnativepagerview.event.PageScrollStateChangedEvent
 import com.reactnativepagerview.event.PageSelectedEvent
@@ -19,12 +17,6 @@ import com.reactnativepagerview.event.PageSelectedEvent
 class PagerViewViewManager : ViewGroupManager<ComposePagerView>(), RNCViewPagerManagerInterface<ComposePagerView> {
     companion object {
         const val NAME = "RNCViewPager"
-
-        init {
-            if (BuildConfig.CODEGEN_MODULE_REGISTRATION != null) {
-                SoLoader.loadLibrary(BuildConfig.CODEGEN_MODULE_REGISTRATION)
-            }
-        }
     }
 
     private val mDelegate: ViewManagerDelegate<ComposePagerView> = RNCViewPagerManagerDelegate(this)
@@ -157,10 +149,9 @@ class PagerViewViewManager : ViewGroupManager<ComposePagerView>(), RNCViewPagerM
         }
     }
 
-    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Map<String, String>> {
-        return MapBuilder.of(
-                PageScrollEvent.EVENT_NAME, MapBuilder.of("registrationName", "onPageScroll"),
-                PageScrollStateChangedEvent.EVENT_NAME, MapBuilder.of("registrationName", "onPageScrollStateChanged"),
-                PageSelectedEvent.EVENT_NAME, MapBuilder.of("registrationName", "onPageSelected"))
-    }
+    override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> = mutableMapOf(
+        PageScrollEvent.EVENT_NAME to mapOf("registrationName" to "onPageScroll"),
+        PageScrollStateChangedEvent.EVENT_NAME to mapOf("registrationName" to "onPageScrollStateChanged"),
+        PageSelectedEvent.EVENT_NAME to mapOf("registrationName" to "onPageSelected"),
+    )
 }

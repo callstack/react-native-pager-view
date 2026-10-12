@@ -14,7 +14,8 @@
     "lib": ["esnext"],
     "module": "esnext",
     "moduleResolution": "bundler",
-    "customConditions": ["react-native"],
+    "noEmit": true,
+    "customConditions": ["react-native", "react-native-strict-api"],
     "noFallthroughCasesInSwitch": true,
     "noImplicitReturns": true,
     "noUncheckedIndexedAccess": true,
@@ -23,7 +24,8 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "target": "esnext"
+    "target": "esnext",
+    "verbatimModuleSyntax": true
   },
   "exclude": ["example", "e2e", "lib"]
 }

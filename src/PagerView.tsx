@@ -7,10 +7,10 @@ import { childrenWithOverriddenStyle } from './utils';
 
 import PagerViewNativeComponent, {
   Commands as PagerViewNativeCommands,
-  OnPageScrollEventData,
-  OnPageScrollStateChangedEventData,
-  OnPageSelectedEventData,
-  NativeProps,
+  type OnPageScrollEventData,
+  type OnPageScrollStateChangedEventData,
+  type OnPageSelectedEventData,
+  type NativeProps,
 } from './PagerViewNativeComponent';
 
 /**

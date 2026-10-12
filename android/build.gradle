@@ -1,6 +1,19 @@
 buildscript {
-  // Buildscript is evaluated before everything else so we can't use getExtOrDefault
-  def kotlin_version = rootProject.ext.has('kotlinVersion') ? rootProject.ext.get('kotlinVersion') : project.properties['PagerView_kotlinVersion']
+  ext.PagerView = [
+    kotlinVersion: "2.0.21",
+    composeVersion: "1.7.8",
+    lifecycleVersion: "2.6.1",
+    minSdkVersion: 24,
+    compileSdkVersion: 36
+  ]
+
+  ext.getExtOrDefault = { prop ->
+    if (rootProject.ext.has(prop)) {
+      return rootProject.ext.get(prop)
+    }
+
+    return PagerView[prop]
+  }
 
   repositories {
     google()
@@ -8,240 +21,52 @@ buildscript {
   }
 
   dependencies {
-    classpath 'com.android.tools.build:gradle:4.2.1'
+    classpath "com.android.tools.build:gradle:8.7.2"
     // noinspection DifferentKotlinGradleVersion
-    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    classpath "org.jetbrains.kotlin:compose-compiler-gradle-plugin:$kotlin_version"
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${getExtOrDefault('kotlinVersion')}"
+    classpath "org.jetbrains.kotlin:compose-compiler-gradle-plugin:${getExtOrDefault('kotlinVersion')}"
   }
 }
 
-apply plugin: 'com.android.library'
+apply plugin: "com.android.library"
 
-def agpVersion = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')[0].toInteger()
-
-// AGP 9 compiles Kotlin sources on its own ("built-in Kotlin"), which is enabled by default and
-// can be turned off with `android.builtInKotlin=false`. Applying the Kotlin Android plugin on top
-// of it fails the build, so only apply it explicitly when built-in Kotlin is not in play.
-def builtInKotlinProperty = findProperty('android.builtInKotlin')
-def hasBuiltInKotlin = agpVersion >= 9 &&
-    (builtInKotlinProperty == null || builtInKotlinProperty.toString().toBoolean())
-
-if (!hasBuiltInKotlin) {
-  apply plugin: 'kotlin-android'
-}
-apply plugin: 'org.jetbrains.kotlin.plugin.compose'
-apply plugin: 'com.facebook.react'
-
-def getExtOrDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['PagerView_' + name]
+if (project.extensions.findByName("kotlin") == null) {
+  apply plugin: "kotlin-android"
 }
 
-def getExtOrIntegerDefault(name) {
-  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties['PagerView_' + name]).toInteger()
-}
-def shouldUseNameSpace = agpVersion >= 8
-def PACKAGE_PROP = "package=\"com.reactnativepagerview\""
-def manifestOutFile = file("${projectDir}/src/main/AndroidManifest.xml")
-def manifestContent = manifestOutFile.getText()
-if(shouldUseNameSpace){
-      manifestContent = manifestContent.replaceAll(
-        PACKAGE_PROP,
-        ''
-    )
-} else {
-    if(!manifestContent.contains("$PACKAGE_PROP")){
-        manifestContent = manifestContent.replace(
-            '<manifest',
-            "<manifest $PACKAGE_PROP "
-        )
-    }
-}
-manifestContent.replaceAll("  ", " ")
-manifestOutFile.write(manifestContent)
-
-import groovy.json.JsonSlurper
-
-// https://github.com/callstack/react-native-builder-bob/discussions/359
-def registrationCompat = {
-  def reactAndroidProject = rootProject.allprojects.find { it.name == 'ReactAndroid' }
-  if (reactAndroidProject == null) return false
-
-  def reactNativeManifest = file("${reactAndroidProject.projectDir}/../package.json")
-  def reactNativeVersion = new JsonSlurper().parseText(reactNativeManifest.text).version as String
-  // Fabric was introduced at react-native@0.68, full CMake support were introduced at react-native@0.71
-  // Use Android.mk for compatibility with react-native@0.68/0.69
-  reactNativeVersion.matches('(0.68.*|0.69.*)')
-}()
-
-def codegenViewLibraryName = "RNCViewPager"
-def codegenViewModuleName = {
-  // Autolink for Fabric uses codegenConfig.name in package.json since react-native@0.70
-  // Use codegenViewLibraryName for compatibility with react-native@0.68/0.69
-  def libraryManifestJson = new JsonSlurper().parseText(file("$projectDir/../package.json").text)
-  registrationCompat ? codegenViewLibraryName : libraryManifestJson.codegenConfig.name
-}()
-
-def appProject = rootProject.allprojects.find { it.plugins.hasPlugin('com.android.application') }
+apply plugin: "org.jetbrains.kotlin.plugin.compose"
+apply plugin: "com.facebook.react"
 
 android {
-  compileSdkVersion getExtOrIntegerDefault('compileSdkVersion')
-  if (shouldUseNameSpace){
-    namespace = "com.reactnativepagerview"
-    buildFeatures {
-      buildConfig true
-    }
-  }
+  namespace "com.reactnativepagerview"
+
+  compileSdkVersion getExtOrDefault("compileSdkVersion")
+
   defaultConfig {
-    minSdkVersion getExtOrIntegerDefault('minSdkVersion')
-    targetSdkVersion getExtOrIntegerDefault('targetSdkVersion')
-    buildConfigField "String", "CODEGEN_MODULE_REGISTRATION", (registrationCompat ? "\"${codegenViewModuleName}_registration\"" : "null")
-
-    if (registrationCompat) {
-      def reactAndroidProject = project(':ReactAndroid')
-      externalNativeBuild {
-        ndkBuild {
-          arguments "APP_PLATFORM=android-21",
-                    "APP_STL=c++_shared",
-                    "NDK_TOOLCHAIN_VERSION=clang",
-                    "GENERATED_SRC_DIR=$buildDir/generated/source", // for react_codegen_* in this library's codegen/jni
-                    "PROJECT_BUILD_DIR=${appProject.buildDir}", // for REACT_NDK_EXPORT_DIR in ReactAndroid's Android-prebuilt.mk
-                    "REACT_ANDROID_DIR=${reactAndroidProject.projectDir}",
-                    "REACT_ANDROID_BUILD_DIR=${reactAndroidProject.buildDir}",
-                    "CODEGEN_MODULE_NAME=$codegenViewModuleName"
-          cFlags "-Wall", "-Werror", "-fexceptions", "-frtti", "-DWITH_INSPECTOR=1"
-          cppFlags "-std=c++17"
-          targets "${codegenViewModuleName}_registration"
-        }
-      }
-    }
-  }
-
-  if (registrationCompat) {
-    // We configure the NDK build when registrationCompat is enabled.
-    externalNativeBuild {
-      ndkBuild {
-        path "Android.mk"
-      }
-    }
-  }
-
-  buildTypes {
-    release {
-      minifyEnabled false
-    }
-  }
-
-  lintOptions {
-    disable 'GradleCompatible'
+    minSdkVersion getExtOrDefault("minSdkVersion")
   }
 
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_17
+    targetCompatibility JavaVersion.VERSION_17
   }
+
   buildFeatures {
     compose true
   }
-  sourceSets {
-    main {
-      java.srcDirs += [
-        "src/fabric/java",
-        "${project.buildDir}/generated/source/codegen/java"
-      ]
-    }
-  }
 }
 
-repositories {
-  mavenCentral()
-  google()
-
-  def found = false
-  def defaultDir = null
-  def androidSourcesName = 'React Native sources'
-
-  if (rootProject.ext.has('reactNativeAndroidRoot')) {
-    defaultDir = rootProject.ext.get('reactNativeAndroidRoot')
-  } else {
-    defaultDir = new File(
-      projectDir,
-      '/../../../node_modules/react-native/android'
-    )
-  }
-
-  if (defaultDir.exists()) {
-    maven {
-      url defaultDir.toString()
-      name androidSourcesName
-    }
-
-    logger.info(":${project.name}:reactNativeAndroidRoot ${defaultDir.canonicalPath}")
-    found = true
-  } else {
-    def parentDir = rootProject.projectDir
-
-    1.upto(5, {
-      if (found) return true
-      parentDir = parentDir.parentFile
-
-      def androidSourcesDir = new File(
-        parentDir,
-        'node_modules/react-native'
-      )
-
-      def androidPrebuiltBinaryDir = new File(
-        parentDir,
-        'node_modules/react-native/android'
-      )
-
-      if (androidPrebuiltBinaryDir.exists()) {
-        maven {
-          url androidPrebuiltBinaryDir.toString()
-          name androidSourcesName
-        }
-
-        logger.info(":${project.name}:reactNativeAndroidRoot ${androidPrebuiltBinaryDir.canonicalPath}")
-        found = true
-      } else if (androidSourcesDir.exists()) {
-        maven {
-          url androidSourcesDir.toString()
-          name androidSourcesName
-        }
-
-        logger.info(":${project.name}:reactNativeAndroidRoot ${androidSourcesDir.canonicalPath}")
-        found = true
-      }
-    })
-  }
-
-  if (!found) {
-    throw new GradleException(
-      "${project.name}: unable to locate React Native android sources. " +
-      "Ensure you have you installed React Native as a dependency in your project and try again."
-    )
-  }
-}
-
-def kotlin_version = getExtOrDefault('kotlinVersion')
-def compose_version = getExtOrDefault('composeVersion')
-def lifecycle_version = getExtOrDefault('lifecycleVersion')
+def composeVersion = getExtOrDefault("composeVersion")
+def lifecycleVersion = getExtOrDefault("lifecycleVersion")
 
 dependencies {
-    //noinspection GradleDynamicVersion
-  api "com.facebook.react:react-native:+"
-  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation "androidx.compose.foundation:foundation:$compose_version"
-  implementation "androidx.compose.runtime:runtime:$compose_version"
-  implementation "androidx.compose.ui:ui:$compose_version"
+  implementation "com.facebook.react:react-android"
+  implementation "androidx.compose.foundation:foundation:$composeVersion"
+  implementation "androidx.compose.runtime:runtime:$composeVersion"
+  implementation "androidx.compose.ui:ui:$composeVersion"
   // Needed for ComposeViewLifecycleOwner (see ComposePagerView.kt), which
   // gives the ComposeView a self-owned Lifecycle instead of the ambient one.
-  implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+  implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
   testImplementation "androidx.arch.core:core-testing:2.2.0"
   testImplementation "junit:junit:4.13.2"
-}
-
-react {
-  jsRootDir = file("../src")
-  libraryName = codegenViewLibraryName
-  codegenJavaPackageName = "com.reactnativepagerview"
 }
