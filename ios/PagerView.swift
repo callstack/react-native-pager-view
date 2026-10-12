@@ -16,6 +16,18 @@ struct PagerView: View {
     props.orientation == .vertical
   }
 
+  private func applyScrollEnabled(_ scrollEnabled: Bool) {
+    collectionView?.isScrollEnabled = scrollEnabled
+    // iOS 15 only, see PagerViewIOS15Compat.swift (delete together with the iOS 15 support).
+    PagerViewIOS15Compat.applyScrollEnabled(scrollEnabled, to: collectionView)
+  }
+
+  private func applyOverdrag(_ overdrag: Bool) {
+    collectionView?.bounces = overdrag
+    // iOS 15 only, see PagerViewIOS15Compat.swift (delete together with the iOS 15 support).
+    PagerViewIOS15Compat.applyOverdrag(overdrag, to: collectionView)
+  }
+
   var body: some View {
     GeometryReader { proxy in
       TabView(selection: $props.currentPage) {
@@ -39,8 +51,8 @@ struct PagerView: View {
       .environment(\.layoutDirection, props.layoutDirection.converted)
       .introspect(.tabView(style: .page), on: .iOS(.v14...)) { collectionView in
         self.collectionView = collectionView
-        collectionView.bounces = props.overdrag
-        collectionView.isScrollEnabled = props.scrollEnabled
+        applyOverdrag(props.overdrag)
+        applyScrollEnabled(props.scrollEnabled)
         collectionView.keyboardDismissMode = props.keyboardDismissMode
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
@@ -70,8 +82,8 @@ struct PagerView: View {
       // Apply initial prop values that .onChange won't catch
       // (.onChange only fires on changes, not on initial values)
       DispatchQueue.main.async {
-        collectionView?.isScrollEnabled = props.scrollEnabled
-        collectionView?.bounces = props.overdrag
+        applyScrollEnabled(props.scrollEnabled)
+        applyOverdrag(props.overdrag)
       }
 
       // `onChange` does not fire for the initial `currentPage` value. Emit the
@@ -91,10 +103,10 @@ struct PagerView: View {
       delegate?.onPageSelected(position: newValue)
     }
     .onChange(of: props.scrollEnabled) { newValue in
-      collectionView?.isScrollEnabled = newValue
+      applyScrollEnabled(newValue)
     }
     .onChange(of: props.overdrag) { newValue in
-      collectionView?.bounces = newValue
+      applyOverdrag(newValue)
     }
     .onChange(of: props.keyboardDismissMode) { newValue in
       collectionView?.keyboardDismissMode = newValue
