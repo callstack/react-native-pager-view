@@ -37,7 +37,6 @@ import ReanimatedOnPageScrollExample from './ReanimatedOnPageScrollExample';
 import { MaterialTopBarExample } from './MaterialTopTabExample';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PagerHookExample } from './PagerHookExample';
 import { NestedHorizontalScrollViewExample } from './NestedHorizontalScrollViewExample';
 import { Issue1096KeyboardShrinkRepro } from './gh-issues/Issue1096KeyboardShrinkRepro';
@@ -251,54 +250,52 @@ const NavigationStack = createNativeStackNavigator();
 
 export function Navigation() {
   return (
-    <GestureHandlerRootView style={styles.root}>
-      <SafeAreaProvider>
-        <StatusBar barStyle="dark-content" />
-        <NavigationContainer theme={navigationTheme}>
-          <NavigationStack.Navigator
-            initialRouteName="PagerView Example"
-            screenOptions={{
-              headerShadowVisible: false,
-              headerTintColor: colors.foreground,
-              headerTitleStyle: { fontWeight: '600' },
-              headerBackButtonDisplayMode: 'minimal',
+    <SafeAreaProvider style={styles.root}>
+      <StatusBar barStyle="dark-content" />
+      <NavigationContainer theme={navigationTheme}>
+        <NavigationStack.Navigator
+          initialRouteName="PagerView Example"
+          screenOptions={{
+            headerShadowVisible: false,
+            headerTintColor: colors.foreground,
+            headerTitleStyle: { fontWeight: '600' },
+            headerBackButtonDisplayMode: 'minimal',
+          }}
+        >
+          <NavigationStack.Screen
+            name="PagerView Example"
+            component={App}
+            options={{
+              title: 'PagerView',
+              headerLeft: renderLayoutDirectionToggle,
             }}
-          >
+          />
+          {allExamples.map((example, index) => (
             <NavigationStack.Screen
-              name="PagerView Example"
-              component={App}
-              options={{
-                title: 'PagerView',
-                headerLeft: renderLayoutDirectionToggle,
-              }}
+              key={index}
+              name={example.name}
+              component={example.component}
             />
-            {allExamples.map((example, index) => (
-              <NavigationStack.Screen
-                key={index}
-                name={example.name}
-                component={example.component}
-              />
-            ))}
-            <NavigationStack.Screen
-              name="ModalSetPageModal"
-              component={ModalSetPageModalScreen}
-              options={{
-                presentation: 'modal',
-                animation: 'slide_from_bottom',
-              }}
-            />
-            <NavigationStack.Screen
-              name="Issue #1142 Plain List"
-              component={Issue1142PlainListScreen}
-            />
-            <NavigationStack.Screen
-              name="Issue #1142 Pager List"
-              component={Issue1142PagerListScreen}
-            />
-          </NavigationStack.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+          ))}
+          <NavigationStack.Screen
+            name="ModalSetPageModal"
+            component={ModalSetPageModalScreen}
+            options={{
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+            }}
+          />
+          <NavigationStack.Screen
+            name="Issue #1142 Plain List"
+            component={Issue1142PlainListScreen}
+          />
+          <NavigationStack.Screen
+            name="Issue #1142 Pager List"
+            component={Issue1142PagerListScreen}
+          />
+        </NavigationStack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
 
