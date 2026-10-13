@@ -1,32 +1,26 @@
 name: Lint
 
 on:
-  pull_request:
-    branches:
-      - main
-  push:
-    branches:
-      - main
-
-concurrency:
-  group: ${{ github.ref }}-js
-  cancel-in-progress: true
+  workflow_call:
 
 jobs:
   verify-package-source:
     name: Lint package
     runs-on: ubuntu-latest
-
+    timeout-minutes: 10
     steps:
-      - name: Set up Bun
-        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
-
       - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: package.json
 
       - name: Install dependencies
-        shell: bash
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Check formatting
         run: bun run format:check
