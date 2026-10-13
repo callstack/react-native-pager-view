@@ -1,5 +1,5 @@
 import React from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
+import { Animated, I18nManager, StyleSheet, View } from 'react-native';
 
 const ACTIVE_COLOR = '#347af0';
 const INACTIVE_COLOR = '#000';
@@ -12,6 +12,9 @@ interface Props {
 }
 
 const pageRange = (index: number) => [index - 1, index, index + 1];
+
+const slideX = (progress: Props['progress'], step: number) =>
+  Animated.multiply(progress, I18nManager.isRTL ? -step : step);
 
 const interpolate = <T extends number | string>(
   progress: Props['progress'],
@@ -73,7 +76,7 @@ export function ScalingDots({ progress, count, testID }: Props) {
 const BORDER_SIZE = 20;
 
 export function SlidingBorder({ progress, count, testID }: Props) {
-  const translateX = Animated.multiply(progress, BORDER_SIZE);
+  const translateX = slideX(progress, BORDER_SIZE);
   return (
     <View testID={testID} style={styles.row}>
       <Animated.View
@@ -92,7 +95,7 @@ const SLIDING_DOT_SIZE = 12;
 const SLIDING_DOT_MARGIN = 3;
 
 export function SlidingDot({ progress, count, testID }: Props) {
-  const translateX = Animated.multiply(
+  const translateX = slideX(
     progress,
     SLIDING_DOT_SIZE + SLIDING_DOT_MARGIN * 2
   );
@@ -157,7 +160,7 @@ const styles = StyleSheet.create({
   },
   slidingDotActive: {
     position: 'absolute',
-    left: 0,
+    start: 0,
     backgroundColor: ACTIVE_COLOR,
   },
 });
