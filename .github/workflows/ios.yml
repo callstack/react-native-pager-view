@@ -7,6 +7,17 @@ jobs:
   ios-build:
     runs-on: macos-26
     timeout-minutes: 60
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      CCACHE_BASEDIR: ${{ github.workspace }}
+      CCACHE_MAXSIZE: 2G
+      # Xcode compiles with clang modules and VFS overlays, which ccache won't
+      # cache unless told to relax those checks. Same list Expo uses.
+      CCACHE_SLOPPINESS: clang_index_store,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros
+      CCACHE_DEPEND: true
+      # Runner image updates touch clang even when it hasn't changed, so
+      # compare its contents instead of its mtime.
+      CCACHE_COMPILERCHECK: content
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -25,6 +36,16 @@ jobs:
           key: pods-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('example/ios/Podfile.lock') }}
           restore-keys: pods-${{ runner.os }}-${{ runner.arch }}-
 
+      - name: Install ccache
+        run: brew install ccache
+
+      - name: Cache ccache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .ccache
+          key: ccache-ios-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: ccache-ios-
+
       - name: Install example Pods
         run: bun pods
         working-directory: example
@@ -35,7 +56,12 @@ jobs:
         run: defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
 
       - name: Build iOS App
-        run: bun example:ios:release
+        # RN's USE_CCACHE wrapper silently skips ccache on Xcode 26
+        # (facebook/react-native#56612), so use Xcode's compiler launcher.
+        run: |
+          ccache --zero-stats
+          bun example:ios:release --extra-params "C_COMPILER_LAUNCHER=$(command -v ccache) CLANG_ENABLE_EXPLICIT_MODULES_WITH_COMPILER_LAUNCHER=YES"
+          ccache --show-stats
 
       - name: Run e2e tests
         run: bun run test:ios
