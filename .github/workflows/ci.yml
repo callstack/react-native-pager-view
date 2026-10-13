@@ -3,7 +3,8 @@ name: CI
 # blocks the PR forever (https://github.com/orgs/community/discussions/13690),
 # so `changes` filters paths and checks skip through a job-level `if:`.
 # Branch protection requires only `Required checks`. If `changes` fails,
-# every check runs instead of being skipped into green.
+# every check runs instead of being skipped into green. Pushes to `main`
+# always run everything.
 on:
   pull_request:
   push:
@@ -12,7 +13,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -27,17 +28,12 @@ jobs:
       contents: read
       pull-requests: read
     outputs:
-      # Empty when the filter is skipped (workflow_dispatch), so everything runs.
+      # Empty when the filter is skipped (not a pull request), so everything runs.
       android: ${{ steps.filter.outputs.android != 'false' }}
       ios: ${{ steps.filter.outputs.ios != 'false' }}
     steps:
-      # On pull requests paths-filter uses the API; pushes need the repository.
-      - if: github.event_name == 'push'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
       - id: filter
-        if: github.event_name != 'workflow_dispatch'
+        if: github.event_name == 'pull_request'
         uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
         with:
           filters: |
