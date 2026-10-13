@@ -1,22 +1,15 @@
 import React from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  Animated,
-  Dimensions,
-} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, Animated } from 'react-native';
 import PagerView, {
   PagerViewOnPageScrollEventData,
 } from 'react-native-pager-view';
 
 import {
-  ScalingDot,
+  ExpandingDots,
+  ScalingDots,
   SlidingBorder,
-  ExpandingDot,
   SlidingDot,
-} from 'react-native-animated-pagination-dots';
+} from './component/PaginationDots';
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
@@ -48,18 +41,13 @@ const INTRO_DATA = [
 ];
 
 export default function PaginationDotsExample() {
-  const width = Dimensions.get('window').width;
   const ref = React.useRef<PagerView>(null);
   const scrollOffsetAnimatedValue = React.useRef(new Animated.Value(0)).current;
   const positionAnimatedValue = React.useRef(new Animated.Value(0)).current;
-  const inputRange = [0, INTRO_DATA.length];
-  const scrollX = Animated.add(
+  const progress = Animated.add(
     scrollOffsetAnimatedValue,
     positionAnimatedValue
-  ).interpolate({
-    inputRange,
-    outputRange: [0, INTRO_DATA.length * width],
-  });
+  );
 
   const onPageScroll = React.useMemo(
     () =>
@@ -102,59 +90,34 @@ export default function PaginationDotsExample() {
       <View style={styles.dotsContainer}>
         <View style={styles.dotContainer}>
           <Text>Expanding Dot</Text>
-          <ExpandingDot
-            testID={'expanding-dot'}
-            data={INTRO_DATA}
-            expandingDotWidth={30}
-            //@ts-ignore
-            scrollX={scrollX}
-            inActiveDotOpacity={0.6}
-            dotStyle={{
-              width: 10,
-              height: 10,
-              backgroundColor: '#347af0',
-              borderRadius: 5,
-              marginHorizontal: 5,
-            }}
-            containerStyle={{
-              top: 30,
-            }}
+          <ExpandingDots
+            testID="expanding-dot"
+            progress={progress}
+            count={INTRO_DATA.length}
           />
         </View>
         <View style={styles.dotContainer}>
           <Text>Scaling Dot</Text>
-          <ScalingDot
-            testID={'scaling-dot'}
-            data={INTRO_DATA}
-            //@ts-ignore
-            scrollX={scrollX}
-            containerStyle={{
-              top: 30,
-            }}
+          <ScalingDots
+            testID="scaling-dot"
+            progress={progress}
+            count={INTRO_DATA.length}
           />
         </View>
-
         <View style={styles.dotContainer}>
           <Text>Sliding Border</Text>
           <SlidingBorder
-            testID={'sliding-border'}
-            containerStyle={{ top: 30 }}
-            data={INTRO_DATA}
-            //@ts-ignore
-            scrollX={scrollX}
-            dotSize={24}
+            testID="sliding-border"
+            progress={progress}
+            count={INTRO_DATA.length}
           />
         </View>
         <View style={styles.dotContainer}>
           <Text>Sliding Dot</Text>
           <SlidingDot
-            testID={'sliding-dot'}
-            marginHorizontal={3}
-            containerStyle={{ top: 30 }}
-            data={INTRO_DATA}
-            //@ts-ignore
-            scrollX={scrollX}
-            dotSize={12}
+            testID="sliding-dot"
+            progress={progress}
+            count={INTRO_DATA.length}
           />
         </View>
       </View>

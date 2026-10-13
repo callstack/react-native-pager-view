@@ -1696,29 +1696,6 @@ PODS:
     - React-utils (= 0.87.1)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.87.1)
-  - RNGestureHandler (3.3.0):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-bridging
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - RNWorklets (>= 0.8.0)
-    - Yoga
   - RNReanimated (4.7.1):
     - hermes-engine
     - RCTRequired
@@ -1858,51 +1835,6 @@ PODS:
     - React-NativeModulesApple
     - React-RCTFabric
     - React-RCTImage
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - Yoga
-  - RNSVG (15.15.5):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-bridging
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
-    - React-renderercss
-    - React-rendererdebug
-    - React-utils
-    - ReactCodegen
-    - ReactCommon/turbomodule/core
-    - ReactNativeDependencies
-    - RNSVG/common (= 15.15.5)
-    - Yoga
-  - RNSVG/common (15.15.5):
-    - hermes-engine
-    - RCTRequired
-    - RCTTypeSafety
-    - React-bridging
-    - React-Core
-    - React-Core-prebuilt
-    - React-debug
-    - React-Fabric
-    - React-featureflags
-    - React-graphics
-    - React-ImageManager
-    - React-jsi
-    - React-NativeModulesApple
-    - React-RCTFabric
     - React-renderercss
     - React-rendererdebug
     - React-utils
@@ -2074,10 +2006,8 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios/ReactCodegen`)
   - ReactCommon/turbomodule/core (from `../../node_modules/react-native/ReactCommon`)
   - ReactNativeDependencies (from `../../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec`)
-  - RNGestureHandler (from `../../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../../node_modules/react-native-reanimated`)
   - RNScreens (from `../../node_modules/react-native-screens`)
-  - RNSVG (from `../../node_modules/react-native-svg`)
   - RNWorklets (from `../../node_modules/react-native-worklets`)
   - SocketRocket (from `build/rndeps-facades/SocketRocket`)
   - Yoga (from `build/rncore-facades/Yoga`)
@@ -2258,14 +2188,10 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/react-native/ReactCommon"
   ReactNativeDependencies:
     :podspec: "../../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec"
-  RNGestureHandler:
-    :path: "../../node_modules/react-native-gesture-handler"
   RNReanimated:
     :path: "../../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../../node_modules/react-native-screens"
-  RNSVG:
-    :path: "../../node_modules/react-native-svg"
   RNWorklets:
     :path: "../../node_modules/react-native-worklets"
   SocketRocket:
@@ -2359,15 +2285,13 @@ SPEC CHECKSUMS:
   ReactCodegen: 4c37f4e08e5f07a42571c9121381ce113c7fa447
   ReactCommon: 749169e12aa3461a3df3656a00e48dbe0456b2d6
   ReactNativeDependencies: 94c922c39e0e6150ee9ad05e2ca1946e0ef55783
-  RNGestureHandler: eb4c031b22e791851742d29384ddcad30f3ee49d
   RNReanimated: ed120ab46e6c23b98484e9832a51cceeb4a99724
   RNScreens: 038dc998fe1ab34778d9e8f4a33318a6c7a5bde8
-  RNSVG: 6c9bcbf53822153be6f6c1484f6b0b57c0040d21
   RNWorklets: 75edbf2dd8509c1cce82e60d2d527a616d59240c
   SocketRocket: 37aec555668fb852ec12e3c0de59a86ca58f0871
   SwiftUIIntrospect: fee9aa07293ee280373a591e1824e8ddc869ba5d
   Yoga: d1c536142c5ff8ec8cd856ab2a7c227a1d875c8e
 
-PODFILE CHECKSUM: cbcc9224eaa3d62e5c6f42ad9bcb11207fb4b007
+PODFILE CHECKSUM: afa7d0e3fbdff0d26b7633845fbe98429f748599
 
 COCOAPODS: 1.15.2

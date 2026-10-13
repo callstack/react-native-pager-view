@@ -21,12 +21,9 @@
     "@react-navigation/native-stack": "^7.20.0",
     "react": "19.2.3",
     "react-native": "0.87.1",
-    "react-native-animated-pagination-dots": "^0.1.73",
-    "react-native-gesture-handler": "3.3.0",
     "react-native-reanimated": "4.7.1",
     "react-native-safe-area-context": "5.10.1",
     "react-native-screens": "4.28.0",
-    "react-native-svg": "15.15.5",
     "react-native-tab-view": "4.3.3",
     "react-native-worklets": "0.13.0"
   },
