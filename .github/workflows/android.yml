@@ -1,45 +1,24 @@
 name: Android Build
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/android.yml'
-      - 'android/**'
-      - 'src/**'
-      - 'example/android/**'
-      - 'example/src/**'
-      - 'example/package.json'
-      - 'example/metro.config.js'
-      - 'package.json'
-      - 'bun.lock'
-      - 'bunfig.toml'
-      - 'e2e/**'
-  push:
-    branches:
-      - main
-
-permissions:
-  contents: read
-  pull-requests: write
+  workflow_call:
 
 jobs:
   android-build:
     runs-on: ubuntu-latest
     timeout-minutes: 75
-    concurrency:
-      group: ${{ github.ref }}-android
-      cancel-in-progress: true
     steps:
-      - uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: package.json
 
       - name: Install dependencies
-        shell: bash
-        run: bun install
+        run: bun install --frozen-lockfile
 
-      - uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4.7.1
+      - uses: actions/setup-java@de7274f081f381c8f8158605e0321c36c376e2e6 # v6.0.1
         with:
           distribution: 'zulu'
           java-version: '17'
@@ -57,7 +36,7 @@ jobs:
         working-directory: example/android
 
       - name: AVD cache
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: avd-cache
         with:
           path: |
@@ -74,7 +53,7 @@ jobs:
 
       - name: Create AVD and generate snapshot for caching
         if: steps.avd-cache.outputs.cache-hit != 'true'
-        uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2.34.0
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
         with:
           api-level: 35
           target: google_apis
@@ -89,7 +68,7 @@ jobs:
           script: echo "Generated AVD snapshot for caching."
 
       - name: Run e2e tests
-        uses: reactivecircus/android-emulator-runner@1dcd0090116d15e7c562f8db72807de5e036a4ed # v2.34.0
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:

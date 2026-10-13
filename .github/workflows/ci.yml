@@ -1,0 +1,113 @@
+name: CI
+# A required check skipped by an `on.<event>.paths` filter never reports and
+# blocks the PR forever (https://github.com/orgs/community/discussions/13690),
+# so `changes` filters paths and checks skip through a job-level `if:`.
+# Branch protection requires only `Required checks`. If `changes` fails,
+# every check runs instead of being skipped into green. Pushes to `main`
+# always run everything.
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    name: Changed paths
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      # Empty when the filter is skipped (not a pull request), so everything runs.
+      android: ${{ steps.filter.outputs.android != 'false' }}
+      ios: ${{ steps.filter.outputs.ios != 'false' }}
+    steps:
+      - id: filter
+        if: github.event_name == 'pull_request'
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        with:
+          filters: |
+            shared: &shared
+              - '.github/workflows/ci.yml'
+              - 'src/**'
+              - 'example/src/**'
+              - 'example/package.json'
+              - 'example/metro.config.js'
+              - 'example/index.js'
+              - 'example/babel.config.js'
+              - 'example/react-native.config.js'
+              - 'package.json'
+              - 'bun.lock'
+              - 'bunfig.toml'
+              - 'e2e/**/*.ts'
+              - 'e2e/package.json'
+            android:
+              - *shared
+              - '.github/workflows/android.yml'
+              - 'android/**'
+              - 'example/android/**'
+            ios:
+              - *shared
+              - '.github/workflows/ios.yml'
+              - 'ios/**'
+              - 'example/ios/**'
+              - '*.podspec'
+              - 'example/Gemfile'
+              - 'example/Gemfile.lock'
+
+  lint:
+    name: Lint
+    uses: ./.github/workflows/lint.yml
+
+  android:
+    name: Android Build
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.android == 'true') }}
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: ./.github/workflows/android.yml
+
+  ios:
+    name: iOS Build
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.ios == 'true') }}
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: ./.github/workflows/ios.yml
+
+  required:
+    name: Required checks
+    needs: [changes, lint, android, ios]
+    # `always()`, not `!cancelled()`: a skipped required check counts as passing.
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      NEEDS: ${{ toJSON(needs) }}
+    steps:
+      - name: Report every check
+        run: |
+          {
+            echo "| Check | Result |"
+            echo "| --- | --- |"
+            echo "$NEEDS" | jq -r 'to_entries | sort_by(.key) | .[] | "| \(.key) | \(.value.result) |"'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Fail on any failed or cancelled check
+        run: |
+          echo "$NEEDS" | jq -e '
+            to_entries | all(.value.result as $r | {
+              changes: ["success", "failure"],
+              lint: ["success"]
+            }[.key] // ["success", "skipped"] | index($r))' > /dev/null

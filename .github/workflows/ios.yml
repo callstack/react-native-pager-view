@@ -1,52 +1,29 @@
 name: iOS Build
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths:
-      - '.github/workflows/ios.yml'
-      - 'ios/**'
-      - 'src/**'
-      - 'example/ios/**'
-      - 'example/src/**'
-      - 'example/package.json'
-      - 'example/metro.config.js'
-      - 'package.json'
-      - 'bun.lock'
-      - 'bunfig.toml'
-      - 'e2e/**'
-  push:
-    branches:
-      - main
-
-permissions:
-  contents: read
-  pull-requests: write
+  workflow_call:
 
 jobs:
   ios-build:
     runs-on: macos-26
     timeout-minutes: 60
-    concurrency:
-      group: ${{ github.ref }}-ios
-      cancel-in-progress: true
     steps:
-      - uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76 # v2.0.2
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with:
+          bun-version-file: package.json
 
       - name: Install dependencies
-        shell: bash
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Cache Pods
-        id: cache-pods
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
-        env:
-          cache-name: cached-ios-pods-deps
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: example/ios/Pods
-          key: ${{ hashFiles('example/ios/Podfile.lock') }}
+          key: pods-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('example/ios/Podfile.lock') }}
+          restore-keys: pods-${{ runner.os }}-${{ runner.arch }}-
 
       - name: Install example Pods
         run: bun pods
@@ -58,8 +35,7 @@ jobs:
         run: defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
 
       - name: Build iOS App
-        run: |
-          bun example:ios:release
+        run: bun example:ios:release
 
       - name: Run e2e tests
         run: bun run test:ios

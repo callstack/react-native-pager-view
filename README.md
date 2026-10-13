@@ -10,9 +10,7 @@
 [![Lean Core Extracted](https://img.shields.io/badge/Lean%20Core-Extracted-brightgreen.svg)](https://github.com/facebook/react-native/issues/23313)
 [![License](https://img.shields.io/github/license/callstack/react-native-pager-view?color=blue)](https://github.com/callstack/react-native-pager-view/blob/main/LICENSE)
 
-[![Lint](https://github.com/callstack/react-native-pager-view/actions/workflows/main.yml/badge.svg)](https://github.com/callstack/react-native-pager-view/actions/workflows/main.yml)
-[![iOS Build](https://github.com/callstack/react-native-pager-view/actions/workflows/ios.yml/badge.svg)](https://github.com/callstack/react-native-pager-view/actions/workflows/ios.yml)
-[![Android Build](https://github.com/callstack/react-native-pager-view/actions/workflows/android.yml/badge.svg)](https://github.com/callstack/react-native-pager-view/actions/workflows/android.yml)
+[![CI](https://github.com/callstack/react-native-pager-view/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/callstack/react-native-pager-view/actions/workflows/ci.yml)
 
 `PagerView` lets users swipe left and right (or up and down) through pages of content. It is a native component: on Android it renders a [Jetpack Compose pager](https://developer.android.com/develop/ui/compose/layouts/pager), and on iOS a [SwiftUI paged `TabView`](https://developer.apple.com/documentation/swiftui/tabview). [See it in action!](#preview)
 
