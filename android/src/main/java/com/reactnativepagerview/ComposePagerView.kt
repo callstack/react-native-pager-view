@@ -57,6 +57,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   // untouched. It only reaches DESTROYED for real in dispose() below.
   private val composeLifecycleOwner = ComposeViewLifecycleOwner()
   private var composeView: ComposeView? = null
+  private var isDisposePending = false
   private val pages = mutableStateListOf<View>()
   private val scrollEnabledState = mutableStateOf(true)
   private val orientationState = mutableStateOf(Orientation.Horizontal)
@@ -131,10 +132,23 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     // dispose the composition, since DisposeOnLifecycleDestroyed only acts
     // on ON_DESTROY.
     composeLifecycleOwner.detach()
+    if (isDisposePending) {
+      isDisposePending = false
+      composeLifecycleOwner.destroy()
+    }
     super.onDetachedFromWindow()
   }
 
   fun dispose() {
+    // If the view is still attached when RN drops it, react-native-screens is
+    // keeping it on-screen for an in-progress navigation transition (e.g. a
+    // pop). Destroying the Lifecycle now disposes the composition and blanks
+    // the pages before the animation finishes, so defer it until the view is
+    // detached from the window.
+    if (isAttachedToWindow) {
+      isDisposePending = true
+      return
+    }
     composeLifecycleOwner.destroy()
   }
 
