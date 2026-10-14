@@ -57,7 +57,17 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   // untouched. It only reaches DESTROYED for real in dispose() below.
   private val composeLifecycleOwner = ComposeViewLifecycleOwner()
   private var composeView: ComposeView? = null
+  private var isDisposePending = false
+  // `children` is what React Native sees (getChildCount/getChildAt) and is
+  // updated synchronously by the view manager. `pages` is what the Compose
+  // pager renders. Removals reach `pages` one frame later, so that when RN
+  // tears the pager down - removing every page and then dropping the pager
+  // in the same mount batch - while react-native-screens still keeps it
+  // on-screen for a pop transition, dispose() can freeze the rendered pages
+  // instead of blanking them before the animation finishes.
+  private val children = mutableListOf<View>()
   private val pages = mutableStateListOf<View>()
+  private val syncPagesRunnable = Runnable { syncPages() }
   private val scrollEnabledState = mutableStateOf(true)
   private val orientationState = mutableStateOf(Orientation.Horizontal)
   private val layoutDirectionState = mutableStateOf(LayoutDirection.Ltr)
@@ -131,10 +141,24 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     // dispose the composition, since DisposeOnLifecycleDestroyed only acts
     // on ON_DESTROY.
     composeLifecycleOwner.detach()
+    if (isDisposePending) {
+      isDisposePending = false
+      composeLifecycleOwner.destroy()
+    }
     super.onDetachedFromWindow()
   }
 
   fun dispose() {
+    // If the view is still attached when RN drops it, react-native-screens is
+    // keeping it on-screen for an in-progress navigation transition (e.g. a
+    // pop). Destroying the Lifecycle now disposes the composition and blanks
+    // the pages before the animation finishes, so defer it until the view is
+    // detached from the window.
+    if (isAttachedToWindow) {
+      isDisposePending = true
+      removeCallbacks(syncPagesRunnable)
+      return
+    }
     composeLifecycleOwner.destroy()
   }
 
@@ -223,35 +247,55 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     if (child == null) {
       return
     }
-    val insertionIndex = index.coerceIn(0, pages.size)
-    pages.add(insertionIndex, child)
+    val insertionIndex = index.coerceIn(0, children.size)
+    children.add(insertionIndex, child)
+    syncPages()
   }
 
-  fun getPageCount(): Int = pages.size
+  fun getPageCount(): Int = children.size
 
-  fun getPageAt(index: Int): View = pages[index]
+  fun getPageAt(index: Int): View = children[index]
 
   fun removePage(view: View) {
-    val index = pages.indexOf(view)
+    val index = children.indexOf(view)
     if (index >= 0) {
       removePageAt(index)
     }
   }
 
   fun removePageAt(index: Int) {
-    if (index !in pages.indices) {
+    if (index !in children.indices) {
       return
     }
-    val view = pages.removeAt(index)
-    (view.parent as? ViewGroup)?.removeView(view)
+    children.removeAt(index)
+    schedulePagesSync()
   }
 
   fun removeAllPages() {
-    pages.forEach { view ->
-      (view.parent as? ViewGroup)?.removeView(view)
-    }
-    pages.clear()
+    children.clear()
     resetPagerState()
+    schedulePagesSync()
+  }
+
+  private fun schedulePagesSync() {
+    removeCallbacks(syncPagesRunnable)
+    post(syncPagesRunnable)
+  }
+
+  private fun syncPages() {
+    removeCallbacks(syncPagesRunnable)
+    if (isDisposePending) {
+      return
+    }
+    pages.forEach { view ->
+      if (view !in children) {
+        (view.parent as? ViewGroup)?.removeView(view)
+      }
+    }
+    if (pages != children) {
+      pages.clear()
+      pages.addAll(children)
+    }
   }
 
   private fun resetPagerState() {

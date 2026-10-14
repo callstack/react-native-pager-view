@@ -52,6 +52,10 @@ import {
   Issue1142SearchBarInsetRepro,
 } from './gh-issues/Issue1142SearchBarInsetRepro';
 import { Issue1154PageChangeFocusRepro } from './gh-issues/Issue1154PageChangeFocusRepro';
+import {
+  ExitAnimationExample,
+  ExitAnimationPagerScreen,
+} from './ExitAnimationExample';
 import { colors, radius } from './theme';
 
 function BasicPagerViewExampleScreen() {
@@ -134,6 +138,10 @@ const sections: { title: string; data: Example[] }[] = [
       {
         component: ReanimatedOnPageScrollExample,
         name: 'Reanimated onPageScroll example',
+      },
+      {
+        component: ExitAnimationExample,
+        name: 'PagerView Exit Animation Example',
       },
     ],
   },
@@ -284,6 +292,11 @@ export function Navigation() {
               presentation: 'modal',
               animation: 'slide_from_bottom',
             }}
+          />
+          <NavigationStack.Screen
+            name="PagerView Exit Animation"
+            component={ExitAnimationPagerScreen}
+            options={{ animation: 'slide_from_bottom' }}
           />
           <NavigationStack.Screen
             name="Issue #1142 Plain List"
