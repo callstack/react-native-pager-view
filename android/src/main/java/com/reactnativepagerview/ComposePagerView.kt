@@ -1,12 +1,14 @@
 package com.reactnativepagerview
 
 import android.content.Context
+import android.graphics.Rect
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
+import android.widget.HorizontalScrollView
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.interaction.DragInteraction
@@ -39,6 +41,7 @@ import com.reactnativepagerview.event.PageSelectedEvent
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
+import kotlin.math.max
 import kotlin.math.sign
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -64,7 +67,6 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private val pageMarginState = mutableStateOf(0)
   private val offscreenPageLimitState = mutableStateOf(DEFAULT_OFFSCREEN_PAGE_LIMIT)
   private val overScrollModeState = mutableStateOf(OverScrollMode.Auto)
-  private val sameOrientationChildGestureState = mutableStateOf(false)
   private var initialPage = 0
   private var didEmitInitialPage = false
   private var currentPage = 0
@@ -72,7 +74,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private var touchSlop = 0
   private var initialTouchX = 0f
   private var initialTouchY = 0f
-  private var didDelegateGestureToAncestor = false
+  private var isGestureResolved = false
   private val scrollCommandState = mutableStateOf<ScrollCommand?>(null)
   private var lastEmittedScrollState: String? = null
   private var lastEmittedPageSelected: Int? = null
@@ -122,7 +124,6 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   override fun onDetachedFromWindow() {
-    updateSameOrientationAncestorsGestureState(false)
     // composeView is intentionally left attached and alive here: its
     // Lifecycle is self-owned (see composeLifecycleOwner) and only reaches
     // DESTROYED in dispose(). We pause it to CREATED instead, so lifecycle-
@@ -141,17 +142,11 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   override fun dispatchTouchEvent(event: MotionEvent): Boolean {
     when (event.actionMasked) {
       MotionEvent.ACTION_DOWN -> {
-        initialTouchX = event.x
-        initialTouchY = event.y
-        didDelegateGestureToAncestor = false
-        updateSameOrientationAncestorsGestureState(true)
+        initialTouchX = event.rawX
+        initialTouchY = event.rawY
+        isGestureResolved = false
       }
-      MotionEvent.ACTION_MOVE -> updateSameOrientationAncestorsGestureStateForMove(event)
-      MotionEvent.ACTION_UP,
-      MotionEvent.ACTION_CANCEL -> {
-        didDelegateGestureToAncestor = false
-        updateSameOrientationAncestorsGestureState(false)
-      }
+      MotionEvent.ACTION_MOVE -> if (!isGestureResolved) resolveGesture(event)
     }
     return super.dispatchTouchEvent(event)
   }
@@ -260,8 +255,6 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     scrollCommandState.value = null
     lastEmittedScrollState = null
     lastEmittedPageSelected = null
-    didDelegateGestureToAncestor = false
-    sameOrientationChildGestureState.value = false
   }
 
   fun setInitialPage(value: Int) {
@@ -324,56 +317,55 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     }
   }
 
-  private fun setSameOrientationChildGestureActive(value: Boolean) {
-    sameOrientationChildGestureState.value = value
-  }
-
-  private fun updateSameOrientationAncestorsGestureState(value: Boolean) {
-    val orientation = orientationState.value
-    var ancestor = parent
-    while (ancestor != null) {
-      if (ancestor is ComposePagerView && ancestor.orientationState.value == orientation) {
-        ancestor.setSameOrientationChildGestureActive(value)
-      }
-      ancestor = (ancestor as? View)?.parent
-    }
-  }
-
-  private fun updateSameOrientationAncestorsGestureStateForMove(event: MotionEvent) {
-    val dx = event.x - initialTouchX
-    val dy = event.y - initialTouchY
-    val orientation = orientationState.value
-    val isHorizontal = orientation == Orientation.Horizontal
-    val scaledDx = dx.absoluteValue * if (isHorizontal) .5f else 1f
-    val scaledDy = dy.absoluteValue * if (isHorizontal) 1f else .5f
-
-    if (scaledDx <= touchSlop && scaledDy <= touchSlop) {
+  private fun resolveGesture(event: MotionEvent) {
+    val dx = event.rawX - initialTouchX
+    val dy = event.rawY - initialTouchY
+    if (max(dx.absoluteValue, dy.absoluteValue) < touchSlop) {
       return
     }
 
-    val isPerpendicularGesture = isHorizontal == (scaledDy > scaledDx)
-    if (isPerpendicularGesture) {
-      updateSameOrientationAncestorsGestureState(false)
+    isGestureResolved = true
+    val isHorizontal = orientationState.value == Orientation.Horizontal
+    if (isHorizontal != (dx.absoluteValue > dy.absoluteValue)) {
       return
     }
 
-    val delta = if (isHorizontal) dx else dy
-    val direction = -delta.sign.toInt()
-    val canScroll = canScrollInDirection(direction)
-    updateSameOrientationAncestorsGestureState(canScroll)
-
-    if (shouldHandleRtlHorizontalGesture(canScroll)) {
-      didDelegateGestureToAncestor = scrollInDirection(direction)
-    } else if (!canScroll && !didDelegateGestureToAncestor) {
-      didDelegateGestureToAncestor = scrollSameOrientationAncestorInDirection(direction)
-    }
+    val direction = -(if (isHorizontal) dx else dy).sign.toInt()
+    val x = initialTouchX.toInt()
+    val y = initialTouchY.toInt()
+    pages.firstNotNullOfOrNull { findScrollableViewAt(it, x, y, direction) }
+      ?.parent
+      ?.requestDisallowInterceptTouchEvent(true)
   }
 
-  private fun shouldHandleRtlHorizontalGesture(canScroll: Boolean): Boolean {
-    return canScroll &&
-      !didDelegateGestureToAncestor &&
-      orientationState.value == Orientation.Horizontal &&
-      layoutDirectionState.value == LayoutDirection.Rtl
+  private fun findScrollableViewAt(view: View, x: Int, y: Int, direction: Int): View? {
+    if (!view.isShown) {
+      return null
+    }
+    val rect = Rect()
+    if (!view.getGlobalVisibleRect(rect) || !rect.contains(x, y)) {
+      return null
+    }
+    val children = when (view) {
+      is ComposePagerView -> view.pages
+      is ViewGroup -> (view.childCount - 1 downTo 0).map(view::getChildAt)
+      else -> emptyList()
+    }
+    return children.firstNotNullOfOrNull { findScrollableViewAt(it, x, y, direction) }
+      ?: view.takeIf { canViewScroll(it, direction) }
+  }
+
+  private fun canViewScroll(view: View, direction: Int): Boolean {
+    if (orientationState.value == Orientation.Vertical) {
+      return view.canScrollVertically(direction)
+    }
+    val canScroll = view.canScrollHorizontally(direction)
+    if (!canScroll || view !is HorizontalScrollView) {
+      return canScroll
+    }
+    val contentWidth = view.getChildAt(0)?.width ?: 0
+    val maxScrollX = contentWidth - (view.width - view.paddingLeft - view.paddingRight)
+    return if (direction < 0) view.scrollX > 0 else view.scrollX < maxScrollX
   }
 
   private fun canScrollInDirection(direction: Int): Boolean {
@@ -391,31 +383,6 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     } else {
       currentPage < pages.size - 1
     }
-  }
-
-  private fun scrollSameOrientationAncestorInDirection(direction: Int): Boolean {
-    val orientation = orientationState.value
-    var ancestor = parent
-    while (ancestor != null) {
-      if (ancestor is ComposePagerView && ancestor.orientationState.value == orientation) {
-        return ancestor.scrollInDirection(direction)
-      }
-      ancestor = (ancestor as? View)?.parent
-    }
-    return false
-  }
-
-  private fun scrollInDirection(direction: Int): Boolean {
-    if (!canScrollInDirection(direction)) {
-      return false
-    }
-
-    val isRtlHorizontal =
-      orientationState.value == Orientation.Horizontal &&
-        layoutDirectionState.value == LayoutDirection.Rtl
-    val effectiveDirection = if (isRtlHorizontal) -direction else direction
-    setCurrentItem(currentPage + if (effectiveDirection < 0) -1 else 1, true)
-    return true
   }
 
   fun setCurrentItem(selectedPage: Int, animated: Boolean) {
@@ -570,7 +537,6 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 
     val pageSpacing = pageMarginState.value.dp
     val beyondViewportPageCount = getBeyondViewportPageCount()
-    val userScrollEnabled = scrollEnabledState.value && !sameOrientationChildGestureState.value
     val overscrollConfiguration = if (overScrollModeState.value == OverScrollMode.Never) {
       null
     } else {
@@ -583,7 +549,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
           state = pagerState,
           modifier = Modifier.fillMaxSize(),
           pageSpacing = pageSpacing,
-          userScrollEnabled = userScrollEnabled,
+          userScrollEnabled = scrollEnabledState.value,
           reverseLayout = false,
           beyondViewportPageCount = beyondViewportPageCount
         ) { page ->
@@ -594,7 +560,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
           state = pagerState,
           modifier = Modifier.fillMaxSize(),
           pageSpacing = pageSpacing,
-          userScrollEnabled = userScrollEnabled,
+          userScrollEnabled = scrollEnabledState.value,
           reverseLayout = false,
           beyondViewportPageCount = beyondViewportPageCount
         ) { page ->
