@@ -7,6 +7,18 @@ jobs:
   android-build:
     runs-on: ubuntu-latest
     timeout-minutes: 75
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+      CCACHE_BASEDIR: ${{ github.workspace }}
+      CCACHE_MAXSIZE: 2G
+      CCACHE_SLOPPINESS: include_file_ctime,include_file_mtime,pch_defines,system_headers,time_macros
+      CCACHE_DEPEND: true
+      # Runner image updates touch clang even when it hasn't changed, so
+      # compare its contents instead of its mtime.
+      CCACHE_COMPILERCHECK: content
+      # CMake picks these up as defaults, so every native module goes through ccache.
+      CMAKE_C_COMPILER_LAUNCHER: ccache
+      CMAKE_CXX_COMPILER_LAUNCHER: ccache
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -24,6 +36,25 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
+      - name: Install ccache
+        run: sudo apt-get install -y ccache
+
+      - name: Cache ccache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .ccache
+          key: ccache-android-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: ccache-android-
+
+      # setup-java's Gradle cache is keyed on the Gradle files only, so it never
+      # picks up new build cache entries. Cache those separately.
+      - name: Cache Gradle build cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.gradle/caches/build-cache-1
+          key: gradle-build-cache-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: gradle-build-cache-
+
       - name: Bundle app
         run: bun run build:android
         working-directory: example
@@ -32,7 +63,10 @@ jobs:
       # emulator for the runner's cores ANRs System UI, and the dialog then
       # blocks every test.
       - name: Build release APK
-        run: ./gradlew :app:assembleRelease -PreactNativeArchitectures=x86_64
+        run: |
+          ccache --zero-stats
+          ./gradlew :app:assembleRelease -PreactNativeArchitectures=x86_64 --build-cache
+          ccache --show-stats
         working-directory: example/android
 
       - name: AVD cache
