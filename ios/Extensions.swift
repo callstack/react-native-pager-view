@@ -5,7 +5,7 @@ import UIKit
 /**
  Helper used to render UIView inside of SwiftUI.
  Uses UIViewControllerRepresentable to re-inject safe area insets
- that SwiftUI's .ignoresSafeArea() strips from child UIKit views.
+ that SwiftUI's .ignoresSafeArea() strips from child UIKit views
  */
 struct RepresentableView: UIViewControllerRepresentable {
   var view: UIView
