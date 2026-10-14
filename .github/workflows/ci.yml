@@ -22,7 +22,7 @@ permissions:
 jobs:
   changes:
     name: Changed paths
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     permissions:
       contents: read
@@ -92,7 +92,7 @@ jobs:
     needs: [changes, lint, android, ios]
     # `always()`, not `!cancelled()`: a skipped required check counts as passing.
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 5
     env:
       NEEDS: ${{ toJSON(needs) }}
