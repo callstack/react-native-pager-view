@@ -22,19 +22,6 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-
-      # Simulator.app attaches the Mac keyboard by default, which hides the
-      # software keyboard and leaves no Return key for the keyboard tests.
-      - name: Detach hardware keyboard from simulator
-        run: defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
-
-      # A fresh simulator takes minutes to boot. Start it now so it boots while
-      # the app builds, instead of run-ios waiting for it after the build.
-      - name: Boot simulator
-        run: |
-          udid=$(xcrun simctl list devices available -j | jq -r '[.devices[][] | select(.name == "iPhone 17 Pro")][0].udid')
-          xcrun simctl boot "$udid"
-
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with:
           bun-version-file: package.json
@@ -63,12 +50,17 @@ jobs:
         run: bun pods
         working-directory: example
 
+      # Simulator.app attaches the Mac keyboard by default, which hides the
+      # software keyboard and leaves no Return key for the keyboard tests.
+      - name: Detach hardware keyboard from simulator
+        run: defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
+
       - name: Build iOS App
         # RN's USE_CCACHE wrapper silently skips ccache on Xcode 26
         # (facebook/react-native#56612), so use Xcode's compiler launcher.
         run: |
           ccache --zero-stats
-          bun example:ios:release --extra-params "C_COMPILER_LAUNCHER=$(command -v ccache) CLANG_ENABLE_EXPLICIT_MODULES_WITH_COMPILER_LAUNCHER=YES ONLY_ACTIVE_ARCH=YES -showBuildTimingSummary"
+          bun example:ios:release --extra-params "C_COMPILER_LAUNCHER=$(command -v ccache) CLANG_ENABLE_EXPLICIT_MODULES_WITH_COMPILER_LAUNCHER=YES ONLY_ACTIVE_ARCH=YES"
           ccache --show-stats -v
 
       - name: Run e2e tests
