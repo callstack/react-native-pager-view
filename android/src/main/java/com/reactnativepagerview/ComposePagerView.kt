@@ -35,6 +35,7 @@ import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
+import com.facebook.react.uimanager.events.NativeGestureUtil
 import com.reactnativepagerview.event.PageScrollEvent
 import com.reactnativepagerview.event.PageScrollStateChangedEvent
 import com.reactnativepagerview.event.PageSelectedEvent
@@ -75,6 +76,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private var initialTouchX = 0f
   private var initialTouchY = 0f
   private var isGestureResolved = false
+  private var didStartNativeGesture = false
   private val scrollCommandState = mutableStateOf<ScrollCommand?>(null)
   private var lastEmittedScrollState: String? = null
   private var lastEmittedPageSelected: Int? = null
@@ -147,8 +149,24 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         isGestureResolved = false
       }
       MotionEvent.ACTION_MOVE -> if (!isGestureResolved) resolveGesture(event)
+      MotionEvent.ACTION_UP,
+      MotionEvent.ACTION_CANCEL -> {
+        if (didStartNativeGesture && event.actionMasked == MotionEvent.ACTION_UP) {
+          NativeGestureUtil.notifyNativeGestureEnded(this, event)
+        }
+        didStartNativeGesture = false
+      }
     }
     return super.dispatchTouchEvent(event)
+  }
+
+  // Not called once a child, like a nested ScrollView, has claimed the touch, so the pager
+  // only notifies when it is the one dragging.
+  override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
+    if (event.actionMasked == MotionEvent.ACTION_MOVE) {
+      notifyNativeGestureStartedForMove(event)
+    }
+    return super.onInterceptTouchEvent(event)
   }
 
   override fun canScrollHorizontally(direction: Int): Boolean {
@@ -366,6 +384,27 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     val contentWidth = view.getChildAt(0)?.width ?: 0
     val maxScrollX = contentWidth - (view.width - view.paddingLeft - view.paddingRight)
     return if (direction < 0) view.scrollX > 0 else view.scrollX < maxScrollX
+  }
+
+  // Compose starts dragging once the touch moves touchSlop along the pager axis. Tell
+  // React Native then, like ScrollView does, so the JS touch is cancelled instead of
+  // ending as a press.
+  private fun notifyNativeGestureStartedForMove(event: MotionEvent) {
+    // Compose never drags with a mouse.
+    val isMouse = event.getToolType(0) == MotionEvent.TOOL_TYPE_MOUSE
+    if (didStartNativeGesture || !scrollEnabledState.value || isMouse) {
+      return
+    }
+
+    val delta = if (orientationState.value == Orientation.Horizontal) {
+      event.rawX - initialTouchX
+    } else {
+      event.rawY - initialTouchY
+    }
+    if (delta.absoluteValue >= touchSlop) {
+      didStartNativeGesture = true
+      NativeGestureUtil.notifyNativeGestureStarted(this, event)
+    }
   }
 
   private fun canScrollInDirection(direction: Int): Boolean {
