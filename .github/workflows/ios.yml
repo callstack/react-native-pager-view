@@ -62,9 +62,7 @@ jobs:
         if: ${{ inputs.spm }}
         working-directory: example/ios
         run: |
-          # Exits 2 until react-native-screens' Package.swift is scaffolded.
-          npx react-native spm --yes || test $? -eq 2
-          npx react-native spm scaffold --yes
+          npx react-native spm scaffold --deintegrate --yes
 
           # The scaffolder misses screens' `<rnscreens/...>` header path.
           manifest=../../node_modules/react-native-screens/Package.swift
@@ -72,8 +70,6 @@ jobs:
           grep -qF "$search_path" "$manifest" ||
             perl -pi -e 's|\.headerSearchPath\("common/cpp"\),|$&'" $search_path,"'|g' "$manifest"
           grep -qF "$search_path" "$manifest"
-
-          npx react-native spm --yes
 
       # Simulator.app attaches the Mac keyboard by default, which hides the
       # software keyboard and leaves no Return key for the keyboard tests.
