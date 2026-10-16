@@ -29,12 +29,13 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # Exact key only: a Pods dir restored from an older Podfile.lock keeps stale
+      # `Local Podspecs` and makes `pod install` bail on the version mismatch.
       - name: Cache Pods
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: example/ios/Pods
           key: pods-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('example/ios/Podfile.lock') }}
-          restore-keys: pods-${{ runner.os }}-${{ runner.arch }}-
 
       - name: Install ccache
         run: brew install ccache
