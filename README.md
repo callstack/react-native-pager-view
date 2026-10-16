@@ -39,7 +39,7 @@ cd ios && pod install
 
 ## Compatibility
 
-We support the three latest React Native versions: **0.85**, **0.86** and **0.87**. Only the New Architecture is supported.
+We support the three latest React Native versions: **0.86**, **0.87** and **0.88**. Only the New Architecture is supported.
 
 ## Usage
 
