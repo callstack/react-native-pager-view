@@ -84,3 +84,8 @@ example/ios/PagerViewExample.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
 !.yarn/sdks
 !.yarn/versions
 .agent-device
+
+# Swift Package Manager
+.build/
+.swiftpm/
+ios/Package.resolved

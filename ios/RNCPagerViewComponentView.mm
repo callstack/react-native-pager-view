@@ -5,16 +5,11 @@
 #import <react/renderer/components/pagerview/Props.h>
 #import <react/renderer/components/pagerview/RCTComponentViewHelpers.h>
 
-#import "RCTFabricComponentsPlugins.h"
+#import <React/RCTFabricComponentsPlugins.h>
 #import "React/RCTConversions.h"
 
 #import "RCTOnPageScrollEvent.h"
-
-#if __has_include("react_native_pager_view/react_native_pager_view-Swift.h")
-#import "react_native_pager_view/react_native_pager_view-Swift.h"
-#else
-#import "react_native_pager_view-Swift.h"
-#endif
+#import "RNCPagerViewProviding.h"
 
 using namespace facebook::react;
 
@@ -22,7 +17,7 @@ using namespace facebook::react;
 @end
 
 @implementation RNCPagerViewComponentView {
-  PagerViewProvider *_pagerViewProvider;
+  UIView<RNCPagerViewProviding> *_pagerViewProvider;
 }
 
 // Needed because of this: https://github.com/facebook/react-native/pull/37274
@@ -37,7 +32,7 @@ using namespace facebook::react;
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const RNCViewPagerProps>();
     _props = defaultProps;
-    _pagerViewProvider = [[PagerViewProvider alloc] initWithDelegate:self];
+    _pagerViewProvider = RNCPagerViewCreateProvider(self);
     self.contentView = _pagerViewProvider;
   }
 
@@ -101,9 +96,8 @@ using namespace facebook::react;
 
 #pragma mark - PagerViewProviderDelegate
 
-- (void)onPageScrollWithData:(OnPageScrollEventData *)data {
-  const auto eventEmitter = [self pagerEventEmitter];
-  [self sendScrollEventsForPosition:data.position offset:data.offset];
+- (void)onPageScrollWithPosition:(double)position offset:(double)offset {
+  [self sendScrollEventsForPosition:position offset:offset];
 }
 
 - (void)onPageSelectedWithPosition:(NSInteger)position {
@@ -111,7 +105,7 @@ using namespace facebook::react;
   eventEmitter->onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
 }
 
-- (void)onPageScrollStateChangedWithState:(enum PageScrollState)state {
+- (void)onPageScrollStateChangedWithState:(PageScrollState)state {
   const auto eventEmitter = [self pagerEventEmitter];
 
   RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState scrollState;
