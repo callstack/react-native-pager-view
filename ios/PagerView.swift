@@ -3,6 +3,9 @@
 
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
+#if SWIFT_PACKAGE
+import react_native_pager_view
+#endif
 
 struct PagerView: View {
   @ObservedObject var props: PagerViewProps

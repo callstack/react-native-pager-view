@@ -1,5 +1,8 @@
 import SwiftUI
 import UIKit
+#if SWIFT_PACKAGE
+import react_native_pager_view
+#endif
 
 struct IdentifiablePlatformView: Identifiable, Equatable {
   let id = UUID()
@@ -10,10 +13,7 @@ struct IdentifiablePlatformView: Identifiable, Equatable {
   }
 }
 
-@objc public enum PagerLayoutDirection: Int {
-  case ltr
-  case rtl
-
+extension PagerLayoutDirection {
   var converted: LayoutDirection {
     switch self {
     case .ltr:

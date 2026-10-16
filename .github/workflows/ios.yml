@@ -2,6 +2,11 @@ name: iOS Build
 
 on:
   workflow_call:
+    inputs:
+      spm:
+        description: Convert the example to Swift Package Manager before building
+        type: boolean
+        default: false
 
 jobs:
   ios-build:
@@ -32,6 +37,7 @@ jobs:
       # Exact key only: a Pods dir restored from an older Podfile.lock keeps stale
       # `Local Podspecs` and makes `pod install` bail on the version mismatch.
       - name: Cache Pods
+        if: ${{ !inputs.spm }}
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: example/ios/Pods
@@ -44,12 +50,26 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .ccache
-          key: ccache-ios-${{ github.run_id }}-${{ github.run_attempt }}
-          restore-keys: ccache-ios-
+          key: ccache-ios${{ inputs.spm && '-spm' || '' }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: ccache-ios${{ inputs.spm && '-spm' || '' }}-
 
       - name: Install example Pods
+        if: ${{ !inputs.spm }}
         run: bun pods
         working-directory: example
+
+      - name: Convert example to SwiftPM
+        if: ${{ inputs.spm }}
+        working-directory: example/ios
+        run: |
+          npx react-native spm scaffold --deintegrate --yes
+
+          # The scaffolder misses screens' `<rnscreens/...>` header path.
+          manifest=../../node_modules/react-native-screens/Package.swift
+          search_path='.headerSearchPath("common/cpp/react/renderer/components")'
+          grep -qF "$search_path" "$manifest" ||
+            perl -pi -e 's|\.headerSearchPath\("common/cpp"\),|$&'" $search_path,"'|g' "$manifest"
+          grep -qF "$search_path" "$manifest"
 
       # Simulator.app attaches the Mac keyboard by default, which hides the
       # software keyboard and leaves no Return key for the keyboard tests.
@@ -74,7 +94,7 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: e2e-report-ios
+          name: e2e-report-ios${{ inputs.spm && '-spm' || '' }}
           path: |
             e2e/.e2e/report.json
             e2e/.e2e/artifacts
