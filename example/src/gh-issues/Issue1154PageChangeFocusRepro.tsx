@@ -1,8 +1,8 @@
 /**
- * Repro for #1154: on Android, a focused TextInput must lose focus and hide
- * the keyboard when its page is left, via setPage or a swipe. The mode buttons
- * focus the new page's input from onPageSelected or right after setPage, which
- * must keep working.
+ * Repro for #1154: a focused TextInput must lose focus and hide the keyboard
+ * when its page is left, via setPage or a swipe. The mode buttons focus the
+ * new page's input from onPageSelected or right after setPage, which must
+ * keep working.
  */
 import React, { useEffect, useRef, useState } from 'react';
 import {

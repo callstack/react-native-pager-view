@@ -18,6 +18,7 @@ import UIKit
   }
 }
 
+@MainActor
 @objc public protocol PagerViewProviderDelegate {
   func onPageScroll(data: OnPageScrollEventData)
   func onPageScrollStateChanged(state: PageScrollState)
@@ -63,9 +64,78 @@ import UIKit
     }
   }
 
+  private lazy var selectionObserver = PagerSelectionObserver(provider: self)
+
   @objc public convenience init(delegate: PagerViewProviderDelegate) {
     self.init()
     self.delegate = delegate
+  }
+
+  fileprivate func forward(pageScroll data: OnPageScrollEventData) {
+    delegate?.onPageScroll(data: data)
+  }
+
+  fileprivate func forward(scrollState state: PageScrollState) {
+    delegate?.onPageScrollStateChanged(state: state)
+  }
+
+  fileprivate func handle(pageSelected position: Int) {
+    delegate?.onPageSelected(position: position)
+    scheduleBlur()
+  }
+
+  /// Resigning inside a selection change forces a synchronous layout pass that
+  /// applies the change outside its animation. Default mode also holds the
+  /// blur for the whole of a swipe: a gesture and the deceleration that
+  /// follows it keep the run loop in tracking mode, so the keyboard cannot
+  /// close under the finger. The timer this schedules wakes the run loop,
+  /// which a queued block would not.
+  private func scheduleBlur() {
+    cancelScheduledBlur()
+    perform(#selector(blurOutsideCurrentPage), with: nil, afterDelay: 0, inModes: [.default])
+  }
+
+  private func cancelScheduledBlur() {
+    NSObject.cancelPreviousPerformRequests(
+      withTarget: self,
+      selector: #selector(blurOutsideCurrentPage),
+      object: nil
+    )
+  }
+
+  /// The selected page is read here rather than captured when the blur was
+  /// scheduled, so a second page change that arrives first decides which page
+  /// keeps its input. A responder inside the pager but outside its pages is
+  /// SwiftUI's own, and one that takes no text, such as a key-command view, is
+  /// not an input.
+  @objc private func blurOutsideCurrentPage() {
+    let page = props.currentPage
+    guard props.children[safe: page] != nil else {
+      return
+    }
+    // A window has one first responder, so the first page that holds it is the
+    // only one that can.
+    for (index, child) in props.children.enumerated() where index != page {
+      guard let responder = Self.firstResponder(in: child.view) else {
+        continue
+      }
+      if responder is UIKeyInput || responder.inputView != nil {
+        responder.resignFirstResponder()
+      }
+      return
+    }
+  }
+
+  private static func firstResponder(in view: UIView) -> UIView? {
+    if view.isFirstResponder {
+      return view
+    }
+    for subview in view.subviews {
+      if let responder = firstResponder(in: subview) {
+        return responder
+      }
+    }
+    return nil
   }
 
   @objc(insertChild:atIndex:)
@@ -95,6 +165,9 @@ import UIKit
     super.willMove(toWindow: newWindow)
     if newWindow != nil {
       syncParentViewController()
+    } else {
+      // A scheduled blur retains the pager until it fires.
+      cancelScheduledBlur()
     }
   }
 
@@ -237,7 +310,7 @@ import UIKit
     // insets (the RN screen's, including a native search bar) and re-injects
     // them; the two are independent.
     let hostingController = UIHostingController(
-      rootView: PagerView(props: props, delegate: delegate),
+      rootView: PagerView(props: props, delegate: selectionObserver),
       ignoreSafeArea: true
     )
     self.hostingController = hostingController
@@ -266,5 +339,27 @@ import UIKit
     hostingController.removeFromParent()
     parentViewController.addChild(hostingController)
     hostingController.didMove(toParent: parentViewController)
+  }
+}
+
+/// A separate type keeps the delegate methods off `PagerViewProvider`, where
+/// conforming to an `@objc` protocol would make them public.
+private final class PagerSelectionObserver: NSObject, PagerViewProviderDelegate {
+  private weak var provider: PagerViewProvider?
+
+  init(provider: PagerViewProvider) {
+    self.provider = provider
+  }
+
+  func onPageScroll(data: OnPageScrollEventData) {
+    provider?.forward(pageScroll: data)
+  }
+
+  func onPageScrollStateChanged(state: PageScrollState) {
+    provider?.forward(scrollState: state)
+  }
+
+  func onPageSelected(position: Int) {
+    provider?.handle(pageSelected: position)
   }
 }

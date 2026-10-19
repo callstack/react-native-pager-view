@@ -40,6 +40,14 @@ bun run e2e:test:android
 From this directory, `bun run test:ios -- --tag smoke` runs only the smoke
 test, and `bun run list` prints every test without running it.
 
+### Software keyboard on iOS
+
+The keyboard tests (`issue-1096-keyboard-shrink` and `issue-1154-page-change-focus`) need the simulator to show its own keyboard. A device that has seen a Mac keyboard once shows none again, across boots, and `Simulator.app`'s `ConnectHardwareKeyboard` preference does not reach a device the engine booted itself, so clear the device's own flag:
+
+```bash
+xcrun simctl spawn booted defaults write com.apple.keyboard.preferences HardwareKeyboardLastSeen -bool false
+```
+
 ### Several simulators at once
 
 With nothing pinned, the engine uses every booted simulator as the pool, so
