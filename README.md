@@ -106,7 +106,7 @@ For more examples, see the [example app](example/src): nested pagers, keyboard h
 
 `PagerView` also accepts all standard `View` props.
 
-Leaving a page blurs an input focused on it, whatever `keyboardDismissMode` is set to. On iOS the blur follows `onPageSelected`, including the one sent on mount, and is held off while any scroll view in the app is being dragged or is still decelerating, so a swipe never dismisses the keyboard under the user's finger. Because the blur follows the event, an input focused from an `onPageSelected` handler keeps its focus, though the keyboard can close and reopen on the way.
+Leaving a page blurs an input focused on it, whatever `keyboardDismissMode` is set to. On iOS the blur follows `onPageSelected`, including the one sent on mount, and is held off while any scroll view in the app is being dragged or is still decelerating, so a swipe never dismisses the keyboard under the user's finger. Because the blur follows the event, it never takes the focus from an input an `onPageSelected` handler focused, though the keyboard can close and reopen on the way. On iOS that event arrives when the pager starts moving rather than when it settles, so a focus call made from the handler during an animated `setPage` can land on a page that is not on screen yet and do nothing; focus from `onPageScrollStateChanged` once the state is `idle` where it has to hold.
 
 ### Methods
 
