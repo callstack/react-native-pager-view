@@ -10,6 +10,7 @@ import react_native_pager_view
 struct PagerView: View {
   @ObservedObject var props: PagerViewProps
   @State private var scrollDelegate = PagerScrollDelegate()
+  @State private var gestureObserver = PagerGestureObserver()
   @State private var didEmitInitialPageSelection = false
   weak var delegate: PagerViewProviderDelegate?
 
@@ -80,6 +81,11 @@ struct PagerView: View {
           scrollDelegate.orientation = .horizontal
           collectionView.delegate = scrollDelegate
         }
+
+        gestureObserver.attach(to: collectionView)
+        gestureObserver.currentPage = props.currentPage
+        gestureObserver.layoutDirection = props.layoutDirection
+        gestureObserver.orientation = props.orientation
       }
     }
     // GeometryReader is the root since the vertical layout; without this it
@@ -107,6 +113,7 @@ struct PagerView: View {
       }
     }
     .onChange(of: props.currentPage) { newValue in
+      gestureObserver.currentPage = newValue
       delegate?.onPageSelected(position: newValue)
     }
     .onChange(of: props.scrollEnabled) { newValue in
