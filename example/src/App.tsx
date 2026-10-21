@@ -54,6 +54,7 @@ import {
 import { Issue1154PageChangeFocusRepro } from './gh-issues/Issue1154PageChangeFocusRepro';
 import { Issue1156NestedHorizontalScrollRepro } from './gh-issues/Issue1156NestedHorizontalScrollRepro';
 import { Issue424SwipeCancelsPressRepro } from './gh-issues/Issue424SwipeCancelsPressRepro';
+import { Issue965PagesBeforeCurrentRepro } from './gh-issues/Issue965PagesBeforeCurrentRepro';
 import { colors, radius } from './theme';
 
 function BasicPagerViewExampleScreen() {
@@ -173,6 +174,10 @@ const sections: { title: string; data: Example[] }[] = [
       {
         component: Issue424SwipeCancelsPressRepro,
         name: 'Issue #424 Swipe Cancels Press Repro',
+      },
+      {
+        component: Issue965PagesBeforeCurrentRepro,
+        name: 'Issue #965 Pages Before Current Repro',
       },
     ],
   },
