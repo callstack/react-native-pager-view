@@ -22,19 +22,19 @@ final class PagerGestureObserver: NSObject {
   var layoutDirection: PagerLayoutDirection = .ltr
   var orientation: UICollectionView.ScrollDirection = .horizontal
 
-  private weak var collectionView: UICollectionView?
+  /// Attaches to the scroll view that pages: the collection view on iOS 16+,
+  /// the scroll views it embeds on iOS 15 (see `PagerViewIOS15Compat`).
+  func attach(to scrollView: UIScrollView) {
+    let attached = objc_getAssociatedObject(scrollView, &PagerGestureObserver.associationKey)
+    guard attached as? PagerGestureObserver !== self else { return }
 
-  func attach(to collectionView: UICollectionView) {
-    guard self.collectionView !== collectionView else { return }
-
-    self.collectionView = collectionView
     objc_setAssociatedObject(
-      collectionView,
+      scrollView,
       &PagerGestureObserver.associationKey,
       self,
       .OBJC_ASSOCIATION_RETAIN_NONATOMIC
     )
-    PagerGestureObserver.installGestureArbitration(on: collectionView)
+    PagerGestureObserver.installGestureArbitration(on: scrollView)
   }
 
   fileprivate func yieldsToBackGesture(in scrollView: UIScrollView) -> Bool {
@@ -134,8 +134,8 @@ private extension PagerGestureObserver {
     "RNSScreenEdgeGestureRecognizer",
   ]
 
-  static func installGestureArbitration(on collectionView: UICollectionView) {
-    guard let currentClass = object_getClass(collectionView) else { return }
+  static func installGestureArbitration(on scrollView: UIScrollView) {
+    guard let currentClass = object_getClass(scrollView) else { return }
 
     let currentName = String(cString: class_getName(currentClass))
 
@@ -145,7 +145,7 @@ private extension PagerGestureObserver {
     let subclassName = currentName.appending(subclassSuffix)
 
     if let existing = NSClassFromString(subclassName) {
-      object_setClass(collectionView, existing)
+      object_setClass(scrollView, existing)
       return
     }
 
@@ -188,6 +188,6 @@ private extension PagerGestureObserver {
     )
 
     objc_registerClassPair(subclass)
-    object_setClass(collectionView, subclass)
+    object_setClass(scrollView, subclass)
   }
 }
