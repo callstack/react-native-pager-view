@@ -2,27 +2,20 @@ import ObjectiveC
 import UIKit
 
 /**
- Keeps the pager's pan from swallowing the navigation controller's back gesture.
+ Keeps the pager's pan from swallowing the navigation controller's back gesture
+ (callstack/react-native-pager-view#1050). UIKit hands the touch to the scroll
+ view even when recognizing simultaneously, so the pan must be refused in
+ `gestureRecognizerShouldBegin`, whose delegate has to be the scroll view
+ itself. Hence the runtime subclass, as in `disableSafeArea()`.
 
- react-native-screens' full-screen swipe (its own pan recognizer before iOS 26,
- the system `interactiveContentPopGestureRecognizer` from iOS 26) spans the whole
- screen, so a pager on top of it takes every horizontal drag
- (callstack/react-native-pager-view#1050). The 6.x UIKit pager solved this in a
- gesture delegate; the SwiftUI pager has none. Allowing the two to recognize
- simultaneously does not help, UIKit still hands the touch to the scroll view,
- so the pan has to be refused before it begins. That answer belongs to
- `gestureRecognizerShouldBegin`, which the pan asks its delegate, and UIKit
- insists that delegate is the scroll view itself. Hence the runtime subclass,
- the same trick `disableSafeArea()` uses in `Extensions.swift`.
+ Only an outward drag on the first page of a horizontal pager yields, and only
+ while a back recognizer is actually tracking the touch. A deeper stack alone is
+ not enough: the pop recognizers may be disabled, refused by their delegate, or
+ edge-only with the drag starting mid-screen, and yielding would just kill the
+ overdrag bounce.
 
- Only the first page of a horizontal pager yields, and only while there is
- somewhere to go back to; there a back-swipe has nothing to scroll to anyway.
- Every other drag reaches the original implementation untouched.
-
- iOS 26 adds a private `UIScrollViewPagingSwipeGestureRecognizer` to paging
- scroll views that flips a page on a quick flick even when the pan never
- begins, and it asks the same delegate method. It has to be refused too, or
- only slow drags reach the back gesture.
+ iOS 26's private `UIScrollViewPagingSwipeGestureRecognizer` flips pages on a
+ flick without the pan and asks the same method, so it is refused too.
  */
 final class PagerGestureObserver: NSObject {
   var currentPage = 0
@@ -45,7 +38,7 @@ final class PagerGestureObserver: NSObject {
   }
 
   fileprivate func yieldsToBackGesture(in scrollView: UIScrollView) -> Bool {
-    guard orientation == .horizontal, currentPage == 0, canNavigateBack(from: scrollView) else {
+    guard orientation == .horizontal, currentPage == 0, backGestureCanHandleTouch(in: scrollView) else {
       return false
     }
 
@@ -74,18 +67,61 @@ final class PagerGestureObserver: NSObject {
 
   /// Walks the responder chain because the pod does not import React's `UIView`
   /// category, so `reactViewController()` is unavailable here.
-  private func canNavigateBack(from view: UIView) -> Bool {
-    var responder: UIResponder? = view.next
+  private func backGestureCanHandleTouch(in scrollView: UIScrollView) -> Bool {
+    var responder: UIResponder? = scrollView.next
+    var navigationController: UINavigationController?
 
     while let current = responder {
-      if let navigationController = current as? UINavigationController {
-        return navigationController.viewControllers.count > 1
+      if let found = current as? UINavigationController {
+        navigationController = found
+        break
       }
 
       responder = current.next
     }
 
-    return false
+    guard let navigationController, navigationController.viewControllers.count > 1 else {
+      return false
+    }
+
+    var candidates: [UIGestureRecognizer] = []
+
+    if let recognizer = navigationController.interactivePopGestureRecognizer {
+      candidates.append(recognizer)
+    }
+
+    if #available(iOS 26.0, *),
+      let recognizer = navigationController.interactiveContentPopGestureRecognizer
+    {
+      candidates.append(recognizer)
+    }
+
+    // react-native-screens installs its own swipe recognizers on the stack view
+    // above the navigation controller's view.
+    var ancestor = scrollView.superview
+    while let view = ancestor {
+      for recognizer in view.gestureRecognizers ?? []
+      where Self.screensBackRecognizerClassNames.contains(NSStringFromClass(type(of: recognizer))) {
+        candidates.append(recognizer)
+      }
+      ancestor = view.superview
+    }
+
+    return candidates.contains(where: Self.isTrackingTouch)
+  }
+
+  /// A recognizer whose delegate refused the touch never receives it, and an
+  /// edge recognizer fails once the touch starts away from its edge, so only
+  /// one still holding touches in a live state can take over the drag.
+  private static func isTrackingTouch(_ recognizer: UIGestureRecognizer) -> Bool {
+    guard recognizer.isEnabled, recognizer.numberOfTouches > 0 else { return false }
+
+    switch recognizer.state {
+    case .possible, .began, .changed:
+      return true
+    default:
+      return false
+    }
   }
 }
 
@@ -93,6 +129,10 @@ private extension PagerGestureObserver {
   static var associationKey: UInt8 = 0
   static let subclassSuffix = "_PagerBackGesture"
   static let pagingSwipeRecognizerClassName = "UIScrollViewPagingSwipeGestureRecognizer"
+  static let screensBackRecognizerClassNames: Set<String> = [
+    "RNSPanGestureRecognizer",
+    "RNSScreenEdgeGestureRecognizer",
+  ]
 
   static func installGestureArbitration(on collectionView: UICollectionView) {
     guard let currentClass = object_getClass(collectionView) else { return }
