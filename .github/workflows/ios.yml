@@ -23,6 +23,10 @@ jobs:
       # Runner image updates touch clang even when it hasn't changed, so
       # compare its contents instead of its mtime.
       CCACHE_COMPILERCHECK: content
+      AGENT_DEVICE_RUNNER_PATHS: |
+        ~/.agent-device/apple-runner/derived/ios-simulator/*/Build/Products/*
+        ~/.agent-device/apple-runner/derived/ios-simulator/*/.agent-device-runner-cache.json
+        !~/.agent-device/apple-runner/derived/ios-simulator/*/Build/Products/AgentDeviceRunner.env.session-*
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -84,11 +88,36 @@ jobs:
           bun example:ios:release --extra-params "C_COMPILER_LAUNCHER=$(command -v ccache) CLANG_ENABLE_EXPLICIT_MODULES_WITH_COMPILER_LAUNCHER=YES ONLY_ACTIVE_ARCH=YES"
           ccache --show-stats -v
 
+      # The runner depends only on agent-device and Xcode, not on bun.lock.
+      - name: Resolve agent-device runner cache key
+        id: agent-device
+        run: |
+          pkg=e2e/node_modules/agent-device/package.json
+          [ -f "$pkg" ] || pkg=node_modules/agent-device/package.json
+          version=$(jq -r .version "$pkg")
+          xcode=$(xcodebuild -version | awk '/Build version/ { print $3 }')
+          echo "key=agent-device-runner-${RUNNER_OS}-${RUNNER_ARCH}-${version}-xcode-${xcode}" >> "$GITHUB_OUTPUT"
+
+      - name: Restore agent-device runner
+        id: agent-device-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ env.AGENT_DEVICE_RUNNER_PATHS }}
+          key: ${{ steps.agent-device.outputs.key }}
+
       - name: Run e2e tests
         run: bun run test:ios
         working-directory: e2e
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # The runner is built before any test runs, so save it even if one fails.
+      - name: Save agent-device runner
+        if: ${{ !cancelled() && steps.agent-device-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ env.AGENT_DEVICE_RUNNER_PATHS }}
+          key: ${{ steps.agent-device.outputs.key }}
 
       - name: Upload e2e report
         if: ${{ !cancelled() }}
