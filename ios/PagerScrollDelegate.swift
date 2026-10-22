@@ -7,7 +7,7 @@ import react_native_pager_view
  Scroll delegate used to control underlying TabView's collection view.
  */
 class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDelegate {
-  weak var originalDelegate: UICollectionViewDelegate?
+  weak var originalDelegate: UIScrollViewDelegate?
   weak var delegate: PagerViewProviderDelegate?
   var orientation: UICollectionView.ScrollDirection = .horizontal
   
@@ -79,11 +79,13 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   }
   
   func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-    originalDelegate?.collectionView?(collectionView, didEndDisplaying: cell, forItemAt: indexPath)
+    (originalDelegate as? UICollectionViewDelegate)?.collectionView?(collectionView, didEndDisplaying: cell, forItemAt: indexPath)
   }
   
   func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-    originalDelegate?.collectionView?(collectionView, willDisplay: cell, forItemAt: indexPath)
+    // iOS 15 only, see PagerViewIOS15Compat.swift (delete together with the iOS 15 support).
+    PagerViewIOS15Compat.attachScrollDelegate(to: collectionView, delegate: delegate)
+    (originalDelegate as? UICollectionViewDelegate)?.collectionView?(collectionView, willDisplay: cell, forItemAt: indexPath)
   }
   
   override func responds(to aSelector: Selector!) -> Bool {
