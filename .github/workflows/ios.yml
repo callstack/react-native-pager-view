@@ -19,7 +19,7 @@ jobs:
       # compare its contents instead of its mtime.
       CCACHE_COMPILERCHECK: content
       AGENT_DEVICE_RUNNER_PATHS: |
-        ~/.agent-device/apple-runner/derived/ios-simulator/*/Build/Products
+        ~/.agent-device/apple-runner/derived/ios-simulator/*/Build/Products/*
         ~/.agent-device/apple-runner/derived/ios-simulator/*/.agent-device-runner-cache.json
         !~/.agent-device/apple-runner/derived/ios-simulator/*/Build/Products/AgentDeviceRunner.env.session-*
     steps:
