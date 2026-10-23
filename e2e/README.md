@@ -45,7 +45,7 @@ test, and `bun run list` prints every test without running it.
 The keyboard tests (`issue-1096-keyboard-shrink` and `issue-1154-page-change-focus`) need the simulator to show its own keyboard. A device that has seen a Mac keyboard once shows none again, across boots, and `Simulator.app`'s `ConnectHardwareKeyboard` preference does not reach a device the engine booted itself. Clear the device's own two flags, on every booted device, after building and before the run, since a build and launch can set them again:
 
 ```bash
-xcrun simctl list devices booted | grep -Eo '[0-9A-F-]{36}' | while read -r udid; do
+for udid in $(xcrun simctl list devices booted | grep -Eo '[0-9A-F-]{36}'); do
   xcrun simctl spawn "$udid" defaults write com.apple.keyboard.preferences HardwareKeyboardLastSeen -bool false
   xcrun simctl spawn "$udid" defaults write com.apple.keyboard.preferences AutomaticMinimizationEnabled -bool false
 done
