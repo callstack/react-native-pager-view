@@ -87,6 +87,17 @@ jobs:
       pull-requests: write
     uses: ./.github/workflows/ios.yml
 
+  ios-spm:
+    name: iOS Build (SwiftPM)
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.ios == 'true') }}
+    permissions:
+      contents: read
+      pull-requests: write
+    uses: ./.github/workflows/ios.yml
+    with:
+      spm: true
+
   required:
     name: Required checks
     needs: [changes, lint, android, ios]

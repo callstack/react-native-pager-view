@@ -1,4 +1,7 @@
 import UIKit
+#if SWIFT_PACKAGE
+import react_native_pager_view
+#endif
 
 /**
  Scroll delegate used to control underlying TabView's collection view.
@@ -29,8 +32,7 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
     let offset = contentOffset.truncatingRemainder(dividingBy: pageSize) / pageSize
     let position = round(contentOffset / pageSize - offset)
     
-    let eventData = OnPageScrollEventData(position: position, offset: offset)
-    delegate?.onPageScroll(data: eventData)
+    delegate?.onPageScroll(position: position, offset: offset)
     originalDelegate?.scrollViewDidScroll?(scrollView)
   }
 
@@ -43,8 +45,7 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
 
     if pageSize > 0 {
       let page = Int(round(contentOffset / pageSize))
-      let eventData = OnPageScrollEventData(position: Double(page), offset: 0)
-      delegate?.onPageScroll(data: eventData)
+      delegate?.onPageScroll(position: Double(page), offset: 0)
     }
 
     delegate?.onPageScrollStateChanged(state: .idle)

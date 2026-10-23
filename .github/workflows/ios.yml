@@ -2,6 +2,11 @@ name: iOS Build
 
 on:
   workflow_call:
+    inputs:
+      spm:
+        description: Convert the example to Swift Package Manager before building
+        type: boolean
+        default: false
 
 jobs:
   ios-build:
@@ -18,6 +23,10 @@ jobs:
       # Runner image updates touch clang even when it hasn't changed, so
       # compare its contents instead of its mtime.
       CCACHE_COMPILERCHECK: content
+      AGENT_DEVICE_RUNNER_PATHS: |
+        ~/.agent-device/apple-runner/derived/ios-simulator/*/Build/Products/*
+        ~/.agent-device/apple-runner/derived/ios-simulator/*/.agent-device-runner-cache.json
+        !~/.agent-device/apple-runner/derived/ios-simulator/*/Build/Products/AgentDeviceRunner.env.session-*
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -32,6 +41,7 @@ jobs:
       # Exact key only: a Pods dir restored from an older Podfile.lock keeps stale
       # `Local Podspecs` and makes `pod install` bail on the version mismatch.
       - name: Cache Pods
+        if: ${{ !inputs.spm }}
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: example/ios/Pods
@@ -44,12 +54,26 @@ jobs:
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .ccache
-          key: ccache-ios-${{ github.run_id }}-${{ github.run_attempt }}
-          restore-keys: ccache-ios-
+          key: ccache-ios${{ inputs.spm && '-spm' || '' }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: ccache-ios${{ inputs.spm && '-spm' || '' }}-
 
       - name: Install example Pods
+        if: ${{ !inputs.spm }}
         run: bun pods
         working-directory: example
+
+      - name: Convert example to SwiftPM
+        if: ${{ inputs.spm }}
+        working-directory: example/ios
+        run: |
+          npx react-native spm scaffold --deintegrate --yes
+
+          # The scaffolder misses screens' `<rnscreens/...>` header path.
+          manifest=../../node_modules/react-native-screens/Package.swift
+          search_path='.headerSearchPath("common/cpp/react/renderer/components")'
+          grep -qF "$search_path" "$manifest" ||
+            perl -pi -e 's|\.headerSearchPath\("common/cpp"\),|$&'" $search_path,"'|g' "$manifest"
+          grep -qF "$search_path" "$manifest"
 
       # Simulator.app attaches the Mac keyboard by default, which hides the
       # software keyboard and leaves no Return key for the keyboard tests.
@@ -64,17 +88,42 @@ jobs:
           bun example:ios:release --extra-params "C_COMPILER_LAUNCHER=$(command -v ccache) CLANG_ENABLE_EXPLICIT_MODULES_WITH_COMPILER_LAUNCHER=YES ONLY_ACTIVE_ARCH=YES"
           ccache --show-stats -v
 
+      # The runner depends only on agent-device and Xcode, not on bun.lock.
+      - name: Resolve agent-device runner cache key
+        id: agent-device
+        run: |
+          pkg=e2e/node_modules/agent-device/package.json
+          [ -f "$pkg" ] || pkg=node_modules/agent-device/package.json
+          version=$(jq -r .version "$pkg")
+          xcode=$(xcodebuild -version | awk '/Build version/ { print $3 }')
+          echo "key=agent-device-runner-${RUNNER_OS}-${RUNNER_ARCH}-${version}-xcode-${xcode}" >> "$GITHUB_OUTPUT"
+
+      - name: Restore agent-device runner
+        id: agent-device-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ env.AGENT_DEVICE_RUNNER_PATHS }}
+          key: ${{ steps.agent-device.outputs.key }}
+
       - name: Run e2e tests
         run: bun run test:ios
         working-directory: e2e
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # The runner is built before any test runs, so save it even if one fails.
+      - name: Save agent-device runner
+        if: ${{ !cancelled() && steps.agent-device-cache.outputs.cache-hit != 'true' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ env.AGENT_DEVICE_RUNNER_PATHS }}
+          key: ${{ steps.agent-device.outputs.key }}
+
       - name: Upload e2e report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: e2e-report-ios
+          name: e2e-report-ios${{ inputs.spm && '-spm' || '' }}
           path: |
             e2e/.e2e/report.json
             e2e/.e2e/artifacts

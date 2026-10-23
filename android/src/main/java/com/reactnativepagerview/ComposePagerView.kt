@@ -236,6 +236,9 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     if (child == null) {
       return
     }
+    // Page keys must be unique. If Fabric re-adds a view it never removed, move it like a
+    // ViewGroup would instead of listing it twice.
+    pages.remove(child)
     val insertionIndex = index.coerceIn(0, pages.size)
     pages.add(insertionIndex, child)
   }
@@ -500,13 +503,6 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         currentPage = pagerState.currentPage
         dispatchPageSelected(pagerState.currentPage)
       }
-
-      if (pagerState.currentPage >= pageCount) {
-        val target = pageCount - 1
-        pagerState.scrollToPage(target)
-        currentPage = target
-        dispatchPageSelected(target)
-      }
     }
 
     LaunchedEffect(scrollCommandState.value, pageCount) {
@@ -576,6 +572,9 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 
     val pageSpacing = pageMarginState.value.dp
     val beyondViewportPageCount = getBeyondViewportPageCount()
+    // Key pages by their React tag, so the visible page stays put and its new index is
+    // reported when React inserts or removes pages before it.
+    val pageKey: (Int) -> Any = { page -> pages[page].id }
     val overscrollConfiguration = if (overScrollModeState.value == OverScrollMode.Never) {
       null
     } else {
@@ -590,7 +589,8 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
           pageSpacing = pageSpacing,
           userScrollEnabled = scrollEnabledState.value,
           reverseLayout = false,
-          beyondViewportPageCount = beyondViewportPageCount
+          beyondViewportPageCount = beyondViewportPageCount,
+          key = pageKey
         ) { page ->
           PageHost(pages[page])
         }
@@ -601,7 +601,8 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
           pageSpacing = pageSpacing,
           userScrollEnabled = scrollEnabledState.value,
           reverseLayout = false,
-          beyondViewportPageCount = beyondViewportPageCount
+          beyondViewportPageCount = beyondViewportPageCount,
+          key = pageKey
         ) { page ->
           PageHost(pages[page])
         }
@@ -621,7 +622,11 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         }
       },
       update = { container ->
-        attachChild(container, child)
+        // Reads pages so this runs again when React moves a page: removePageAt detached it,
+        // and its keyed slot keeps the same view without recomposing.
+        if (child in pages) {
+          attachChild(container, child)
+        }
       }
     )
   }

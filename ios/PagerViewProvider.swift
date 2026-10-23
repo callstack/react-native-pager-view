@@ -1,64 +1,51 @@
 import SwiftUI
 import UIKit
+#if SWIFT_PACKAGE
+// CocoaPods exposes React's UIView+React category and RNCPagerViewProviding.h
+// implicitly (same module); SwiftPM needs the imports.
+import React
+import react_native_pager_view
+#endif
 
-@objc public enum PageScrollState: Int {
-  case idle
-  case dragging
-  case settling
+@_cdecl("RNCPagerViewCreateProvider")
+public func createPagerViewProvider(delegate: PagerViewProviderDelegate) -> UIView & RNCPagerViewProviding {
+  PagerViewProvider(delegate: delegate)
 }
 
-@objcMembers public class OnPageScrollEventData: NSObject {
-  public let position: Double
-  public let offset: Double
-
-  init(position: Double, offset: Double) {
-    self.position = position
-    self.offset = offset
-    super.init()
-  }
-}
-
-@MainActor
-@objc public protocol PagerViewProviderDelegate {
-  func onPageScroll(data: OnPageScrollEventData)
-  func onPageScrollStateChanged(state: PageScrollState)
-  func onPageSelected(position: Int)
-}
-
-@objc public class PagerViewProvider: UIView {
+final class PagerViewProvider: UIView, RNCPagerViewProviding {
   private weak var delegate: PagerViewProviderDelegate?
   private var hostingController: UIHostingController<PagerView>?
   private var props = PagerViewProps()
 
-  @objc public var scrollEnabled: Bool = true {
+  var scrollEnabled: Bool = true {
     didSet {
       props.scrollEnabled = scrollEnabled
     }
   }
 
-  @objc public var overdrag: Bool = false {
+  var overdrag: Bool = false {
     didSet {
       props.overdrag = overdrag
     }
   }
 
-  @objc public var currentPage: Int = -1 {
+  var currentPage: Int = -1 {
     didSet {
       props.currentPage = currentPage
     }
   }
-  @objc public var keyboardDismissMode: UIScrollView.KeyboardDismissMode = .none {
+  var keyboardDismissMode: UIScrollView.KeyboardDismissMode = .none {
     didSet {
       props.keyboardDismissMode = keyboardDismissMode
     }
   }
 
-  @objc public var layoutDirection: PagerLayoutDirection = .ltr {
+  var layoutDirection: PagerLayoutDirection = .ltr {
     didSet {
       props.layoutDirection = layoutDirection
     }
   }
-  @objc public var orientation: UICollectionView.ScrollDirection = .horizontal {
+  var orientation: UICollectionView.ScrollDirection = .horizontal {
     didSet {
       props.orientation = orientation
     }
@@ -66,13 +53,13 @@ import UIKit
 
   private lazy var selectionObserver = PagerSelectionObserver(provider: self)
 
-  @objc public convenience init(delegate: PagerViewProviderDelegate) {
+  convenience init(delegate: PagerViewProviderDelegate) {
     self.init()
     self.delegate = delegate
   }
 
-  fileprivate func forward(pageScroll data: OnPageScrollEventData) {
-    delegate?.onPageScroll(data: data)
+  fileprivate func forward(pageScrollPosition position: Double, offset: Double) {
+    delegate?.onPageScroll(position: position, offset: offset)
   }
 
   fileprivate func forward(scrollState state: PageScrollState) {
@@ -138,30 +125,28 @@ import UIKit
     return nil
   }
 
-  @objc(insertChild:atIndex:)
-  public func insertChild(_ child: UIView, at index: Int) {
+  func insertChild(_ child: UIView, at index: Int) {
     guard index >= 0 && index <= props.children.count else {
       return
     }
     props.children.insert(IdentifiablePlatformView(child), at: index)
   }
 
-  @objc(removeChildAtIndex:)
-  public func removeChild(at index: Int) {
+  func removeChild(at index: Int) {
     guard index >= 0 && index < props.children.count else {
       return
     }
     props.children.remove(at: index)
   }
 
-  override public func didMoveToWindow() {
+  override func didMoveToWindow() {
     super.didMoveToWindow()
     if window != nil {
       setupView()
     }
   }
 
-  override public func willMove(toWindow newWindow: UIWindow?) {
+  override func willMove(toWindow newWindow: UIWindow?) {
     super.willMove(toWindow: newWindow)
     if newWindow != nil {
       syncParentViewController()
@@ -171,26 +156,26 @@ import UIKit
     }
   }
 
-  override public func willMove(toSuperview newSuperview: UIView?) {
+  override func willMove(toSuperview newSuperview: UIView?) {
     if let parentViewController = newSuperview?.reactViewController() {
       syncParentViewController(to: parentViewController)
     }
     super.willMove(toSuperview: newSuperview)
   }
 
-  override public func didMoveToSuperview() {
+  override func didMoveToSuperview() {
     super.didMoveToSuperview()
     syncParentViewController()
   }
 
-  override public func layoutSubviews() {
+  override func layoutSubviews() {
     super.layoutSubviews()
     if window != nil {
       setupView()
     }
   }
 
-  override public func safeAreaInsetsDidChange() {
+  override func safeAreaInsetsDidChange() {
     super.safeAreaInsetsDidChange()
     // The hosting view is forced to `.zero`, so UIKit will not forward this
     // change into `PageChildViewController`. Relayout so it can re-read our
@@ -198,7 +183,7 @@ import UIKit
     hostingController?.view.setNeedsLayout()
   }
 
-  @objc public func goTo(index: Int, animated: Bool) {
+  func goTo(index: Int, animated: Bool) {
     if animated && hasPresentedViewController() {
       // A native-stack modal can begin its dismissal in the same JavaScript
       // callback as `setPage`. Starting a SwiftUI TabView animation in that
@@ -351,8 +336,8 @@ private final class PagerSelectionObserver: NSObject, PagerViewProviderDelegate 
     self.provider = provider
   }
 
-  func onPageScroll(data: OnPageScrollEventData) {
-    provider?.forward(pageScroll: data)
+  func onPageScroll(position: Double, offset: Double) {
+    provider?.forward(pageScrollPosition: position, offset: offset)
   }
 
   func onPageScrollStateChanged(state: PageScrollState) {
