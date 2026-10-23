@@ -72,7 +72,7 @@ final class PagerGestureObserver: NSObject {
     var navigationController: UINavigationController?
 
     while let current = responder {
-      if let found = current as? UINavigationController {
+      if let found = current as? UINavigationController, found.viewControllers.count > 1 {
         navigationController = found
         break
       }
@@ -80,7 +80,7 @@ final class PagerGestureObserver: NSObject {
       responder = current.next
     }
 
-    guard let navigationController, navigationController.viewControllers.count > 1 else {
+    guard let navigationController else {
       return false
     }
 
