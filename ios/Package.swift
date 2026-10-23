@@ -52,6 +52,7 @@ let package = Package(
                 "PagerScrollDelegate.swift",
                 "PagerView.swift",
                 "PagerViewIOS15Compat.swift",
+                "PagerViewIOS15NavigationBarCompat.swift",
                 "PagerViewProps.swift",
                 "PagerViewProvider.swift",
             ],
