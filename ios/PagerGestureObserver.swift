@@ -1,5 +1,8 @@
 import ObjectiveC
 import UIKit
+#if SWIFT_PACKAGE
+import react_native_pager_view
+#endif
 
 /**
  Keeps the pager's pan from swallowing the navigation controller's back gesture
