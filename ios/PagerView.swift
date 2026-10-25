@@ -10,6 +10,7 @@ import react_native_pager_view
 struct PagerView: View {
   @ObservedObject var props: PagerViewProps
   @State private var scrollDelegate = PagerScrollDelegate()
+  @State private var gestureObserver = PagerGestureObserver()
   @State private var didEmitInitialPageSelection = false
   weak var delegate: PagerViewProviderDelegate?
 
@@ -80,6 +81,13 @@ struct PagerView: View {
           scrollDelegate.orientation = .horizontal
           collectionView.delegate = scrollDelegate
         }
+
+        gestureObserver.attach(to: collectionView)
+        // iOS 15 only, see PagerViewIOS15Compat.swift (delete together with the iOS 15 support).
+        PagerViewIOS15Compat.attachGestureObserver(gestureObserver, to: collectionView)
+        gestureObserver.currentPage = props.currentPage
+        gestureObserver.layoutDirection = props.layoutDirection
+        gestureObserver.orientation = props.orientation
       }
     }
     // GeometryReader is the root since the vertical layout; without this it
@@ -91,6 +99,8 @@ struct PagerView: View {
       DispatchQueue.main.async {
         applyScrollEnabled(props.scrollEnabled)
         applyOverdrag(props.overdrag)
+        // iOS 15 only: the embedded scroll views may not exist yet when introspected.
+        PagerViewIOS15Compat.attachGestureObserver(gestureObserver, to: collectionView)
       }
 
       // `onChange` does not fire for the initial `currentPage` value. Emit the
@@ -107,6 +117,7 @@ struct PagerView: View {
       }
     }
     .onChange(of: props.currentPage) { newValue in
+      gestureObserver.currentPage = newValue
       delegate?.onPageSelected(position: newValue)
     }
     .onChange(of: props.scrollEnabled) { newValue in

@@ -35,10 +35,17 @@ import CoverflowExample from './tabView/CoverflowExample';
 import { TabViewInsideScrollViewExample } from './tabView/TabViewInsideScrollViewExample';
 import ReanimatedOnPageScrollExample from './ReanimatedOnPageScrollExample';
 import { MaterialTopBarExample } from './MaterialTopTabExample';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  type NativeStackNavigationOptions,
+} from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PagerHookExample } from './PagerHookExample';
 import { NestedHorizontalScrollViewExample } from './NestedHorizontalScrollViewExample';
+import {
+  Issue1050BackGestureRepro,
+  Issue1050NestedStackBackGestureRepro,
+} from './gh-issues/Issue1050BackGestureRepro';
 import { Issue1096KeyboardShrinkRepro } from './gh-issues/Issue1096KeyboardShrinkRepro';
 import { Issue1098NestedPagerRepro } from './gh-issues/Issue1098NestedPagerRepro';
 import { Issue1099SafeAreaRepro } from './gh-issues/Issue1099SafeAreaRepro';
@@ -69,6 +76,7 @@ type Example = {
   component: React.ComponentType;
   name: string;
   testID?: string;
+  options?: NativeStackNavigationOptions;
 };
 
 const chevron =
@@ -82,6 +90,7 @@ const sections: { title: string; data: Example[] }[] = [
         component: BasicPagerViewExampleScreen,
         name: 'Basic Example',
         testID: 'example-basic-horizontal',
+        options: { fullScreenGestureEnabled: false },
       },
       {
         component: VerticalBasicPagerViewExampleScreen,
@@ -146,6 +155,14 @@ const sections: { title: string; data: Example[] }[] = [
       {
         component: Issue1083ModalSetPageExample,
         name: 'Issue #1083 Modal SetPage Repro',
+      },
+      {
+        component: Issue1050BackGestureRepro,
+        name: 'Issue #1050 Back Gesture Repro',
+      },
+      {
+        component: Issue1050NestedStackBackGestureRepro,
+        name: 'Issue #1050 Nested Stack Back Gesture Repro',
       },
       {
         component: Issue1096KeyboardShrinkRepro,
@@ -290,6 +307,7 @@ export function Navigation() {
               key={index}
               name={example.name}
               component={example.component}
+              options={example.options}
             />
           ))}
           <NavigationStack.Screen

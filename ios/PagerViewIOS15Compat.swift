@@ -7,12 +7,13 @@ import UIKit
 /// collection view (private class `_UICollectionViewOrthogonalScrollerEmbeddedScrollView`), while
 /// the collection view itself only scrolls vertically. Because `PagerView` can only toggle the
 /// collection view, on iOS 15 `scrollEnabled={false}` / `overdrag={false}` never reached the view
-/// that actually handles the swipe.
+/// that actually handles the swipe, and the back-gesture arbitration of `PagerGestureObserver`
+/// never reached the pan that blocks it.
 ///
 /// On iOS 16 and later the collection view itself is the pager, so none of this is needed — the
 /// `#available` checks below make every function in here a no-op on those versions.
 ///
-/// - Note: Delete this file together with the two `PagerViewIOS15Compat` calls in `PagerView.swift`
+/// - Note: Delete this file together with the `PagerViewIOS15Compat` calls in `PagerView.swift`
 ///   once the minimum supported iOS version is 16.
 enum PagerViewIOS15Compat {
   /// Mirrors `scrollEnabled` onto the scroll views SwiftUI embedded in the paging collection view.
@@ -31,6 +32,19 @@ enum PagerViewIOS15Compat {
     }
 
     pagingScrollViews(in: collectionView).forEach { $0.bounces = overdrag }
+  }
+
+  /// Attaches the back-gesture arbitration to the scroll views SwiftUI embedded in the paging
+  /// collection view.
+  static func attachGestureObserver(
+    _ gestureObserver: PagerGestureObserver,
+    to collectionView: UICollectionView?
+  ) {
+    if #available(iOS 16, *) {
+      return
+    }
+
+    pagingScrollViews(in: collectionView).forEach { gestureObserver.attach(to: $0) }
   }
 
   /// Scroll views that SwiftUI embedded in the paging collection view.
