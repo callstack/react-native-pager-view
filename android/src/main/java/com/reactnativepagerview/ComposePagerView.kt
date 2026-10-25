@@ -212,6 +212,33 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     measureAndLayoutComposeView()
   }
 
+  // React Native's parent views drop layout requests, so the pager isn't laid out again when
+  // Compose asks for it, like when pages arrive in an empty pager, and stays blank until a
+  // touch (see #219). Lay it out again at its current size.
+  override fun requestLayout() {
+    super.requestLayout()
+    post { layoutAtCurrentSize() }
+  }
+
+  // A configuration change handled in place, like dark mode, calls this on every view instead
+  // of requestLayout(), with the same result.
+  override fun forceLayout() {
+    super.forceLayout()
+    post { layoutAtCurrentSize() }
+  }
+
+  private fun layoutAtCurrentSize() {
+    // dispose() requests a layout too, and measuring then would create a new composition.
+    if (composeView?.hasComposition != true || width <= 0 || height <= 0) {
+      return
+    }
+    measure(
+      MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+      MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+    )
+    layout(left, top, right, bottom)
+  }
+
   private fun measureAndLayoutComposeView() {
     val width = width.takeIf { it > 0 } ?: measuredWidth
     val height = height.takeIf { it > 0 } ?: measuredHeight
