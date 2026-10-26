@@ -30,6 +30,15 @@ class PageChildViewController: UIViewController {
     }
   }
 
+  /// SwiftUI can host one page in two controllers. When the newer one goes
+  /// away, the page view is left without a parent, so take it back here.
+  func reclaimWrappedViewIfOrphaned() {
+    guard let wrappedView, wrappedView.superview == nil else {
+      return
+    }
+    view.addSubview(wrappedView)
+  }
+
   override func viewDidLayoutSubviews() {
     super.viewDidLayoutSubviews()
     propagateSafeArea()
