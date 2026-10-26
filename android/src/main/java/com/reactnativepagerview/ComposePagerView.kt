@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -548,8 +549,15 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
           .drop(1)
           .collect { inProgress ->
             if (!inProgress) {
-              dispatchPageScroll(pagerState.settledPage, 0f)
-              dispatchScrollState("idle")
+              // A drag's scroll ends before the fling that follows it starts
+              // its own, in a coroutine launched after DragInteraction.Stop,
+              // so isScrollInProgress is briefly false between the two. Wait a
+              // frame so that gap isn't reported as the pager coming to rest.
+              withFrameNanos {}
+              if (!pagerState.isScrollInProgress) {
+                dispatchPageScroll(pagerState.settledPage, 0f)
+                dispatchScrollState("idle")
+              }
             }
           }
       }
@@ -557,14 +565,11 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         pagerState.interactionSource.interactions.collect { interaction ->
           when (interaction) {
             is DragInteraction.Start -> dispatchScrollState("dragging")
+            // Every drag ends in a fling that snaps to a page, even when
+            // released at rest, and its end is reported as idle above. The
+            // fling hasn't started yet, so isScrollInProgress can't tell.
             is DragInteraction.Stop,
-            is DragInteraction.Cancel -> {
-              if (pagerState.isScrollInProgress) {
-                dispatchScrollState("settling")
-              } else {
-                dispatchScrollState("idle")
-              }
-            }
+            is DragInteraction.Cancel -> dispatchScrollState("settling")
           }
         }
       }
