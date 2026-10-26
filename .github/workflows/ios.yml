@@ -26,6 +26,7 @@ jobs:
       # Restore keys match by prefix, so neither variant's name may prefix the
       # other's (`ccache-ios-` used to restore the SwiftPM cache).
       CACHE_VARIANT: ${{ inputs.spm && 'spm' || 'pods' }}
+      XCODE_CAS_DIR: ${{ github.workspace }}/.xcode-cas
       AGENT_DEVICE_RUNNER_PATHS: |
         ~/.agent-device/apple-runner/derived/ios-simulator/*/Build/Products/*
         ~/.agent-device/apple-runner/derived/ios-simulator/*/.agent-device-runner-cache.json
@@ -53,12 +54,28 @@ jobs:
       - name: Install ccache
         run: brew install ccache
 
-      - name: Cache ccache
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      - name: Resolve Xcode version
+        id: xcode
+        run: echo "build=$(xcodebuild -version | awk '/Build version/ { print $3 }')" >> "$GITHUB_OUTPUT"
+
+      - name: Restore ccache
+        id: ccache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: .ccache
           key: ccache-ios-${{ env.CACHE_VARIANT }}-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: ccache-ios-${{ env.CACHE_VARIANT }}-
+
+      # Xcode's compilation cache handles the Swift side (ccache can't). Nothing
+      # prunes it, so the key starts it over whenever Xcode or the native
+      # dependencies (Podfile.lock) change.
+      - name: Restore Xcode CAS
+        id: xcode-cas
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ env.XCODE_CAS_DIR }}
+          key: xcode-cas-ios-${{ env.CACHE_VARIANT }}-xcode-${{ steps.xcode.outputs.build }}-${{ hashFiles('example/ios/Podfile.lock') }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: xcode-cas-ios-${{ env.CACHE_VARIANT }}-xcode-${{ steps.xcode.outputs.build }}-${{ hashFiles('example/ios/Podfile.lock') }}-
 
       - name: Install example Pods
         if: ${{ !inputs.spm }}
@@ -84,12 +101,29 @@ jobs:
         run: defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
 
       - name: Build iOS App
+        id: build
         # RN's USE_CCACHE wrapper silently skips ccache on Xcode 26
         # (facebook/react-native#56612), so use Xcode's compiler launcher.
         run: |
           ccache --zero-stats
-          bun example:ios:release --extra-params "C_COMPILER_LAUNCHER=$(command -v ccache) CLANG_ENABLE_EXPLICIT_MODULES_WITH_COMPILER_LAUNCHER=YES ONLY_ACTIVE_ARCH=YES"
+          bun example:ios:release --extra-params "C_COMPILER_LAUNCHER=$(command -v ccache) CLANG_ENABLE_EXPLICIT_MODULES_WITH_COMPILER_LAUNCHER=YES ONLY_ACTIVE_ARCH=YES CLANG_ENABLE_COMPILE_CACHE=NO SWIFT_ENABLE_COMPILE_CACHE=YES COMPILATION_CACHE_CAS_PATH=$XCODE_CAS_DIR"
           ccache --show-stats -v
+
+      # Save right after the build, so a failing e2e test doesn't throw away
+      # fresh compiler cache entries.
+      - name: Save ccache
+        if: ${{ !cancelled() && steps.build.outcome != 'skipped' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .ccache
+          key: ${{ steps.ccache.outputs.cache-primary-key }}
+
+      - name: Save Xcode CAS
+        if: ${{ !cancelled() && steps.build.outcome != 'skipped' }}
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ env.XCODE_CAS_DIR }}
+          key: ${{ steps.xcode-cas.outputs.cache-primary-key }}
 
       # The runner depends only on agent-device and Xcode, not on bun.lock.
       - name: Resolve agent-device runner cache key
@@ -98,8 +132,9 @@ jobs:
           pkg=e2e/node_modules/agent-device/package.json
           [ -f "$pkg" ] || pkg=node_modules/agent-device/package.json
           version=$(jq -r .version "$pkg")
-          xcode=$(xcodebuild -version | awk '/Build version/ { print $3 }')
-          echo "key=agent-device-runner-${RUNNER_OS}-${RUNNER_ARCH}-${version}-xcode-${xcode}" >> "$GITHUB_OUTPUT"
+          echo "key=agent-device-runner-${RUNNER_OS}-${RUNNER_ARCH}-${version}-xcode-${XCODE_BUILD}" >> "$GITHUB_OUTPUT"
+        env:
+          XCODE_BUILD: ${{ steps.xcode.outputs.build }}
 
       - name: Restore agent-device runner
         id: agent-device-cache
