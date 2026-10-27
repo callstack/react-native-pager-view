@@ -1,0 +1,44 @@
+name: Stale issues
+# Marks issues with no activity for 180 days as stale, then closes them 14 days
+# later unless they're updated (a comment, label change or edit resets it).
+# Pull requests are left alone.
+on:
+  schedule:
+    - cron: '27 3 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+
+permissions:
+  contents: read
+
+jobs:
+  stale:
+    name: Close stale issues
+    if: github.repository == 'callstack/react-native-pager-view'
+    runs-on: ubuntu-slim
+    timeout-minutes: 10
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
+        with:
+          days-before-issue-stale: 180
+          days-before-issue-close: 14
+          days-before-pr-stale: -1
+          days-before-pr-close: -1
+          stale-issue-label: stale
+          exempt-issue-labels: bug,keep open,blocked,on hold,wip,help wanted,good first issue,enhancement
+          exempt-all-issue-milestones: true
+          exempt-all-issue-assignees: true
+          close-issue-reason: not_planned
+          stale-issue-message: >
+            This issue has had no activity for 180 days and is now marked as stale.
+            It will be closed in 14 days unless there is new activity. If it still
+            affects the latest version, please comment with a reproduction.
+          close-issue-message: >
+            Closing because there has been no activity for 14 days since this was
+            marked as stale. Feel free to open a new issue with a reproduction if
+            the problem persists on the latest version.
+          operations-per-run: 60
