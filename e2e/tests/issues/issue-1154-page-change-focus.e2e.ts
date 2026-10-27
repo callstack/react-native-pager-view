@@ -6,11 +6,6 @@ freshAppBeforeEach();
 
 const options = { tags: ['regression', 'issue-1154'] };
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-/** Matches the wait the iOS blur falls back on when nothing reports settling. */
-const PAGE_CHANGE_WAIT_MS = 1000;
-
 /**
  * Checks the selected page, the focused input, and the keyboard, which follows
  * the focus. The keyboard is checked on iOS only: Android's headless IME never
@@ -160,9 +155,7 @@ test(
     await focusInputOnPage(app, screen, platform, 0);
 
     // The second command goes back a page, so an overshoot lands on page 0
-    // where this can see it. The interrupted slide reports stopping for a page
-    // the pager is no longer heading to, so the blur comes from the wait
-    // running out and the status is checked after both.
+    // where this can see it. The status is checked once the pager stops.
     await screen.getByTestId('issue-1154-go-2-then-1').tap();
     await expectIdle(screen);
     await expectStatus(screen, platform, 1, 'none');
@@ -185,16 +178,14 @@ test(
 );
 
 test(
-  'two setPage calls that cancel out keep the focus',
+  'two setPage calls that cancel out land on the first page',
   { ...options, platforms: ['ios'] },
   async ({ app, screen, platform }) => {
     await focusInputOnPage(app, screen, platform, 0);
 
-    // The pager ends where it started, so it never moves and never reports
-    // settling. Nothing left page 0, so its input keeps focus, and the check
-    // comes after the wait has run out so the blur it schedules is included.
+    // Each setPage blurs before the pager moves, so the first one has already
+    // taken the focus by the time the second one sends the pager back.
     await screen.getByTestId('issue-1154-go-1-and-0').tap();
-    await wait(PAGE_CHANGE_WAIT_MS + 300);
-    await expectStatus(screen, platform, 0, 'input 0');
+    await expectStatus(screen, platform, 0, 'none');
   }
 );
