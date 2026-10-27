@@ -31,7 +31,7 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
 
   var currentPage: Int = -1 {
     didSet {
-      setPage(index: currentPage, animated: false)
+      props.currentPage = currentPage
     }
   }
   var keyboardDismissMode: UIScrollView.KeyboardDismissMode = .none {
@@ -51,92 +51,9 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
     }
   }
 
-  private var lastScrollPosition = -1.0
-
-  /// The position that comes with an idle is the physical page, which a right
-  /// to left layout mirrors.
-  private var settledPage: Int {
-    let page = Int(lastScrollPosition)
-    return props.layoutDirection == .rtl
-      ? props.children.count - 1 - page
-      : page
-  }
-
-  /// Resigning a first responder forces a layout pass, and one inside a
-  /// `TabView` animation makes SwiftUI apply the pending selection twice,
-  /// landing a page past the target, so the blur waits for the pager to settle.
-  private var isPageChangeAnimating = false
-
-  /// iOS 15 pages through a scroll view inside the collection view that
-  /// `PagerScrollDelegate` never sees, and visionOS never installs that
-  /// delegate, so nothing reports settling there. A slide settles in about
-  /// 0.8s under the default spring, and where settling is reported this is
-  /// only a backstop.
-  private static let pageChangeWait: TimeInterval = 1
-
   convenience init(delegate: PagerViewProviderDelegate) {
     self.init()
     self.delegate = delegate
-  }
-
-  /// Default mode holds this for a whole swipe: the gesture and its
-  /// deceleration keep the run loop in tracking mode, so the keyboard cannot
-  /// close under the finger. A timer wakes the loop. A queued block would not.
-  private func schedule(_ selector: Selector, after delay: TimeInterval) {
-    cancel(selector)
-    perform(selector, with: nil, afterDelay: delay, inModes: [.default])
-  }
-
-  private func cancel(_ selector: Selector) {
-    NSObject.cancelPreviousPerformRequests(
-      withTarget: self,
-      selector: selector,
-      object: nil
-    )
-  }
-
-  @objc private func endPageChangeWait() {
-    cancel(#selector(endPageChangeWait))
-    isPageChangeAnimating = false
-    schedule(#selector(blurOutsideCurrentPage), after: 0)
-  }
-
-  /// The page is read when the blur fires, not when it was scheduled, so a
-  /// page change arriving first decides which page keeps its input. Only a
-  /// responder that takes text is resigned: a key-command view is not an input.
-  @objc private func blurOutsideCurrentPage() {
-    // A blur scheduled before this slide would otherwise land inside it. The
-    // settling schedules another one.
-    if isPageChangeAnimating {
-      return
-    }
-    let page = props.currentPage
-    guard props.children[safe: page] != nil else {
-      return
-    }
-    // A window has one first responder, so stop at the first page holding it.
-    for (index, child) in props.children.enumerated() where index != page {
-      guard child.view.window != nil,
-            let responder = Self.firstResponder(in: child.view) else {
-        continue
-      }
-      if responder is UIKeyInput || responder.inputView != nil {
-        responder.resignFirstResponder()
-      }
-      return
-    }
-  }
-
-  private static func firstResponder(in view: UIView) -> UIView? {
-    if view.isFirstResponder {
-      return view
-    }
-    for subview in view.subviews {
-      if let responder = firstResponder(in: subview) {
-        return responder
-      }
-    }
-    return nil
   }
 
   func insertChild(_ child: UIView, at index: Int) {
@@ -164,11 +81,6 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
     super.willMove(toWindow: newWindow)
     if newWindow != nil {
       syncParentViewController()
-    } else {
-      // A scheduled blur or wait retains the pager until it fires.
-      cancel(#selector(blurOutsideCurrentPage))
-      cancel(#selector(endPageChangeWait))
-      isPageChangeAnimating = false
     }
   }
 
@@ -251,15 +163,9 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
   }
 
   private func setPage(index: Int, animated: Bool) {
-    // Only a sliding command starts a wait, and none of them ends one that is
-    // already running, so a jump landing mid-slide still waits it out.
-    let willSlide =
-      animated && index != props.currentPage && window != nil
-        && props.children.indices.contains(index)
-    if willSlide {
-      isPageChangeAnimating = true
-      schedule(#selector(endPageChangeWait), after: Self.pageChangeWait)
-    }
+    // Blur before the selection changes: resigning during the TabView
+    // animation breaks the slide.
+    props.resignFirstResponder(outsidePage: index)
     if animated {
       withAnimation {
         props.currentPage = index
@@ -320,7 +226,7 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
     // insets (the RN screen's, including a native search bar) and re-injects
     // them; the two are independent.
     let hostingController = UIHostingController(
-      rootView: PagerView(props: props, delegate: self),
+      rootView: PagerView(props: props, delegate: delegate),
       ignoreSafeArea: true
     )
     self.hostingController = hostingController
@@ -349,32 +255,5 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
     hostingController.removeFromParent()
     parentViewController.addChild(hostingController)
     hostingController.didMove(toParent: parentViewController)
-  }
-}
-
-extension PagerViewProvider: PagerViewProviderDelegate {
-  func onPageScroll(position: Double, offset: Double) {
-    delegate?.onPageScroll(position: position, offset: offset)
-    lastScrollPosition = position
-  }
-
-  /// `PagerScrollDelegate` sends the settled page just before it reports idle,
-  /// so an idle naming another page belongs to a slide that has been replaced.
-  func onPageScrollStateChanged(state: PageScrollState) {
-    delegate?.onPageScrollStateChanged(state: state)
-    guard state == .idle, isPageChangeAnimating,
-          settledPage == props.currentPage
-    else {
-      return
-    }
-    endPageChangeWait()
-  }
-
-  func onPageSelected(position: Int) {
-    delegate?.onPageSelected(position: position)
-    if isPageChangeAnimating {
-      return
-    }
-    schedule(#selector(blurOutsideCurrentPage), after: 0)
   }
 }

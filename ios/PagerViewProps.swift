@@ -32,4 +32,15 @@ class PagerViewProps: ObservableObject {
   @Published var keyboardDismissMode: UIScrollView.KeyboardDismissMode = .none
   @Published var layoutDirection: PagerLayoutDirection = .ltr
   @Published var orientation: UICollectionView.ScrollDirection = .horizontal
+
+  /// Blurs a text input focused on any page other than `page`. The paged
+  /// `TabView` keeps neighbouring pages in the window, so nothing else does.
+  func resignFirstResponder(outsidePage page: Int) {
+    for (index, child) in children.enumerated() where index != page {
+      if let responder = child.view.firstResponderInHierarchy, responder is UIKeyInput {
+        responder.resignFirstResponder()
+        return
+      }
+    }
+  }
 }

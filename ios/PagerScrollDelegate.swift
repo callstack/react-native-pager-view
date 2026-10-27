@@ -10,6 +10,8 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   weak var originalDelegate: UICollectionViewDelegate?
   weak var delegate: PagerViewProviderDelegate?
   var orientation: UICollectionView.ScrollDirection = .horizontal
+  /// Called once a drag has come to rest, after `TabView` has seen it.
+  var onDragEnded: (() -> Void)?
   
   private let handledSelectors: Set<Selector> = [
     #selector(scrollViewDidScroll(_:)),
@@ -64,6 +66,7 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
     emitIdleWithCleanOffset(scrollView)
     originalDelegate?.scrollViewDidEndDecelerating?(scrollView)
+    onDragEnded?()
   }
 
   func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
@@ -76,6 +79,9 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
       emitIdleWithCleanOffset(scrollView)
     }
     originalDelegate?.scrollViewDidEndDragging?(scrollView, willDecelerate: decelerate)
+    if !decelerate {
+      onDragEnded?()
+    }
   }
   
   func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {

@@ -78,6 +78,12 @@ struct PagerView: View {
           scrollDelegate.delegate = delegate
           // VTabView-style rotation preserves TabView's horizontal collection view.
           scrollDelegate.orientation = .horizontal
+          scrollDelegate.onDragEnded = { [props] in
+            // Read the selection on the next pass, once TabView has applied it.
+            DispatchQueue.main.async {
+              props.resignFirstResponder(outsidePage: props.currentPage)
+            }
+          }
           collectionView.delegate = scrollDelegate
         }
       }
