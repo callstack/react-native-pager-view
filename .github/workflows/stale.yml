@@ -41,4 +41,4 @@ jobs:
             Closing because there has been no activity for 14 days since this was
             marked as stale. Feel free to open a new issue with a reproduction if
             the problem persists on the latest version.
-          operations-per-run: 60
+          operations-per-run: 300
