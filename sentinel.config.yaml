@@ -1,2 +1,4 @@
 user_settings:
-  reviewers: troZee
+  reviewers:
+    - troZee
+    - artus9033
