@@ -35,10 +35,17 @@ import CoverflowExample from './tabView/CoverflowExample';
 import { TabViewInsideScrollViewExample } from './tabView/TabViewInsideScrollViewExample';
 import ReanimatedOnPageScrollExample from './ReanimatedOnPageScrollExample';
 import { MaterialTopBarExample } from './MaterialTopTabExample';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import {
+  createNativeStackNavigator,
+  type NativeStackNavigationOptions,
+} from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PagerHookExample } from './PagerHookExample';
 import { NestedHorizontalScrollViewExample } from './NestedHorizontalScrollViewExample';
+import {
+  Issue1050BackGestureRepro,
+  Issue1050NestedStackBackGestureRepro,
+} from './gh-issues/Issue1050BackGestureRepro';
 import { Issue1096KeyboardShrinkRepro } from './gh-issues/Issue1096KeyboardShrinkRepro';
 import { Issue1098NestedPagerRepro } from './gh-issues/Issue1098NestedPagerRepro';
 import { Issue1099SafeAreaRepro } from './gh-issues/Issue1099SafeAreaRepro';
@@ -53,8 +60,13 @@ import {
 } from './gh-issues/Issue1142SearchBarInsetRepro';
 import { Issue1154PageChangeFocusRepro } from './gh-issues/Issue1154PageChangeFocusRepro';
 import { Issue1156NestedHorizontalScrollRepro } from './gh-issues/Issue1156NestedHorizontalScrollRepro';
+import { Issue1199ScrollStateRepro } from './gh-issues/Issue1199ScrollStateRepro';
 import { Issue424SwipeCancelsPressRepro } from './gh-issues/Issue424SwipeCancelsPressRepro';
 import { Issue965PagesBeforeCurrentRepro } from './gh-issues/Issue965PagesBeforeCurrentRepro';
+import {
+  PR1194RemountInitialPageCoverScreen,
+  PR1194RemountInitialPageRepro,
+} from './gh-issues/PR1194RemountInitialPageRepro';
 import { colors, radius } from './theme';
 
 function BasicPagerViewExampleScreen() {
@@ -69,6 +81,7 @@ type Example = {
   component: React.ComponentType;
   name: string;
   testID?: string;
+  options?: NativeStackNavigationOptions;
 };
 
 const chevron =
@@ -82,6 +95,7 @@ const sections: { title: string; data: Example[] }[] = [
         component: BasicPagerViewExampleScreen,
         name: 'Basic Example',
         testID: 'example-basic-horizontal',
+        options: { fullScreenGestureEnabled: false },
       },
       {
         component: VerticalBasicPagerViewExampleScreen,
@@ -148,6 +162,14 @@ const sections: { title: string; data: Example[] }[] = [
         name: 'Issue #1083 Modal SetPage Repro',
       },
       {
+        component: Issue1050BackGestureRepro,
+        name: 'Issue #1050 Back Gesture Repro',
+      },
+      {
+        component: Issue1050NestedStackBackGestureRepro,
+        name: 'Issue #1050 Nested Stack Back Gesture Repro',
+      },
+      {
         component: Issue1096KeyboardShrinkRepro,
         name: 'Issue #1096 Keyboard Shrink Repro',
       },
@@ -172,12 +194,20 @@ const sections: { title: string; data: Example[] }[] = [
         name: 'Issue #1156 Nested Horizontal Scroll Repro',
       },
       {
+        component: Issue1199ScrollStateRepro,
+        name: 'Issue #1199 Scroll State Repro',
+      },
+      {
         component: Issue424SwipeCancelsPressRepro,
         name: 'Issue #424 Swipe Cancels Press Repro',
       },
       {
         component: Issue965PagesBeforeCurrentRepro,
         name: 'Issue #965 Pages Before Current Repro',
+      },
+      {
+        component: PR1194RemountInitialPageRepro,
+        name: 'PR #1194 Remount InitialPage Repro',
       },
     ],
   },
@@ -290,6 +320,7 @@ export function Navigation() {
               key={index}
               name={example.name}
               component={example.component}
+              options={example.options}
             />
           ))}
           <NavigationStack.Screen
@@ -307,6 +338,10 @@ export function Navigation() {
           <NavigationStack.Screen
             name="Issue #1142 Pager List"
             component={Issue1142PagerListScreen}
+          />
+          <NavigationStack.Screen
+            name="PR #1194 Remount InitialPage Cover"
+            component={PR1194RemountInitialPageCoverScreen}
           />
         </NavigationStack.Navigator>
       </NavigationContainer>

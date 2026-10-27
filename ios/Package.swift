@@ -49,9 +49,11 @@ let package = Package(
             path: ".",
             sources: [
                 "Extensions.swift",
+                "PagerGestureObserver.swift",
                 "PagerScrollDelegate.swift",
                 "PagerView.swift",
                 "PagerViewIOS15Compat.swift",
+                "PagerViewIOS15NavigationBarCompat.swift",
                 "PagerViewProps.swift",
                 "PagerViewProvider.swift",
             ],

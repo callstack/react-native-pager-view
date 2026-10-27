@@ -319,7 +319,9 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
     // has them at full size. `PageChildViewController` reads *this* view's
     // insets (the RN screen's, including a native search bar) and re-injects
     // them; the two are independent.
-    let hostingController = UIHostingController(
+    // iOS 15 only, see PagerViewIOS15NavigationBarCompat.swift
+    // (delete together with the iOS 15 support).
+    let hostingController = PagerViewIOS15NavigationBarCompat.makeHostingController(
       rootView: PagerView(props: props, delegate: self),
       ignoreSafeArea: true
     )
