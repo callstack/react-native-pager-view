@@ -60,9 +60,15 @@ import {
 } from './gh-issues/Issue1142SearchBarInsetRepro';
 import { Issue1154PageChangeFocusRepro } from './gh-issues/Issue1154PageChangeFocusRepro';
 import { Issue1156NestedHorizontalScrollRepro } from './gh-issues/Issue1156NestedHorizontalScrollRepro';
+import { Issue1199ScrollStateRepro } from './gh-issues/Issue1199ScrollStateRepro';
 import { Issue1202BlankPageRepro } from './gh-issues/Issue1202BlankPageRepro';
+import { Issue219EmptyPagerRepro } from './gh-issues/Issue219EmptyPagerRepro';
 import { Issue424SwipeCancelsPressRepro } from './gh-issues/Issue424SwipeCancelsPressRepro';
 import { Issue965PagesBeforeCurrentRepro } from './gh-issues/Issue965PagesBeforeCurrentRepro';
+import {
+  PR1194RemountInitialPageCoverScreen,
+  PR1194RemountInitialPageRepro,
+} from './gh-issues/PR1194RemountInitialPageRepro';
 import { colors, radius } from './theme';
 
 function BasicPagerViewExampleScreen() {
@@ -190,8 +196,16 @@ const sections: { title: string; data: Example[] }[] = [
         name: 'Issue #1156 Nested Horizontal Scroll Repro',
       },
       {
+        component: Issue1199ScrollStateRepro,
+        name: 'Issue #1199 Scroll State Repro',
+      },
+      {
         component: Issue1202BlankPageRepro,
         name: 'Issue #1202 Blank Page Repro',
+      },
+      {
+        component: Issue219EmptyPagerRepro,
+        name: 'Issue #219 Empty Pager Repro',
       },
       {
         component: Issue424SwipeCancelsPressRepro,
@@ -200,6 +214,10 @@ const sections: { title: string; data: Example[] }[] = [
       {
         component: Issue965PagesBeforeCurrentRepro,
         name: 'Issue #965 Pages Before Current Repro',
+      },
+      {
+        component: PR1194RemountInitialPageRepro,
+        name: 'PR #1194 Remount InitialPage Repro',
       },
     ],
   },
@@ -330,6 +348,10 @@ export function Navigation() {
           <NavigationStack.Screen
             name="Issue #1142 Pager List"
             component={Issue1142PagerListScreen}
+          />
+          <NavigationStack.Screen
+            name="PR #1194 Remount InitialPage Cover"
+            component={PR1194RemountInitialPageCoverScreen}
           />
         </NavigationStack.Navigator>
       </NavigationContainer>

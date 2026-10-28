@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshotFlow
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -33,6 +34,10 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
 import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.lifecycle.setViewTreeLifecycleOwner
+import androidx.savedstate.SavedStateRegistry
+import androidx.savedstate.SavedStateRegistryController
+import androidx.savedstate.SavedStateRegistryOwner
+import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.NativeGestureUtil
@@ -99,6 +104,13 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       // resolves it instead of walking up to the ambient (and repeatedly
       // destroyed) Fragment view-tree Lifecycle - see the field comment above.
       setViewTreeLifecycleOwner(composeLifecycleOwner)
+      // Same for saved state. Compose would otherwise store the pager's
+      // rememberSaveable state (current page, page view state) in the host
+      // Fragment's SavedStateRegistry under a key derived from this view's
+      // id. It has none, so every pager shares one key and a remounted pager
+      // restores the previous pager's page instead of using initialPage.
+      // React owns the pager state, so the owner's registry is never saved.
+      setViewTreeSavedStateRegistryOwner(composeLifecycleOwner)
       setViewCompositionStrategy(
         ViewCompositionStrategy.DisposeOnLifecycleDestroyed(composeLifecycleOwner)
       )
@@ -198,6 +210,33 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
     super.onLayout(changed, left, top, right, bottom)
     measureAndLayoutComposeView()
+  }
+
+  // React Native's parent views drop layout requests, so the pager isn't laid out again when
+  // Compose asks for it, like when pages arrive in an empty pager, and stays blank until a
+  // touch (see #219). Lay it out again at its current size.
+  override fun requestLayout() {
+    super.requestLayout()
+    post { layoutAtCurrentSize() }
+  }
+
+  // A configuration change handled in place, like dark mode, calls this on every view instead
+  // of requestLayout(), with the same result.
+  override fun forceLayout() {
+    super.forceLayout()
+    post { layoutAtCurrentSize() }
+  }
+
+  private fun layoutAtCurrentSize() {
+    // dispose() requests a layout too, and measuring then would create a new composition.
+    if (composeView?.hasComposition != true || width <= 0 || height <= 0) {
+      return
+    }
+    measure(
+      MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+      MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+    )
+    layout(left, top, right, bottom)
   }
 
   private fun measureAndLayoutComposeView() {
@@ -548,8 +587,15 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
           .drop(1)
           .collect { inProgress ->
             if (!inProgress) {
-              dispatchPageScroll(pagerState.settledPage, 0f)
-              dispatchScrollState("idle")
+              // A drag's scroll ends before the fling that follows it starts
+              // its own, in a coroutine launched after DragInteraction.Stop,
+              // so isScrollInProgress is briefly false between the two. Wait a
+              // frame so that gap isn't reported as the pager coming to rest.
+              withFrameNanos {}
+              if (!pagerState.isScrollInProgress) {
+                dispatchPageScroll(pagerState.settledPage, 0f)
+                dispatchScrollState("idle")
+              }
             }
           }
       }
@@ -557,14 +603,11 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         pagerState.interactionSource.interactions.collect { interaction ->
           when (interaction) {
             is DragInteraction.Start -> dispatchScrollState("dragging")
+            // Every drag ends in a fling that snaps to a page, even when
+            // released at rest, and its end is reported as idle above. The
+            // fling hasn't started yet, so isScrollInProgress can't tell.
             is DragInteraction.Stop,
-            is DragInteraction.Cancel -> {
-              if (pagerState.isScrollInProgress) {
-                dispatchScrollState("settling")
-              } else {
-                dispatchScrollState("idle")
-              }
-            }
+            is DragInteraction.Cancel -> dispatchScrollState("settling")
           }
         }
       }
@@ -692,17 +735,28 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 // A stable Lifecycle that follows the currently attached host through
 // CREATED/STARTED/RESUMED, but only moves to DESTROYED when destroy() is
 // called explicitly. This lets it survive react-native-screens replacing the
-// ambient Fragment view-tree owner (see the field comment above).
-internal class ComposeViewLifecycleOwner : LifecycleOwner, LifecycleEventObserver {
-  private val registry = LifecycleRegistry(this).apply {
-    currentState = Lifecycle.State.CREATED
-  }
+// ambient Fragment view-tree owner (see the field comment above). It also
+// provides an empty SavedStateRegistry that is never saved, so nothing in the
+// composition is persisted or restored.
+internal class ComposeViewLifecycleOwner :
+  LifecycleOwner, SavedStateRegistryOwner, LifecycleEventObserver {
+  private val registry = LifecycleRegistry(this)
+  private val savedStateController = SavedStateRegistryController.create(this)
   private var hostLifecycle: Lifecycle? = null
   private var isAttached = false
   private var isDestroyed = false
 
+  init {
+    // Must run while the Lifecycle is still INITIALIZED.
+    savedStateController.performRestore(null)
+    registry.currentState = Lifecycle.State.CREATED
+  }
+
   override val lifecycle: Lifecycle
     get() = registry
+
+  override val savedStateRegistry: SavedStateRegistry
+    get() = savedStateController.savedStateRegistry
 
   fun attach(lifecycle: Lifecycle?) {
     if (isDestroyed) {
