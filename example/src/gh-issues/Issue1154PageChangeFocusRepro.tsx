@@ -8,6 +8,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Button,
   Keyboard,
+  KeyboardAvoidingView,
   StyleSheet,
   Text,
   TextInput,
@@ -16,8 +17,8 @@ import {
 } from 'react-native';
 import PagerView from 'react-native-pager-view';
 
-const PAGES = ['Page 0', 'Page 1', 'Page 2'];
-const PAGE_COLORS = ['#fde2e2', '#e2fde6', '#e2e8fd'];
+const PAGES = ['Page 0', 'Page 1', 'Page 2', 'Page 3'];
+const PAGE_COLORS = ['#fde2e2', '#e2fde6', '#e2e8fd', '#fdf3e2'];
 
 export function Issue1154PageChangeFocusRepro() {
   const pagerRef = useRef<PagerView>(null);
@@ -29,13 +30,24 @@ export function Issue1154PageChangeFocusRepro() {
   const [autoFocusMode, setAutoFocusMode] = useState<
     'off' | 'onSelected' | 'onPress'
   >('off');
+  const [avoidsKeyboard, setAvoidsKeyboard] = useState(false);
   const inputRefs = useRef<Array<TextInputInstance | null>>([]);
+  const lastRest = useRef(0);
+  const lateCommand = useRef<ReturnType<typeof setTimeout> | null>(null);
   const log = (event: string) =>
     setEvents((current) => [...current.slice(-11), event]);
 
-  // Each page command starts a fresh log, so a check waiting for the pager to
-  // report stopping cannot match a report from an earlier command.
-  const startCommand = () => setEvents([]);
+  // Each page command starts a fresh log and drops a follow-up left armed, so
+  // a check waiting for the pager to report stopping cannot match a report
+  // from an earlier command.
+  const startCommand = () => {
+    setEvents([]);
+    followUpCommand.current = null;
+    if (lateCommand.current) {
+      clearTimeout(lateCommand.current);
+      lateCommand.current = null;
+    }
+  };
 
   const goToPageThen = (first: number, second: number) => {
     startCommand();
@@ -44,6 +56,9 @@ export function Issue1154PageChangeFocusRepro() {
     followUpCommand.current =
       selectedPage === first ? null : { at: first, go: second };
     pagerRef.current?.setPage(first);
+    if (autoFocusMode === 'onPress') {
+      inputRefs.current[first]?.focus();
+    }
   };
 
   useEffect(() => {
@@ -58,6 +73,9 @@ export function Issue1154PageChangeFocusRepro() {
     return () => {
       show.remove();
       hide.remove();
+      if (lateCommand.current) {
+        clearTimeout(lateCommand.current);
+      }
     };
   }, []);
 
@@ -99,12 +117,33 @@ export function Issue1154PageChangeFocusRepro() {
           onPress={() => goToPageThen(2, 1)}
         />
         <Button
+          testID="issue-1154-go-1-then-2"
+          title="Go 1 then 2"
+          onPress={() => goToPageThen(1, 2)}
+        />
+        <Button
           testID="issue-1154-go-1-and-0"
           title="Go 1 and 0"
           onPress={() => {
             startCommand();
             pagerRef.current?.setPage(1);
             pagerRef.current?.setPage(0);
+          }}
+        />
+        <Button
+          testID="issue-1154-go-1-then-2-late"
+          title="Go 1 then 2 late"
+          onPress={() => {
+            startCommand();
+            pagerRef.current?.setPage(1);
+            inputRefs.current[1]?.focus();
+            // Long enough for the focus to land, so the blur before a page
+            // change is the one that catches it. The redirect lands the same
+            // way if the slide finishes first, which keeps this off the clock.
+            lateCommand.current = setTimeout(
+              () => pagerRef.current?.setPage(2),
+              200
+            );
           }}
         />
       </View>
@@ -117,15 +156,27 @@ export function Issue1154PageChangeFocusRepro() {
             onPress={() => setAutoFocusMode(mode)}
           />
         ))}
+        <Button
+          testID="issue-1154-avoid"
+          title={`${avoidsKeyboard ? '* ' : ''}avoid`}
+          onPress={() => setAvoidsKeyboard((current) => !current)}
+        />
       </View>
       <PagerView
         ref={pagerRef}
         style={styles.pager}
+        onPageScroll={(e) => {
+          // The pager sends the snapped page with no offset just before it
+          // reports stopping, which is where it actually came to rest.
+          if (e.nativeEvent.offset === 0) {
+            lastRest.current = e.nativeEvent.position;
+          }
+        }}
         onPageScrollStateChanged={(e) => {
           // Only idle is logged: a re-render while the finger is still down
           // changes how far the pager travels.
           if (e.nativeEvent.pageScrollState === 'idle') {
-            log('state idle');
+            log('state idle at ' + String(lastRest.current));
           }
         }}
         onPageSelected={(e) => {
@@ -147,8 +198,12 @@ export function Issue1154PageChangeFocusRepro() {
         }}
       >
         {PAGES.map((label, i) => (
-          <View
+          <KeyboardAvoidingView
             key={label}
+            // A page that grows and shrinks with the keyboard, which is what an
+            // app with an input on a page does. The blur before a slide closes
+            // the keyboard, so the page relayouts as the slide starts.
+            behavior={avoidsKeyboard ? 'padding' : undefined}
             style={[styles.page, { backgroundColor: PAGE_COLORS[i] }]}
           >
             <Text testID={`issue-1154-label-${i}`} style={styles.pageLabel}>
@@ -170,7 +225,7 @@ export function Issue1154PageChangeFocusRepro() {
                 log(`blur ${i}`);
               }}
             />
-          </View>
+          </KeyboardAvoidingView>
         ))}
       </PagerView>
     </View>
@@ -192,6 +247,7 @@ const styles = StyleSheet.create({
   },
   buttons: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-around',
     paddingBottom: 12,
   },

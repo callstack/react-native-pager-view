@@ -10,8 +10,14 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   weak var originalDelegate: UICollectionViewDelegate?
   weak var delegate: PagerViewProviderDelegate?
   var orientation: UICollectionView.ScrollDirection = .horizontal
-  /// Called once a drag has come to rest, after `TabView` has seen it.
-  var onDragEnded: (() -> Void)?
+  /// Called once the pager has come to rest on a page, after `TabView`'s own
+  /// handler has seen the same event. The page is the physical one, which a
+  /// right-to-left layout mirrors.
+  var onRest: ((Int) -> Void)?
+  /// Page the last rest was reported for, so a slide reports its arrival once.
+  /// A scroll-end callback is the final word and reports anyway, since the page
+  /// check downstream may have dropped the earlier one.
+  private var lastRestedPage: Int?
   
   private let handledSelectors: Set<Selector> = [
     #selector(scrollViewDidScroll(_:)),
@@ -36,6 +42,13 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
     
     delegate?.onPageScroll(position: position, offset: offset)
     originalDelegate?.scrollViewDidScroll?(scrollView)
+    // A slide another command redirects lands after its last scroll-end
+    // callback, and that callback arrives between pages, so the offset is the
+    // only report left of that landing. A finger on the pager or a
+    // deceleration means it is still on its way, and both end in a callback.
+    if !scrollView.isTracking, !scrollView.isDecelerating {
+      notifyRestOnPageBoundary(scrollView)
+    }
   }
 
   /// Emits a final onPageScroll with offset 0 before transitioning to idle,
@@ -52,6 +65,29 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
 
     delegate?.onPageScrollStateChanged(state: .idle)
   }
+
+  /// A slide cut short by another command stops between pages, which is not a
+  /// rest: the pager is still on its way somewhere.
+  private func notifyRestOnPageBoundary(_ scrollView: UIScrollView, fromScrollEnd: Bool = false) {
+    let isHorizontal = orientation == .horizontal
+    let pageSize = isHorizontal ? scrollView.frame.width : scrollView.frame.height
+    let contentOffset = isHorizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
+
+    guard pageSize > 0 else {
+      return
+    }
+    let offsetInPage = abs(contentOffset.truncatingRemainder(dividingBy: pageSize))
+    guard offsetInPage < 1 || pageSize - offsetInPage < 1 else {
+      lastRestedPage = nil
+      return
+    }
+    let page = Int(round(contentOffset / pageSize))
+    guard fromScrollEnd || lastRestedPage != page else {
+      return
+    }
+    lastRestedPage = page
+    onRest?(page)
+  }
   
   func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
     delegate?.onPageScrollStateChanged(state: .dragging)
@@ -66,12 +102,13 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
     emitIdleWithCleanOffset(scrollView)
     originalDelegate?.scrollViewDidEndDecelerating?(scrollView)
-    onDragEnded?()
+    notifyRestOnPageBoundary(scrollView, fromScrollEnd: true)
   }
 
   func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
     emitIdleWithCleanOffset(scrollView)
     originalDelegate?.scrollViewDidEndScrollingAnimation?(scrollView)
+    notifyRestOnPageBoundary(scrollView, fromScrollEnd: true)
   }
 
   func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -80,7 +117,7 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
     }
     originalDelegate?.scrollViewDidEndDragging?(scrollView, willDecelerate: decelerate)
     if !decelerate {
-      onDragEnded?()
+      notifyRestOnPageBoundary(scrollView, fromScrollEnd: true)
     }
   }
   
