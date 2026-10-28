@@ -8,7 +8,7 @@ import type {
 type PageScrollStateChangedNativeEvent =
   ReactNative.NativeSyntheticEvent<PageScrollStateChangedNativeEventData>;
 
-import { PagerView } from './PagerView';
+import { PagerView, type PagerViewRef } from './PagerView';
 
 import { Animated } from 'react-native';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -24,7 +24,7 @@ type UsePagerViewParams = {
 export function usePagerView(
   { pagesAmount }: UsePagerViewParams = { pagesAmount: 0 }
 ) {
-  const ref = useRef<PagerView>(null);
+  const ref = useRef<PagerViewRef>(null);
   const [pages, setPages] = useState<number[]>(
     new Array(pagesAmount).fill('').map((_v, index) => index)
   );

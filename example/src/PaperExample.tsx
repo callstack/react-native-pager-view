@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Image, StyleSheet, Text, View, SafeAreaView } from 'react-native';
 
-import PagerView from 'react-native-pager-view';
+import PagerView, { type PagerViewRef } from 'react-native-pager-view';
 import { PAGES, createPage } from './utils';
 import { LikeCount } from './component/LikeCount';
 import type { CreatePage } from './utils';
@@ -23,7 +23,7 @@ type State = {
 };
 
 class PaperExample extends React.Component<any, State> {
-  viewPager = React.createRef<PagerView>();
+  viewPager = React.createRef<PagerViewRef>();
 
   constructor(props: any) {
     super(props);

@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, SafeAreaView, Animated } from 'react-native';
 import PagerView, {
   PagerViewOnPageScrollEventData,
+  type PagerViewRef,
 } from 'react-native-pager-view';
 
 import {
@@ -41,7 +42,7 @@ const INTRO_DATA = [
 ];
 
 export default function PaginationDotsExample() {
-  const ref = React.useRef<PagerView>(null);
+  const ref = React.useRef<PagerViewRef>(null);
   const scrollOffsetAnimatedValue = React.useRef(new Animated.Value(0)).current;
   const positionAnimatedValue = React.useRef(new Animated.Value(0)).current;
   const progress = Animated.add(
