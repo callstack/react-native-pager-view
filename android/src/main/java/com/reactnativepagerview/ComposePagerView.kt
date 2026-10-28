@@ -39,6 +39,7 @@ import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.NativeGestureUtil
 import com.reactnativepagerview.event.PageScrollEvent
@@ -83,6 +84,8 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private var isGestureResolved = false
   private var didStartNativeGesture = false
   private val scrollCommandState = mutableStateOf<ScrollCommand?>(null)
+  private var pendingScrollCommand: Runnable? = null
+  private var isDestroyed = false
   private var lastEmittedScrollState: String? = null
   private var lastEmittedPageSelected: Int? = null
 
@@ -150,6 +153,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   fun dispose() {
+    isDestroyed = true
     composeLifecycleOwner.destroy()
   }
 
@@ -467,14 +471,21 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   fun setCurrentItem(selectedPage: Int, animated: Boolean) {
-    if (selectedPage < 0 || selectedPage >= pages.size) {
-      return
+    // Fabric runs view commands before the mount items of the same batch, so a setPage sent from
+    // an effect gets here before the pages its commit added (see #1196). Check the index once
+    // the batch is done, on the main handler: View.post would wait while the pager is detached.
+    val command = Runnable {
+      if (!isDestroyed && selectedPage in pages.indices) {
+        scrollCommandState.value = ScrollCommand(
+          id = nextScrollCommandId++,
+          page = selectedPage,
+          animated = animated
+        )
+      }
     }
-    scrollCommandState.value = ScrollCommand(
-      id = nextScrollCommandId++,
-      page = selectedPage,
-      animated = animated
-    )
+    pendingScrollCommand?.let { UiThreadUtil.getUiThreadHandler().removeCallbacks(it) }
+    pendingScrollCommand = command
+    UiThreadUtil.getUiThreadHandler().post(command)
   }
 
   private fun dispatchPageSelected(position: Int) {
@@ -568,7 +579,6 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     LaunchedEffect(pagerState) {
       launch {
         snapshotFlow { pagerState.settledPage }
-          .drop(1)
           .collect { page ->
             currentPage = page
             dispatchPageSelected(page)
