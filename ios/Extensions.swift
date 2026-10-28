@@ -20,6 +20,9 @@ struct RepresentableView: UIViewControllerRepresentable {
 }
 
 class PageChildViewController: UIViewController {
+  private static let parentGestureRecognizerContainerSelector =
+    NSSelectorFromString("_parentGestureRecognizerContainer")
+
   var wrappedView: UIView?
 
   override func viewDidLoad() {
@@ -35,9 +38,27 @@ class PageChildViewController: UIViewController {
     propagateSafeArea()
   }
 
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    resolveGestureRecognizerContainers()
+  }
+
   override func viewSafeAreaInsetsDidChange() {
     super.viewSafeAreaInsetsDidChange()
     propagateSafeArea()
+  }
+
+  /// After a SwiftUI update, the paging collection's platform view host answers
+  /// nil to the first `_parentGestureRecognizerContainer` query, so a touch
+  /// synthesized in-process (Detox) collects no gesture recognizers and React
+  /// Native never sees it. Walking the chain once resolves it before the first
+  /// touch.
+  private func resolveGestureRecognizerContainers() {
+    let selector = Self.parentGestureRecognizerContainerSelector
+    var container: AnyObject? = view
+    while let current = container, current.responds(to: selector) {
+      container = current.perform(selector)?.takeUnretainedValue()
+    }
   }
 
   /// Makes this page's `safeAreaInsets` match the pager view's overlap with
