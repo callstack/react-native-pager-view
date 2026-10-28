@@ -97,7 +97,8 @@
     "modulePathIgnorePatterns": [
       "<rootDir>/example/",
       "<rootDir>/e2e/",
-      "<rootDir>/lib/"
+      "<rootDir>/lib/",
+      "<rootDir>/docs/"
     ]
   },
   "prettier": {
