@@ -48,15 +48,16 @@ class PageChildViewController: UIViewController {
     propagateSafeArea()
   }
 
-  /// After a SwiftUI update, the paging collection's platform view host answers
-  /// nil to the first `_parentGestureRecognizerContainer` query, so a touch
-  /// synthesized in-process (Detox) collects no gesture recognizers and React
-  /// Native never sees it. Walking the chain once resolves it before the first
-  /// touch.
+  /// A SwiftUI host answers nil to its first `_parentGestureRecognizerContainer`
+  /// query after the page appears, which leaves a touch synthesized in-process
+  /// (Detox) without gesture recognizers. Asking first resolves the chain.
   private func resolveGestureRecognizerContainers() {
     let selector = Self.parentGestureRecognizerContainerSelector
+    var visited = Set<ObjectIdentifier>()
     var container: AnyObject? = view
-    while let current = container, current.responds(to: selector) {
+    while let current = container,
+          current.responds(to: selector),
+          visited.insert(ObjectIdentifier(current)).inserted {
       container = current.perform(selector)?.takeUnretainedValue()
     }
   }
