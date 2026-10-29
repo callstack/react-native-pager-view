@@ -99,6 +99,9 @@ For more examples, see the [example app](example/src): nested pagers, keyboard h
 | `layoutDirection: 'ltr' \| 'rtl' \| 'locale'`                              | Layout direction. Use `ltr` or `rtl` to set it explicitly, or `locale` to follow `I18nManager.isRTL`. Defaults to `locale`.             |   both   |
 | `pageMargin: number`                                                       | Blank space between pages.                                                                                                              |   both   |
 | `keyboardDismissMode: 'none' \| 'on-drag'`                                 | Whether the keyboard is dismissed when the user drags the pager. Defaults to `none`.                                                    |   both   |
+| `lazy: boolean`                                                            | Mounts a page's content only when the pager gets near it. See [Lazy pages](#lazy-pages). Defaults to `false`.                           |   both   |
+| `lazyPreloadDistance: number`                                              | With `lazy`, how many pages on each side of the current page are mounted ahead of time. Defaults to `1`.                                |   both   |
+| `renderLazyPlaceholder: (index: number) => ReactNode`                      | With `lazy`, what a page shows before its content is mounted.                                                                           |   both   |
 | `onPageScroll: (e: PagerViewOnPageScrollEvent) => void`                    | Called while moving between pages, either from a swipe or from an animated `setPage`. `e.nativeEvent` contains `position` and `offset`. |   both   |
 | `onPageSelected: (e: PagerViewOnPageSelectedEvent) => void`                | Called once the pager settles on a page, and once on mount for `initialPage`. `e.nativeEvent.position` is the selected index.           |   both   |
 | `onPageScrollStateChanged: (e: PageScrollStateChangedNativeEvent) => void` | Called when the scroll state changes. `e.nativeEvent.pageScrollState` is `idle`, `dragging` or `settling`.                              |   both   |
@@ -121,6 +124,36 @@ The ref is the native pager view with these methods attached, so native view met
 ### Types
 
 The package exports these TypeScript types: `PagerViewRef` (the ref type), `PagerViewMethods`, `PagerViewProps`, `PagerViewOnPageScrollEvent`, `PagerViewOnPageSelectedEvent`, `PageScrollStateChangedNativeEvent`, and their `*EventData` payloads.
+
+## Lazy pages
+
+By default, every page renders on mount. With `lazy`, a page renders only once the pager is within `lazyPreloadDistance` pages of it. After that it stays mounted, so it keeps its scroll position and state.
+
+Pages are tracked by `key`, so adding or removing pages doesn't remount the others.
+
+```tsx
+<PagerView
+  style={{ flex: 1 }}
+  lazy
+  renderLazyPlaceholder={() => (
+    <View style={{ flex: 1, justifyContent: 'center' }}>
+      <ActivityIndicator />
+    </View>
+  )}
+>
+  {items.map((item) => (
+    <View key={item.id}>
+      <Item item={item} />
+    </View>
+  ))}
+</PagerView>
+```
+
+`renderLazyPlaceholder` shows until a page mounts. With the default distance you'll rarely see it: only when an animated `setPage` passes pages that aren't mounted yet, at the start of a swipe with `lazyPreloadDistance={0}`, or when the JS thread is busy. It isn't a loading state for the page's data.
+
+`offscreenPageLimit` is unrelated. It only limits how many pages the Android pager composes, and React still renders every page.
+
+See the [full example](example/src/LazyPagerViewExample.tsx).
 
 ## `usePagerView` hook
 
