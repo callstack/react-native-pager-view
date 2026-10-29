@@ -5,7 +5,7 @@
     "": {
       "name": "react-native-pager-view-docs",
       "dependencies": {
-        "@callstack/rspress-preset": "0.6.6",
+        "@callstack/rspress-preset": "0.6.8",
         "@rspress/core": "^2.0.23",
       },
       "devDependencies": {
@@ -15,9 +15,9 @@
     },
   },
   "packages": {
-    "@callstack/rspress-preset": ["@callstack/rspress-preset@0.6.6", "", { "dependencies": { "@callstack/rspress-theme": "0.6.6", "@rspress/plugin-sitemap": "^2.0.8", "@vercel/analytics": "^2.0.1", "rsbuild-plugin-open-graph": "^1.1.2", "zod": "^4.3.6" }, "peerDependencies": { "@rspress/core": "^2.0.8" } }, "sha512-JvhV9eYZLx3maNOqBdSQOsteg2kMH+OWUEGsItP95AEp9ht7mpk4KZXS1I2AuRvq3PKfYw6PTYtsjOzWQKHP+w=="],
+    "@callstack/rspress-preset": ["@callstack/rspress-preset@0.6.8", "", { "dependencies": { "@callstack/rspress-theme": "0.6.8", "@rspress/plugin-sitemap": "^2.0.8", "@vercel/analytics": "^2.0.1", "rsbuild-plugin-open-graph": "^1.1.2", "zod": "^4.3.6" }, "peerDependencies": { "@rspress/core": "^2.0.8" } }, "sha512-UcEbuRENFK6ATdkcX5dhm5L93/ENd4N7ABZaPWHNLRB4dE3Tcq/XY0zV0akL+1HkBulx1go9A2PFolsl/MYIoQ=="],
 
-    "@callstack/rspress-theme": ["@callstack/rspress-theme@0.6.6", "", { "peerDependencies": { "@rspress/core": "^2.0.8", "react": "^19.2.4", "react-dom": "^19.2.4" } }, "sha512-B1A9fiU8Nk7629x/7mAdFDjpXJgLAQNM2eGNAT0YkAMMJu9EXntLUbiT7wlHc5Y6w1XESn5wm3YQnHySpLQKbg=="],
+    "@callstack/rspress-theme": ["@callstack/rspress-theme@0.6.8", "", { "peerDependencies": { "@rspress/core": "^2.0.8", "react": "^19.2.4", "react-dom": "^19.2.4" } }, "sha512-CjD7e+K4rG2kg2dP8HlJMRJrCXVFkkDcpS15K4lMWQF/xgRzdtsIrF2K+8ZldF3WodRm2JfFfZq9auxwCTM2tg=="],
 
     "@emnapi/core": ["@emnapi/core@1.11.3", "", { "dependencies": { "@emnapi/wasi-threads": "1.2.3", "tslib": "^2.4.0" } }, "sha512-zLpS5asjEb7lq8jYLq37N6XKaE41DIexlY1rF/z4/tIl3wo13Sqm28fRyfIsKZD+NZ8mM5RoKkpW/rBcuoSZSg=="],
 
