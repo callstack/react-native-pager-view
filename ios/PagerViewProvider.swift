@@ -74,26 +74,26 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
     super.didMoveToWindow()
     if window != nil {
       setupView()
+    } else {
+      syncParentViewController(to: nil)
     }
   }
 
   override func willMove(toWindow newWindow: UIWindow?) {
     super.willMove(toWindow: newWindow)
     if newWindow != nil {
-      syncParentViewController()
+      syncParentViewController(to: reactViewController())
     }
   }
 
   override func willMove(toSuperview newSuperview: UIView?) {
-    if let parentViewController = newSuperview?.reactViewController() {
-      syncParentViewController(to: parentViewController)
-    }
+    syncParentViewController(to: newSuperview?.reactViewController())
     super.willMove(toSuperview: newSuperview)
   }
 
   override func didMoveToSuperview() {
     super.didMoveToSuperview()
-    syncParentViewController()
+    syncParentViewController(to: reactViewController())
   }
 
   override func layoutSubviews() {
@@ -208,13 +208,14 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
 
   private func setupView() {
     if self.hostingController != nil {
-      syncParentViewController()
+      syncParentViewController(to: reactViewController())
       return
     }
 
-    guard let parentViewController = reactViewController() else {
-      return
-    }
+    // Window-level containers, such as FullWindowOverlay, do not have a
+    // controller in their responder chain. The hosting view can still render
+    // there, but must not be attached to an unrelated controller.
+    let parentViewController = reactViewController()
 
     // The hosting view must not carry a safe area: `PagerView`'s `GeometryReader`
     // is measured inside it, and every page is framed to that measurement, so the
@@ -230,7 +231,7 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
     )
     self.hostingController = hostingController
 
-    parentViewController.addChild(hostingController)
+    parentViewController?.addChild(hostingController)
     hostingController.view.backgroundColor = .clear
     addSubview(hostingController.view)
 
@@ -243,16 +244,15 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
   /// SwiftUI can recreate the page controller around this React view while
   /// preserving the view itself. Keep the hosting controller attached to the
   /// current page controller so UIKit's view-controller hierarchy stays valid.
-  private func syncParentViewController(to parentViewController: UIViewController? = nil) {
+  private func syncParentViewController(to parentViewController: UIViewController?) {
     guard let hostingController,
-          let parentViewController = parentViewController ?? reactViewController(),
           hostingController.parent !== parentViewController else {
       return
     }
 
     hostingController.willMove(toParent: nil)
     hostingController.removeFromParent()
-    parentViewController.addChild(hostingController)
+    parentViewController?.addChild(hostingController)
     hostingController.didMove(toParent: parentViewController)
   }
 }
