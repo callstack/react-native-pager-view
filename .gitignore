@@ -64,6 +64,7 @@ e2e/.e2e/
 #Example
 example/ios/Pods
 example/vendor
+example/dist/
 .lefthookrc
 lefthook.yml
 

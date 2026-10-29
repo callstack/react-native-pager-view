@@ -2,12 +2,14 @@ import React, { useImperativeHandle, useRef } from 'react';
 import { I18nManager, Keyboard, Platform } from 'react-native';
 import type * as ReactNative from 'react-native';
 
+import { useLazyPages } from './useLazyPages';
 import { childrenWithOverriddenStyle } from './utils';
 
 import PagerViewNativeComponent, {
   Commands as PagerViewNativeCommands,
   type OnPageScrollEventData,
   type OnPageScrollStateChangedEventData,
+  type OnPageSelectedEventData,
   type NativeProps,
 } from './PagerViewNativeComponent';
 
@@ -37,13 +39,23 @@ export type PagerViewMethods = {
 export type PagerViewRef = React.ComponentRef<typeof PagerViewNativeComponent> &
   PagerViewMethods;
 
-export type PagerViewProps = Omit<NativeProps, 'layoutDirection'> & {
-  /**
-   * `'locale'` follows `I18nManager.isRTL`; native only receives `'ltr' | 'rtl'`.
-   */
-  layoutDirection?: 'ltr' | 'rtl' | 'locale';
-  ref?: React.Ref<PagerViewRef>;
+type LazyProps = {
+  /** Mounts a page's content only when the pager gets near it. */
+  lazy?: boolean;
+  /** With `lazy`, how many pages on each side are mounted ahead of time. */
+  lazyPreloadDistance?: number;
+  /** With `lazy`, what a page shows before its content is mounted. */
+  renderLazyPlaceholder?: (index: number) => React.ReactNode;
 };
+
+export type PagerViewProps = Omit<NativeProps, 'layoutDirection'> &
+  LazyProps & {
+    /**
+     * `'locale'` follows `I18nManager.isRTL`; native only receives `'ltr' | 'rtl'`.
+     */
+    layoutDirection?: 'ltr' | 'rtl' | 'locale';
+    ref?: React.Ref<PagerViewRef>;
+  };
 
 function deduceLayoutDirection(
   layoutDirection: PagerViewProps['layoutDirection']
@@ -74,10 +86,23 @@ function deduceLayoutDirection(
  * </PagerView>
  * ```
  */
-export function PagerView({ ref, ...props }: PagerViewProps) {
+export function PagerView({
+  ref,
+  lazy = false,
+  lazyPreloadDistance = 1,
+  renderLazyPlaceholder,
+  ...props
+}: PagerViewProps) {
   const nativeRef =
     useRef<React.ComponentRef<typeof PagerViewNativeComponent>>(null);
   const isScrolling = useRef(false);
+  const { children, setCurrent, onScroll, onSelect } = useLazyPages({
+    lazy,
+    preloadDistance: lazyPreloadDistance,
+    initialPage: props.initialPage ?? 0,
+    children: props.children,
+    renderPlaceholder: renderLazyPlaceholder,
+  });
 
   // Methods go on the native view, not a wrapper, which Animated needs.
   useImperativeHandle<PagerViewRef | null, PagerViewRef | null>(
@@ -89,11 +114,13 @@ export function PagerView({ ref, ...props }: PagerViewProps) {
       }
       return Object.assign(instance, {
         setPage: (selectedPage: number) => {
+          setCurrent?.(selectedPage);
           if (nativeRef.current) {
             PagerViewNativeCommands.setPage(nativeRef.current, selectedPage);
           }
         },
         setPageWithoutAnimation: (selectedPage: number) => {
+          setCurrent?.(selectedPage);
           if (nativeRef.current) {
             PagerViewNativeCommands.setPageWithoutAnimation(
               nativeRef.current,
@@ -112,13 +139,15 @@ export function PagerView({ ref, ...props }: PagerViewProps) {
         pagerView: instance,
       });
     },
-    []
+    [setCurrent]
   );
 
   const onPageScroll = (
     e: ReactNative.NativeSyntheticEvent<OnPageScrollEventData>
   ) => {
     props.onPageScroll?.(e);
+
+    onScroll(e.nativeEvent.position, e.nativeEvent.offset, isScrolling.current);
 
     // Not implemented on iOS yet
     if (Platform.OS === 'android' && props.keyboardDismissMode === 'on-drag') {
@@ -131,6 +160,13 @@ export function PagerView({ ref, ...props }: PagerViewProps) {
   ) => {
     props.onPageScrollStateChanged?.(e);
     isScrolling.current = e.nativeEvent.pageScrollState === 'dragging';
+  };
+
+  const onPageSelected = (
+    e: ReactNative.NativeSyntheticEvent<OnPageSelectedEventData>
+  ) => {
+    props.onPageSelected?.(e);
+    onSelect(e.nativeEvent.position);
   };
 
   return (
@@ -146,8 +182,9 @@ export function PagerView({ ref, ...props }: PagerViewProps) {
       layoutDirection={deduceLayoutDirection(props.layoutDirection)}
       onPageScroll={onPageScroll}
       onPageScrollStateChanged={onPageScrollStateChanged}
+      onPageSelected={onPageSelected}
       onMoveShouldSetResponderCapture={() => isScrolling.current}
-      children={childrenWithOverriddenStyle(props.children, props.pageMargin)}
+      children={childrenWithOverriddenStyle(children, props.pageMargin)}
     />
   );
 }
