@@ -42,6 +42,7 @@ import {
 } from '@react-navigation/native-stack';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PagerHookExample } from './PagerHookExample';
+import { LazyPagerViewExample } from './LazyPagerViewExample';
 import { NativeDriverEventsExample } from './NativeDriverEventsExample';
 import { NestedHorizontalScrollViewExample } from './NestedHorizontalScrollViewExample';
 import {
@@ -132,6 +133,7 @@ const sections: { title: string; data: Example[] }[] = [
         component: ScrollViewInsideExample,
         name: 'ScrollView inside PagerView Example',
       },
+      { component: LazyPagerViewExample, name: 'Lazy PagerView Example' },
     ],
   },
   {
