@@ -139,6 +139,7 @@
   },
   "overrides": {
     "eslint-plugin-ft-flow": "^3.0.11",
-    "react-native-pager-view": "link:."
+    "react-native-pager-view": "link:.",
+    "agent-device": "0.21.35"
   }
 }
