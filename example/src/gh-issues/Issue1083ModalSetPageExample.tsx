@@ -10,7 +10,7 @@ import {
   type RouteProp,
 } from '@react-navigation/native';
 import { type NativeStackNavigationProp } from '@react-navigation/native-stack';
-import PagerView from 'react-native-pager-view';
+import PagerView, { type PagerViewRef } from 'react-native-pager-view';
 
 export type ModalSetPageParamList = {
   'Issue #1083 Modal SetPage Repro': undefined;
@@ -21,7 +21,7 @@ const PAGES = ['Page 0', 'Page 1', 'Page 2'];
 const PAGE_COLORS = ['#fde2e2', '#e2fde6', '#e2e8fd'];
 
 export function Issue1083ModalSetPageExample() {
-  const pagerRef = React.useRef<PagerView>(null);
+  const pagerRef = React.useRef<PagerViewRef>(null);
   const [currentPage, setCurrentPage] = React.useState(0);
   const navigation =
     useNavigation<

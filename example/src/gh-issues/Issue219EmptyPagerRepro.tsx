@@ -4,7 +4,7 @@
  */
 import React, { useRef, useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import PagerView from 'react-native-pager-view';
+import PagerView, { type PagerViewRef } from 'react-native-pager-view';
 
 const PAGES = ['A', 'B', 'C', 'D'];
 const COLORS: Record<string, string> = {
@@ -15,7 +15,7 @@ const COLORS: Record<string, string> = {
 };
 
 export function Issue219EmptyPagerRepro() {
-  const pagerRef = useRef<PagerView>(null);
+  const pagerRef = useRef<PagerViewRef>(null);
   const [count, setCount] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [events, setEvents] = useState(0);

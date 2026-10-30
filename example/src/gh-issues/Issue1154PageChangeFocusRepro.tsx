@@ -14,13 +14,13 @@ import {
   View,
   type TextInputInstance,
 } from 'react-native';
-import PagerView from 'react-native-pager-view';
+import PagerView, { type PagerViewRef } from 'react-native-pager-view';
 
 const PAGES = ['Page 0', 'Page 1', 'Page 2'];
 const PAGE_COLORS = ['#fde2e2', '#e2fde6', '#e2e8fd'];
 
 export function Issue1154PageChangeFocusRepro() {
-  const pagerRef = useRef<PagerView>(null);
+  const pagerRef = useRef<PagerViewRef>(null);
   const [selectedPage, setSelectedPage] = useState(0);
   const [focusedInput, setFocusedInput] = useState<number | null>(null);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
