@@ -1,0 +1,11 @@
+[
+  {
+    "text": "Docs",
+    "link": "/docs/getting-started/introduction",
+    "activeMatch": "^/docs/"
+  },
+  {
+    "text": "Examples",
+    "link": "https://github.com/callstack/react-native-pager-view/tree/main/example/src"
+  }
+]

@@ -1,0 +1,27 @@
+import { PackageManagerTabs } from '@theme';
+
+# Installation
+
+<PackageManagerTabs command="install react-native-pager-view" />
+
+The library is autolinked. On iOS, install the pods afterwards:
+
+```sh
+cd ios && pod install
+```
+
+## Compatibility
+
+We support the three latest React Native versions: **0.86**, **0.87** and **0.88**.
+
+:::warning New Architecture only
+Since 7.x, `react-native-pager-view` supports only the [New Architecture](https://reactnative.dev/architecture/landing-page). If your app still runs on the old architecture, use 6.x.
+:::
+
+| `react-native-pager-view` | Android implementation | iOS implementation |
+| --- | --- | --- |
+| 9.x | Jetpack Compose | SwiftUI |
+| 8.x | `ViewPager2` | SwiftUI |
+| 7.x | `ViewPager2` | `UIPageViewController` |
+
+See the [migration guide](/docs/migration) when upgrading between major versions.
