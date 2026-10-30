@@ -82,6 +82,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private var initialTouchX = 0f
   private var initialTouchY = 0f
   private var isGestureResolved = false
+  private var isGestureAcross = false
   private var didStartNativeGesture = false
   private val scrollCommandState = mutableStateOf<ScrollCommand?>(null)
   private var pendingScrollCommand: Runnable? = null
@@ -390,10 +391,8 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 
     isGestureResolved = true
     val isHorizontal = orientationState.value == Orientation.Horizontal
-    if (isHorizontal != (dx.absoluteValue > dy.absoluteValue)) {
-      return
-    }
-
+    // Compose's pager only measures its own axis, so hand a drag mostly across it to a child too.
+    isGestureAcross = isHorizontal != (dx.absoluteValue > dy.absoluteValue)
     val direction = -(if (isHorizontal) dx else dy).sign.toInt()
     val x = initialTouchX.toInt()
     val y = initialTouchY.toInt()
@@ -420,6 +419,14 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   private fun canViewScroll(view: View, direction: Int): Boolean {
+    // Both directions count, as a ScrollView at its top still takes a drag down, e.g. to refresh.
+    if (isGestureAcross) {
+      return if (orientationState.value == Orientation.Vertical) {
+        view.canScrollHorizontally(1) || view.canScrollHorizontally(-1)
+      } else {
+        view.canScrollVertically(1) || view.canScrollVertically(-1)
+      }
+    }
     if (orientationState.value == Orientation.Vertical) {
       return view.canScrollVertically(direction)
     }
