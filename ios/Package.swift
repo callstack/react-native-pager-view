@@ -51,6 +51,7 @@ let package = Package(
                 "Extensions.swift",
                 "PagerGestureObserver.swift",
                 "PagerScrollDelegate.swift",
+                "PagerScrollDelegateIOS15.swift",
                 "PagerView.swift",
                 "PagerViewIOS15Compat.swift",
                 "PagerViewIOS15NavigationBarCompat.swift",

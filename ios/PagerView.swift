@@ -9,7 +9,13 @@ import react_native_pager_view
 
 struct PagerView: View {
   @ObservedObject var props: PagerViewProps
-  @State private var scrollDelegate = PagerScrollDelegate()
+  @State private var scrollDelegate: PagerScrollDelegate = {
+    if #available(iOS 16, *) {
+      return PagerScrollDelegate()
+    }
+    // iOS 15 only, see PagerViewIOS15Compat.swift (delete together with the iOS 15 support).
+    return PagerScrollDelegateIOS15()
+  }()
   @State private var gestureObserver = PagerGestureObserver()
   @State private var didEmitInitialPageSelection = false
   weak var delegate: PagerViewProviderDelegate?
