@@ -101,7 +101,7 @@ For more examples, see the [example app](example/src): nested pagers, keyboard h
 | `onPageSelected: (e: PagerViewOnPageSelectedEvent) => void`                | Called when a new page becomes selected, and once on mount for `initialPage`. `e.nativeEvent.position` is the selected index.           |   both   |
 | `onPageScrollStateChanged: (e: PageScrollStateChangedNativeEvent) => void` | Called when the scroll state changes. `e.nativeEvent.pageScrollState` is `idle`, `dragging` or `settling`.                              |   both   |
 | `overdrag: boolean`                                                        | Allows bouncing past the first and last page. Defaults to `false`.                                                                      |   iOS    |
-| `offscreenPageLimit: number`                                               | Number of pages kept composed on each side of the visible page. When unset, the Compose pager default is used.                          | Android  |
+| `offscreenPageLimit: number`                                               | Number of pages kept composed on each side of the visible page. Defaults to `1`.                                                        | Android  |
 | `overScrollMode: 'auto' \| 'always' \| 'never'`                            | Overscroll effect at the edges. `never` disables the effect. Defaults to `auto`.                                                        | Android  |
 
 `PagerView` also accepts all standard `View` props.

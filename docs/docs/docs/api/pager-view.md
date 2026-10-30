@@ -74,7 +74,7 @@ Allows bouncing past the first and last page.
 | --- | --- | --- |
 | `number` | `1` | Android |
 
-Number of pages kept composed on each side of the visible page. When unset, the Compose pager default is used.
+Number of pages kept composed on each side of the visible page.
 
 ### `overScrollMode`
 
@@ -98,6 +98,10 @@ Called while moving between pages, either from a swipe or from an animated [`set
 | --- | --- | --- |
 | `position` | `number` | Index of the first currently visible page. While swiping from page 1 to page 2, it is `1`. |
 | `offset` | `number` | Progress from `position` to the next page, in the range `[0, 1)`. |
+
+:::note Overdrag on iOS
+On iOS with [`overdrag`](#overdrag), a bounce past the first page gives a negative `offset`, and a bounce past the last page gives a positive `offset` with `position` still on the last page.
+:::
 
 ### `onPageSelected`
 
