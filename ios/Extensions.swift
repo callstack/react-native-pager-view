@@ -168,6 +168,18 @@ extension UIView {
       bottomAnchor.constraint(equalTo: other.bottomAnchor)
     ])
   }
+
+  var firstResponderInHierarchy: UIView? {
+    if isFirstResponder {
+      return self
+    }
+    for subview in subviews {
+      if let responder = subview.firstResponderInHierarchy {
+        return responder
+      }
+    }
+    return nil
+  }
 }
 
 extension UIHostingController {

@@ -79,6 +79,21 @@ struct PagerView: View {
           scrollDelegate.delegate = delegate
           // VTabView-style rotation preserves TabView's horizontal collection view.
           scrollDelegate.orientation = .horizontal
+          scrollDelegate.onRest = { [props] restedPage in
+            // The page is physical, and a right-to-left layout mirrors it.
+            // Read the count here, before a change to the pages can shift it.
+            let page = props.layoutDirection == .rtl
+              ? props.children.count - 1 - restedPage
+              : restedPage
+            // Read the selection on the next pass, once TabView has applied it.
+            DispatchQueue.main.async {
+              // A page the pager is only passing through is not a rest.
+              guard page == props.currentPage else {
+                return
+              }
+              props.resignFirstResponder(outsidePage: page)
+            }
+          }
           collectionView.delegate = scrollDelegate
         }
 
