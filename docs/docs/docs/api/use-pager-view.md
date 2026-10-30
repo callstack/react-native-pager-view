@@ -75,7 +75,7 @@ See the [full example](https://github.com/callstack/react-native-pager-view/blob
 | --- | --- | --- |
 | `setPage` | `(page: number) => void` | Goes to `page`, with or without animation depending on `isAnimated`. |
 | `addPage` | `() => void` | Appends a page to `pages`. |
-| `removePage` | `() => void` | Removes the last page. Always keeps at least one. |
+| `removePage` | `() => void` | Removes the last page, unless it is the only one left. |
 | `toggleScroll` | `() => void` | Toggles `scrollEnabled`. |
 | `toggleAnimation` | `() => void` | Toggles `isAnimated`. |
 | `toggleOverdrag` | `() => void` | Toggles `overdrag`. |
