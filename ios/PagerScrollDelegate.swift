@@ -84,6 +84,19 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   
   func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
     originalDelegate?.collectionView?(collectionView, willDisplay: cell, forItemAt: indexPath)
+    Self.pageController(in: cell.contentView)?.reclaimWrappedViewIfOrphaned()
+  }
+
+  private static func pageController(in view: UIView) -> PageChildViewController? {
+    if let controller = view.next as? PageChildViewController {
+      return controller
+    }
+    for subview in view.subviews {
+      if let controller = pageController(in: subview) {
+        return controller
+      }
+    }
+    return nil
   }
   
   override func responds(to aSelector: Selector!) -> Bool {
