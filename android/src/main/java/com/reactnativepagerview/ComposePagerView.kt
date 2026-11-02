@@ -54,6 +54,7 @@ import kotlin.math.sign
 @OptIn(ExperimentalFoundationApi::class)
 class ComposePagerView(context: Context) : FrameLayout(context) {
   private val reactContext = context as ReactContext
+  private val surfaceId = UIManagerHelper.getSurfaceId(reactContext)
   // react-native-screens fully removes and re-adds this screen's Fragment
   // (rather than merely hiding it) while it's covered by another screen
   // (see #1103), destroying that Fragment's view-tree Lifecycle. Compose's
@@ -502,7 +503,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     lastEmittedPageSelected = position
     clearFocusOutsidePage(position)
     UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)?.dispatchEvent(
-      PageSelectedEvent(id, position)
+      PageSelectedEvent(surfaceId, id, position)
     )
   }
 
@@ -529,7 +530,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 
   private fun dispatchPageScroll(position: Int, offset: Float) {
     UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)?.dispatchEvent(
-      PageScrollEvent(id, position, offset)
+      PageScrollEvent(surfaceId, id, position, offset)
     )
   }
 
@@ -539,7 +540,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     }
     lastEmittedScrollState = state
     UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)?.dispatchEvent(
-      PageScrollStateChangedEvent(id, state)
+      PageScrollStateChangedEvent(surfaceId, id, state)
     )
   }
 
@@ -648,7 +649,6 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
           modifier = Modifier.fillMaxSize(),
           pageSpacing = pageSpacing,
           userScrollEnabled = scrollEnabledState.value,
-          reverseLayout = false,
           beyondViewportPageCount = beyondViewportPageCount,
           key = pageKey
         ) { page ->
@@ -660,7 +660,6 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
           modifier = Modifier.fillMaxSize(),
           pageSpacing = pageSpacing,
           userScrollEnabled = scrollEnabledState.value,
-          reverseLayout = false,
           beyondViewportPageCount = beyondViewportPageCount,
           key = pageKey
         ) { page ->

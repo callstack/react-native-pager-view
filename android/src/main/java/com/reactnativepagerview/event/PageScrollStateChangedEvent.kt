@@ -3,25 +3,24 @@ package com.reactnativepagerview.event
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.events.Event
-import com.facebook.react.uimanager.events.RCTEventEmitter
 
 
 /**
- * Event emitted by [ReactViewPager] when user scrolling state changed.
+ * Event emitted by [com.reactnativepagerview.ComposePagerView] when user scrolling state changed.
  *
  * Additional data provided by this event:
  * - pageScrollState - {Idle,Dragging,Settling}
  */
-class PageScrollStateChangedEvent(viewTag: Int, private val mPageScrollState: String) : Event<PageScrollStateChangedEvent>(viewTag) {
+class PageScrollStateChangedEvent(surfaceId: Int, viewTag: Int, private val mPageScrollState: String) : Event<PageScrollStateChangedEvent>(surfaceId, viewTag) {
     override fun getEventName(): String {
         return EVENT_NAME
     }
 
-    override fun dispatch(rctEventEmitter: RCTEventEmitter) {
-        rctEventEmitter.receiveEvent(viewTag, eventName, serializeEventData())
+    override fun canCoalesce(): Boolean {
+        return false
     }
 
-    private fun serializeEventData(): WritableMap {
+    override fun getEventData(): WritableMap {
         val eventData = Arguments.createMap()
         eventData.putString("pageScrollState", mPageScrollState)
         return eventData
@@ -30,5 +29,4 @@ class PageScrollStateChangedEvent(viewTag: Int, private val mPageScrollState: St
     companion object {
         const val EVENT_NAME = "topPageScrollStateChanged"
     }
-
 }
