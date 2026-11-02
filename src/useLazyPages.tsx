@@ -24,17 +24,21 @@ export function useLazyPages({
     () => new Set()
   );
   const pages = lazy ? Children.toArray(children) : [];
+  const keys = pages.map(pageKey);
   const distance = Math.max(preloadDistance, 0) + 1;
 
   // `position` is fractional while scrolling, so both pages on screen count.
+  // Keys of removed pages are dropped, so a page re-added later starts lazy.
   const mountNear = (mounted: ReadonlySet<string>, position: number) => {
-    const next = new Set([
-      ...mounted,
-      ...pages
-        .filter((_, index) => Math.abs(index - position) < distance)
-        .map(pageKey),
-    ]);
-    return next.size === mounted.size ? mounted : next;
+    const next = new Set(
+      keys.filter(
+        (key, index) =>
+          mounted.has(key) || Math.abs(index - position) < distance
+      )
+    );
+    const unchanged =
+      next.size === mounted.size && [...mounted].every((key) => next.has(key));
+    return unchanged ? mounted : next;
   };
 
   if (lazy) {
