@@ -73,12 +73,12 @@ files across them. The suite (13 tests on iOS, 12 on Android) takes about
 across its devices. Remote devices fit the same shape: one pool entry per
 device.
 
-| Variable | Effect |
-| --- | --- |
-| `E2E_DEVICE` | Simulator or emulator name or UDID. Default: every booted device of the platform. |
-| `E2E_DEVICES` | Comma-separated pool of names or UDIDs, for example `iPhone 17,iPhone 17 Pro`. One worker per device; the test files spread across them. Every device needs the app installed, or set `E2E_IOS_APP_PATH`. |
-| `E2E_IOS_APP_PATH` | `.app` bundle installed on every pooled device before its first test. Use the Xcode build product (`~/Library/Developer/Xcode/DerivedData/PagerViewExample-*/Build/Products/Release-iphonesimulator/ReactTestApp.app`), never a path inside a simulator's own container: installing replaces that container and the path disappears mid-run. |
-| `E2E_ANDROID_APK_PATH` | `.apk` to install before the first test instead of using the installed build. |
+| Variable               | Effect                                                                                                                                                                                                                                                                                                                                       |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `E2E_DEVICE`           | Simulator or emulator name or UDID. Default: every booted device of the platform.                                                                                                                                                                                                                                                            |
+| `E2E_DEVICES`          | Comma-separated pool of names or UDIDs, for example `iPhone 17,iPhone 17 Pro`. One worker per device; the test files spread across them. Every device needs the app installed, or set `E2E_IOS_APP_PATH`.                                                                                                                                    |
+| `E2E_IOS_APP_PATH`     | `.app` bundle installed on every pooled device before its first test. Use the Xcode build product (`~/Library/Developer/Xcode/DerivedData/PagerViewExample-*/Build/Products/Release-iphonesimulator/ReactTestApp.app`), never a path inside a simulator's own container: installing replaces that container and the path disappears mid-run. |
+| `E2E_ANDROID_APK_PATH` | `.apk` to install before the first test instead of using the installed build.                                                                                                                                                                                                                                                                |
 
 ## Layout
 

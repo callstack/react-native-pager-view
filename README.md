@@ -72,7 +72,9 @@ Each direct child of `PagerView` becomes one page and is stretched to fill the p
 To control the pager from code, keep a ref and call its [methods](#methods):
 
 ```tsx
-const ref = useRef<PagerView>(null);
+import PagerView, { type PagerViewRef } from 'react-native-pager-view';
+
+const ref = useRef<PagerViewRef>(null);
 
 // ...
 <PagerView ref={ref} style={{ flex: 1 }}>
@@ -89,24 +91,22 @@ For more examples, see the [example app](example/src): nested pagers, keyboard h
 
 ### Props
 
-| Prop                                                                       | Description                                                                                                                                                                                                                                                                                    | Platform |
-| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
-| `initialPage: number`                                                      | Index of the page that is selected on mount.                                                                                                                                                                                                                                                   |   both   |
-| `scrollEnabled: boolean`                                                   | Whether the user can swipe between pages. Defaults to `true`.                                                                                                                                                                                                                                  |   both   |
-| `orientation: 'horizontal' \| 'vertical'`                                  | Scroll direction. Defaults to `horizontal`. Changing it after mount is not supported.                                                                                                                                                                                                          |   both   |
-| `layoutDirection: 'ltr' \| 'rtl' \| 'locale'`                              | Layout direction. Use `ltr` or `rtl` to set it explicitly, or `locale` to follow `I18nManager.isRTL`. Defaults to `locale`.                                                                                                                                                                    |   both   |
-| `pageMargin: number`                                                       | Blank space between pages.                                                                                                                                                                                                                                                                     |   both   |
-| `keyboardDismissMode: 'none' \| 'on-drag'`                                 | Whether the keyboard is dismissed when the user drags the pager. Defaults to `none`.                                                                                                                                                                                                           |   both   |
-| `onPageScroll: (e: PagerViewOnPageScrollEvent) => void`                    | Called while moving between pages, either from a swipe or from an animated `setPage`. `e.nativeEvent` contains `position` and `offset`.                                                                                                                                                        |   both   |
-| `onPageSelected: (e: PagerViewOnPageSelectedEvent) => void`                | Called when the pager moves to a page: on Android once it settles, and on iOS before it does, as an animated `setPage` starts, as a swipe commits to a page, or at once for `setPageWithoutAnimation`. Also called on mount for `initialPage`. `e.nativeEvent.position` is the selected index. |   both   |
-| `onPageScrollStateChanged: (e: PageScrollStateChangedNativeEvent) => void` | Called when the scroll state changes. `e.nativeEvent.pageScrollState` is `idle`, `dragging` or `settling`.                                                                                                                                                                                     |   both   |
-| `overdrag: boolean`                                                        | Allows bouncing past the first and last page. Defaults to `false`.                                                                                                                                                                                                                             |   iOS    |
-| `offscreenPageLimit: number`                                               | Number of pages kept composed on each side of the visible page. Defaults to `1`.                                                                                                                                                                                                               | Android  |
-| `overScrollMode: 'auto' \| 'always' \| 'never'`                            | Overscroll effect at the edges. `never` disables the effect. Defaults to `auto`.                                                                                                                                                                                                               | Android  |
+| Prop                                                                       | Description                                                                                                                             | Platform |
+| -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | :------: |
+| `initialPage: number`                                                      | Index of the page that is selected on mount.                                                                                            |   both   |
+| `scrollEnabled: boolean`                                                   | Whether the user can swipe between pages. Defaults to `true`.                                                                           |   both   |
+| `orientation: 'horizontal' \| 'vertical'`                                  | Scroll direction. Defaults to `horizontal`. Changing it after mount is not supported.                                                   |   both   |
+| `layoutDirection: 'ltr' \| 'rtl' \| 'locale'`                              | Layout direction. Use `ltr` or `rtl` to set it explicitly, or `locale` to follow `I18nManager.isRTL`. Defaults to `locale`.             |   both   |
+| `pageMargin: number`                                                       | Blank space between pages.                                                                                                              |   both   |
+| `keyboardDismissMode: 'none' \| 'on-drag'`                                 | Whether the keyboard is dismissed when the user drags the pager. Defaults to `none`.                                                    |   both   |
+| `onPageScroll: (e: PagerViewOnPageScrollEvent) => void`                    | Called while moving between pages, either from a swipe or from an animated `setPage`. `e.nativeEvent` contains `position` and `offset`. |   both   |
+| `onPageSelected: (e: PagerViewOnPageSelectedEvent) => void`                | Called when a new page becomes selected, and once on mount for `initialPage`. `e.nativeEvent.position` is the selected index.           |   both   |
+| `onPageScrollStateChanged: (e: PageScrollStateChangedNativeEvent) => void` | Called when the scroll state changes. `e.nativeEvent.pageScrollState` is `idle`, `dragging` or `settling`.                              |   both   |
+| `overdrag: boolean`                                                        | Allows bouncing past the first and last page. Defaults to `false`.                                                                      |   iOS    |
+| `offscreenPageLimit: number`                                               | Number of pages kept composed on each side of the visible page. Defaults to `1`.                                                        | Android  |
+| `overScrollMode: 'auto' \| 'always' \| 'never'`                            | Overscroll effect at the edges. `never` disables the effect. Defaults to `auto`.                                                        | Android  |
 
 `PagerView` also accepts all standard `View` props.
-
-Leaving a page blurs an input focused on it, whatever `keyboardDismissMode` is set to. On iOS an animated `setPage` blurs the input before the slide starts, and a swipe blurs it once the pager comes to rest, so the keyboard never closes under the user's finger. A swipe reports coming to rest from iOS 16 on, so on iOS 15 and visionOS only `setPage` blurs. A handler that focuses an input from `onPageSelected` keeps it after a swipe, though the keyboard closes and reopens on the way; during an animated `setPage` iOS reports the selection before the page is on screen, so focusing there does nothing and the page ends with nothing focused. A focus sent in the same tick as a `setPage` that moves the pager back a page does not take effect on iOS either, so focus the new page's input once the pager reports `idle` instead.
 
 ### Methods
 
@@ -116,9 +116,11 @@ Leaving a page blurs an input focused on it, whatever `keyboardDismissMode` is s
 | `setPageWithoutAnimation(index: number)`   | Jumps to the given page without an animation. An invalid index is ignored.                                                                                  |   both   |
 | `setScrollEnabled(scrollEnabled: boolean)` | Enables or disables swiping imperatively. Prefer the `scrollEnabled` prop; use this when a re-render would get in the way, for example during an animation. |   both   |
 
+The ref is the native pager view with these methods attached, so native view methods such as `measure()` work on it too.
+
 ### Types
 
-The package exports these TypeScript types: `PagerViewProps`, `PagerViewOnPageScrollEvent`, `PagerViewOnPageSelectedEvent`, `PageScrollStateChangedNativeEvent`, and their `*EventData` payloads.
+The package exports these TypeScript types: `PagerViewRef` (the ref type), `PagerViewMethods`, `PagerViewProps`, `PagerViewOnPageScrollEvent`, `PagerViewOnPageSelectedEvent`, `PageScrollStateChangedNativeEvent`, and their `*EventData` payloads.
 
 ## `usePagerView` hook
 
