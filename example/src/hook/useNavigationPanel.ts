@@ -1,8 +1,8 @@
 import type {
-  default as PagerView,
   PageScrollStateChangedNativeEvent,
   PagerViewOnPageScrollEventData,
   PagerViewOnPageSelectedEventData,
+  PagerViewRef,
 } from 'react-native-pager-view';
 import { Animated } from 'react-native';
 import { createPage, CreatePage } from '../utils';
@@ -23,7 +23,7 @@ export function useNavigationPanel(
   pagesAmount: number = 10,
   onPageSelectedCallback: (position: number) => void = () => {}
 ) {
-  const ref = useRef<PagerView>(null);
+  const ref = useRef<PagerViewRef>(null);
   const [pages, setPages] = useState<CreatePage[]>(
     useMemo(() => getBasePages(pagesAmount), [pagesAmount])
   );
