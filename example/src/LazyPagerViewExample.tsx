@@ -12,12 +12,10 @@ import PagerView, { type PagerViewRef } from 'react-native-pager-view';
 
 import { Button } from './component/Button';
 import { colors, radius } from './theme';
-import { BGCOLOR } from './utils';
+import { BGCOLOR, padNumber } from './utils';
 
 const PAGE_COUNT = 20;
 const PRELOAD_DISTANCES = [0, 1, 2, 3];
-
-const padNumber = (value: number) => String(value).padStart(2, '0');
 
 type LazyPageProps = {
   index: number;
