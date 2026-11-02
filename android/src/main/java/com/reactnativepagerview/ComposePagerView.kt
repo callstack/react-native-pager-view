@@ -39,6 +39,7 @@ import androidx.savedstate.SavedStateRegistryController
 import androidx.savedstate.SavedStateRegistryOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.bridge.UiThreadUtil
 import com.facebook.react.uimanager.UIManagerHelper
 import com.facebook.react.uimanager.events.NativeGestureUtil
 import com.reactnativepagerview.event.PageScrollEvent
@@ -81,8 +82,11 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private var initialTouchX = 0f
   private var initialTouchY = 0f
   private var isGestureResolved = false
+  private var isGestureAcross = false
   private var didStartNativeGesture = false
   private val scrollCommandState = mutableStateOf<ScrollCommand?>(null)
+  private var pendingScrollCommand: Runnable? = null
+  private var isDestroyed = false
   private var lastEmittedScrollState: String? = null
   private var lastEmittedPageSelected: Int? = null
 
@@ -150,6 +154,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   fun dispose() {
+    isDestroyed = true
     composeLifecycleOwner.destroy()
   }
 
@@ -386,10 +391,8 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 
     isGestureResolved = true
     val isHorizontal = orientationState.value == Orientation.Horizontal
-    if (isHorizontal != (dx.absoluteValue > dy.absoluteValue)) {
-      return
-    }
-
+    // Compose's pager only measures its own axis, so hand a drag mostly across it to a child too.
+    isGestureAcross = isHorizontal != (dx.absoluteValue > dy.absoluteValue)
     val direction = -(if (isHorizontal) dx else dy).sign.toInt()
     val x = initialTouchX.toInt()
     val y = initialTouchY.toInt()
@@ -416,6 +419,14 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   private fun canViewScroll(view: View, direction: Int): Boolean {
+    // Both directions count, as a ScrollView at its top still takes a drag down, e.g. to refresh.
+    if (isGestureAcross) {
+      return if (orientationState.value == Orientation.Vertical) {
+        view.canScrollHorizontally(1) || view.canScrollHorizontally(-1)
+      } else {
+        view.canScrollVertically(1) || view.canScrollVertically(-1)
+      }
+    }
     if (orientationState.value == Orientation.Vertical) {
       return view.canScrollVertically(direction)
     }
@@ -467,14 +478,21 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   fun setCurrentItem(selectedPage: Int, animated: Boolean) {
-    if (selectedPage < 0 || selectedPage >= pages.size) {
-      return
+    // Fabric runs view commands before the mount items of the same batch, so a setPage sent from
+    // an effect gets here before the pages its commit added (see #1196). Check the index once
+    // the batch is done, on the main handler: View.post would wait while the pager is detached.
+    val command = Runnable {
+      if (!isDestroyed && selectedPage in pages.indices) {
+        scrollCommandState.value = ScrollCommand(
+          id = nextScrollCommandId++,
+          page = selectedPage,
+          animated = animated
+        )
+      }
     }
-    scrollCommandState.value = ScrollCommand(
-      id = nextScrollCommandId++,
-      page = selectedPage,
-      animated = animated
-    )
+    pendingScrollCommand?.let { UiThreadUtil.getUiThreadHandler().removeCallbacks(it) }
+    pendingScrollCommand = command
+    UiThreadUtil.getUiThreadHandler().post(command)
   }
 
   private fun dispatchPageSelected(position: Int) {
@@ -568,7 +586,6 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     LaunchedEffect(pagerState) {
       launch {
         snapshotFlow { pagerState.settledPage }
-          .drop(1)
           .collect { page ->
             currentPage = page
             dispatchPageSelected(page)

@@ -1,7 +1,7 @@
-name: Stale issues
-# Marks issues with no activity for 180 days as stale, then closes them 14 days
-# later unless they're updated (a comment, label change or edit resets it).
-# Pull requests are left alone.
+name: Stale issues and PRs
+# Marks issues with no activity for 180 days and pull requests with no activity
+# for 90 days as stale, then closes them 14 days later unless they're updated
+# (a comment, push, label change or edit resets it).
 on:
   schedule:
     - cron: '27 3 * * *'
@@ -15,22 +15,26 @@ permissions:
 
 jobs:
   stale:
-    name: Close stale issues
+    name: Close stale issues and PRs
     if: github.repository == 'callstack/react-native-pager-view'
     runs-on: ubuntu-slim
     timeout-minutes: 10
     permissions:
       issues: write
+      pull-requests: write
     steps:
       - uses: actions/stale@4391f3da665fdf50b6810c1a66712fb9ba21aa93 # v11.0.0
         with:
           days-before-issue-stale: 180
           days-before-issue-close: 14
-          days-before-pr-stale: -1
-          days-before-pr-close: -1
+          days-before-pr-stale: 90
+          days-before-pr-close: 14
           stale-issue-label: stale
+          stale-pr-label: stale
           exempt-issue-labels: bug,keep open,blocked,on hold,wip,help wanted,good first issue,enhancement
+          exempt-pr-labels: keep open,blocked,on hold,wip
           exempt-all-issue-milestones: true
+          exempt-all-pr-milestones: true
           exempt-all-issue-assignees: true
           close-issue-reason: not_planned
           stale-issue-message: >
@@ -41,4 +45,13 @@ jobs:
             Closing because there has been no activity for 14 days since this was
             marked as stale. Feel free to open a new issue with a reproduction if
             the problem persists on the latest version.
+          stale-pr-message: >
+            This pull request has had no activity for 90 days and is now marked as
+            stale. It will be closed in 14 days unless there is new activity. If
+            you're still working on it, please rebase on the latest main or leave
+            a comment.
+          close-pr-message: >
+            Closing because there has been no activity for 14 days since this was
+            marked as stale. Feel free to reopen or open a new pull request if you
+            want to continue this work.
           operations-per-run: 300

@@ -1,0 +1,19 @@
+# Keeps the SHA-pinned actions in .github/workflows up to date. Dependabot
+# bumps both the commit hash and the trailing "# vX.Y.Z" comment, and groups
+# all updates from one run into a single PR.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      github-actions:
+        patterns:
+          - '*'
+    commit-message:
+      prefix: chore
+      include: scope
+    open-pull-requests-limit: 5

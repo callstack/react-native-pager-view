@@ -60,7 +60,9 @@ import {
 } from './gh-issues/Issue1142SearchBarInsetRepro';
 import { Issue1154PageChangeFocusRepro } from './gh-issues/Issue1154PageChangeFocusRepro';
 import { Issue1156NestedHorizontalScrollRepro } from './gh-issues/Issue1156NestedHorizontalScrollRepro';
+import { Issue1196SetPageAfterAddRepro } from './gh-issues/Issue1196SetPageAfterAddRepro';
 import { Issue1199ScrollStateRepro } from './gh-issues/Issue1199ScrollStateRepro';
+import { Issue1205DiagonalSwipeRepro } from './gh-issues/Issue1205DiagonalSwipeRepro';
 import { Issue219EmptyPagerRepro } from './gh-issues/Issue219EmptyPagerRepro';
 import { Issue424SwipeCancelsPressRepro } from './gh-issues/Issue424SwipeCancelsPressRepro';
 import { Issue965PagesBeforeCurrentRepro } from './gh-issues/Issue965PagesBeforeCurrentRepro';
@@ -195,8 +197,16 @@ const sections: { title: string; data: Example[] }[] = [
         name: 'Issue #1156 Nested Horizontal Scroll Repro',
       },
       {
+        component: Issue1196SetPageAfterAddRepro,
+        name: 'Issue #1196 Set Page After Add Repro',
+      },
+      {
         component: Issue1199ScrollStateRepro,
         name: 'Issue #1199 Scroll State Repro',
+      },
+      {
+        component: Issue1205DiagonalSwipeRepro,
+        name: 'Issue #1205 Diagonal Swipe Repro',
       },
       {
         component: Issue219EmptyPagerRepro,

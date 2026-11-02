@@ -11,10 +11,10 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@e2e-dev/github": "^0.4.0",
-    "@e2e-dev/mobile": "^0.12.1",
-    "@types/node": "^26.5.0",
-    "e2e": "^0.21.0",
+    "@e2e-dev/github": "^0.4.3",
+    "@e2e-dev/mobile": "^0.12.4",
+    "@types/node": "^26.6.5",
+    "e2e": "^0.21.3",
     "typescript": "^7.0.2"
   }
 }

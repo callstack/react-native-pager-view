@@ -1,0 +1,7 @@
+[
+  { "type": "dir", "name": "getting-started", "label": "Getting Started" },
+  { "type": "dir", "name": "api", "label": "API Reference" },
+  { "type": "dir", "name": "guides", "label": "Guides" },
+  { "type": "file", "name": "migration", "label": "Migration" },
+  { "type": "file", "name": "contributing", "label": "Contributing" }
+]

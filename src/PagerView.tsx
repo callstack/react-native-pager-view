@@ -13,6 +13,13 @@ import PagerViewNativeComponent, {
   type NativeProps,
 } from './PagerViewNativeComponent';
 
+export type PagerViewProps = Omit<NativeProps, 'layoutDirection'> & {
+  /**
+   * `'locale'` follows `I18nManager.isRTL`; native only receives `'ltr' | 'rtl'`.
+   */
+  layoutDirection?: 'ltr' | 'rtl' | 'locale';
+};
+
 /**
  * Container that allows to flip left and right between child views. Each
  * child view of the `PagerView` will be treated as a separate page
@@ -55,14 +62,13 @@ import PagerViewNativeComponent, {
  * ```
  */
 
-export class PagerView extends React.Component<NativeProps> {
+export class PagerView extends React.Component<PagerViewProps> {
   private isScrolling = false;
   pagerView: React.ElementRef<typeof PagerViewNativeComponent> | null = null;
 
   private get deducedLayoutDirection() {
     if (
       !this.props.layoutDirection ||
-      //@ts-ignore fix it
       this.props.layoutDirection === 'locale'
     ) {
       return I18nManager.isRTL ? 'rtl' : 'ltr';
