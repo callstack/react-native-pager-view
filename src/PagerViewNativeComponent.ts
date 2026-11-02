@@ -40,15 +40,15 @@ type PagerViewViewType = HostComponent<NativeProps>;
 
 export interface NativeCommands {
   setPage: (
-    viewRef: React.ElementRef<PagerViewViewType>,
+    viewRef: React.ComponentRef<PagerViewViewType>,
     selectedPage: CodegenTypes.Int32
   ) => void;
   setPageWithoutAnimation: (
-    viewRef: React.ElementRef<PagerViewViewType>,
+    viewRef: React.ComponentRef<PagerViewViewType>,
     selectedPage: CodegenTypes.Int32
   ) => void;
   setScrollEnabledImperatively: (
-    viewRef: React.ElementRef<PagerViewViewType>,
+    viewRef: React.ComponentRef<PagerViewViewType>,
     scrollEnabled: boolean
   ) => void;
 }

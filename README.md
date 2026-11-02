@@ -72,7 +72,9 @@ Each direct child of `PagerView` becomes one page and is stretched to fill the p
 To control the pager from code, keep a ref and call its [methods](#methods):
 
 ```tsx
-const ref = useRef<PagerView>(null);
+import PagerView, { type PagerViewRef } from 'react-native-pager-view';
+
+const ref = useRef<PagerViewRef>(null);
 
 // ...
 <PagerView ref={ref} style={{ flex: 1 }}>
@@ -114,9 +116,11 @@ For more examples, see the [example app](example/src): nested pagers, keyboard h
 | `setPageWithoutAnimation(index: number)`   | Jumps to the given page without an animation. An invalid index is ignored.                                                                                  |   both   |
 | `setScrollEnabled(scrollEnabled: boolean)` | Enables or disables swiping imperatively. Prefer the `scrollEnabled` prop; use this when a re-render would get in the way, for example during an animation. |   both   |
 
+The ref is the native pager view with these methods attached, so native view methods such as `measure()` work on it too.
+
 ### Types
 
-The package exports these TypeScript types: `PagerViewProps`, `PagerViewOnPageScrollEvent`, `PagerViewOnPageSelectedEvent`, `PageScrollStateChangedNativeEvent`, and their `*EventData` payloads.
+The package exports these TypeScript types: `PagerViewRef` (the ref type), `PagerViewMethods`, `PagerViewProps`, `PagerViewOnPageScrollEvent`, `PagerViewOnPageSelectedEvent`, `PageScrollStateChangedNativeEvent`, and their `*EventData` payloads.
 
 ## `usePagerView` hook
 

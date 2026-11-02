@@ -7,12 +7,12 @@
  */
 import React, { useRef, useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import PagerView from 'react-native-pager-view';
+import PagerView, { type PagerViewRef } from 'react-native-pager-view';
 
 const PAGES = ['Page 0', 'Page 1', 'Page 2'];
 
 export function Issue1199ScrollStateRepro() {
-  const pager = useRef<PagerView>(null);
+  const pager = useRef<PagerViewRef>(null);
   const states = useRef<string[]>([]);
   const offset = useRef(0);
   const [status, setStatus] = useState('No scroll yet');
