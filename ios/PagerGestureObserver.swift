@@ -68,8 +68,8 @@ final class PagerGestureObserver: NSObject {
     return NSStringFromClass(type(of: gestureRecognizer)) == pagingSwipeRecognizerClassName
   }
 
-  /// Walks the responder chain because the pod does not import React's `UIView`
-  /// category, so `reactViewController()` is unavailable here.
+  /// Walks the responder chain for a navigation controller that can go back:
+  /// `reactViewController()` would stop at the nearest controller instead.
   private func backGestureCanHandleTouch(in scrollView: UIScrollView) -> Bool {
     var responder: UIResponder? = scrollView.next
     var navigationController: UINavigationController?

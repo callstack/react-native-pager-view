@@ -83,8 +83,6 @@ struct PagerView: View {
         if scrollDelegate.originalDelegate == nil {
           scrollDelegate.originalDelegate = collectionView.delegate
           scrollDelegate.delegate = delegate
-          // VTabView-style rotation preserves TabView's horizontal collection view.
-          scrollDelegate.orientation = .horizontal
           scrollDelegate.onRest = { [props] restedPage in
             // The page is physical, and a right-to-left layout mirrors it.
             // Read the count here, before a change to the pages can shift it.

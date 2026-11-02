@@ -15,7 +15,7 @@
 
 - (instancetype) initWithReactTag:(NSNumber *)reactTag
                          position:(NSNumber *)position
-                           offset:(NSNumber *)offset;
+                           offset:(NSNumber *)offset
 {
     RCTAssertParam(reactTag);
     
@@ -52,7 +52,7 @@ RCT_NOT_IMPLEMENTED(- (instancetype)init)
                  }];
 }
 
-- (id<RCTEvent>)coalesceWithEvent:(id<RCTEvent>)newEvent;
+- (id<RCTEvent>)coalesceWithEvent:(id<RCTEvent>)newEvent
 {
     return newEvent;
 }

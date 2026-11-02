@@ -19,7 +19,7 @@ typedef NS_CLOSED_ENUM(NSInteger, PagerLayoutDirection) {
 };
 
 @protocol PagerViewProviderDelegate <NSObject>
-- (void)onPageScrollWithPosition:(double)position offset:(double)offset NS_SWIFT_NAME(onPageScroll(position:offset:));
+- (void)onPageScrollWithPosition:(NSInteger)position offset:(double)offset NS_SWIFT_NAME(onPageScroll(position:offset:));
 - (void)onPageScrollStateChangedWithState:(PageScrollState)state NS_SWIFT_NAME(onPageScrollStateChanged(state:));
 - (void)onPageSelectedWithPosition:(NSInteger)position NS_SWIFT_NAME(onPageSelected(position:));
 @end
