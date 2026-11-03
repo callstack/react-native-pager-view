@@ -4,12 +4,13 @@ import react_native_pager_view
 #endif
 
 /**
- Scroll delegate used to control underlying TabView's collection view.
+ Scroll delegate used to control underlying TabView's collection view. It
+ pages horizontally, as the vertical pager rotates it, and on iOS 15 through
+ the scroll views it embeds (see `PagerViewIOS15Compat`).
  */
 class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDelegate {
   weak var originalDelegate: UICollectionViewDelegate?
   weak var delegate: PagerViewProviderDelegate?
-  var orientation: UICollectionView.ScrollDirection = .horizontal
   /// Called once the pager has come to rest on a page, after `TabView`'s own
   /// handler has seen the same event. The page is the physical one, which a
   /// right-to-left layout mirrors.
@@ -31,14 +32,13 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   ]
   
   func scrollViewDidScroll(_ scrollView: UIScrollView) {
-    let isHorizontal = orientation == .horizontal
-    let pageSize = isHorizontal ? scrollView.frame.width : scrollView.frame.height
-    let contentOffset = isHorizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
-    
+    let pageSize = scrollView.frame.width
+    let contentOffset = scrollView.contentOffset.x
+
     guard pageSize > 0 else { return }
     
     let offset = contentOffset.truncatingRemainder(dividingBy: pageSize) / pageSize
-    let position = round(contentOffset / pageSize - offset)
+    let position = Int(round(contentOffset / pageSize - offset))
     
     delegate?.onPageScroll(position: position, offset: offset)
     originalDelegate?.scrollViewDidScroll?(scrollView)
@@ -54,13 +54,8 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   /// Emits a final onPageScroll with offset 0 before transitioning to idle,
   /// clearing any residual floating-point offset from the scroll animation.
   private func emitIdleWithCleanOffset(_ scrollView: UIScrollView) {
-    let isHorizontal = orientation == .horizontal
-    let pageSize = isHorizontal ? scrollView.frame.width : scrollView.frame.height
-    let contentOffset = isHorizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
-
-    if pageSize > 0 {
-      let page = Int(round(contentOffset / pageSize))
-      delegate?.onPageScroll(position: Double(page), offset: 0)
+    if let (page, _) = nearestPage(in: scrollView) {
+      delegate?.onPageScroll(position: page, offset: 0)
     }
 
     delegate?.onPageScrollStateChanged(state: .idle)
@@ -69,24 +64,29 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   /// A slide cut short by another command stops between pages, which is not a
   /// rest: the pager is still on its way somewhere.
   private func notifyRestOnPageBoundary(_ scrollView: UIScrollView, fromScrollEnd: Bool = false) {
-    let isHorizontal = orientation == .horizontal
-    let pageSize = isHorizontal ? scrollView.frame.width : scrollView.frame.height
-    let contentOffset = isHorizontal ? scrollView.contentOffset.x : scrollView.contentOffset.y
-
-    guard pageSize > 0 else {
+    guard let (page, pageSize) = nearestPage(in: scrollView) else {
       return
     }
-    let offsetInPage = abs(contentOffset.truncatingRemainder(dividingBy: pageSize))
+    let offsetInPage = abs(scrollView.contentOffset.x.truncatingRemainder(dividingBy: pageSize))
     guard offsetInPage < 1 || pageSize - offsetInPage < 1 else {
       lastRestedPage = nil
       return
     }
-    let page = Int(round(contentOffset / pageSize))
     guard fromScrollEnd || lastRestedPage != page else {
       return
     }
     lastRestedPage = page
     onRest?(page)
+  }
+
+  /// The page the scroll view is closest to and the page size it was measured
+  /// against, or nil before the scroll view has a size.
+  private func nearestPage(in scrollView: UIScrollView) -> (page: Int, pageSize: CGFloat)? {
+    let pageSize = scrollView.frame.width
+    guard pageSize > 0 else {
+      return nil
+    }
+    return (Int(round(scrollView.contentOffset.x / pageSize)), pageSize)
   }
   
   func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
