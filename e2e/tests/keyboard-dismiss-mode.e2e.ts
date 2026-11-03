@@ -4,10 +4,6 @@ import { openExample } from './support/app.ts';
 
 freshAppBeforeEach();
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const SETTLE_MS = 1000;
-
 // Focus stands in for the keyboard: Android's headless IME never reports it.
 async function expectStatus(
   screen: Screen,
