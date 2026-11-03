@@ -502,7 +502,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     lastEmittedPageSelected = position
     clearFocusOutsidePage(position)
     UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)?.dispatchEvent(
-      PageSelectedEvent(id, position)
+      PageSelectedEvent(UIManagerHelper.getSurfaceId(this), id, position)
     )
   }
 
@@ -529,7 +529,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
 
   private fun dispatchPageScroll(position: Int, offset: Float) {
     UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)?.dispatchEvent(
-      PageScrollEvent(id, position, offset)
+      PageScrollEvent(UIManagerHelper.getSurfaceId(this), id, position, offset)
     )
   }
 
@@ -539,7 +539,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     }
     lastEmittedScrollState = state
     UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)?.dispatchEvent(
-      PageScrollStateChangedEvent(id, state)
+      PageScrollStateChangedEvent(UIManagerHelper.getSurfaceId(this), id, state)
     )
   }
 
@@ -648,7 +648,6 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
           modifier = Modifier.fillMaxSize(),
           pageSpacing = pageSpacing,
           userScrollEnabled = scrollEnabledState.value,
-          reverseLayout = false,
           beyondViewportPageCount = beyondViewportPageCount,
           key = pageKey
         ) { page ->
@@ -660,7 +659,6 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
           modifier = Modifier.fillMaxSize(),
           pageSpacing = pageSpacing,
           userScrollEnabled = scrollEnabledState.value,
-          reverseLayout = false,
           beyondViewportPageCount = beyondViewportPageCount,
           key = pageKey
         ) { page ->
