@@ -14,7 +14,8 @@ using namespace facebook::react;
 
 // Once Fabric implements proper NativeAnimationDriver, this should be removed.
 // This is just a workaround to allow animations based on onPageScroll event,
-// as RCTScrollViewComponentView does for onScroll.
+// as RCTScrollViewComponentView does for onScroll,
+// see: https://github.com/facebook/react-native/blob/44f431b471c243c92284aa042d3807ba4d04af65/packages/react-native/React/Fabric/Mounting/ComponentViews/ScrollView/RCTScrollViewComponentView.mm#L59
 static void
 RCTSendPageScrollEventForNativeAnimations_DEPRECATED(NSInteger tag, NSInteger position, double offset)
 {
@@ -109,16 +110,16 @@ RCTSendPageScrollEventForNativeAnimations_DEPRECATED(NSInteger tag, NSInteger po
 
 - (void)onPageScrollWithPosition:(NSInteger)position offset:(double)offset {
   const auto eventEmitter = [self pagerEventEmitter];
-  if (eventEmitter) {
-    eventEmitter->onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{
-      .position = static_cast<double>(position),
-      .offset = offset
-    });
+  if (!eventEmitter) {
+    return;
   }
 
-  if (eventEmitter) {
-    RCTSendPageScrollEventForNativeAnimations_DEPRECATED(self.tag, position, offset);
-  }
+  eventEmitter->onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{
+    .position = static_cast<double>(position),
+    .offset = offset
+  });
+
+  RCTSendPageScrollEventForNativeAnimations_DEPRECATED(self.tag, position, offset);
 }
 
 - (void)onPageSelectedWithPosition:(NSInteger)position {

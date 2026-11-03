@@ -54,7 +54,7 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   /// Emits a final onPageScroll with offset 0 before transitioning to idle,
   /// clearing any residual floating-point offset from the scroll animation.
   private func emitIdleWithCleanOffset(_ scrollView: UIScrollView) {
-    if let page = nearestPage(in: scrollView) {
+    if let (page, _) = nearestPage(in: scrollView) {
       delegate?.onPageScroll(position: page, offset: 0)
     }
 
@@ -64,8 +64,7 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   /// A slide cut short by another command stops between pages, which is not a
   /// rest: the pager is still on its way somewhere.
   private func notifyRestOnPageBoundary(_ scrollView: UIScrollView, fromScrollEnd: Bool = false) {
-    let pageSize = scrollView.frame.width
-    guard let page = nearestPage(in: scrollView) else {
+    guard let (page, pageSize) = nearestPage(in: scrollView) else {
       return
     }
     let offsetInPage = abs(scrollView.contentOffset.x.truncatingRemainder(dividingBy: pageSize))
@@ -80,13 +79,14 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
     onRest?(page)
   }
 
-  /// The page the scroll view is closest to, or nil before it has a size.
-  private func nearestPage(in scrollView: UIScrollView) -> Int? {
+  /// The page the scroll view is closest to and the page size it was measured
+  /// against, or nil before the scroll view has a size.
+  private func nearestPage(in scrollView: UIScrollView) -> (page: Int, pageSize: CGFloat)? {
     let pageSize = scrollView.frame.width
     guard pageSize > 0 else {
       return nil
     }
-    return Int(round(scrollView.contentOffset.x / pageSize))
+    return (Int(round(scrollView.contentOffset.x / pageSize)), pageSize)
   }
   
   func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
