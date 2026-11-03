@@ -43,8 +43,7 @@ test('on-drag: dragging the pager blurs the input', async ({ app, screen }) => {
 test('on-drag: setPage keeps the input focused', async ({ app, screen }) => {
   await focusInput(app, screen, 'on-drag');
 
-  await screen.getByTestId('keyboard-dismiss-next').tap();
-  await wait(SETTLE_MS);
+await screen.getByTestId('keyboard-dismiss-next').tap();
   await expectStatus(screen, 'on-drag', 1, true);
 });
 
