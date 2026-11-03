@@ -116,7 +116,9 @@ RCTSendPageScrollEventForNativeAnimations_DEPRECATED(NSInteger tag, NSInteger po
     });
   }
 
-  RCTSendPageScrollEventForNativeAnimations_DEPRECATED(self.tag, position, offset);
+  if (eventEmitter) {
+    RCTSendPageScrollEventForNativeAnimations_DEPRECATED(self.tag, position, offset);
+  }
 }
 
 - (void)onPageSelectedWithPosition:(NSInteger)position {
