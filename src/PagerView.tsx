@@ -6,7 +6,6 @@ import { childrenWithOverriddenStyle } from './utils';
 
 import PagerViewNativeComponent, {
   Commands as PagerViewNativeCommands,
-  type OnPageScrollEventData,
   type OnPageScrollStateChangedEventData,
   type NativeProps,
 } from './PagerViewNativeComponent';
@@ -45,6 +44,19 @@ export type PagerViewProps = Omit<NativeProps, 'layoutDirection'> & {
   ref?: React.Ref<PagerViewRef>;
 };
 
+type NativeInstance = React.ComponentRef<typeof PagerViewNativeComponent>;
+
+function bindCommand<T>(
+  ref: React.RefObject<NativeInstance | null>,
+  command: (view: NativeInstance, arg: T) => void
+) {
+  return (arg: T) => {
+    if (ref.current) {
+      command(ref.current, arg);
+    }
+  };
+}
+
 function deduceLayoutDirection(
   layoutDirection: PagerViewProps['layoutDirection']
 ) {
@@ -75,8 +87,7 @@ function deduceLayoutDirection(
  * ```
  */
 export function PagerView({ ref, ...props }: PagerViewProps) {
-  const nativeRef =
-    useRef<React.ComponentRef<typeof PagerViewNativeComponent>>(null);
+  const nativeRef = useRef<NativeInstance>(null);
   const isScrolling = useRef(false);
 
   // Methods go on the native view, not a wrapper, which Animated needs.
@@ -88,50 +99,40 @@ export function PagerView({ ref, ...props }: PagerViewProps) {
         return null;
       }
       return Object.assign(instance, {
-        setPage: (selectedPage: number) => {
-          if (nativeRef.current) {
-            PagerViewNativeCommands.setPage(nativeRef.current, selectedPage);
-          }
-        },
-        setPageWithoutAnimation: (selectedPage: number) => {
-          if (nativeRef.current) {
-            PagerViewNativeCommands.setPageWithoutAnimation(
-              nativeRef.current,
-              selectedPage
-            );
-          }
-        },
-        setScrollEnabled: (scrollEnabled: boolean) => {
-          if (nativeRef.current) {
-            PagerViewNativeCommands.setScrollEnabledImperatively(
-              nativeRef.current,
-              scrollEnabled
-            );
-          }
-        },
+        setPage: bindCommand(nativeRef, PagerViewNativeCommands.setPage),
+        setPageWithoutAnimation: bindCommand(
+          nativeRef,
+          PagerViewNativeCommands.setPageWithoutAnimation
+        ),
+        setScrollEnabled: bindCommand(
+          nativeRef,
+          PagerViewNativeCommands.setScrollEnabledImperatively
+        ),
         pagerView: instance,
       });
     },
     []
   );
 
-  const onPageScroll = (
-    e: ReactNative.NativeSyntheticEvent<OnPageScrollEventData>
-  ) => {
-    props.onPageScroll?.(e);
-
-    // Not implemented on iOS yet
-    if (Platform.OS === 'android' && props.keyboardDismissMode === 'on-drag') {
-      Keyboard.dismiss();
-    }
-  };
-
   const onPageScrollStateChanged = (
     e: ReactNative.NativeSyntheticEvent<OnPageScrollStateChangedEventData>
   ) => {
     props.onPageScrollStateChanged?.(e);
     isScrolling.current = e.nativeEvent.pageScrollState === 'dragging';
+    if (
+      isScrolling.current &&
+      Platform.OS === 'android' &&
+      props.keyboardDismissMode === 'on-drag'
+    ) {
+      Keyboard.dismiss();
+    }
   };
+
+  const onMoveShouldSetResponderCapture = (
+    e: ReactNative.GestureResponderEvent
+  ) => isScrolling.current || !!props.onMoveShouldSetResponderCapture?.(e);
+
+  const iosPageMargin = Platform.OS === 'ios' ? props.pageMargin ?? 0 : 0;
 
   return (
     <PagerViewNativeComponent
@@ -139,15 +140,12 @@ export function PagerView({ ref, ...props }: PagerViewProps) {
       ref={nativeRef}
       style={[
         props.style,
-        Platform.OS === 'ios' && props.pageMargin
-          ? { marginHorizontal: -props.pageMargin / 2 }
-          : null,
+        iosPageMargin ? { marginHorizontal: -iosPageMargin / 2 } : null,
       ]}
       layoutDirection={deduceLayoutDirection(props.layoutDirection)}
-      onPageScroll={onPageScroll}
       onPageScrollStateChanged={onPageScrollStateChanged}
-      onMoveShouldSetResponderCapture={() => isScrolling.current}
-      children={childrenWithOverriddenStyle(props.children, props.pageMargin)}
+      onMoveShouldSetResponderCapture={onMoveShouldSetResponderCapture}
+      children={childrenWithOverriddenStyle(props.children, iosPageMargin)}
     />
   );
 }

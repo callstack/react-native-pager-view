@@ -22,6 +22,7 @@ import {
 } from '@react-navigation/native';
 import { BasicPagerViewExample } from './BasicPagerViewExample';
 import { KeyboardExample } from './KeyboardExample';
+import { KeyboardDismissModeExample } from './KeyboardDismissModeExample';
 import { OnPageScrollExample } from './OnPageScrollExample';
 import { OnPageSelectedExample } from './OnPageSelectedExample';
 import { ScrollablePagerViewExample } from './ScrollablePagerViewExample';
@@ -151,6 +152,11 @@ const sections: { title: string; data: Example[] }[] = [
     data: [
       { component: PagerHookExample, name: 'Pager Hook Example' },
       { component: KeyboardExample, name: 'Keyboard Example' },
+      {
+        component: KeyboardDismissModeExample,
+        name: 'Keyboard Dismiss Mode Example',
+        testID: 'example-keyboard-dismiss-mode',
+      },
       {
         component: HeadphonesCarouselExample,
         name: 'Headphones Carousel Example',
