@@ -40,6 +40,19 @@ bun run e2e:test:android
 From this directory, `bun run test:ios -- --tag smoke` runs only the smoke
 test, and `bun run list` prints every test without running it.
 
+### Software keyboard on iOS
+
+The keyboard tests (`issue-1096-keyboard-shrink` and `issue-1154-page-change-focus`) need the simulator to show its own keyboard. A device that has seen a Mac keyboard once shows none again, across boots, and `Simulator.app`'s `ConnectHardwareKeyboard` preference does not reach a device the engine booted itself. Clear the device's own two flags, on every booted device, after building and before the run, since a build and launch can set them again:
+
+```bash
+for udid in $(xcrun simctl list devices booted | grep -Eo '[0-9A-F-]{36}'); do
+  xcrun simctl spawn "$udid" defaults write com.apple.keyboard.preferences HardwareKeyboardLastSeen -bool false
+  xcrun simctl spawn "$udid" defaults write com.apple.keyboard.preferences AutomaticMinimizationEnabled -bool false
+done
+```
+
+`AutomaticMinimizationEnabled` matters as much as the other: with it set, the keyboard stays minimised to the shortcut bar and React Native reports it hidden while an input is focused.
+
 ### Several simulators at once
 
 With nothing pinned, the engine uses every booted simulator as the pool, so
@@ -60,12 +73,12 @@ files across them. The suite (13 tests on iOS, 12 on Android) takes about
 across its devices. Remote devices fit the same shape: one pool entry per
 device.
 
-| Variable | Effect |
-| --- | --- |
-| `E2E_DEVICE` | Simulator or emulator name or UDID. Default: every booted device of the platform. |
-| `E2E_DEVICES` | Comma-separated pool of names or UDIDs, for example `iPhone 17,iPhone 17 Pro`. One worker per device; the test files spread across them. Every device needs the app installed, or set `E2E_IOS_APP_PATH`. |
-| `E2E_IOS_APP_PATH` | `.app` bundle installed on every pooled device before its first test. Use the Xcode build product (`~/Library/Developer/Xcode/DerivedData/PagerViewExample-*/Build/Products/Release-iphonesimulator/ReactTestApp.app`), never a path inside a simulator's own container: installing replaces that container and the path disappears mid-run. |
-| `E2E_ANDROID_APK_PATH` | `.apk` to install before the first test instead of using the installed build. |
+| Variable               | Effect                                                                                                                                                                                                                                                                                                                                       |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `E2E_DEVICE`           | Simulator or emulator name or UDID. Default: every booted device of the platform.                                                                                                                                                                                                                                                            |
+| `E2E_DEVICES`          | Comma-separated pool of names or UDIDs, for example `iPhone 17,iPhone 17 Pro`. One worker per device; the test files spread across them. Every device needs the app installed, or set `E2E_IOS_APP_PATH`.                                                                                                                                    |
+| `E2E_IOS_APP_PATH`     | `.app` bundle installed on every pooled device before its first test. Use the Xcode build product (`~/Library/Developer/Xcode/DerivedData/PagerViewExample-*/Build/Products/Release-iphonesimulator/ReactTestApp.app`), never a path inside a simulator's own container: installing replaces that container and the path disappears mid-run. |
+| `E2E_ANDROID_APK_PATH` | `.apk` to install before the first test instead of using the installed build.                                                                                                                                                                                                                                                                |
 
 ## Layout
 

@@ -80,6 +80,8 @@ jobs:
 
       # Simulator.app attaches the Mac keyboard by default, which hides the
       # software keyboard and leaves no Return key for the keyboard tests.
+      # A fresh runner's own devices have never seen a Mac keyboard, so they do
+      # not need the per-device flags that e2e/README.md gives for local runs.
       - name: Detach hardware keyboard from simulator
         run: defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
 
@@ -124,7 +126,7 @@ jobs:
 
       - name: Upload e2e report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: e2e-report-ios${{ inputs.spm && '-spm' || '' }}
           path: |

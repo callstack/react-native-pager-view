@@ -1,0 +1,20 @@
+{
+  "name": "react-native-pager-view-docs",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Documentation for react-native-pager-view",
+  "type": "module",
+  "scripts": {
+    "dev": "rspress dev",
+    "build": "rspress build",
+    "preview": "rspress preview"
+  },
+  "dependencies": {
+    "@callstack/rspress-preset": "0.6.8",
+    "@rspress/core": "^2.0.23"
+  },
+  "devDependencies": {
+    "@types/node": "^24.12.2",
+    "@types/react": "^19.2.0"
+  }
+}

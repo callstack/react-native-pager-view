@@ -1,10 +1,10 @@
 package com.reactnativepagerview
 
 import android.view.View
-import android.view.ViewGroup
-import com.facebook.react.bridge.ReadableArray
 import com.facebook.react.module.annotations.ReactModule
-import com.facebook.react.uimanager.*
+import com.facebook.react.uimanager.ThemedReactContext
+import com.facebook.react.uimanager.ViewGroupManager
+import com.facebook.react.uimanager.ViewManagerDelegate
 import com.facebook.react.uimanager.annotations.ReactProp
 import com.facebook.react.viewmanagers.RNCViewPagerManagerDelegate
 import com.facebook.react.viewmanagers.RNCViewPagerManagerInterface
@@ -19,16 +19,13 @@ class PagerViewViewManager : ViewGroupManager<ComposePagerView>(), RNCViewPagerM
         const val NAME = "RNCViewPager"
     }
 
-    private val mDelegate: ViewManagerDelegate<ComposePagerView> = RNCViewPagerManagerDelegate(this)
+    private val delegate: RNCViewPagerManagerDelegate<ComposePagerView, PagerViewViewManager> =
+        RNCViewPagerManagerDelegate(this)
 
-    override fun getDelegate() = mDelegate
+    override fun getDelegate(): ViewManagerDelegate<ComposePagerView> = delegate
 
     override fun getName(): String {
         return NAME
-    }
-
-    override fun receiveCommand(root: ComposePagerView, commandId: String, args: ReadableArray?) {
-        mDelegate.receiveCommand(root, commandId, args)
     }
 
     public override fun createViewInstance(reactContext: ThemedReactContext): ComposePagerView {
@@ -67,86 +64,64 @@ class PagerViewViewManager : ViewGroupManager<ComposePagerView>(), RNCViewPagerM
     }
 
     @ReactProp(name = "scrollEnabled", defaultBoolean = true)
-    override fun setScrollEnabled(view: ComposePagerView?, value: Boolean) {
-        if (view != null) {
-            view.setScrollEnabled(value)
-        }
+    override fun setScrollEnabled(view: ComposePagerView, value: Boolean) {
+        view.setScrollEnabled(value)
     }
 
     @ReactProp(name = "layoutDirection")
-    override fun setLayoutDirection(view: ComposePagerView?, value: String?) {
-        if (view != null && value != null) {
+    override fun setLayoutDirection(view: ComposePagerView, value: String?) {
+        if (value != null) {
             view.setLayoutDirection(value)
         }
     }
 
     @ReactProp(name = "initialPage", defaultInt = 0)
-    override fun setInitialPage(view: ComposePagerView?, value: Int) {
-        if (view != null) {
-            view.setInitialPage(value)
-        }
+    override fun setInitialPage(view: ComposePagerView, value: Int) {
+        view.setInitialPage(value)
     }
 
     @ReactProp(name = "orientation")
-    override fun setOrientation(view: ComposePagerView?, value: String?) {
-        if (view != null && value != null) {
+    override fun setOrientation(view: ComposePagerView, value: String?) {
+        if (value != null) {
             view.setOrientation(value)
         }
     }
 
     @ReactProp(name = "offscreenPageLimit", defaultInt = -1)
-    override fun setOffscreenPageLimit(view: ComposePagerView?, value: Int) {
-        if (view != null) {
-            view.setOffscreenPageLimit(value)
-        }
+    override fun setOffscreenPageLimit(view: ComposePagerView, value: Int) {
+        view.setOffscreenPageLimit(value)
     }
 
     @ReactProp(name = "pageMargin", defaultInt = 0)
-    override fun setPageMargin(view: ComposePagerView?, value: Int) {
-        if (view != null) {
-            view.setPageMargin(value)
-        }
+    override fun setPageMargin(view: ComposePagerView, value: Int) {
+        view.setPageMargin(value)
     }
 
     @ReactProp(name = "overScrollMode")
-    override fun setOverScrollMode(view: ComposePagerView?, value: String?) {
-        if (view != null && value != null) {
+    override fun setOverScrollMode(view: ComposePagerView, value: String?) {
+        if (value != null) {
             view.setOverScrollMode(value)
         }
     }
 
+    // iOS only.
     @ReactProp(name = "overdrag")
-    override fun setOverdrag(view: ComposePagerView?, value: Boolean) {
-        return
-    }
+    override fun setOverdrag(view: ComposePagerView, value: Boolean) = Unit
 
+    // Dismissed from JS on Android, see PagerView.tsx.
     @ReactProp(name = "keyboardDismissMode")
-    override fun setKeyboardDismissMode(view: ComposePagerView?, value: String?) {
-        return
+    override fun setKeyboardDismissMode(view: ComposePagerView, value: String?) = Unit
+
+    override fun setPage(view: ComposePagerView, selectedPage: Int) {
+        view.setCurrentItem(selectedPage, true)
     }
 
-    fun goTo(root: ComposePagerView?, selectedPage: Int, scrollWithAnimation: Boolean) {
-        if (root == null) {
-            return
-        }
-        if (selectedPage < 0 || selectedPage >= root.getPageCount()) {
-            return
-        }
-        root.setCurrentItem(selectedPage, scrollWithAnimation)
+    override fun setPageWithoutAnimation(view: ComposePagerView, selectedPage: Int) {
+        view.setCurrentItem(selectedPage, false)
     }
 
-    override fun setPage(view: ComposePagerView?, selectedPage: Int) {
-        goTo(view, selectedPage, true)
-    }
-
-    override fun setPageWithoutAnimation(view: ComposePagerView?, selectedPage: Int) {
-        goTo(view, selectedPage, false)
-    }
-
-    override fun setScrollEnabledImperatively(view: ComposePagerView?, scrollEnabled: Boolean) {
-        if (view != null) {
-            view.setScrollEnabled(scrollEnabled)
-        }
+    override fun setScrollEnabledImperatively(view: ComposePagerView, scrollEnabled: Boolean) {
+        view.setScrollEnabled(scrollEnabled)
     }
 
     override fun getExportedCustomDirectEventTypeConstants(): MutableMap<String, Any> = mutableMapOf(

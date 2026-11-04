@@ -1,20 +1,23 @@
 import type * as ReactNative from 'react-native';
 import { PagerView } from './PagerView';
 export default PagerView;
+export type {
+  PagerViewMethods,
+  PagerViewProps,
+  PagerViewRef,
+} from './PagerView';
 export * from './usePagerView';
 
 import type {
   OnPageScrollEventData as PagerViewOnPageScrollEventData,
   OnPageSelectedEventData as PagerViewOnPageSelectedEventData,
   OnPageScrollStateChangedEventData as PageScrollStateChangedNativeEventData,
-  NativeProps,
 } from './PagerViewNativeComponent';
 
 export type {
   PagerViewOnPageScrollEventData,
   PagerViewOnPageSelectedEventData,
   PageScrollStateChangedNativeEventData,
-  NativeProps as PagerViewProps,
 };
 
 export type PagerViewOnPageScrollEvent =

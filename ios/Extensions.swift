@@ -20,6 +20,9 @@ struct RepresentableView: UIViewControllerRepresentable {
 }
 
 class PageChildViewController: UIViewController {
+  private static let parentGestureRecognizerContainerSelector =
+    NSSelectorFromString("_parentGestureRecognizerContainer")
+
   var wrappedView: UIView?
 
   override func viewDidLoad() {
@@ -44,9 +47,28 @@ class PageChildViewController: UIViewController {
     propagateSafeArea()
   }
 
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    resolveGestureRecognizerContainers()
+  }
+
   override func viewSafeAreaInsetsDidChange() {
     super.viewSafeAreaInsetsDidChange()
     propagateSafeArea()
+  }
+
+  /// A SwiftUI host answers nil to its first `_parentGestureRecognizerContainer`
+  /// query after the page appears, which leaves a touch synthesized in-process
+  /// (Detox) without gesture recognizers. Asking first resolves the chain.
+  private func resolveGestureRecognizerContainers() {
+    let selector = Self.parentGestureRecognizerContainerSelector
+    var visited = Set<ObjectIdentifier>()
+    var container: AnyObject? = view
+    while let current = container,
+          current.responds(to: selector),
+          visited.insert(ObjectIdentifier(current)).inserted {
+      container = current.perform(selector)?.takeUnretainedValue()
+    }
   }
 
   /// Makes this page's `safeAreaInsets` match the pager view's overlap with
@@ -139,13 +161,6 @@ class PageChildViewController: UIViewController {
   }
 }
 
-extension Collection {
-  // Returns the element at the specified index if it is within bounds, otherwise nil.
-  subscript(safe index: Index) -> Element? {
-    indices.contains(index) ? self[index] : nil
-  }
-}
-
 extension UIView {
   func pinEdges(to other: UIView) {
     NSLayoutConstraint.activate([
@@ -154,6 +169,18 @@ extension UIView {
       topAnchor.constraint(equalTo: other.topAnchor),
       bottomAnchor.constraint(equalTo: other.bottomAnchor)
     ])
+  }
+
+  var firstResponderInHierarchy: UIView? {
+    if isFirstResponder {
+      return self
+    }
+    for subview in subviews {
+      if let responder = subview.firstResponderInHierarchy {
+        return responder
+      }
+    }
+    return nil
   }
 }
 

@@ -1,17 +1,31 @@
-#import <Foundation/Foundation.h>
 #import "RNCPagerViewComponentView.h"
 #import <react/renderer/components/pagerview/ComponentDescriptors.h>
 #import <react/renderer/components/pagerview/EventEmitters.h>
 #import <react/renderer/components/pagerview/Props.h>
 #import <react/renderer/components/pagerview/RCTComponentViewHelpers.h>
 
+#import <React/RCTConstants.h>
 #import <React/RCTFabricComponentsPlugins.h>
-#import "React/RCTConversions.h"
 
 #import "RCTOnPageScrollEvent.h"
 #import "RNCPagerViewProviding.h"
 
 using namespace facebook::react;
+
+// Once Fabric implements proper NativeAnimationDriver, this should be removed.
+// This is just a workaround to allow animations based on onPageScroll event,
+// as RCTScrollViewComponentView does for onScroll,
+// see: https://github.com/facebook/react-native/blob/44f431b471c243c92284aa042d3807ba4d04af65/packages/react-native/React/Fabric/Mounting/ComponentViews/ScrollView/RCTScrollViewComponentView.mm#L59
+static void
+RCTSendPageScrollEventForNativeAnimations_DEPRECATED(NSInteger tag, NSInteger position, double offset)
+{
+  RCTOnPageScrollEvent *event = [[RCTOnPageScrollEvent alloc] initWithReactTag:@(tag)
+                                                                      position:@(position)
+                                                                        offset:@(offset)];
+  [[NSNotificationCenter defaultCenter] postNotificationName:RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED
+                                                      object:nil
+                                                    userInfo:@{@"event": event}];
+}
 
 @interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, PagerViewProviderDelegate>
 @end
@@ -26,7 +40,6 @@ using namespace facebook::react;
   [super load];
 }
 
-
 - (instancetype)initWithFrame:(CGRect)frame
 {
   if (self = [super initWithFrame:frame]) {
@@ -38,7 +51,6 @@ using namespace facebook::react;
 
   return self;
 }
-
 
 #pragma mark - React API
 
@@ -56,39 +68,39 @@ using namespace facebook::react;
   return NO;
 }
 
-- (void)updateProps:(const facebook::react::Props::Shared &)props oldProps:(const facebook::react::Props::Shared &)oldProps{
-  const auto &oldScreenProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
-  const auto &newScreenProps = *std::static_pointer_cast<const RNCViewPagerProps>(props);
+- (void)updateProps:(const Props::Shared &)props oldProps:(const Props::Shared &)oldProps
+{
+  const auto &oldPagerProps = *std::static_pointer_cast<const RNCViewPagerProps>(_props);
+  const auto &newPagerProps = *std::static_pointer_cast<const RNCViewPagerProps>(props);
 
   if (_pagerViewProvider.currentPage == -1) {
-     _pagerViewProvider.currentPage = newScreenProps.initialPage;
-   }
-
-  if (oldScreenProps.scrollEnabled != newScreenProps.scrollEnabled) {
-     _pagerViewProvider.scrollEnabled = newScreenProps.scrollEnabled;
-   }
-
-  if (oldScreenProps.overdrag != newScreenProps.overdrag) {
-     _pagerViewProvider.overdrag = newScreenProps.overdrag;
-   }
-
-  if (oldScreenProps.keyboardDismissMode != newScreenProps.keyboardDismissMode) {
-    switch (newScreenProps.keyboardDismissMode) {
-      case RNCViewPagerKeyboardDismissMode::None:
-        _pagerViewProvider.keyboardDismissMode = UIScrollViewKeyboardDismissModeNone;
-        break;
-
-      case RNCViewPagerKeyboardDismissMode::OnDrag:
-        _pagerViewProvider.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
-    }
-   }
-
-  if (oldScreenProps.orientation != newScreenProps.orientation) {
-    _pagerViewProvider.orientation = newScreenProps.orientation == RNCViewPagerOrientation::Vertical ? UICollectionViewScrollDirectionVertical : UICollectionViewScrollDirectionHorizontal;
+    _pagerViewProvider.currentPage = newPagerProps.initialPage;
   }
 
-  if (oldScreenProps.layoutDirection != newScreenProps.layoutDirection) {
-    _pagerViewProvider.layoutDirection = newScreenProps.layoutDirection == RNCViewPagerLayoutDirection::Rtl ? PagerLayoutDirectionRtl : PagerLayoutDirectionLtr;
+  if (oldPagerProps.scrollEnabled != newPagerProps.scrollEnabled) {
+    _pagerViewProvider.scrollEnabled = newPagerProps.scrollEnabled;
+  }
+
+  if (oldPagerProps.overdrag != newPagerProps.overdrag) {
+    _pagerViewProvider.overdrag = newPagerProps.overdrag;
+  }
+
+  if (oldPagerProps.keyboardDismissMode != newPagerProps.keyboardDismissMode) {
+    _pagerViewProvider.keyboardDismissMode = newPagerProps.keyboardDismissMode == RNCViewPagerKeyboardDismissMode::OnDrag
+        ? UIScrollViewKeyboardDismissModeOnDrag
+        : UIScrollViewKeyboardDismissModeNone;
+  }
+
+  if (oldPagerProps.orientation != newPagerProps.orientation) {
+    _pagerViewProvider.orientation = newPagerProps.orientation == RNCViewPagerOrientation::Vertical
+        ? UICollectionViewScrollDirectionVertical
+        : UICollectionViewScrollDirectionHorizontal;
+  }
+
+  if (oldPagerProps.layoutDirection != newPagerProps.layoutDirection) {
+    _pagerViewProvider.layoutDirection = newPagerProps.layoutDirection == RNCViewPagerLayoutDirection::Rtl
+        ? PagerLayoutDirectionRtl
+        : PagerLayoutDirectionLtr;
   }
 
   [super updateProps:props oldProps:oldProps];
@@ -96,17 +108,33 @@ using namespace facebook::react;
 
 #pragma mark - PagerViewProviderDelegate
 
-- (void)onPageScrollWithPosition:(double)position offset:(double)offset {
-  [self sendScrollEventsForPosition:position offset:offset];
+- (void)onPageScrollWithPosition:(NSInteger)position offset:(double)offset {
+  const auto eventEmitter = [self pagerEventEmitter];
+  if (!eventEmitter) {
+    return;
+  }
+
+  eventEmitter->onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{
+    .position = static_cast<double>(position),
+    .offset = offset
+  });
+
+  RCTSendPageScrollEventForNativeAnimations_DEPRECATED(self.tag, position, offset);
 }
 
 - (void)onPageSelectedWithPosition:(NSInteger)position {
   const auto eventEmitter = [self pagerEventEmitter];
-  eventEmitter->onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position =  static_cast<double>(position)});
+  if (!eventEmitter) {
+    return;
+  }
+  eventEmitter->onPageSelected(RNCViewPagerEventEmitter::OnPageSelected{.position = static_cast<double>(position)});
 }
 
 - (void)onPageScrollStateChangedWithState:(PageScrollState)state {
   const auto eventEmitter = [self pagerEventEmitter];
+  if (!eventEmitter) {
+    return;
+  }
 
   RNCViewPagerEventEmitter::OnPageScrollStateChangedPageScrollState scrollState;
 
@@ -129,12 +157,6 @@ using namespace facebook::react;
   });
 }
 
-#pragma mark - Internal methods
-
-- (void)goTo:(NSInteger)index animated:(BOOL)animated {
-  [_pagerViewProvider goToIndex:index animated:animated];
-}
-
 #pragma mark - Imperative methods exposed to React Native
 
 - (void)handleCommand:(const NSString *)commandName args:(const NSArray *)args {
@@ -142,16 +164,18 @@ using namespace facebook::react;
 }
 
 - (void)setPage:(NSInteger)index {
-  [self goTo:index animated:YES];
+  [_pagerViewProvider goToIndex:index animated:YES];
 }
 
 - (void)setPageWithoutAnimation:(NSInteger)index {
-  [self goTo:index animated:NO];
+  [_pagerViewProvider goToIndex:index animated:NO];
 }
 
 - (void)setScrollEnabledImperatively:(BOOL)scrollEnabled {
   _pagerViewProvider.scrollEnabled = scrollEnabled;
 }
+
+#pragma mark - Internal methods
 
 - (std::shared_ptr<const RNCViewPagerEventEmitter>)pagerEventEmitter
 {
@@ -161,25 +185,6 @@ using namespace facebook::react;
 
   assert(std::dynamic_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter));
   return std::static_pointer_cast<const RNCViewPagerEventEmitter>(_eventEmitter);
-}
-
-- (void)sendScrollEventsForPosition:(NSInteger)position offset:(CGFloat)offset {
-  const auto eventEmitter = [self pagerEventEmitter];
-  eventEmitter->onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{
-    .position = static_cast<double>(position),
-    .offset = offset
-  });
-
-  // This is temporary workaround to allow animations based on onPageScroll event
-  // until Fabric implements proper NativeAnimationDriver,
-  // see: https://github.com/facebook/react-native/blob/44f431b471c243c92284aa042d3807ba4d04af65/packages/react-native/React/Fabric/Mounting/ComponentViews/ScrollView/RCTScrollViewComponentView.mm#L59
-  RCTOnPageScrollEvent *event = [[RCTOnPageScrollEvent alloc] initWithReactTag:@(self.tag)
-                                                                      position:@(position)
-                                                                        offset:@(offset)];
-  NSDictionary *userInfo = @{@"event": event};
-  [[NSNotificationCenter defaultCenter] postNotificationName:@"RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED"
-                                                      object:nil
-                                                    userInfo:userInfo];
 }
 
 #pragma mark - RCTComponentViewProtocol

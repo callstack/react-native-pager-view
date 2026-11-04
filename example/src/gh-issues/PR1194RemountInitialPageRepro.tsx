@@ -12,7 +12,7 @@ import * as React from 'react';
 import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { type NativeStackNavigationProp } from '@react-navigation/native-stack';
-import PagerView from 'react-native-pager-view';
+import PagerView, { type PagerViewRef } from 'react-native-pager-view';
 
 export type PR1194RemountInitialPageParamList = {
   'PR #1194 Remount InitialPage Repro': undefined;
@@ -23,7 +23,7 @@ const PAGES = ['Page 0', 'Page 1', 'Page 2'];
 const PAGE_COLORS = ['#fde2e2', '#e2fde6', '#e2e8fd'];
 
 export function PR1194RemountInitialPageRepro() {
-  const pagerRef = React.useRef<PagerView>(null);
+  const pagerRef = React.useRef<PagerViewRef>(null);
   const [mount, setMount] = React.useState({ key: 0, initialPage: 0 });
   const navigation =
     useNavigation<

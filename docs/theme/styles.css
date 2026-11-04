@@ -1,0 +1,17 @@
+@font-face {
+  font-family: 'Alliance No. 2';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://cdn.prod.website-files.com/67e6b7885e182e1054b556db/67e6b8ee4fb44f39145cf744_AllianceNo2-Regular.ttf')
+    format('truetype');
+}
+
+@font-face {
+  font-family: 'Alliance No. 2';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('https://cdn.prod.website-files.com/67e6b7885e182e1054b556db/67e6b8eed3d2262c4baebd90_AllianceNo2-Medium.ttf')
+    format('truetype');
+}

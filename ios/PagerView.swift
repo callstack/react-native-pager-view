@@ -9,7 +9,13 @@ import react_native_pager_view
 
 struct PagerView: View {
   @ObservedObject var props: PagerViewProps
-  @State private var scrollDelegate = PagerScrollDelegate()
+  @State private var scrollDelegate: PagerScrollDelegate = {
+    if #available(iOS 16, *) {
+      return PagerScrollDelegate()
+    }
+    // iOS 15 only, see PagerViewIOS15Compat.swift (delete together with the iOS 15 support).
+    return PagerScrollDelegateIOS15()
+  }()
   @State private var gestureObserver = PagerGestureObserver()
   @State private var didEmitInitialPageSelection = false
   weak var delegate: PagerViewProviderDelegate?
@@ -77,8 +83,21 @@ struct PagerView: View {
         if scrollDelegate.originalDelegate == nil {
           scrollDelegate.originalDelegate = collectionView.delegate
           scrollDelegate.delegate = delegate
-          // VTabView-style rotation preserves TabView's horizontal collection view.
-          scrollDelegate.orientation = .horizontal
+          scrollDelegate.onRest = { [props] restedPage in
+            // The page is physical, and a right-to-left layout mirrors it.
+            // Read the count here, before a change to the pages can shift it.
+            let page = props.layoutDirection == .rtl
+              ? props.children.count - 1 - restedPage
+              : restedPage
+            // Read the selection on the next pass, once TabView has applied it.
+            DispatchQueue.main.async {
+              // A page the pager is only passing through is not a rest.
+              guard page == props.currentPage else {
+                return
+              }
+              props.resignFirstResponder(outsidePage: page)
+            }
+          }
           collectionView.delegate = scrollDelegate
         }
 
