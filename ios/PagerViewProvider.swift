@@ -164,18 +164,47 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
 
   private func setPage(index: Int, animated: Bool) {
     // Blur before the selection changes: resigning during the TabView
-    // animation breaks the slide. A command for the page already shown moves
-    // nothing, and blurring on it would close the keyboard during a swipe an
-    // app echoes back with `setPage`.
-    if index != props.currentPage {
+    // animation breaks the slide. A command for the page already arriving
+    // moves nothing, and blurring on it would close the keyboard during a
+    // swipe an app echoes back with `setPage`.
+    if index != (props.pendingPage ?? props.currentPage) {
       props.resignFirstResponder(outsidePage: index)
     }
-    if animated {
+    guard animated else {
+      props.pendingPage = nil
+      props.currentPage = index
+      return
+    }
+    // A slide already waiting takes the page asked for last.
+    guard props.pendingPage == nil else {
+      props.pendingPage = index
+      return
+    }
+    // The page already selected moves nothing, and waiting would let this
+    // undo a swipe that commits in the meantime. The selection is still
+    // written, as it is without this wait, so nothing downstream sees a
+    // command go missing.
+    guard index != props.currentPage else {
       withAnimation {
         props.currentPage = index
       }
-    } else {
-      props.currentPage = index
+      return
+    }
+    // Closing the keyboard forces a layout, and SwiftUI drops the animation
+    // for a selection applied before that layout has settled. One pass is not
+    // always enough. The wait does not depend on the blur above finding an
+    // input, since a keyboard already on its way out collides the same way.
+    props.pendingPage = index
+    DispatchQueue.main.async { [props] in
+      DispatchQueue.main.async {
+        guard let page = props.pendingPage else {
+          return
+        }
+        props.pendingPage = nil
+        withAnimation {
+          props.currentPage = page
+        }
+      }
     }
   }
 

@@ -89,10 +89,11 @@ struct PagerView: View {
             let page = props.layoutDirection == .rtl
               ? props.children.count - 1 - restedPage
               : restedPage
-            // Read the selection on the next pass, once TabView has applied it.
+            // Read the selection once TabView has applied it.
             DispatchQueue.main.async {
-              // A page the pager is only passing through is not a rest.
-              guard page == props.currentPage else {
+              // A page the pager is passing through, or is about to leave for
+              // a selection still waiting, is not a rest.
+              guard page == (props.pendingPage ?? props.currentPage) else {
                 return
               }
               props.resignFirstResponder(outsidePage: page)
@@ -133,6 +134,13 @@ struct PagerView: View {
     .onChange(of: props.children) { newValue in
       if props.currentPage >= newValue.count && !newValue.isEmpty {
         props.currentPage = newValue.count - 1
+      }
+      // A selection still waiting is clamped too, so a page removed while it
+      // waits cannot select an index that no longer exists.
+      if let pending = props.pendingPage,
+         pending >= newValue.count,
+         !newValue.isEmpty {
+        props.pendingPage = newValue.count - 1
       }
     }
     .onChange(of: props.currentPage) { newValue in
