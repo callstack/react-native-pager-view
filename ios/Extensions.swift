@@ -218,3 +218,15 @@ extension UIHostingController {
     }
   }
 }
+
+extension UIScrollView {
+  /// True when the paging offset sits on a page boundary, to within a point.
+  var isOnPageBoundary: Bool {
+    let pageSize = frame.width
+    guard pageSize > 0 else {
+      return true
+    }
+    let offsetInPage = abs(contentOffset.x.truncatingRemainder(dividingBy: pageSize))
+    return offsetInPage < 1 || pageSize - offsetInPage < 1
+  }
+}

@@ -61,6 +61,7 @@ struct PagerView: View {
       .environment(\.layoutDirection, props.layoutDirection.converted)
       .introspect(.tabView(style: .page), on: .iOS(.v14...)) { collectionView in
         self.collectionView = collectionView
+        props.scrollView = collectionView
         applyOverdrag(props.overdrag)
         applyScrollEnabled(props.scrollEnabled)
         collectionView.keyboardDismissMode = props.keyboardDismissMode

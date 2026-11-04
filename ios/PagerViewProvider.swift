@@ -163,11 +163,13 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
   }
 
   private func setPage(index: Int, animated: Bool) {
-    // Blur before the selection changes: resigning during the TabView
-    // animation breaks the slide. A command for the page already shown moves
-    // nothing, and blurring on it would close the keyboard during a swipe an
-    // app echoes back with `setPage`.
-    if index != props.currentPage {
+    // Blur before the selection changes, but only from rest: resigning during
+    // a slide can make it land after the new selection and write its own page
+    // back. On the way to a page, the rest on the new page does the blur. A
+    // command for the page already shown moves nothing, and blurring on it
+    // would close the keyboard during a swipe an app echoes back with
+    // `setPage`.
+    if index != props.currentPage && !props.restWillFollow(movingTo: index) {
       props.resignFirstResponder(outsidePage: index)
     }
     if animated {

@@ -217,18 +217,32 @@ test(
 );
 
 test(
-  'a setPage redirected once the focus has landed blurs it',
+  'a setPage redirected mid-slide blurs the focused input',
   { ...options, platforms: ['ios'] },
-  async ({ app, screen, platform }) => {
-    await focusInputOnPage(app, screen, platform, 0);
+  async ({ app, screen }) => {
+    await openExample(app, screen, 'Issue #1154 Page Change Focus Repro');
+    // Opening the software keyboard ends the slide early on a fast machine,
+    // before the redirect is sent, so the inputs here open no keyboard. The
+    // blur breaks the slide without one.
+    await screen.getByTestId('issue-1154-no-keyboard').tap();
+    await screen.getByTestId('issue-1154-input-0').tap();
+    await expect(screen.getByTestId('issue-1154-status')).toHaveText(
+      /^Selected: 0 \| Focused: input 0 \|/
+    );
 
-    // The focus on page 1 lands before the redirect to page 2 arrives, so the
-    // blur before that page change is the one that resigns it, in the middle
-    // of a slide, where resigning used to break the slide. An overshoot lands
-    // on page 3, which the selection would report.
-    await screen.getByTestId('issue-1154-go-1-then-2-late').tap();
+    // Input 1 takes the focus as the slide to page 1 starts, and the redirect
+    // to page 2 arrives a quarter of the way there. Blurring it mid-slide can
+    // let that slide land last and select page 1 again, but only now and
+    // then, so the check is on the order: the blur waits for the rest on page
+    // 2, after its selection, every time.
+    await screen.getByTestId('issue-1154-go-1-then-2-mid-slide').tap();
     await wait(SETTLE_MS);
-    await expectStatus(screen, platform, 2, 'none');
+    await expect(screen.getByTestId('issue-1154-events')).toHaveText(
+      /redirect mid-slide, (?:(?!blur 1).)*selected 2, .*blur 1/
+    );
+    await expect(screen.getByTestId('issue-1154-status')).toHaveText(
+      /^Selected: 2 \| Focused: none \|/
+    );
   }
 );
 

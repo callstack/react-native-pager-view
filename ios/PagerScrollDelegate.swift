@@ -64,11 +64,10 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   /// A slide cut short by another command stops between pages, which is not a
   /// rest: the pager is still on its way somewhere.
   private func notifyRestOnPageBoundary(_ scrollView: UIScrollView, fromScrollEnd: Bool = false) {
-    guard let (page, pageSize) = nearestPage(in: scrollView) else {
+    guard let (page, _) = nearestPage(in: scrollView) else {
       return
     }
-    let offsetInPage = abs(scrollView.contentOffset.x.truncatingRemainder(dividingBy: pageSize))
-    guard offsetInPage < 1 || pageSize - offsetInPage < 1 else {
+    guard scrollView.isOnPageBoundary else {
       lastRestedPage = nil
       return
     }
