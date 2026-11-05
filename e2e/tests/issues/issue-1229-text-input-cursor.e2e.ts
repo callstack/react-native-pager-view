@@ -42,12 +42,32 @@ const INPUTS = {
   multi: 'a multiline input on a page',
 };
 
-for (const [name, label] of Object.entries(INPUTS)) {
+// The issue was reported with scrolling disabled too, which leaves the pager
+// without its drag handling.
+const CASES = Object.entries(INPUTS).flatMap(([name, label]) =>
+  name === 'outside'
+    ? [{ name, label, scrollEnabled: true }]
+    : [
+        { name, label, scrollEnabled: true },
+        {
+          name,
+          label: `${label} with scrolling disabled`,
+          scrollEnabled: false,
+        },
+      ]
+);
+
+for (const { name, label, scrollEnabled } of CASES) {
   test(
     `a tap that moves places the cursor in ${label}`,
     options,
     async ({ app, screen }) => {
       await openRepro(app, screen);
+      if (!scrollEnabled) {
+        const toggle = screen.getByTestId('issue-1229-scroll-enabled');
+        await toggle.tap();
+        await expect(toggle).toHaveText(/scrollEnabled: false/i);
+      }
       // Focuses the input past the end of its text, so the cursor goes last.
       await screen.getByTestId(`issue-1229-input-${name}`).tap();
       await expect(screen.getByTestId(STATUS)).toHaveText(
