@@ -219,6 +219,7 @@ See the [full example](example/src/ReanimatedOnPageScrollExample.tsx).
 - Type refs with `PagerViewRef` instead of `PagerView`. The ref is the native view with the methods attached; `ref.current.pagerView` is deprecated.
 - Subclassing `PagerView` is no longer possible. Wrap it in your own component instead.
 - On Android, `keyboardDismissMode="on-drag"` dismisses the keyboard only when a drag starts, not on `setPage`.
+- On iOS, leaving a page now hides the keyboard if an input on that page is focused.
 
 ### Older versions
 

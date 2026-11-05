@@ -72,4 +72,4 @@ const ref = useRef<PagerViewRef>(null);
 
 ## `PagerViewMethods`
 
-Just the pager methods: `setPage`, `setPageWithoutAnimation` and `setScrollEnabled`.
+The methods added to the ref: `setPage`, `setPageWithoutAnimation` and `setScrollEnabled`.
