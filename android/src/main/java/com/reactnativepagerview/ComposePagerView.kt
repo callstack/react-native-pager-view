@@ -84,6 +84,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private var isGestureResolved = false
   private var isGestureAcross = false
   private var didStartNativeGesture = false
+  private var isDispatchingTouch = false
   private val scrollCommandState = mutableStateOf<ScrollCommand?>(null)
   private var pendingScrollCommand: Runnable? = null
   private var isDestroyed = false
@@ -174,7 +175,13 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         didStartNativeGesture = false
       }
     }
-    return super.dispatchTouchEvent(event)
+    isDispatchingTouch = true
+    try {
+      return super.dispatchTouchEvent(event)
+    } finally {
+      isDispatchingTouch = false
+      releasePendingIntercepts()
+    }
   }
 
   // Not called once a child, like a nested ScrollView, has claimed the touch, so the pager
@@ -673,11 +680,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     AndroidView(
       modifier = Modifier.fillMaxSize(),
       factory = { context ->
-        FrameLayout(context).apply {
-          layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
-          isSaveEnabled = false
-          attachChild(this, child)
-        }
+        PageContainer(context).apply { attachChild(this, child) }
       },
       update = { container ->
         // Reads pages so this runs again when React moves a page: removePageAt detached it,
@@ -687,6 +690,44 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         }
       }
     )
+  }
+
+  // The FrameLayout a page is hosted in.
+  //
+  // A TextInput with nothing to scroll asks to be intercepted again on its very first move, and
+  // Compose's interop filter cancels - never resumes - the touch of a view that lets the pager
+  // intercept while it is still dispatching that move, so a tap that moves the finger at all
+  // never reaches the input as ACTION_UP and the cursor stays put (see #1229). A release
+  // arriving while the pager dispatches an event is therefore held here, and passed on once that
+  // event is done, which keeps the pager free to intercept the next one as the input asks.
+  private inner class PageContainer(context: Context) : FrameLayout(context) {
+    private var pendingAllowIntercept = false
+
+    init {
+      layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
+      isSaveEnabled = false
+    }
+
+    override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+      if (isDispatchingTouch && !disallowIntercept) {
+        pendingAllowIntercept = true
+      } else {
+        pendingAllowIntercept = false
+        super.requestDisallowInterceptTouchEvent(disallowIntercept)
+      }
+    }
+
+    fun onPagerTouchDispatched() {
+      if (pendingAllowIntercept) {
+        pendingAllowIntercept = false
+        super.requestDisallowInterceptTouchEvent(false)
+      }
+    }
+  }
+
+  // Hands the pages' hosts the release each of them held for this event.
+  private fun releasePendingIntercepts() {
+    pages.forEach { (it.parent as? PageContainer)?.onPagerTouchDispatched() }
   }
 
   private fun attachChild(container: FrameLayout, child: View) {
