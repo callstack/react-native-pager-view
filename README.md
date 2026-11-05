@@ -212,6 +212,16 @@ See the [full example](example/src/ReanimatedOnPageScrollExample.tsx).
 
 ## Migration
 
+### 9.x → 10.x
+
+`PagerView` is now a function component. Props did not change.
+
+- Type refs with `PagerViewRef` instead of `PagerView`. The ref is the native view with the methods attached; `ref.current.pagerView` is deprecated.
+- Subclassing `PagerView` is no longer possible. Wrap it in your own component instead.
+- On Android, `keyboardDismissMode="on-drag"` dismisses the keyboard only when a drag starts, not on `setPage`.
+
+### Older versions
+
 - **8.x → 9.x**: the Android implementation moved from `ViewPager2` to Jetpack Compose. The JavaScript API did not change.
 - **7.x → 8.x**: the iOS implementation moved from `UIPageViewController` to SwiftUI. The JavaScript API did not change.
 - **6.x → 7.x**: only the New Architecture is supported. Enable it in your app before upgrading.

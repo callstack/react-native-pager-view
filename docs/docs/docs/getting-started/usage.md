@@ -50,7 +50,9 @@ const styles = StyleSheet.create({
 To control the pager from code, keep a ref and call its [methods](/docs/api/pager-view#methods):
 
 ```tsx
-const ref = useRef<PagerView>(null);
+import PagerView, { type PagerViewRef } from 'react-native-pager-view';
+
+const ref = useRef<PagerViewRef>(null);
 
 // ...
 <PagerView ref={ref} style={{ flex: 1 }}>
