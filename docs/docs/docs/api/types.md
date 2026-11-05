@@ -4,6 +4,8 @@ The package ships TypeScript definitions. These types are exported:
 
 ```ts
 import type {
+  PagerViewRef,
+  PagerViewMethods,
   PagerViewProps,
   PagerViewOnPageScrollEvent,
   PagerViewOnPageScrollEventData,
@@ -60,10 +62,14 @@ Animated.event<PagerViewOnPageScrollEventData>(
 
 Return type of [`usePagerView`](/docs/api/use-pager-view).
 
-## Ref type
+## `PagerViewRef`
 
-`PagerView` is a class component, so the class itself is the ref type:
+Type of a `PagerView` ref. It gives you the [methods](/docs/api/pager-view#methods) and the usual native view methods, such as `measure()`.
 
 ```ts
-const ref = useRef<PagerView>(null);
+const ref = useRef<PagerViewRef>(null);
 ```
+
+## `PagerViewMethods`
+
+The methods added to the ref: `setPage`, `setPageWithoutAnimation` and `setScrollEnabled`.
