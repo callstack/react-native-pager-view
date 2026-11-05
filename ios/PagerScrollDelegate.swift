@@ -89,6 +89,8 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   }
   
   func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    // A drag leaves the page, so its landing is a new rest even on the same page.
+    lastRestedPage = nil
     delegate?.onPageScrollStateChanged(state: .dragging)
     originalDelegate?.scrollViewWillBeginDragging?(scrollView)
   }

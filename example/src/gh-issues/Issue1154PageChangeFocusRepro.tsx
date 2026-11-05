@@ -130,10 +130,9 @@ export function Issue1154PageChangeFocusRepro() {
           title="Go 1 then 2 mid-slide"
           onPress={() => {
             startCommand();
-            // The redirect is sent from onPageScroll a quarter of the way to
-            // page 1, so it reaches the pager mid-slide on any machine, with
-            // input 1 focused, and a slow JS thread still has time to send it.
-            midSlideCommand.current = true;
+            // onPageScroll sends the redirect a quarter of the way to page 1.
+            // On page 1 already, nothing moves to send or disarm it.
+            midSlideCommand.current = selectedPage !== 1;
             pagerRef.current?.setPage(1);
             inputRefs.current[1]?.focus();
           }}

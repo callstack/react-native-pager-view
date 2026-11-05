@@ -230,11 +230,9 @@ test(
       /^Selected: 0 \| Focused: input 0 \|/
     );
 
-    // Input 1 takes the focus as the slide to page 1 starts, and the redirect
-    // to page 2 arrives a quarter of the way there. Blurring it mid-slide can
-    // let that slide land last and select page 1 again, but only now and
-    // then, so the check is on the order: the blur waits for the rest on page
-    // 2, after its selection, every time.
+    // The redirect to page 2 arrives a quarter of the way to page 1. A wrong
+    // landing shows only now and then, so the check is on the order: the
+    // blur must come after `selected 2`.
     await screen.getByTestId('issue-1154-go-1-then-2-mid-slide').tap();
     await wait(SETTLE_MS);
     await expect(screen.getByTestId('issue-1154-events')).toHaveText(
