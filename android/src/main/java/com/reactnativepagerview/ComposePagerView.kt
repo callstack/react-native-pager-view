@@ -84,6 +84,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private var isGestureResolved = false
   private var isGestureAcross = false
   private var didStartNativeGesture = false
+  private var isDispatchingTouch = false
   private val scrollCommandState = mutableStateOf<ScrollCommand?>(null)
   private var pendingScrollCommand: Runnable? = null
   private var isDestroyed = false
@@ -174,7 +175,13 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         didStartNativeGesture = false
       }
     }
-    return super.dispatchTouchEvent(event)
+    isDispatchingTouch = true
+    try {
+      return super.dispatchTouchEvent(event)
+    } finally {
+      isDispatchingTouch = false
+      pages.forEach { (it.parent as? PageContainer)?.onTouchDispatched() }
+    }
   }
 
   // Not called once a child, like a nested ScrollView, has claimed the touch, so the pager
@@ -673,7 +680,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     AndroidView(
       modifier = Modifier.fillMaxSize(),
       factory = { context ->
-        FrameLayout(context).apply {
+        PageContainer(context).apply {
           layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
           isSaveEnabled = false
           attachChild(this, child)
@@ -687,6 +694,27 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         }
       }
     )
+  }
+
+  // Compose cancels the touch of a view that lets the pager intercept again while handling a
+  // move, as a TextInput with nothing to scroll does on its first move, so a tap that moves at
+  // all can't place the cursor (see #1229). Pass that on once the pager has dispatched the touch.
+  private inner class PageContainer(context: Context) : FrameLayout(context) {
+    private var allowsInterceptAfterDispatch = false
+
+    override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
+      allowsInterceptAfterDispatch = !disallowIntercept && isDispatchingTouch
+      if (!allowsInterceptAfterDispatch) {
+        super.requestDisallowInterceptTouchEvent(disallowIntercept)
+      }
+    }
+
+    fun onTouchDispatched() {
+      if (allowsInterceptAfterDispatch) {
+        allowsInterceptAfterDispatch = false
+        super.requestDisallowInterceptTouchEvent(false)
+      }
+    }
   }
 
   private fun attachChild(container: FrameLayout, child: View) {
