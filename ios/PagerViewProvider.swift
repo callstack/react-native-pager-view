@@ -166,6 +166,9 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
   }
 
   private func setPage(index: Int, animation: PagerPageAnimation) {
+    guard props.children.indices.contains(index) else {
+      return
+    }
     // Blur before the selection changes: resigning during the TabView
     // animation breaks the slide. A command for the page already shown moves
     // nothing, and blurring on it would close the keyboard during a swipe an
@@ -202,7 +205,6 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
     let currentPage = props.currentPage
     guard #available(iOS 16, *),
           abs(index - currentPage) > 1,
-          props.children.indices.contains(index),
           props.children.indices.contains(currentPage) else {
       withAnimation {
         props.currentPage = index

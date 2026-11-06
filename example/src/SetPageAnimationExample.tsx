@@ -21,9 +21,14 @@ export function SetPageAnimationExample() {
   const pager = useRef<PagerViewRef>(null);
   const [isVertical, setIsVertical] = useState(false);
   const [events, setEvents] = useState<string[]>([]);
+  const currentPage = useRef(0);
+  const passing = useRef({ from: 0, to: 0, pages: new Set<number>() });
+  const [passed, setPassed] = useState<number[]>([]);
 
   const go = (page: number, animation: SetPageOptions['animation']) => {
     setEvents([]);
+    setPassed([]);
+    passing.current = { from: currentPage.current, to: page, pages: new Set() };
     pager.current?.setPage(page, { animation });
   };
 
@@ -60,17 +65,29 @@ export function SetPageAnimationExample() {
       <Text testID="set-page-animation-events" style={styles.events}>
         {events.join(' ') || 'No events yet'}
       </Text>
+      <Text testID="set-page-animation-passed" style={styles.events}>
+        passed: {passed.join(',') || 'none'}
+      </Text>
       <PagerView
         key={isVertical ? 'vertical' : 'horizontal'}
         ref={pager}
         style={styles.pager}
         orientation={isVertical ? 'vertical' : 'horizontal'}
-        onPageSelected={(e) =>
+        onPageSelected={(e) => {
+          currentPage.current = e.nativeEvent.position;
           setEvents((current) => [
             ...current,
             `selected:${e.nativeEvent.position}`,
-          ])
-        }
+          ]);
+        }}
+        onPageScroll={(e) => {
+          const { from, to, pages } = passing.current;
+          const page = e.nativeEvent.position;
+          if (page !== from && page !== to && !pages.has(page)) {
+            pages.add(page);
+            setPassed([...pages].sort((a, b) => a - b));
+          }
+        }}
         onPageScrollStateChanged={(e) =>
           setEvents((current) => [...current, e.nativeEvent.pageScrollState])
         }

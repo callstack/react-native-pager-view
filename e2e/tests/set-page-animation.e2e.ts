@@ -79,3 +79,27 @@ test(
     await expect(screen.getByTestId('set-page-animation-page-6')).toBeVisible();
   }
 );
+
+test(
+  'scroll setPage passes the pages in between, direct setPage does not',
+  options,
+  async ({ app, screen, platform }) => {
+    await openSetPageAnimation(app, screen);
+    const passed = screen.getByTestId('set-page-animation-passed');
+
+    await screen.getByTestId('set-page-animation-scroll-last').tap();
+    await expect(screen.getByTestId('set-page-animation-events')).toHaveText(
+      slideEvents(platform, 7)
+    );
+    // From the start, unlike a jump to three pages short of the target. A page
+    // can pass between two onPageScroll events, so not every one is required.
+    await expect(passed).toHaveText(/passed: [12](,\d){3,}$/);
+
+    await screen.getByTestId('set-page-animation-direct-first').tap();
+    await expect(screen.getByTestId('set-page-animation-events')).toHaveText(
+      slideEvents(platform, 0)
+    );
+    // At most the target's neighbour, which the slide starts from.
+    await expect(passed).toHaveText(/passed: (none|1)$/);
+  }
+);
