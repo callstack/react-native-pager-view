@@ -8,7 +8,7 @@ import type {
 type PageScrollStateChangedNativeEvent =
   ReactNative.NativeSyntheticEvent<PageScrollStateChangedNativeEventData>;
 
-import { PagerView, type PagerViewRef } from './PagerView';
+import { PagerView, type PagerViewRef, type SetPageOptions } from './PagerView';
 
 import { Animated } from 'react-native';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -39,9 +39,9 @@ export function usePagerView(
   const onPageSelectedPosition = useRef(new Animated.Value(0)).current;
 
   const setPage = useCallback(
-    (page: number) =>
+    (page: number, options?: SetPageOptions) =>
       isAnimated
-        ? ref.current?.setPage(page)
+        ? ref.current?.setPage(page, options)
         : ref.current?.setPageWithoutAnimation(page),
     [isAnimated]
   );

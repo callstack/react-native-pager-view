@@ -13,6 +13,12 @@ typedef NS_CLOSED_ENUM(NSInteger, PageScrollState) {
   PageScrollStateSettling,
 };
 
+typedef NS_CLOSED_ENUM(NSInteger, PagerPageAnimation) {
+  PagerPageAnimationNone,
+  PagerPageAnimationScroll,
+  PagerPageAnimationDirect,
+};
+
 typedef NS_CLOSED_ENUM(NSInteger, PagerLayoutDirection) {
   PagerLayoutDirectionLtr,
   PagerLayoutDirectionRtl,
@@ -33,7 +39,7 @@ typedef NS_CLOSED_ENUM(NSInteger, PagerLayoutDirection) {
 @property (nonatomic) UICollectionViewScrollDirection orientation;
 - (void)insertChild:(UIView *)child atIndex:(NSInteger)index NS_SWIFT_NAME(insertChild(_:at:));
 - (void)removeChildAtIndex:(NSInteger)index NS_SWIFT_NAME(removeChild(at:));
-- (void)goToIndex:(NSInteger)index animated:(BOOL)animated NS_SWIFT_NAME(goTo(index:animated:));
+- (void)goToIndex:(NSInteger)index animation:(PagerPageAnimation)animation NS_SWIFT_NAME(goTo(index:animation:));
 @end
 
 // Defined in PagerViewProvider.swift via @_cdecl.

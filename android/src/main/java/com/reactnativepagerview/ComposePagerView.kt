@@ -9,10 +9,13 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
@@ -51,6 +54,12 @@ import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.sign
 
+internal enum class PageAnimation {
+  None,
+  Scroll,
+  Direct
+}
+
 @OptIn(ExperimentalFoundationApi::class)
 class ComposePagerView(context: Context) : FrameLayout(context) {
   private val reactContext = context as ReactContext
@@ -86,6 +95,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private var didStartNativeGesture = false
   private var isDispatchingTouch = false
   private val scrollCommandState = mutableStateOf<ScrollCommand?>(null)
+  private val pageTransitionState = mutableStateOf<PageTransition?>(null)
   private var pendingScrollCommand: Runnable? = null
   private var isDestroyed = false
   private var lastEmittedScrollState: String? = null
@@ -484,7 +494,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     }
   }
 
-  fun setCurrentItem(selectedPage: Int, animated: Boolean) {
+  internal fun setCurrentItem(selectedPage: Int, animation: PageAnimation) {
     // Fabric runs view commands before the mount items of the same batch, so a setPage sent from
     // an effect gets here before the pages its commit added (see #1196). Check the index once
     // the batch is done, on the main handler: View.post would wait while the pager is detached.
@@ -493,7 +503,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         scrollCommandState.value = ScrollCommand(
           id = nextScrollCommandId++,
           page = selectedPage,
-          animated = animated
+          animation = animation
         )
       }
     }
@@ -577,13 +587,13 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         }
         return@LaunchedEffect
       }
-      if (command.animated) {
-        if (command.page != pagerState.currentPage) {
-          dispatchScrollState("settling")
-        }
-        pagerState.animateScrollToPage(command.page)
-      } else {
-        pagerState.scrollToPage(command.page)
+      if (command.animation != PageAnimation.None && command.page != pagerState.currentPage) {
+        dispatchScrollState("settling")
+      }
+      when (command.animation) {
+        PageAnimation.None -> pagerState.scrollToPage(command.page)
+        PageAnimation.Scroll -> scrollThroughPages(pagerState, command.page)
+        PageAnimation.Direct -> slideDirectly(pagerState, command.page)
       }
       if (scrollCommandState.value == command) {
         scrollCommandState.value = null
@@ -658,7 +668,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
           beyondViewportPageCount = beyondViewportPageCount,
           key = pageKey
         ) { page ->
-          PageHost(pages[page])
+          Page(page)
         }
       } else {
         HorizontalPager(
@@ -669,27 +679,98 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
           beyondViewportPageCount = beyondViewportPageCount,
           key = pageKey
         ) { page ->
-          PageHost(pages[page])
+          Page(page)
         }
       }
     }
   }
 
+  // A direct slide moves the page it leaves into its passing page, see slideDirectly.
   @Composable
-  private fun PageHost(child: View) {
+  private fun Page(page: Int) {
+    val transition = pageTransitionState.value
+    // A transition can recompose a slot whose page React has just removed.
+    val ownPage = pages.getOrNull(page)
+    val child = when {
+      transition == null -> ownPage
+      page == transition.passingPage -> transition.leftPage
+      ownPage === transition.leftPage -> null
+      else -> ownPage
+    }
+    PageHost(child)
+  }
+
+  // animateScrollToPage jumps to three pages short of a distant page first; this scrolls past
+  // every page, as on iOS. A transition jumps within the same scroll, so the pager settles, and
+  // reports a selection, only on the target, and shows once any running scroll has let go.
+  private suspend fun scrollThroughPages(
+    pagerState: PagerState,
+    page: Int,
+    transition: PageTransition? = null
+  ) {
+    pagerState.scroll {
+      with(pagerState) {
+        transition?.let {
+          pageTransitionState.value = it
+          updateCurrentPage(it.passingPage)
+        }
+        updateTargetPage(page)
+      }
+      val pageSize = pagerState.layoutInfo.pageSize + pagerState.layoutInfo.pageSpacing
+      val position = transition?.passingPage?.toFloat()
+        ?: (pagerState.currentPage + pagerState.currentPageOffsetFraction)
+      var scrolled = 0f
+      // The spring animateScrollToPage uses.
+      val animationSpec = spring<Float>()
+      animate(0f, (page - position) * pageSize, animationSpec = animationSpec) { value, _ ->
+        scrolled += scrollBy(value - scrolled)
+      }
+    }
+  }
+
+  // Jumps to the target's neighbour, moving the current page into it, so only the target slides.
+  private suspend fun slideDirectly(pagerState: PagerState, page: Int) {
+    val distance = page - pagerState.currentPage
+    // A slide redirected before it moved still shows the page it left.
+    val borrowedPage = pageTransitionState.value
+      ?.takeIf { it.passingPage == pagerState.currentPage }
+      ?.leftPage
+    // The target slot would give that page up.
+    if (borrowedPage != null && borrowedPage === pages.getOrNull(page)) {
+      pagerState.scrollToPage(page)
+      return
+    }
+    val shownPage = borrowedPage ?: pages.getOrNull(pagerState.currentPage)
+    if (distance.absoluteValue <= 1 || shownPage == null) {
+      scrollThroughPages(pagerState, page)
+      return
+    }
+    val transition = PageTransition(passingPage = page - distance.sign, leftPage = shownPage)
+    try {
+      scrollThroughPages(pagerState, page, transition)
+    } finally {
+      // A newer direct setPage may already show its own.
+      if (pageTransitionState.value === transition) {
+        pageTransitionState.value = null
+      }
+    }
+  }
+
+  @Composable
+  private fun PageHost(child: View?) {
     AndroidView(
       modifier = Modifier.fillMaxSize(),
       factory = { context ->
         PageContainer(context).apply {
           layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
           isSaveEnabled = false
-          attachChild(this, child)
+          child?.let { attachChild(this, it) }
         }
       },
       update = { container ->
         // Reads pages so this runs again when React moves a page: removePageAt detached it,
         // and its keyed slot keeps the same view without recomposing.
-        if (child in pages) {
+        if (child != null && child in pages) {
           attachChild(container, child)
         }
       }
@@ -758,8 +839,10 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private data class ScrollCommand(
     val id: Int,
     val page: Int,
-    val animated: Boolean
+    val animation: PageAnimation
   )
+
+  private class PageTransition(val passingPage: Int, val leftPage: View)
 
   private companion object {
     const val DEFAULT_OFFSCREEN_PAGE_LIMIT = -1
