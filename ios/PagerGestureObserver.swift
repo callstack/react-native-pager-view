@@ -190,6 +190,19 @@ private extension PagerGestureObserver {
       method_getTypeEncoding(method)
     )
 
+    // Experiment for #1230: a text field taking focus calls this on the nearest
+    // scroll view to reveal itself, which replaces a page slide in flight.
+    let revealSelector = #selector(UIScrollView.scrollRectToVisible(_:animated:))
+    if let revealMethod = class_getInstanceMethod(currentClass, revealSelector) {
+      let ignoreReveal: @convention(block) (AnyObject, CGRect, Bool) -> Void = { _, _, _ in }
+      class_addMethod(
+        subclass,
+        revealSelector,
+        imp_implementationWithBlock(ignoreReveal),
+        method_getTypeEncoding(revealMethod)
+      )
+    }
+
     objc_registerClassPair(subclass)
     object_setClass(scrollView, subclass)
   }
