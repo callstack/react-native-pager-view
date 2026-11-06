@@ -118,6 +118,8 @@ For more examples, see the [example app](example/src): nested pagers, keyboard h
 
 The ref is the native pager view with these methods attached, so native view methods such as `measure()` work on it too.
 
+On iOS 16 and later the pager does not scroll itself to reveal a focused text input. UIKit reveals a first responder by scrolling the nearest scrolling ancestor, which for a pager is the view that pages, so an input focused on a page that is not shown would leave the pager between pages rather than change the page. Change the page with `setPage` and focus the input once that page is selected. A field inside a page is still revealed by the scroll views within that page.
+
 ### Types
 
 The package exports these TypeScript types: `PagerViewRef` (the ref type), `PagerViewMethods`, `PagerViewProps`, `PagerViewOnPageScrollEvent`, `PagerViewOnPageSelectedEvent`, `PageScrollStateChangedNativeEvent`, and their `*EventData` payloads.

@@ -63,6 +63,7 @@ import {
 import { Issue1154PageChangeFocusRepro } from './gh-issues/Issue1154PageChangeFocusRepro';
 import { Issue1156NestedHorizontalScrollRepro } from './gh-issues/Issue1156NestedHorizontalScrollRepro';
 import { Issue1196SetPageAfterAddRepro } from './gh-issues/Issue1196SetPageAfterAddRepro';
+import { Issue1230PagerBetweenPagesRepro } from './gh-issues/Issue1230PagerBetweenPagesRepro';
 import { Issue1199ScrollStateRepro } from './gh-issues/Issue1199ScrollStateRepro';
 import { Issue1202BlankPageRepro } from './gh-issues/Issue1202BlankPageRepro';
 import { Issue1205DiagonalSwipeRepro } from './gh-issues/Issue1205DiagonalSwipeRepro';
@@ -211,6 +212,10 @@ const sections: { title: string; data: Example[] }[] = [
       {
         component: Issue1196SetPageAfterAddRepro,
         name: 'Issue #1196 Set Page After Add Repro',
+      },
+      {
+        component: Issue1230PagerBetweenPagesRepro,
+        name: 'Issue #1230 Pager Between Pages Repro',
       },
       {
         component: Issue1199ScrollStateRepro,

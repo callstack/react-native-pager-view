@@ -23,6 +23,10 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   /// Set while the idle report of a slide that ended between pages is held
   /// back, and cleared by the next idle report that goes out.
   private var isIdleOwed = false
+  /// Snaps started since the pager last reported idle. A snap interrupted
+  /// between pages reports a scroll end of its own and starts another watch,
+  /// so counting per watch would never bound a snap that keeps missing.
+  private var strandSnaps = 0
   /// Page the last rest was reported for, so a slide reports its arrival once.
   /// A scroll-end callback is the final word and reports anyway, since the page
   /// check downstream may have dropped the earlier one.
@@ -74,6 +78,7 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
 
     delegate?.onPageScrollStateChanged(state: .idle)
     isIdleOwed = false
+    strandSnaps = 0
   }
 
   /// Sends the idle report held back for a slide that ended between pages,
@@ -131,6 +136,7 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
     // The drag takes the pager over, and reports idle itself when it ends.
     stopWatchingForStrand()
     isIdleOwed = false
+    strandSnaps = 0
     delegate?.onPageScrollStateChanged(state: .dragging)
     originalDelegate?.scrollViewWillBeginDragging?(scrollView)
   }
@@ -200,12 +206,12 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
       watch.stillFrames += 1
     }
     if watch.stillFrames >= Self.strandedFrameCount {
-      if watch.snaps < Self.strandSnapLimit, snapToSelection(scrollView) {
+      if strandSnaps < Self.strandSnapLimit, snapToSelection(scrollView) {
         // The snap ends in a callback of its own. The watch stays on, with
         // the limit again, in case it does not, as when the pager leaves the
         // window on the way. Only a few of those, so a snap that never
         // reaches the page it aims at cannot keep the watch alive.
-        watch.snaps += 1
+        strandSnaps += 1
         watch.offset = scrollView.contentOffset.x
         watch.stillFrames = 0
         watch.frames = 0
@@ -248,7 +254,8 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   /// How long a slide that ended between pages is followed before the pager
   /// is left to whatever moves it next.
   private static let strandWatchFrameLimit = 120
-  /// Snaps one watch may start before it gives up and reports.
+  /// How many snaps are started between one idle report and the next, before
+  /// the pager is left to whatever moves it next.
   private static let strandSnapLimit = 3
 
   func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
@@ -304,8 +311,6 @@ private final class StrandWatch: NSObject {
   var stillFrames = 0
   /// Frames counted toward the limit.
   var frames = 0
-  /// Snaps this watch has started, so one that never lands still ends.
-  var snaps = 0
   private var link: CADisplayLink?
 
   init(owner: PagerScrollDelegate, scrollView: UIScrollView) {

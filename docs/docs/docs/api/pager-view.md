@@ -135,6 +135,8 @@ setPage(index: number): void
 
 Scrolls to the given page with an animation. An invalid index is ignored.
 
+On iOS 16 and later the pager does not scroll itself to reveal a focused text input. UIKit reveals a first responder by scrolling the nearest scrolling ancestor, which for a pager is the view that pages, so an input focused on a page that is not shown would leave the pager between pages rather than change the page. Change the page with `setPage` and focus the input once that page is selected. A field inside a page is still revealed by the scroll views within that page.
+
 ### `setPageWithoutAnimation`
 
 ```ts

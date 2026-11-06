@@ -190,7 +190,39 @@ private extension PagerGestureObserver {
       method_getTypeEncoding(method)
     )
 
+    // On iOS 15 this observer also governs the collection view, which scrolls
+    // vertically there, and the scroll views embedded in it that do the
+    // paging, so the override would stop scrolling that is not paging.
+    if #available(iOS 16, *) {
+      addRevealOverride(to: subclass, from: currentClass)
+    }
+
     objc_registerClassPair(subclass)
     object_setClass(scrollView, subclass)
+  }
+
+  /// UIKit reveals a first responder by scrolling the nearest scrolling
+  /// ancestor, which for a pager is the view that pages. The pager moves only
+  /// between pages, so such a scroll can only take it off the page the
+  /// selection names and leave it between two of them, and a reveal that
+  /// arrives while the pager is moving replaces the page it was asked for.
+  /// Every one of them is declined, so the selection stays the only thing
+  /// that moves the pager. A field inside a page is still revealed by the
+  /// scroll views within that page, which this leaves alone.
+  private static func addRevealOverride(to subclass: AnyClass, from currentClass: AnyClass) {
+    let selector = #selector(UIScrollView.scrollRectToVisible(_:animated:))
+
+    guard let method = class_getInstanceMethod(currentClass, selector) else {
+      return
+    }
+
+    let override: @convention(block) (AnyObject, CGRect, Bool) -> Void = { _, _, _ in }
+
+    class_addMethod(
+      subclass,
+      selector,
+      imp_implementationWithBlock(override),
+      method_getTypeEncoding(method)
+    )
   }
 }
