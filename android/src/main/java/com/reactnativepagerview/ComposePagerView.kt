@@ -683,11 +683,13 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   @Composable
   private fun Page(page: Int) {
     val transition = pageTransitionState.value
+    // A transition can recompose a slot whose page React has just removed.
+    val ownPage = pages.getOrNull(page)
     val child = when {
-      transition == null -> pages[page]
+      transition == null -> ownPage
       page == transition.passingPage -> transition.leftPage
-      pages[page] === transition.leftPage -> null
-      else -> pages[page]
+      ownPage === transition.leftPage -> null
+      else -> ownPage
     }
     PageHost(child)
   }
