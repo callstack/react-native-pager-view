@@ -10,6 +10,8 @@ export const IMAGE_URIS = [
   'https://apod.nasa.gov/apod/image/1510/lunareclipse_27Sep_beletskycrop4.jpg',
 ];
 
+export const padNumber = (value: number) => String(value).padStart(2, '0');
+
 // Unicodes issue on iOS 26.3 https://github.com/facebook/react-native/issues/56183
 export const thumbsUp = '\uD83D\uDC4D';
 export const logoUrl =
