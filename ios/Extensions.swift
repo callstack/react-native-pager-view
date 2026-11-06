@@ -24,6 +24,8 @@ class PageChildViewController: UIViewController {
     NSSelectorFromString("_parentGestureRecognizerContainer")
 
   var wrappedView: UIView?
+  private var isPropagatingSafeArea = false
+  private var lastSafeAreaWrite: (target: UIEdgeInsets, safeArea: UIEdgeInsets)?
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -86,14 +88,70 @@ class PageChildViewController: UIViewController {
   /// Do not walk to the nearest ancestor with a non-zero inset. That source
   /// is in the ancestor's own coordinate space and can track scroll offset
   /// (#1099).
+  ///
+  /// `additionalInsets(toReach:)` assumes UIKit applies the value written
+  /// here. A page re-hosted by an iOS 18+ zoom transition can keep a fixed
+  /// `safeAreaInsets` instead, so every pass subtracts the same gap again and
+  /// the main thread loops forever (#1232). Ignore our own nested callback
+  /// and write again only when the target or the page's actual safe area
+  /// moved since the last write.
+  ///
+  /// UIKit clamps `safeAreaInsets` at 0, so an edge with a negative
+  /// correction and a 0 inset hides the inherited value, and an unchanged
+  /// sample there does not mean UIKit ignored the write. Clear those edges
+  /// first to measure what is inherited, then correct from that.
   private func propagateSafeArea() {
-    let insets = additionalInsets(toReach: targetSafeAreaInsets())
-    if abs(additionalSafeAreaInsets.top - insets.top) > 0.5
-        || abs(additionalSafeAreaInsets.left - insets.left) > 0.5
-        || abs(additionalSafeAreaInsets.bottom - insets.bottom) > 0.5
-        || abs(additionalSafeAreaInsets.right - insets.right) > 0.5 {
-      additionalSafeAreaInsets = insets
+    guard !isPropagatingSafeArea else {
+      return
     }
+    let target = targetSafeAreaInsets()
+    var insets = additionalInsets(toReach: target)
+    if Self.insetsMatch(additionalSafeAreaInsets, insets) {
+      return
+    }
+    if let unclamped = additionalInsetsWithoutClampedEdges() {
+      writeAdditionalSafeAreaInsets(unclamped)
+      insets = additionalInsets(toReach: target)
+      if Self.insetsMatch(additionalSafeAreaInsets, insets) {
+        return
+      }
+    } else if let lastWrite = lastSafeAreaWrite,
+              Self.insetsMatch(lastWrite.target, target),
+              Self.insetsMatch(lastWrite.safeArea, view.safeAreaInsets) {
+      return
+    }
+    writeAdditionalSafeAreaInsets(insets)
+    lastSafeAreaWrite = (target: target, safeArea: view.safeAreaInsets)
+  }
+
+  private func writeAdditionalSafeAreaInsets(_ insets: UIEdgeInsets) {
+    isPropagatingSafeArea = true
+    additionalSafeAreaInsets = insets
+    isPropagatingSafeArea = false
+  }
+
+  /// `additionalSafeAreaInsets` with every clamped edge (negative correction,
+  /// 0 actual inset) set to 0, or nil when no edge is clamped.
+  private func additionalInsetsWithoutClampedEdges() -> UIEdgeInsets? {
+    func unclamped(_ additional: CGFloat, _ actual: CGFloat) -> CGFloat {
+      additional < -0.5 && actual <= 0.5 ? 0 : additional
+    }
+    let current = additionalSafeAreaInsets
+    let actual = view.safeAreaInsets
+    let rebased = UIEdgeInsets(
+      top: unclamped(current.top, actual.top),
+      left: unclamped(current.left, actual.left),
+      bottom: unclamped(current.bottom, actual.bottom),
+      right: unclamped(current.right, actual.right)
+    )
+    return rebased == current ? nil : rebased
+  }
+
+  private static func insetsMatch(_ lhs: UIEdgeInsets, _ rhs: UIEdgeInsets) -> Bool {
+    abs(lhs.top - rhs.top) <= 0.5
+      && abs(lhs.left - rhs.left) <= 0.5
+      && abs(lhs.bottom - rhs.bottom) <= 0.5
+      && abs(lhs.right - rhs.right) <= 0.5
   }
 
   private func additionalInsets(toReach target: UIEdgeInsets) -> UIEdgeInsets {
