@@ -200,16 +200,19 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
       watch.stillFrames += 1
     }
     if watch.stillFrames >= Self.strandedFrameCount {
-      if snapToSelection(scrollView) {
+      if watch.snaps < Self.strandSnapLimit, snapToSelection(scrollView) {
         // The snap ends in a callback of its own. The watch stays on, with
-        // the whole limit, in case it does not, as when the pager leaves the
-        // window on the way.
+        // the limit again, in case it does not, as when the pager leaves the
+        // window on the way. Only a few of those, so a snap that never
+        // reaches the page it aims at cannot keep the watch alive.
+        watch.snaps += 1
         watch.offset = scrollView.contentOffset.x
         watch.stillFrames = 0
         watch.frames = 0
         return
       }
-      // On a page, which the slide reached without a callback of its own.
+      // Either the pager is on a page, which the slide reached without a
+      // callback of its own, or the snaps are spent and it is not arriving.
       stopWatchingForStrand()
       emitIdleIfOwed(scrollView)
     } else if watch.frames >= Self.strandWatchFrameLimit {
@@ -245,6 +248,8 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   /// How long a slide that ended between pages is followed before the pager
   /// is left to whatever moves it next.
   private static let strandWatchFrameLimit = 120
+  /// Snaps one watch may start before it gives up and reports.
+  private static let strandSnapLimit = 3
 
   func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
     if !decelerate {
@@ -299,6 +304,8 @@ private final class StrandWatch: NSObject {
   var stillFrames = 0
   /// Frames counted toward the limit.
   var frames = 0
+  /// Snaps this watch has started, so one that never lands still ends.
+  var snaps = 0
   private var link: CADisplayLink?
 
   init(owner: PagerScrollDelegate, scrollView: UIScrollView) {
