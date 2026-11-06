@@ -175,8 +175,13 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
     }
     // Setting a published value updates the view even when it is already nil,
     // and an update outside the animation would cut a running slide short.
-    if props.pageTransition != nil {
+    let previousTransition = props.pageTransition
+    if let previousTransition {
       props.pageTransition = nil
+      // The jump to the passing page reported no selection.
+      if !previousTransition.isSliding && index == props.currentPage {
+        delegate?.onPageSelected(position: index)
+      }
     }
     switch animation {
     case .none:
@@ -186,16 +191,14 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
         props.currentPage = index
       }
     case .direct:
-      slideDirectly(to: index)
+      slideDirectly(to: index, after: previousTransition)
     }
   }
 
-  /// TabView scrolls past every page on its way to a distant one. Jump to the
-  /// target's neighbour instead, moving the current page into it, so that only
-  /// the target slides in. `PagerView` starts the slide once the jump is shown.
-  /// iOS 15 scrolls instead: the rest that puts the page back is not reported
-  /// there, see `PagerViewIOS15Compat`.
-  private func slideDirectly(to index: Int) {
+  /// Jumps to the target's neighbour, moving the current page into it, so only
+  /// the target slides in; `PagerView` starts the slide. iOS 15 scrolls instead,
+  /// as it reports no rest to put the page back, see `PagerViewIOS15Compat`.
+  private func slideDirectly(to index: Int, after previousTransition: PageTransition?) {
     let currentPage = props.currentPage
     guard #available(iOS 16, *),
           abs(index - currentPage) > 1,
@@ -206,10 +209,19 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
       }
       return
     }
+    // A slide redirected before it moved still shows the page it left.
+    let shownPage = previousTransition
+      .flatMap { !$0.isSliding && $0.passingPage == currentPage ? $0.leftPage : nil }
+      ?? props.children[currentPage].view
+    // The target slot would give that page up.
+    if shownPage === props.children[index].view {
+      props.currentPage = index
+      return
+    }
     let transition = PageTransition(
       passingPage: index > currentPage ? index - 1 : index + 1,
       targetPage: index,
-      leftPage: props.children[currentPage].view
+      leftPage: shownPage
     )
     props.pageTransition = transition
     props.currentPage = transition.passingPage

@@ -24,7 +24,7 @@ extension PagerLayoutDirection {
   }
 }
 
-/// A `setPage` with the `direct` animation, see `PagerViewProvider.slideDirectly(to:)`.
+/// A `setPage` with the `direct` animation, see `PagerViewProvider.slideDirectly(to:after:)`.
 struct PageTransition {
   let id = UUID()
   /// The target's neighbour, which hosts `leftPage` during the slide.

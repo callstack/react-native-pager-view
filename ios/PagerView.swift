@@ -38,8 +38,8 @@ struct PagerView: View {
     PagerViewIOS15Compat.applyOverdrag(overdrag, to: collectionView)
   }
 
-  /// During a direct slide the passing page hosts the page being left, which its
-  /// own slot gives up, see `PagerViewProvider.slideDirectly(to:)`.
+  /// A direct slide moves the page it leaves into its passing page, see
+  /// `PagerViewProvider.slideDirectly(to:after:)`.
   private func pageView(at index: Int, child: IdentifiablePlatformView) -> UIView? {
     guard let transition = props.pageTransition else {
       return child.view

@@ -586,7 +586,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       }
       when (command.animation) {
         PageAnimation.None -> pagerState.scrollToPage(command.page)
-        PageAnimation.Scroll -> pagerState.animateScrollToPage(command.page)
+        PageAnimation.Scroll -> scrollThroughPages(pagerState, command.page)
         PageAnimation.Direct -> slideDirectly(pagerState, command.page)
       }
       if (scrollCommandState.value == command) {
@@ -679,8 +679,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     }
   }
 
-  // During a direct slide the passing page hosts the page being left, which its own slot
-  // gives up, see slideDirectly.
+  // A direct slide moves the page it leaves into its passing page, see slideDirectly.
   @Composable
   private fun Page(page: Int) {
     val transition = pageTransitionState.value
@@ -693,39 +692,56 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     PageHost(child)
   }
 
-  // animateScrollToPage scrolls past every page between, up to three of them. Jump to the
-  // target's neighbour instead, moving the current page into it, so that only the target
-  // slides in. Both steps run in one scroll, so the pager settles, and reports a selection,
-  // only on the target.
+  // animateScrollToPage jumps to three pages short of a distant page first; this scrolls past
+  // every page, as on iOS. A transition jumps within the same scroll, so the pager settles, and
+  // reports a selection, only on the target, and shows once any running scroll has let go.
+  private suspend fun scrollThroughPages(
+    pagerState: PagerState,
+    page: Int,
+    transition: PageTransition? = null
+  ) {
+    pagerState.scroll {
+      with(pagerState) {
+        transition?.let {
+          pageTransitionState.value = it
+          updateCurrentPage(it.passingPage)
+        }
+        updateTargetPage(page)
+      }
+      val pageSize = pagerState.layoutInfo.pageSize + pagerState.layoutInfo.pageSpacing
+      val position = transition?.passingPage?.toFloat()
+        ?: (pagerState.currentPage + pagerState.currentPageOffsetFraction)
+      var scrolled = 0f
+      // The spring animateScrollToPage uses.
+      val animationSpec = spring<Float>(stiffness = Spring.StiffnessMediumLow)
+      animate(0f, (page - position) * pageSize, animationSpec = animationSpec) { value, _ ->
+        scrolled += scrollBy(value - scrolled)
+      }
+    }
+  }
+
+  // Jumps to the target's neighbour, moving the current page into it, so only the target slides.
   private suspend fun slideDirectly(pagerState: PagerState, page: Int) {
     val distance = page - pagerState.currentPage
-    // A slide redirected while still on its passing page shows the page it left there.
-    val shownPage = pageTransitionState.value
+    // A slide redirected before it moved still shows the page it left.
+    val borrowedPage = pageTransitionState.value
       ?.takeIf { it.passingPage == pagerState.currentPage }
       ?.leftPage
-      ?: pages.getOrNull(pagerState.currentPage)
+    // The target slot would give that page up.
+    if (borrowedPage != null && borrowedPage === pages.getOrNull(page)) {
+      pagerState.scrollToPage(page)
+      return
+    }
+    val shownPage = borrowedPage ?: pages.getOrNull(pagerState.currentPage)
     if (distance.absoluteValue <= 1 || shownPage == null) {
-      pagerState.animateScrollToPage(page)
+      scrollThroughPages(pagerState, page)
       return
     }
     val transition = PageTransition(passingPage = page - distance.sign, leftPage = shownPage)
-    pageTransitionState.value = transition
     try {
-      pagerState.scroll {
-        with(pagerState) {
-          updateCurrentPage(transition.passingPage)
-          updateTargetPage(page)
-        }
-        val pageSize = pagerState.layoutInfo.pageSize + pagerState.layoutInfo.pageSpacing
-        var scrolled = 0f
-        // The spring animateScrollToPage uses.
-        val animationSpec = spring<Float>(stiffness = Spring.StiffnessMediumLow)
-        animate(0f, (distance.sign * pageSize).toFloat(), animationSpec = animationSpec) { value, _ ->
-          scrolled += scrollBy(value - scrolled)
-        }
-      }
+      scrollThroughPages(pagerState, page, transition)
     } finally {
-      // A newer direct setPage may have started its own transition already.
+      // A newer direct setPage may already show its own.
       if (pageTransitionState.value === transition) {
         pageTransitionState.value = null
       }

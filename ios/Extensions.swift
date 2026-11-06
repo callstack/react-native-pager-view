@@ -35,8 +35,7 @@ class PageChildViewController: UIViewController {
     }
   }
 
-  /// Swaps the page view, as a direct `setPage` borrows the page it leaves for
-  /// its passing page. The view may already have moved to another page.
+  /// A direct `setPage` borrows page views, so the old one may have moved already.
   func host(_ newView: UIView?) {
     guard newView !== wrappedView else {
       return
