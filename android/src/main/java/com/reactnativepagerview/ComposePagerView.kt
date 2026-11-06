@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -715,7 +714,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         ?: (pagerState.currentPage + pagerState.currentPageOffsetFraction)
       var scrolled = 0f
       // The spring animateScrollToPage uses.
-      val animationSpec = spring<Float>(stiffness = Spring.StiffnessMediumLow)
+      val animationSpec = spring<Float>()
       animate(0f, (page - position) * pageSize, animationSpec = animationSpec) { value, _ ->
         scrolled += scrollBy(value - scrolled)
       }
