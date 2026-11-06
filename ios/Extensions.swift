@@ -8,7 +8,7 @@ import UIKit
  that SwiftUI's .ignoresSafeArea() strips from child UIKit views
  */
 struct RepresentableView: UIViewControllerRepresentable {
-  var view: UIView
+  var view: UIView?
 
   func makeUIViewController(context: Context) -> PageChildViewController {
     let viewController = PageChildViewController()
@@ -16,7 +16,9 @@ struct RepresentableView: UIViewControllerRepresentable {
     return viewController
   }
 
-  func updateUIViewController(_ uiViewController: PageChildViewController, context: Context) {}
+  func updateUIViewController(_ uiViewController: PageChildViewController, context: Context) {
+    uiViewController.host(view)
+  }
 }
 
 class PageChildViewController: UIViewController {
@@ -30,6 +32,21 @@ class PageChildViewController: UIViewController {
     view.backgroundColor = .clear
     if let wrappedView {
       view.addSubview(wrappedView)
+    }
+  }
+
+  /// Swaps the page view, as a direct `setPage` borrows the page it leaves for
+  /// its passing page. The view may already have moved to another page.
+  func host(_ newView: UIView?) {
+    guard newView !== wrappedView else {
+      return
+    }
+    if let wrappedView, wrappedView.superview === viewIfLoaded {
+      wrappedView.removeFromSuperview()
+    }
+    wrappedView = newView
+    if let newView, isViewLoaded {
+      view.addSubview(newView)
     }
   }
 
