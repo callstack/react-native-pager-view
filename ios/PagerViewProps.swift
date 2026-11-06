@@ -33,10 +33,28 @@ class PagerViewProps: ObservableObject {
   @Published var layoutDirection: PagerLayoutDirection = .ltr
   @Published var orientation: UICollectionView.ScrollDirection = .horizontal
 
+  /// The page the selection names, held inside the pages that exist. Nothing
+  /// clamps the index a command carries, and `-1` stands for no selection yet.
+  var clampedCurrentPage: Int {
+    guard !children.isEmpty else {
+      return 0
+    }
+    return min(max(currentPage, 0), children.count - 1)
+  }
+
+  /// A page counted the other way round, which only a right-to-left layout
+  /// changes. Mirroring twice gives the page back, so this converts both ways.
+  func mirroredPage(_ page: Int) -> Int {
+    guard !children.isEmpty, layoutDirection == .rtl else {
+      return page
+    }
+    return children.count - 1 - page
+  }
+
   /// Blurs a text input focused on any page other than `page`. The paged
   /// `TabView` keeps neighbouring pages in the window, so nothing else does.
-  /// An index that is not a page leaves every input alone: there is no page to
-  /// spare from the blur.
+  /// An index that is not a page leaves every input alone, since there would
+  /// be no page to spare from the blur.
   func resignFirstResponder(outsidePage page: Int) {
     guard children.indices.contains(page) else {
       return

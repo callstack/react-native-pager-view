@@ -15,11 +15,24 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   /// handler has seen the same event. The page is the physical one, which a
   /// right-to-left layout mirrors.
   var onRest: ((Int) -> Void)?
+  /// The page the selection names, counted physically, so a slide that ends
+  /// between pages has somewhere to go.
+  var selectedPage: (() -> Int)?
+  /// The watch on a slide that ended between pages, while one runs.
+  private var strandWatch: StrandWatch?
+  /// Set while the idle report of a slide that ended between pages is held
+  /// back, and cleared by the next idle report that goes out.
+  private var isIdleOwed = false
   /// Page the last rest was reported for, so a slide reports its arrival once.
   /// A scroll-end callback is the final word and reports anyway, since the page
   /// check downstream may have dropped the earlier one.
   private var lastRestedPage: Int?
   
+  deinit {
+    strandWatch?.stop()
+    emitIdleIfOwed(nil)
+  }
+
   private let handledSelectors: Set<Selector> = [
     #selector(scrollViewDidScroll(_:)),
     #selector(scrollViewWillBeginDragging(_:)),
@@ -51,14 +64,25 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
     }
   }
 
-  /// Emits a final onPageScroll with offset 0 before transitioning to idle,
-  /// clearing any residual floating-point offset from the scroll animation.
-  private func emitIdleWithCleanOffset(_ scrollView: UIScrollView) {
-    if let (page, _) = nearestPage(in: scrollView) {
+  /// Reports idle. With `cleanOffset`, a final onPageScroll with offset 0 goes
+  /// first, clearing any residual floating-point offset from the scroll
+  /// animation.
+  private func emitIdle(_ scrollView: UIScrollView?, cleanOffset: Bool) {
+    if cleanOffset, let scrollView, let (page, _) = nearestPage(in: scrollView) {
       delegate?.onPageScroll(position: page, offset: 0)
     }
 
     delegate?.onPageScrollStateChanged(state: .idle)
+    isIdleOwed = false
+  }
+
+  /// Sends the idle report held back for a slide that ended between pages,
+  /// with a clean offset only when the pager is on a page.
+  private func emitIdleIfOwed(_ scrollView: UIScrollView?) {
+    guard isIdleOwed else {
+      return
+    }
+    emitIdle(scrollView, cleanOffset: scrollView.map(isOnPage) ?? false)
   }
 
   /// A slide cut short by another command stops between pages, which is not a
@@ -67,8 +91,7 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
     guard let (page, pageSize) = nearestPage(in: scrollView) else {
       return
     }
-    let offsetInPage = abs(scrollView.contentOffset.x.truncatingRemainder(dividingBy: pageSize))
-    guard offsetInPage < 1 || pageSize - offsetInPage < 1 else {
+    guard isOnPageBoundary(scrollView, pageSize: pageSize) else {
       lastRestedPage = nil
       return
     }
@@ -77,6 +100,21 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
     }
     lastRestedPage = page
     onRest?(page)
+  }
+
+  /// Whether the pager sits on a page, which it cannot before it has a size.
+  private func isOnPage(_ scrollView: UIScrollView) -> Bool {
+    guard let (_, pageSize) = nearestPage(in: scrollView) else {
+      return false
+    }
+    return isOnPageBoundary(scrollView, pageSize: pageSize)
+  }
+
+  /// Whether the pager sits on a page rather than between two, within the
+  /// rounding a scroll animation leaves behind.
+  private func isOnPageBoundary(_ scrollView: UIScrollView, pageSize: CGFloat) -> Bool {
+    let offsetInPage = abs(scrollView.contentOffset.x.truncatingRemainder(dividingBy: pageSize))
+    return offsetInPage < 1 || pageSize - offsetInPage < 1
   }
 
   /// The page the scroll view is closest to and the page size it was measured
@@ -90,6 +128,9 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   }
   
   func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    // The drag takes the pager over, and reports idle itself when it ends.
+    stopWatchingForStrand()
+    isIdleOwed = false
     delegate?.onPageScrollStateChanged(state: .dragging)
     originalDelegate?.scrollViewWillBeginDragging?(scrollView)
   }
@@ -100,20 +141,114 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   }
   
   func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-    emitIdleWithCleanOffset(scrollView)
+    emitIdle(scrollView, cleanOffset: true)
     originalDelegate?.scrollViewDidEndDecelerating?(scrollView)
     notifyRestOnPageBoundary(scrollView, fromScrollEnd: true)
   }
 
   func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-    emitIdleWithCleanOffset(scrollView)
+    // A slide that ends between pages has not come to rest, so its idle waits
+    // for the watch that follows it.
+    if watchIfStranded(scrollView) {
+      isIdleOwed = true
+    } else {
+      emitIdle(scrollView, cleanOffset: true)
+    }
     originalDelegate?.scrollViewDidEndScrollingAnimation?(scrollView)
     notifyRestOnPageBoundary(scrollView, fromScrollEnd: true)
   }
 
+  /// UIKit scrolls the pager to show a text field that takes focus on another
+  /// page, and that scroll replaces the slide `TabView` is running and ends
+  /// between pages, where it leaves the pager. A redirected slide reports a
+  /// callback there too and carries on, so a strand is only told apart by the
+  /// pager holding still, counted in frames rather than time: a stalled main
+  /// thread holds back the next frame of a slide that is still coming.
+  /// Reports whether a watch started.
+  private func watchIfStranded(_ scrollView: UIScrollView) -> Bool {
+    stopWatchingForStrand()
+    // Without a selection there is nowhere to move the pager to.
+    guard selectedPage != nil,
+          let (_, pageSize) = nearestPage(in: scrollView),
+          !isOnPageBoundary(scrollView, pageSize: pageSize) else {
+      return false
+    }
+    strandWatch = StrandWatch(owner: self, scrollView: scrollView)
+    return true
+  }
+
+  /// Every way a watch ends sends the idle report it may hold back, except a
+  /// drag, which sends its own.
+  fileprivate func watchForStrand(_ watch: StrandWatch) {
+    guard let scrollView = watch.scrollView else {
+      stopWatchingForStrand()
+      emitIdleIfOwed(nil)
+      return
+    }
+    // A finger that holds the pager without dragging it stops the clock, so
+    // the watch outlasts the touch.
+    if !scrollView.isTracking {
+      watch.frames += 1
+    }
+    // A pager that moves, or that a finger holds, is not stranded yet.
+    if scrollView.contentOffset.x != watch.offset
+        || scrollView.isTracking
+        || scrollView.isDecelerating {
+      watch.offset = scrollView.contentOffset.x
+      watch.stillFrames = 0
+    } else {
+      watch.stillFrames += 1
+    }
+    if watch.stillFrames >= Self.strandedFrameCount {
+      if snapToSelection(scrollView) {
+        // The snap ends in a callback of its own. The watch stays on, with
+        // the whole limit, in case it does not, as when the pager leaves the
+        // window on the way.
+        watch.offset = scrollView.contentOffset.x
+        watch.stillFrames = 0
+        watch.frames = 0
+        return
+      }
+      // On a page, which the slide reached without a callback of its own.
+      stopWatchingForStrand()
+      emitIdleIfOwed(scrollView)
+    } else if watch.frames >= Self.strandWatchFrameLimit {
+      stopWatchingForStrand()
+      emitIdleIfOwed(scrollView)
+    }
+  }
+
+  /// Moves a pager that came to rest between pages onto the selected page,
+  /// and returns whether it did.
+  private func snapToSelection(_ scrollView: UIScrollView) -> Bool {
+    guard let (_, pageSize) = nearestPage(in: scrollView),
+          !isOnPageBoundary(scrollView, pageSize: pageSize),
+          let page = selectedPage?() else {
+      return false
+    }
+    // Out of the window there is no one to see an animation.
+    scrollView.setContentOffset(
+      CGPoint(x: CGFloat(page) * pageSize, y: scrollView.contentOffset.y),
+      animated: scrollView.window != nil
+    )
+    return true
+  }
+
+  private func stopWatchingForStrand() {
+    strandWatch?.stop()
+    strandWatch = nil
+  }
+
+  /// Long enough for a redirected slide to carry on from a callback it
+  /// reported between pages.
+  private static let strandedFrameCount = 9
+  /// How long a slide that ended between pages is followed before the pager
+  /// is left to whatever moves it next.
+  private static let strandWatchFrameLimit = 120
+
   func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
     if !decelerate {
-      emitIdleWithCleanOffset(scrollView)
+      emitIdle(scrollView, cleanOffset: true)
     }
     originalDelegate?.scrollViewDidEndDragging?(scrollView, willDecelerate: decelerate)
     if !decelerate {
@@ -151,3 +286,43 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   }
 }
 
+/// One watch on a pager that came to rest between pages: what it has seen so
+/// far, and the target of its display link. A display link holds its target
+/// until it is invalidated, so the delegate is held weakly here, and a watch
+/// left running cannot keep it alive.
+private final class StrandWatch: NSObject {
+  private weak var owner: PagerScrollDelegate?
+  weak var scrollView: UIScrollView?
+  /// The offset at the last frame, which tells a still frame from a moving one.
+  var offset: CGFloat
+  /// Frames in a row the pager has held still.
+  var stillFrames = 0
+  /// Frames counted toward the limit.
+  var frames = 0
+  private var link: CADisplayLink?
+
+  init(owner: PagerScrollDelegate, scrollView: UIScrollView) {
+    self.owner = owner
+    self.scrollView = scrollView
+    offset = scrollView.contentOffset.x
+    super.init()
+    let link = CADisplayLink(target: self, selector: #selector(tick))
+    // A fixed rate, so the counts mean the same on a ProMotion display.
+    link.preferredFramesPerSecond = 60
+    link.add(to: .main, forMode: .common)
+    self.link = link
+  }
+
+  func stop() {
+    link?.invalidate()
+    link = nil
+  }
+
+  @objc private func tick() {
+    guard let owner else {
+      stop()
+      return
+    }
+    owner.watchForStrand(self)
+  }
+}
