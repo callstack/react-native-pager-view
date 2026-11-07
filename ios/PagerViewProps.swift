@@ -33,6 +33,10 @@ class PagerViewProps: ObservableObject {
   @Published var layoutDirection: PagerLayoutDirection = .ltr
   @Published var orientation: UICollectionView.ScrollDirection = .horizontal
 
+  /// Page an animated `setPage` selects once its wait ends. Not published,
+  /// since nothing renders from it.
+  var pendingPage: Int?
+
   /// Blurs a text input focused on any page other than `page`. The paged
   /// `TabView` keeps neighbouring pages in the window, so nothing else does.
   /// An index that is not a page leaves every input alone: there is no page to

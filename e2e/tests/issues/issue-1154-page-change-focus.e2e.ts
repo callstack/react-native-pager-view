@@ -32,6 +32,17 @@ async function expectStatus(
   );
 }
 
+/**
+ * Checks that the last command slid the pager rather than jumping. A slide
+ * reports around twenty scroll events and a jump one, so the floor is low
+ * enough for a loaded machine that drops frames.
+ */
+async function expectSlid(screen: Screen): Promise<void> {
+  await expect(screen.getByTestId('issue-1154-status')).toHaveText(
+    /Scrolls: ([5-9]|\d\d)/
+  );
+}
+
 /** Waits for the pager to report that it has stopped on `page`. */
 async function expectIdleAt(screen: Screen, page: number): Promise<void> {
   await expect(screen.getByTestId('issue-1154-events')).toHaveText(
@@ -305,5 +316,27 @@ test(
     await expectIdleAt(screen, 1);
     await wait(SETTLE_MS);
     await expectStatus(screen, platform, 1, 'none');
+    await expectSlid(screen);
+  }
+);
+
+test(
+  'a setPage with the keyboard open still slides',
+  { ...options, platforms: ['ios'] },
+  async ({ app, screen, platform }) => {
+    // Twice over: blurring in the pass that changes the selection made the
+    // second move apply the page without animating it, which the landing
+    // checks cannot see. A slide reports around twenty scroll events, a jump
+    // one or two.
+    await focusInputOnPage(app, screen, platform, 0);
+    await screen.getByTestId('issue-1154-go-1').tap();
+    await wait(SETTLE_MS);
+    await expectSlid(screen);
+    await screen.getByTestId('issue-1154-input-1').tap();
+    await expectStatus(screen, platform, 1, 'input 1');
+    await screen.getByTestId('issue-1154-go-2').tap();
+    await wait(SETTLE_MS);
+    await expectSlid(screen);
+    await expectStatus(screen, platform, 2, 'none');
   }
 );

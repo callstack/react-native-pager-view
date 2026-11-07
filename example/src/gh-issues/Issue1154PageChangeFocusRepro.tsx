@@ -33,6 +33,8 @@ export function Issue1154PageChangeFocusRepro() {
   const [avoidsKeyboard, setAvoidsKeyboard] = useState(false);
   const inputRefs = useRef<Array<TextInputInstance | null>>([]);
   const lastRest = useRef(0);
+  const scrollsSinceCommand = useRef(0);
+  const [scrollsAtRest, setScrollsAtRest] = useState(0);
   const lateCommand = useRef<ReturnType<typeof setTimeout> | null>(null);
   const log = (event: string) =>
     setEvents((current) => [...current.slice(-11), event]);
@@ -42,6 +44,8 @@ export function Issue1154PageChangeFocusRepro() {
   // from an earlier command.
   const startCommand = () => {
     setEvents([]);
+    scrollsSinceCommand.current = 0;
+    setScrollsAtRest(0);
     followUpCommand.current = null;
     if (lateCommand.current) {
       clearTimeout(lateCommand.current);
@@ -84,7 +88,7 @@ export function Issue1154PageChangeFocusRepro() {
       <Text testID="issue-1154-status" style={styles.status}>
         Selected: {selectedPage} | Focused:{' '}
         {focusedInput === null ? 'none' : `input ${focusedInput}`} | Keyboard:{' '}
-        {keyboardVisible ? 'visible' : 'hidden'}
+        {keyboardVisible ? 'visible' : 'hidden'} | Scrolls: {scrollsAtRest}
       </Text>
       <Text testID="issue-1154-events" style={styles.events}>
         Events: {events.join(', ')}
@@ -166,6 +170,10 @@ export function Issue1154PageChangeFocusRepro() {
         ref={pagerRef}
         style={styles.pager}
         onPageScroll={(e) => {
+          // Counted in a ref, not in state: a re-render on every scroll event
+          // changes how far the pager travels. The count is published once the
+          // pager stops, and it separates a slide from a jump.
+          scrollsSinceCommand.current += 1;
           // The pager sends the snapped page with no offset just before it
           // reports stopping, which is where it actually came to rest.
           if (e.nativeEvent.offset === 0) {
@@ -176,6 +184,7 @@ export function Issue1154PageChangeFocusRepro() {
           // Only idle is logged: a re-render while the finger is still down
           // changes how far the pager travels.
           if (e.nativeEvent.pageScrollState === 'idle') {
+            setScrollsAtRest(scrollsSinceCommand.current);
             log('state idle at ' + String(lastRest.current));
           }
         }}
