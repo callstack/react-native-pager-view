@@ -164,12 +164,13 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
     notifyRestOnPageBoundary(scrollView, fromScrollEnd: true)
   }
 
-  /// UIKit scrolls the pager to show a text field that takes focus on another
-  /// page, and that scroll replaces the slide `TabView` is running and ends
-  /// between pages, where it leaves the pager. A redirected slide reports a
-  /// callback there too and carries on, so a strand is only told apart by the
-  /// pager holding still, counted in frames rather than time: a stalled main
-  /// thread holds back the next frame of a slide that is still coming.
+  /// A slide that ends between pages has not arrived. `TabView` reports a
+  /// callback there for a redirected slide and carries on, so a strand is
+  /// only told apart by the pager holding still, counted in frames rather
+  /// than time: a stalled main thread holds back the next frame of a slide
+  /// that is still coming. The frame count is also what releases an idle held
+  /// back for such a slide, so the watch runs even where the reveal override
+  /// in `PagerGestureObserver` has already prevented the strand.
   /// Reports whether a watch started.
   private func watchIfStranded(_ scrollView: UIScrollView) -> Bool {
     stopWatchingForStrand()
