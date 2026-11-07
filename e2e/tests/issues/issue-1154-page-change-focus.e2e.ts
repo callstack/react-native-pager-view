@@ -206,13 +206,13 @@ test(
 
     // The first command focuses page 1's input as it leaves page 0, and the
     // second one redirects to page 2 while that slide runs, so the focus lands
-    // on a page the pager has already left. The landing reports an arrival of
-    // its own, which the page check reads, after a settle that leaves an
-    // overshoot to page 3 time to show in the selection.
+    // on a page the pager has already left. An overshoot lands on page 3. The
+    // landing reports an idle of its own, but it can name a page the slide
+    // passed through, so the wait is the settle and the page comes from the
+    // selection, which an overshoot changes.
     await screen.getByTestId('issue-1154-mode-onPress').tap();
     await screen.getByTestId('issue-1154-go-1-then-2').tap();
     await wait(SETTLE_MS);
-    await expectIdleAt(screen, 2);
     await expectStatus(screen, platform, 2, 'none');
   }
 );
