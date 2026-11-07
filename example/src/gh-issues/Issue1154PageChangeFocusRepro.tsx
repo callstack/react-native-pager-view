@@ -31,9 +31,10 @@ export function Issue1154PageChangeFocusRepro() {
     'off' | 'onSelected' | 'onPress'
   >('off');
   const [avoidsKeyboard, setAvoidsKeyboard] = useState(false);
+  const [noKeyboard, setNoKeyboard] = useState(false);
   const inputRefs = useRef<Array<TextInputInstance | null>>([]);
   const lastRest = useRef(0);
-  const lateCommand = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const midSlideCommand = useRef(false);
   const log = (event: string) =>
     setEvents((current) => [...current.slice(-11), event]);
 
@@ -43,10 +44,7 @@ export function Issue1154PageChangeFocusRepro() {
   const startCommand = () => {
     setEvents([]);
     followUpCommand.current = null;
-    if (lateCommand.current) {
-      clearTimeout(lateCommand.current);
-      lateCommand.current = null;
-    }
+    midSlideCommand.current = false;
   };
 
   const goToPageThen = (first: number, second: number) => {
@@ -73,9 +71,6 @@ export function Issue1154PageChangeFocusRepro() {
     return () => {
       show.remove();
       hide.remove();
-      if (lateCommand.current) {
-        clearTimeout(lateCommand.current);
-      }
     };
   }, []);
 
@@ -131,19 +126,15 @@ export function Issue1154PageChangeFocusRepro() {
           }}
         />
         <Button
-          testID="issue-1154-go-1-then-2-late"
-          title="Go 1 then 2 late"
+          testID="issue-1154-go-1-then-2-mid-slide"
+          title="Go 1 then 2 mid-slide"
           onPress={() => {
             startCommand();
+            // onPageScroll sends the redirect a quarter of the way to page 1.
+            // On page 1 already, nothing moves to send or disarm it.
+            midSlideCommand.current = selectedPage !== 1;
             pagerRef.current?.setPage(1);
             inputRefs.current[1]?.focus();
-            // Long enough for the focus to land, so the blur before a page
-            // change is the one that catches it. The redirect lands the same
-            // way if the slide finishes first, which keeps this off the clock.
-            lateCommand.current = setTimeout(
-              () => pagerRef.current?.setPage(2),
-              200
-            );
           }}
         />
       </View>
@@ -157,6 +148,11 @@ export function Issue1154PageChangeFocusRepro() {
           />
         ))}
         <Button
+          testID="issue-1154-no-keyboard"
+          title={`${noKeyboard ? '* ' : ''}no keyboard`}
+          onPress={() => setNoKeyboard((current) => !current)}
+        />
+        <Button
           testID="issue-1154-avoid"
           title={`${avoidsKeyboard ? '* ' : ''}avoid`}
           onPress={() => setAvoidsKeyboard((current) => !current)}
@@ -166,6 +162,12 @@ export function Issue1154PageChangeFocusRepro() {
         ref={pagerRef}
         style={styles.pager}
         onPageScroll={(e) => {
+          const progress = e.nativeEvent.position + e.nativeEvent.offset;
+          if (midSlideCommand.current && progress >= 0.25 && progress < 1) {
+            midSlideCommand.current = false;
+            log('redirect mid-slide');
+            pagerRef.current?.setPage(2);
+          }
           // The pager sends the snapped page with no offset just before it
           // reports stopping, which is where it actually came to rest.
           if (e.nativeEvent.offset === 0) {
@@ -176,6 +178,9 @@ export function Issue1154PageChangeFocusRepro() {
           // Only idle is logged: a re-render while the finger is still down
           // changes how far the pager travels.
           if (e.nativeEvent.pageScrollState === 'idle') {
+            // A slide that stopped short of a quarter sends no redirect, and a
+            // later swipe through that point must not send one either.
+            midSlideCommand.current = false;
             log('state idle at ' + String(lastRest.current));
           }
         }}
@@ -214,6 +219,7 @@ export function Issue1154PageChangeFocusRepro() {
                 inputRefs.current[i] = input;
               }}
               testID={`issue-1154-input-${i}`}
+              showSoftInputOnFocus={!noKeyboard}
               placeholder={`Input on ${label}`}
               style={styles.input}
               onFocus={() => {
