@@ -127,6 +127,6 @@ jobs:
           name: e2e-report-android
           path: |
             e2e/.e2e/report.json
-            e2e/.e2e/artifacts
+            e2e/.e2e/results
           if-no-files-found: warn
           retention-days: 7

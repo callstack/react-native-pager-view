@@ -50,9 +50,9 @@ See the [full example](https://github.com/callstack/react-native-pager-view/blob
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `ref` | `RefObject<PagerView>` | Pass it to the pager's `ref`. |
+| `ref` | `RefObject<PagerViewRef \| null>` | Pass it to the pager's `ref`. |
 | `AnimatedPagerView` | component | `PagerView` wrapped with `Animated.createAnimatedComponent`. Required because `onPageScroll` and `onPageSelected` are `Animated.event` handlers using the native driver. |
-| `PagerView` | component | The plain `PagerView` class, for convenience. |
+| `PagerView` | component | The plain `PagerView` function component, for convenience. |
 | `onPageScroll` | handler | Pass to `onPageScroll`. Updates `progress`. |
 | `onPageSelected` | handler | Pass to `onPageSelected`. Updates `activePage`. |
 | `onPageScrollStateChanged` | handler | Pass to `onPageScrollStateChanged`. Updates `scrollState`. |

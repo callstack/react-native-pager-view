@@ -66,6 +66,7 @@ import { Issue1196SetPageAfterAddRepro } from './gh-issues/Issue1196SetPageAfter
 import { Issue1199ScrollStateRepro } from './gh-issues/Issue1199ScrollStateRepro';
 import { Issue1202BlankPageRepro } from './gh-issues/Issue1202BlankPageRepro';
 import { Issue1205DiagonalSwipeRepro } from './gh-issues/Issue1205DiagonalSwipeRepro';
+import { Issue1229TextInputCursorRepro } from './gh-issues/Issue1229TextInputCursorRepro';
 import { Issue1230PagerBetweenPagesRepro } from './gh-issues/Issue1230PagerBetweenPagesRepro';
 import { Issue219EmptyPagerRepro } from './gh-issues/Issue219EmptyPagerRepro';
 import { Issue424SwipeCancelsPressRepro } from './gh-issues/Issue424SwipeCancelsPressRepro';
@@ -224,6 +225,10 @@ const sections: { title: string; data: Example[] }[] = [
       {
         component: Issue1205DiagonalSwipeRepro,
         name: 'Issue #1205 Diagonal Swipe Repro',
+      },
+      {
+        component: Issue1229TextInputCursorRepro,
+        name: 'Issue #1229 TextInput Cursor Repro',
       },
       {
         component: Issue1230PagerBetweenPagesRepro,

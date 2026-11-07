@@ -127,6 +127,16 @@ Called when the scroll state changes. `event.nativeEvent.pageScrollState` is one
 
 ## Methods
 
+Call these on a ref typed with [`PagerViewRef`](/docs/api/types#pagerviewref):
+
+```tsx
+import { type PagerViewRef } from 'react-native-pager-view';
+
+const ref = useRef<PagerViewRef>(null);
+
+ref.current?.setPage(2);
+```
+
 ### `setPage`
 
 ```ts

@@ -6,7 +6,7 @@
  */
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
-import PagerView from 'react-native-pager-view';
+import PagerView, { type PagerViewRef } from 'react-native-pager-view';
 
 const PAGES = ['A', 'B', 'C', 'D'];
 const COLORS: Record<string, string> = {
@@ -19,7 +19,7 @@ const COLORS: Record<string, string> = {
 type PendingCommand = 'instant' | 'animated' | 'effect' | null;
 
 export function Issue1196SetPageAfterAddRepro() {
-  const pagerRef = useRef<PagerView>(null);
+  const pagerRef = useRef<PagerViewRef>(null);
   const pending = useRef<PendingCommand>(null);
   const [count, setCount] = useState(1);
   const [selected, setSelected] = useState<number | null>(null);
