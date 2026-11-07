@@ -34,7 +34,6 @@ class PagerScrollDelegate: NSObject, UIScrollViewDelegate, UICollectionViewDeleg
   
   deinit {
     strandWatch?.stop()
-    emitIdleIfOwed(nil)
   }
 
   private let handledSelectors: Set<Selector> = [

@@ -118,7 +118,7 @@ For more examples, see the [example app](example/src): nested pagers, keyboard h
 
 The ref is the native pager view with these methods attached, so native view methods such as `measure()` work on it too.
 
-On iOS 16 and later the pager does not scroll itself to reveal a focused text input. UIKit reveals a first responder by scrolling the nearest scrolling ancestor, which for a pager is the view that pages, so an input focused on a page that is not shown would leave the pager between pages rather than change the page. Change the page with `setPage` and focus the input once `onPageScrollStateChanged` reports `idle` for it: on iOS `onPageSelected` arrives as the slide starts, where the page can still be out of the window and focus does nothing. A field inside a page is still revealed by the scroll views within that page.
+On iOS 16 and later the pager does not scroll itself to reveal a focused text input. UIKit reveals a first responder by scrolling the nearest scrolling ancestor, which for a pager is the view that pages, so an input focused on a page that is not shown would leave the pager between pages rather than change the page. Change the page with `setPage` and focus the input once the pager has come to rest there: `onPageScrollStateChanged` carries no page, so keep the position from the last `onPageScroll` that reported an `offset` of 0, which the pager sends just before it reports `idle`, and focus only when that position is the page you asked for. On iOS `onPageSelected` arrives as the slide starts, where the page can still be out of the window and focus does nothing, and an `idle` can arrive while the pager is still on the page it started from. A field inside a page is still revealed by the scroll views within that page.
 
 ### Types
 
