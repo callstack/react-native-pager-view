@@ -38,11 +38,43 @@ struct PagerView: View {
     PagerViewIOS15Compat.applyOverdrag(overdrag, to: collectionView)
   }
 
+  /// A direct slide moves the page it leaves into its passing page, see
+  /// `PagerViewProvider.slideDirectly(to:after:)`.
+  private func pageView(at index: Int, child: IdentifiablePlatformView) -> UIView? {
+    guard let transition = props.pageTransition else {
+      return child.view
+    }
+    if index == transition.passingPage {
+      return transition.leftPage
+    }
+    return child.view === transition.leftPage ? nil : child.view
+  }
+
+  /// Animates to the target once TabView has shown the jump to the passing page,
+  /// which an animation in the same update would scroll through instead.
+  private func slide(_ transition: PageTransition) {
+    DispatchQueue.main.async { [props] in
+      guard props.pageTransition?.id == transition.id else {
+        return
+      }
+      // React can remove the target before the slide starts.
+      guard props.children.indices.contains(transition.targetPage) else {
+        props.pageTransition = nil
+        delegate?.onPageSelected(position: props.currentPage)
+        return
+      }
+      props.pageTransition?.isSliding = true
+      withAnimation {
+        props.currentPage = transition.targetPage
+      }
+    }
+  }
+
   var body: some View {
     GeometryReader { proxy in
       TabView(selection: $props.currentPage) {
         ForEach(Array(props.children.enumerated()), id: \.element.id) { index, child in
-          RepresentableView(view: child.view)
+          RepresentableView(view: pageView(at: index, child: child))
             .frame(width: proxy.size.width, height: proxy.size.height)
             .rotationEffect(isVertical ? .degrees(-90) : .zero)
             .tag(index)
@@ -90,6 +122,10 @@ struct PagerView: View {
             // The page is physical. Read it here, before a change to the
             // pages can shift what it mirrors to.
             let page = props.mirroredPage(restedPage)
+            // The jump to the passing page rests too, before the slide starts.
+            if props.pageTransition?.isSliding == true {
+              props.pageTransition = nil
+            }
             // Read the selection on the next pass, once TabView has applied it.
             DispatchQueue.main.async {
               // A page the pager is only passing through is not a rest.
@@ -138,6 +174,12 @@ struct PagerView: View {
     }
     .onChange(of: props.currentPage) { newValue in
       gestureObserver.currentPage = newValue
+      if let transition = props.pageTransition,
+         !transition.isSliding,
+         transition.passingPage == newValue {
+        slide(transition)
+        return
+      }
       delegate?.onPageSelected(position: newValue)
     }
     .onChange(of: props.scrollEnabled) { newValue in

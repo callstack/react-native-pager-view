@@ -73,7 +73,7 @@ See the [full example](https://github.com/callstack/react-native-pager-view/blob
 
 | Name | Signature | Description |
 | --- | --- | --- |
-| `setPage` | `(page: number) => void` | Goes to `page`, with or without animation depending on `isAnimated`. |
+| `setPage` | `(page: number, options?: SetPageOptions) => void` | Goes to `page`, with or without animation depending on `isAnimated`. `options` is passed to [`setPage`](/docs/api/pager-view#setpage) when animated. |
 | `addPage` | `() => void` | Appends a page to `pages`. |
 | `removePage` | `() => void` | Removes the last page, unless it is the only one left. |
 | `toggleScroll` | `() => void` | Toggles `scrollEnabled`. |

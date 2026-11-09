@@ -163,12 +163,13 @@ RCTSendPageScrollEventForNativeAnimations_DEPRECATED(NSInteger tag, NSInteger po
   RCTRNCViewPagerHandleCommand(self, commandName, args);
 }
 
-- (void)setPage:(NSInteger)index {
-  [_pagerViewProvider goToIndex:index animated:YES];
+- (void)setPage:(NSInteger)index animation:(NSString *)animation {
+  [_pagerViewProvider goToIndex:index
+                      animation:[animation isEqualToString:@"direct"] ? PagerPageAnimationDirect : PagerPageAnimationScroll];
 }
 
 - (void)setPageWithoutAnimation:(NSInteger)index {
-  [_pagerViewProvider goToIndex:index animated:NO];
+  [_pagerViewProvider goToIndex:index animation:PagerPageAnimationNone];
 }
 
 - (void)setScrollEnabledImperatively:(BOOL)scrollEnabled {

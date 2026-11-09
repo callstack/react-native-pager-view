@@ -110,11 +110,11 @@ For more examples, see the [example app](example/src): nested pagers, keyboard h
 
 ### Methods
 
-| Method                                     | Description                                                                                                                                                 | Platform |
-| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
-| `setPage(index: number)`                   | Scrolls to the given page with an animation. An invalid index is ignored.                                                                                   |   both   |
-| `setPageWithoutAnimation(index: number)`   | Jumps to the given page without an animation. An invalid index is ignored.                                                                                  |   both   |
-| `setScrollEnabled(scrollEnabled: boolean)` | Enables or disables swiping imperatively. Prefer the `scrollEnabled` prop; use this when a re-render would get in the way, for example during an animation. |   both   |
+| Method                                     | Description                                                                                                                                                                                       | Platform |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------: |
+| `setPage(index: number, options?)`         | Scrolls to the given page with an animation. An invalid index is ignored. `{ animation: 'direct' }` slides the target in next to the current page instead of scrolling past the pages in between. |   both   |
+| `setPageWithoutAnimation(index: number)`   | Jumps to the given page without an animation. An invalid index is ignored.                                                                                                                        |   both   |
+| `setScrollEnabled(scrollEnabled: boolean)` | Enables or disables swiping imperatively. Prefer the `scrollEnabled` prop; use this when a re-render would get in the way, for example during an animation.                                       |   both   |
 
 The ref is the native pager view with these methods attached, so native view methods such as `measure()` work on it too.
 

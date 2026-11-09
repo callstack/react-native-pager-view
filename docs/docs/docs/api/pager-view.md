@@ -140,10 +140,21 @@ ref.current?.setPage(2);
 ### `setPage`
 
 ```ts
-setPage(index: number): void
+setPage(index: number, options?: { animation?: 'scroll' | 'direct' }): void
 ```
 
 Scrolls to the given page with an animation. An invalid index is ignored.
+
+`animation` picks how a page more than one away is reached:
+
+| Value | Meaning |
+| --- | --- |
+| `'scroll'` | Scrolls past every page in between. The default. |
+| `'direct'` | Slides the target in next to the current page, as if they were neighbours. `onPageSelected` reports only the target, while `onPageScroll` jumps to the page next to the target before the slide. On iOS 15 it falls back to `'scroll'`. |
+
+```tsx
+ref.current?.setPage(5, { animation: 'direct' });
+```
 
 On iOS 16 and later the pager does not scroll itself to reveal a focused text input. UIKit reveals a first responder by scrolling the nearest scrolling ancestor, which for a pager is the view that pages, so an input focused on a page that is not shown would leave the pager between pages rather than change the page. Change the page with `setPage` and focus the input once the pager has come to rest there: `onPageScrollStateChanged` carries no page, so keep the position from the last `onPageScroll` that reported an `offset` of 0, which the pager sends just before it reports `idle`, and focus only when that position is the page you asked for. On iOS `onPageSelected` arrives as the slide starts, where the page can still be out of the window and focus does nothing, and an `idle` can arrive while the pager is still on the page it started from. A field inside a page is still revealed by the scroll views within that page.
 

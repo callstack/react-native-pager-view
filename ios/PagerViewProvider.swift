@@ -111,8 +111,8 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
     hostingController?.view.setNeedsLayout()
   }
 
-  func goTo(index: Int, animated: Bool) {
-    if animated && hasPresentedViewController() {
+  func goTo(index: Int, animation: PagerPageAnimation) {
+    if animation != .none && hasPresentedViewController() {
       // A native-stack modal can begin its dismissal in the same JavaScript
       // callback as `setPage`. Starting a SwiftUI TabView animation in that
       // transaction makes TabView apply the selection twice, landing one page
@@ -123,26 +123,29 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
       // instead of starting the SwiftUI animation on the very next pass.
       setPageWhenPresentationTransitionCompletes(
         index: index,
+        animation: animation,
         attemptsRemaining: 10
       )
     } else {
-      setPage(index: index, animated: animated)
+      setPage(index: index, animation: animation)
     }
   }
 
   private func setPageWhenPresentationTransitionCompletes(
     index: Int,
+    animation: PagerPageAnimation,
     attemptsRemaining: Int
   ) {
     guard let transitionCoordinator = activeTransitionCoordinator() else {
       guard attemptsRemaining > 0 && hasPresentedViewController() else {
-        setPage(index: index, animated: true)
+        setPage(index: index, animation: animation)
         return
       }
 
       DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) { [weak self] in
         self?.setPageWhenPresentationTransitionCompletes(
           index: index,
+          animation: animation,
           attemptsRemaining: attemptsRemaining - 1
         )
       }
@@ -153,16 +156,19 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
       alongsideTransition: nil
     ) { [weak self] _ in
       DispatchQueue.main.async {
-        self?.setPage(index: index, animated: true)
+        self?.setPage(index: index, animation: animation)
       }
     }
 
     if !didSchedulePageChange {
-      setPage(index: index, animated: true)
+      setPage(index: index, animation: animation)
     }
   }
 
-  private func setPage(index: Int, animated: Bool) {
+  private func setPage(index: Int, animation: PagerPageAnimation) {
+    guard props.children.indices.contains(index) else {
+      return
+    }
     // Blur before the selection changes: resigning during the TabView
     // animation breaks the slide. A command for the page already shown moves
     // nothing, and blurring on it would close the keyboard during a swipe an
@@ -170,13 +176,57 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
     if index != props.currentPage {
       props.resignFirstResponder(outsidePage: index)
     }
-    if animated {
+    // Setting a published value updates the view even when it is already nil,
+    // and an update outside the animation would cut a running slide short.
+    let previousTransition = props.pageTransition
+    if let previousTransition {
+      props.pageTransition = nil
+      // The jump to the passing page reported no selection.
+      if !previousTransition.isSliding && index == props.currentPage {
+        delegate?.onPageSelected(position: index)
+      }
+    }
+    switch animation {
+    case .none:
+      props.currentPage = index
+    case .scroll:
       withAnimation {
         props.currentPage = index
       }
-    } else {
-      props.currentPage = index
+    case .direct:
+      slideDirectly(to: index, after: previousTransition)
     }
+  }
+
+  /// Jumps to the target's neighbour, moving the current page into it, so only
+  /// the target slides in; `PagerView` starts the slide. iOS 15 scrolls instead,
+  /// as it reports no rest to put the page back, see `PagerViewIOS15Compat`.
+  private func slideDirectly(to index: Int, after previousTransition: PageTransition?) {
+    let currentPage = props.currentPage
+    guard #available(iOS 16, *),
+          abs(index - currentPage) > 1,
+          props.children.indices.contains(currentPage) else {
+      withAnimation {
+        props.currentPage = index
+      }
+      return
+    }
+    // A slide redirected before it moved still shows the page it left.
+    let shownPage = previousTransition
+      .flatMap { !$0.isSliding && $0.passingPage == currentPage ? $0.leftPage : nil }
+      ?? props.children[currentPage].view
+    // The target slot would give that page up.
+    if shownPage === props.children[index].view {
+      props.currentPage = index
+      return
+    }
+    let transition = PageTransition(
+      passingPage: index > currentPage ? index - 1 : index + 1,
+      targetPage: index,
+      leftPage: shownPage
+    )
+    props.pageTransition = transition
+    props.currentPage = transition.passingPage
   }
 
   /// Finds the native-stack transition that may be dismissing a modal over

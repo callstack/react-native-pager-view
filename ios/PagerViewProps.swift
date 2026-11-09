@@ -24,6 +24,16 @@ extension PagerLayoutDirection {
   }
 }
 
+/// A `setPage` with the `direct` animation, see `PagerViewProvider.slideDirectly(to:after:)`.
+struct PageTransition {
+  let id = UUID()
+  /// The target's neighbour, which hosts `leftPage` during the slide.
+  let passingPage: Int
+  let targetPage: Int
+  let leftPage: UIView
+  var isSliding = false
+}
+
 class PagerViewProps: ObservableObject {
   @Published var children: [IdentifiablePlatformView] = []
   @Published var currentPage: Int = -1
@@ -32,6 +42,7 @@ class PagerViewProps: ObservableObject {
   @Published var keyboardDismissMode: UIScrollView.KeyboardDismissMode = .none
   @Published var layoutDirection: PagerLayoutDirection = .ltr
   @Published var orientation: UICollectionView.ScrollDirection = .horizontal
+  @Published var pageTransition: PageTransition?
 
   /// The page the selection names, held inside the pages that exist. Nothing
   /// clamps the index a command carries, and `-1` stands for no selection yet.
