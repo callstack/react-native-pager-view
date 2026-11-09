@@ -44,6 +44,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PagerHookExample } from './PagerHookExample';
 import { NativeDriverEventsExample } from './NativeDriverEventsExample';
 import { NestedHorizontalScrollViewExample } from './NestedHorizontalScrollViewExample';
+import { SetPageAnimationExample } from './SetPageAnimationExample';
 import {
   Issue1050BackGestureRepro,
   Issue1050NestedStackBackGestureRepro,
@@ -112,6 +113,11 @@ const sections: { title: string; data: Example[] }[] = [
 
       { component: OnPageScrollExample, name: 'OnPageScroll Example' },
       { component: OnPageSelectedExample, name: 'OnPageSelected Example' },
+      {
+        component: SetPageAnimationExample,
+        name: 'setPage Animation Example',
+        testID: 'example-set-page-animation',
+      },
       {
         component: NativeDriverEventsExample,
         name: 'Native Driver Events Example',

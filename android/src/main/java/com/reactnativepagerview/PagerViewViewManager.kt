@@ -112,12 +112,15 @@ class PagerViewViewManager : ViewGroupManager<ComposePagerView>(), RNCViewPagerM
     @ReactProp(name = "keyboardDismissMode")
     override fun setKeyboardDismissMode(view: ComposePagerView, value: String?) = Unit
 
-    override fun setPage(view: ComposePagerView, selectedPage: Int) {
-        view.setCurrentItem(selectedPage, true)
+    override fun setPage(view: ComposePagerView, selectedPage: Int, animation: String?) {
+        view.setCurrentItem(
+            selectedPage,
+            if (animation == "direct") PageAnimation.Direct else PageAnimation.Scroll
+        )
     }
 
     override fun setPageWithoutAnimation(view: ComposePagerView, selectedPage: Int) {
-        view.setCurrentItem(selectedPage, false)
+        view.setCurrentItem(selectedPage, PageAnimation.None)
     }
 
     override fun setScrollEnabledImperatively(view: ComposePagerView, scrollEnabled: Boolean) {

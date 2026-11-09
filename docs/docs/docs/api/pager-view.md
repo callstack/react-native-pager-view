@@ -140,10 +140,21 @@ ref.current?.setPage(2);
 ### `setPage`
 
 ```ts
-setPage(index: number): void
+setPage(index: number, options?: { animation?: 'scroll' | 'direct' }): void
 ```
 
 Scrolls to the given page with an animation. An invalid index is ignored.
+
+`animation` picks how a page more than one away is reached:
+
+| Value | Meaning |
+| --- | --- |
+| `'scroll'` | Scrolls past every page in between. The default. |
+| `'direct'` | Slides the target in next to the current page, as if they were neighbours. `onPageSelected` reports only the target, while `onPageScroll` jumps to the page next to the target before the slide. On iOS 15 it falls back to `'scroll'`. |
+
+```tsx
+ref.current?.setPage(5, { animation: 'direct' });
+```
 
 ### `setPageWithoutAnimation`
 

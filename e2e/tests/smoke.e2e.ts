@@ -1,5 +1,6 @@
 import { freshAppBeforeEach, expect, test } from './support/test.ts';
 import { openExample } from './support/app.ts';
+import { expectActivePage } from './support/basic-pager.ts';
 
 freshAppBeforeEach();
 
@@ -13,6 +14,7 @@ test(
 
     await screen.getByTestId('next-page-button').tap();
     await expect(screen.getByTestId('pageNumber1')).toHaveText('page number 1');
+    await expectActivePage(screen, 1);
 
     await screen.getByTestId('prev-page-button').tap();
     await expect(screen.getByTestId('pageNumber0')).toHaveText('page number 0');

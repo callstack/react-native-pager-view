@@ -41,7 +41,8 @@ type PagerViewViewType = HostComponent<NativeProps>;
 export interface NativeCommands {
   setPage: (
     viewRef: React.ComponentRef<PagerViewViewType>,
-    selectedPage: CodegenTypes.Int32
+    selectedPage: CodegenTypes.Int32,
+    animation: string
   ) => void;
   setPageWithoutAnimation: (
     viewRef: React.ComponentRef<PagerViewViewType>,

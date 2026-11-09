@@ -10,12 +10,21 @@ import PagerViewNativeComponent, {
   type NativeProps,
 } from './PagerViewNativeComponent';
 
+export type SetPageOptions = {
+  /**
+   * `'scroll'` scrolls past every page between the current one and the target.
+   * `'direct'` slides the target in next to the current page, as if they were
+   * neighbours. Defaults to `'scroll'`.
+   */
+  animation?: 'scroll' | 'direct';
+};
+
 export type PagerViewMethods = {
   /**
    * A helper function to scroll to a specific page in the PagerView.
    * The transition between pages will be animated.
    */
-  setPage: (selectedPage: number) => void;
+  setPage: (selectedPage: number, options?: SetPageOptions) => void;
   /**
    * A helper function to scroll to a specific page in the PagerView.
    * The transition between pages will *not* be animated.
@@ -46,13 +55,13 @@ export type PagerViewProps = Omit<NativeProps, 'layoutDirection'> & {
 
 type NativeInstance = React.ComponentRef<typeof PagerViewNativeComponent>;
 
-function bindCommand<T>(
+function bindCommand<Args extends unknown[]>(
   ref: React.RefObject<NativeInstance | null>,
-  command: (view: NativeInstance, arg: T) => void
+  command: (view: NativeInstance, ...args: Args) => void
 ) {
-  return (arg: T) => {
+  return (...args: Args) => {
     if (ref.current) {
-      command(ref.current, arg);
+      command(ref.current, ...args);
     }
   };
 }
@@ -98,8 +107,10 @@ export function PagerView({ ref, ...props }: PagerViewProps) {
       if (!instance) {
         return null;
       }
+      const setPage = bindCommand(nativeRef, PagerViewNativeCommands.setPage);
       return Object.assign(instance, {
-        setPage: bindCommand(nativeRef, PagerViewNativeCommands.setPage),
+        setPage: (selectedPage: number, options?: SetPageOptions) =>
+          setPage(selectedPage, options?.animation ?? 'scroll'),
         setPageWithoutAnimation: bindCommand(
           nativeRef,
           PagerViewNativeCommands.setPageWithoutAnimation

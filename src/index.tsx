@@ -5,6 +5,7 @@ export type {
   PagerViewMethods,
   PagerViewProps,
   PagerViewRef,
+  SetPageOptions,
 } from './PagerView';
 export * from './usePagerView';
 
