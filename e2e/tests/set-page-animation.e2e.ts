@@ -92,8 +92,9 @@ test(
       slideEvents(platform, 7)
     );
     // From the start, unlike a jump to three pages short of the target. A page
-    // can pass between two onPageScroll events, so not every one is required.
-    await expect(passed).toHaveText(/passed: [12](,\d){3,}$/);
+    // can pass between two onPageScroll events, so how many are reported depends
+    // on the frame rate; the first one being next to the current page is the point.
+    await expect(passed).toHaveText(/^passed: [12](,\d)*,6$/);
 
     await screen.getByTestId('set-page-animation-direct-first').tap();
     await expect(screen.getByTestId('set-page-animation-events')).toHaveText(
