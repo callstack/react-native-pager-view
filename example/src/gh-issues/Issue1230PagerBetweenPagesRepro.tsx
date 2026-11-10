@@ -22,6 +22,7 @@ const PAGE_COLORS = ['#fde2e2', '#e2fde6', '#e2e8fd'];
 export function Issue1230PagerBetweenPagesRepro() {
   const pagerRef = useRef<PagerViewRef>(null);
   const redirectTo = useRef<number | null>(null);
+  const lastRest = useRef(0);
   const inputRefs = useRef<Array<TextInputInstance | null>>([]);
   const [selectedPage, setSelectedPage] = useState(0);
   const [focusedInput, setFocusedInput] = useState<number | null>(null);
@@ -65,9 +66,16 @@ export function Issue1230PagerBetweenPagesRepro() {
             pagerRef.current?.setPage(target);
           }
         }}
+        onPageScroll={(e) => {
+          // The pager sends the snapped page with no offset just before it
+          // reports stopping, which is where it actually came to rest.
+          if (e.nativeEvent.offset === 0) {
+            lastRest.current = e.nativeEvent.position;
+          }
+        }}
         onPageScrollStateChanged={(e) => {
           if (e.nativeEvent.pageScrollState === 'idle') {
-            log('idle');
+            log('idle at ' + String(lastRest.current));
           }
         }}
       >

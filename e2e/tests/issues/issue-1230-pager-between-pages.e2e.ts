@@ -8,23 +8,21 @@ const options = {
   platforms: ['ios'] as const,
 };
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-/** Longer than the 0.8s the default spring takes to settle. */
-const SETTLE_MS = 1000;
-
 test(
   'a pager scrolled to a focused field still lands on the page asked for',
   options,
   async ({ app, screen }) => {
     await openExample(app, screen, 'Issue #1230 Pager Between Pages Repro');
 
-    // A pager left between pages reports no rest, so the input on the page
-    // being left keeps focus, and the status is what gives the landing away:
-    // without the fix it reads `Focused: input 1` in five runs of six.
+    // A pager left between pages reports no rest, so it never reports arriving
+    // at the page asked for and the input on the page being left keeps focus.
+    // The events log names the page each rest belongs to, which is the landing
+    // itself rather than the selection that asked for it.
     await screen.getByTestId('issue-1230-strand').tap();
-    await wait(SETTLE_MS);
 
+    await expect(screen.getByTestId('issue-1230-events')).toHaveText(
+      /idle at 2/
+    );
     await expect(screen.getByTestId('issue-1230-status')).toHaveText(
       /^Selected: 2 \| Focused: none/
     );
