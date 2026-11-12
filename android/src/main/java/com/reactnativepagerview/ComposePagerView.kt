@@ -2,6 +2,8 @@ package com.reactnativepagerview
 
 import android.content.Context
 import android.graphics.Rect
+import android.os.Parcelable
+import android.util.SparseArray
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -798,6 +800,16 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
         super.requestDisallowInterceptTouchEvent(false)
       }
     }
+
+    // AndroidView saves this view's hierarchy state when its page leaves the composition, past
+    // beyondViewportPageCount, and restores it when the page comes back. isSaveEnabled = false
+    // only skips the container itself, not the page's views, which then got their old state
+    // back: a Switch whose value React changed meanwhile was set to the old value and emitted
+    // onValueChange, as if the user had toggled it. React owns the state of the page's views, so
+    // neither save nor restore anything below the container, as react-native-screens does.
+    override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {}
+
+    override fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {}
   }
 
   private fun attachChild(container: FrameLayout, child: View) {
