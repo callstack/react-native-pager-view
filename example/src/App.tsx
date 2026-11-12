@@ -76,6 +76,7 @@ import {
   PR1194RemountInitialPageCoverScreen,
   PR1194RemountInitialPageRepro,
 } from './gh-issues/PR1194RemountInitialPageRepro';
+import { PR1241SwitchStateRestoreRepro } from './gh-issues/PR1241SwitchStateRestoreRepro';
 import { colors, radius } from './theme';
 
 function BasicPagerViewExampleScreen() {
@@ -255,6 +256,10 @@ const sections: { title: string; data: Example[] }[] = [
       {
         component: PR1194RemountInitialPageRepro,
         name: 'PR #1194 Remount InitialPage Repro',
+      },
+      {
+        component: PR1241SwitchStateRestoreRepro,
+        name: 'PR #1241 Switch State Restore Repro',
       },
     ],
   },
