@@ -52,6 +52,12 @@ async function expectPage(screen: Screen, page: number): Promise<void> {
   );
 }
 
+/** Only iOS 26 has the mid-screen content pop the back swipes rely on. */
+async function skipWithoutContentPop(screen: Screen): Promise<void> {
+  const hint = screen.getByText('A mid-screen back swipe needs iOS 26');
+  test.skip(await hint.isVisible(), 'needs the iOS 26 content pop');
+}
+
 /** The home list stays scrolled to the example's entry after the pop. */
 async function expectPopped(screen: Screen, example: string): Promise<void> {
   await expect(screen.getByTestId(example)).toBeVisible();
@@ -64,6 +70,7 @@ function describeBackGesture(direction: LayoutDirection): void {
     options,
     async ({ app, screen }) => {
       await openRepro(app, screen, EXAMPLE, direction);
+      await skipWithoutContentPop(screen);
 
       // Before the fix the pager claimed the drag and the screen stayed.
       await dragAcrossPager(screen, direction, true);
@@ -113,6 +120,7 @@ test.describe('back gesture over a pager in a nested stack', () => {
     options,
     async ({ app, screen }) => {
       await openRepro(app, screen, NESTED_EXAMPLE);
+      await skipWithoutContentPop(screen);
 
       // The inner stack has only its root screen. Before skipping stacks that
       // can't pop, the pager stopped there and kept the drag.

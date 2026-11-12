@@ -9,6 +9,8 @@ async function acceptPageAlert(screen: Screen, page: number): Promise<void> {
   await expect(screen.getByText(`You are on ${page} page`)).toBeVisible();
   await expect(screen.getByText('Hey')).toBeVisible();
   await screen.getByRole('button', { name: 'OK' }).tap();
+  // The alert's window takes taps until its dismissal has finished.
+  await expect(screen.getByText('Hey')).toBeHidden();
 }
 
 test('onPageSelected fires an alert for every page change', async ({

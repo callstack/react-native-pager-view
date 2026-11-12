@@ -8,11 +8,15 @@
  * outer one can, and the back swipe should still close the screen.
  */
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import PagerView from 'react-native-pager-view';
 
 const InnerStack = createNativeStackNavigator();
+
+// Before iOS 26 only a swipe from the screen edge goes back.
+const hasContentPop =
+  Platform.OS === 'ios' && parseInt(String(Platform.Version), 10) >= 26;
 
 export function Issue1050BackGestureRepro() {
   const [selectedPage, setSelectedPage] = useState(0);
@@ -21,6 +25,11 @@ export function Issue1050BackGestureRepro() {
     <View style={styles.container}>
       <Text testID="issue-1050-status" style={styles.status}>
         {`Selected: ${selectedPage}`}
+      </Text>
+      <Text testID="issue-1050-hint" style={styles.hint}>
+        {hasContentPop
+          ? 'A back swipe on page 0 closes the screen'
+          : 'A mid-screen back swipe needs iOS 26'}
       </Text>
       <PagerView
         testID="issue-1050-pager"
@@ -52,6 +61,7 @@ export function Issue1050NestedStackBackGestureRepro() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: 'white' },
   status: { padding: 16, fontSize: 16 },
+  hint: { paddingHorizontal: 16, paddingBottom: 16, fontSize: 13 },
   pager: { flex: 1 },
   page: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   label: { fontSize: 24 },

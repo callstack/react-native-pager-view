@@ -40,6 +40,14 @@ test('TabView inside a ScrollView swipes tabs and scrolls the page', async ({
   });
   await expect(screen.getByText('Second Route')).toBeVisible();
 
-  await screen.getByText('First').first().tap();
-  await expect(screen.getByText('First Route')).toBeVisible();
+  const firstTab = screen.getByText('First').first();
+  const firstRoute = screen.getByText('First Route');
+  await firstTab.tap();
+  try {
+    await expect(firstRoute).toBeVisible({ timeout: 5_000 });
+  } catch {
+    // A tap while the ScrollView still decelerates from the scroll only stops it.
+    await firstTab.tap();
+    await expect(firstRoute).toBeVisible();
+  }
 });
