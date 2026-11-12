@@ -115,12 +115,13 @@ struct PagerView: View {
         if scrollDelegate.originalDelegate == nil {
           scrollDelegate.originalDelegate = collectionView.delegate
           scrollDelegate.delegate = delegate
+          scrollDelegate.selectedPage = { [props] in
+            props.mirroredPage(props.clampedCurrentPage)
+          }
           scrollDelegate.onRest = { [props] restedPage in
-            // The page is physical, and a right-to-left layout mirrors it.
-            // Read the count here, before a change to the pages can shift it.
-            let page = props.layoutDirection == .rtl
-              ? props.children.count - 1 - restedPage
-              : restedPage
+            // The page is physical. Read it here, before a change to the
+            // pages can shift what it mirrors to.
+            let page = props.mirroredPage(restedPage)
             // The jump to the passing page rests too, before the slide starts.
             if props.pageTransition?.isSliding == true {
               props.pageTransition = nil
@@ -128,7 +129,7 @@ struct PagerView: View {
             // Read the selection on the next pass, once TabView has applied it.
             DispatchQueue.main.async {
               // A page the pager is only passing through is not a rest.
-              guard page == props.currentPage else {
+              guard page == props.clampedCurrentPage else {
                 return
               }
               props.resignFirstResponder(outsidePage: page)
