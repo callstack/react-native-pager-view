@@ -35,7 +35,7 @@ export async function openExample(
   // The home list stays in the tree until the push has finished, while the
   // pushed content shows from the start. UIKit drops a gesture sent during the
   // push animation, which is every time on iOS 18.
-  const homeList = screen.getByTestId(HOME_LIST_TEST_ID);
+  const homeList = screen.getByTestId(HOME_READY_TEST_ID);
   try {
     await homeList.waitFor({ state: 'detached', timeout: 5_000 });
   } catch {
