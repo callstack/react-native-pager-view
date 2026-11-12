@@ -7,6 +7,7 @@ const HOME_READY_TEST_ID = 'example-basic-horizontal';
 // The first cold start of the release app on a freshly booted CI emulator
 // can keep the window off the accessibility tree for over 15 s.
 const LAUNCH_TIMEOUT = 30_000;
+const HOME_LIST_TEST_ID = 'home-list';
 
 /** Waits until the home list of the example app has rendered. */
 export async function waitForHome(screen: Screen): Promise<void> {
@@ -31,6 +32,17 @@ export async function openExample(
   const entry = screen.getByTestId(testId);
   await screen.scrollUntilVisible(entry);
   await entry.tap();
+  // The home list stays in the tree until the push has finished, while the
+  // pushed content shows from the start. UIKit drops a gesture sent during the
+  // push animation, which is every time on iOS 18.
+  const homeList = screen.getByTestId(HOME_LIST_TEST_ID);
+  try {
+    await homeList.waitFor({ state: 'detached', timeout: 5_000 });
+  } catch {
+    // A tap while the list still decelerates from the scroll only stops it.
+    await entry.tap();
+    await homeList.waitFor({ state: 'detached' });
+  }
 }
 
 /**
