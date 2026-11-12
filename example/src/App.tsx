@@ -261,6 +261,7 @@ function App() {
   const navigation = useNavigation();
   return (
     <ScrollView
+      testID="home-list"
       style={styles.screen}
       contentContainerStyle={styles.content}
       contentInsetAdjustmentBehavior="automatic"
