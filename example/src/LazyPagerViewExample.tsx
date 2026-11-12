@@ -188,7 +188,7 @@ export function LazyPagerViewExample() {
           />
         </View>
         <View style={styles.progress}>
-          <Text style={styles.progressText}>
+          <Text style={styles.progressText} testID="lazy-current-page">
             {padNumber(page + 1)}
             <Text style={styles.progressTotal}>
               {' / '}

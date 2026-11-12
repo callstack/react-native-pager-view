@@ -153,6 +153,8 @@ Pages are tracked by `key`, so adding or removing pages doesn't remount the othe
 
 `renderLazyPlaceholder` shows until a page mounts. With the default distance you'll rarely see it: only when an animated `setPage` passes pages that aren't mounted yet, at the start of a swipe with `lazyPreloadDistance={0}`, or when the JS thread is busy. It isn't a loading state for the page's data.
 
+With `lazy`, `onPageScroll` events always reach JS, since that's how the pager tracks which pages to mount. This includes an `Animated.event` with `useNativeDriver`.
+
 `offscreenPageLimit` is unrelated. It only limits how many pages the Android pager composes, and React still renders every page.
 
 See the [full example](example/src/LazyPagerViewExample.tsx).
