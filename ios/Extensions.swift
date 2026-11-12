@@ -99,7 +99,9 @@ class PageChildViewController: UIViewController {
   /// UIKit clamps `safeAreaInsets` at 0, so an edge with a negative
   /// correction and a 0 inset hides the inherited value, and an unchanged
   /// sample there does not mean UIKit ignored the write. Clear those edges
-  /// first to measure what is inherited, then correct from that.
+  /// first to measure what is inherited, then correct from that. Skip edges
+  /// whose target is 0: they are already correct, and clearing them on every
+  /// pass would bypass the unchanged-sample guard for a stuck edge.
   private func propagateSafeArea() {
     guard !isPropagatingSafeArea else {
       return
@@ -109,7 +111,7 @@ class PageChildViewController: UIViewController {
     if Self.insetsMatch(additionalSafeAreaInsets, insets) {
       return
     }
-    if let unclamped = additionalInsetsWithoutClampedEdges() {
+    if let unclamped = additionalInsetsWithoutClampedEdges(target: target) {
       writeAdditionalSafeAreaInsets(unclamped)
       insets = additionalInsets(toReach: target)
       if Self.insetsMatch(additionalSafeAreaInsets, insets) {
@@ -131,18 +133,19 @@ class PageChildViewController: UIViewController {
   }
 
   /// `additionalSafeAreaInsets` with every clamped edge (negative correction,
-  /// 0 actual inset) set to 0, or nil when no edge is clamped.
-  private func additionalInsetsWithoutClampedEdges() -> UIEdgeInsets? {
-    func unclamped(_ additional: CGFloat, _ actual: CGFloat) -> CGFloat {
-      additional < -0.5 && actual <= 0.5 ? 0 : additional
+  /// 0 actual inset, non-zero target) set to 0, or nil when no edge is
+  /// clamped.
+  private func additionalInsetsWithoutClampedEdges(target: UIEdgeInsets) -> UIEdgeInsets? {
+    func unclamped(_ additional: CGFloat, _ actual: CGFloat, _ target: CGFloat) -> CGFloat {
+      additional < -0.5 && actual <= 0.5 && target > 0.5 ? 0 : additional
     }
     let current = additionalSafeAreaInsets
     let actual = view.safeAreaInsets
     let rebased = UIEdgeInsets(
-      top: unclamped(current.top, actual.top),
-      left: unclamped(current.left, actual.left),
-      bottom: unclamped(current.bottom, actual.bottom),
-      right: unclamped(current.right, actual.right)
+      top: unclamped(current.top, actual.top, target.top),
+      left: unclamped(current.left, actual.left, target.left),
+      bottom: unclamped(current.bottom, actual.bottom, target.bottom),
+      right: unclamped(current.right, actual.right, target.right)
     )
     return rebased == current ? nil : rebased
   }
