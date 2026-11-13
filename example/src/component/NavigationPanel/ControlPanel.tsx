@@ -3,8 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '../Button';
 import type { NavigationPanelProps } from './types';
 import { colors, radius } from '../../theme';
-
-const padNumber = (value: number) => String(value).padStart(2, '0');
+import { padNumber } from '../../utils';
 
 export function ControlsPanel({
   activePage,

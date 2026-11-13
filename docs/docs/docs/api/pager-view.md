@@ -60,6 +60,56 @@ Blank space between pages.
 
 Whether the keyboard is dismissed when the user drags the pager.
 
+### `lazy`
+
+| Type | Default | Platform |
+| --- | --- | --- |
+| `boolean` | `false` | Android, iOS |
+
+Mounts a page's content only when the pager gets within [`lazyPreloadDistance`](#lazypreloaddistance) pages of it. After that the page stays mounted, so it keeps its scroll position and state. Pages are tracked by `key`, so adding or removing pages doesn't remount the others.
+
+```tsx
+<PagerView
+  style={{ flex: 1 }}
+  lazy
+  renderLazyPlaceholder={() => (
+    <View style={{ flex: 1, justifyContent: 'center' }}>
+      <ActivityIndicator />
+    </View>
+  )}
+>
+  {items.map((item) => (
+    <View key={item.id}>
+      <Item item={item} />
+    </View>
+  ))}
+</PagerView>
+```
+
+Set `lazy` when the pager mounts and leave it. The pager doesn't track the current page while `lazy` is off, so turning it on later mounts the pages around `initialPage` and shows placeholders elsewhere, including the page on screen, until the next swipe or `setPage`.
+
+:::note
+With `lazy`, [`onPageScroll`](#onpagescroll) events always reach JS, since that's how the pager tracks which pages to mount. This includes an `Animated.event` with `useNativeDriver`.
+:::
+
+[`offscreenPageLimit`](#offscreenpagelimit) is unrelated. It only limits how many pages the Android pager composes, and React still renders every page.
+
+### `lazyPreloadDistance`
+
+| Type | Default | Platform |
+| --- | --- | --- |
+| `number` | `1` | Android, iOS |
+
+With [`lazy`](#lazy), how many pages on each side of the current page are mounted ahead of time.
+
+### `renderLazyPlaceholder`
+
+| Type | Default | Platform |
+| --- | --- | --- |
+| `(index: number) => ReactNode` | — | Android, iOS |
+
+With [`lazy`](#lazy), what a page shows before its content is mounted. With the default distance you'll rarely see it: only when an animated `setPage` passes pages that aren't mounted yet, at the start of a swipe with `lazyPreloadDistance={0}`, or when the JS thread is busy. It isn't a loading state for the page's data.
+
 ### `overdrag`
 
 | Type | Default | Platform |
