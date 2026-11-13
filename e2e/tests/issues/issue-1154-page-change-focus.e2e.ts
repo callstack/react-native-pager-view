@@ -199,6 +199,28 @@ test(
 );
 
 test(
+  'a setPage back to the page a slide is passing lands there',
+  { ...options, platforms: ['ios'] },
+  async ({ app, screen, platform }) => {
+    await openExample(app, screen, 'Issue #1154 Page Change Focus Repro');
+
+    // The second command goes out from the scroll events, as soon as the slide
+    // to page 2 is more than halfway to page 1, rather than on a timer. TabView
+    // used to take page 1 as reached and let the slide run on to page 2.
+    await screen.getByTestId('issue-1154-go-2-back-to-1').tap();
+    await wait(SETTLE_MS);
+    // Sent mid-slide, or the run proves nothing.
+    await expect(screen.getByTestId('issue-1154-events')).toHaveText(
+      /redirect at (0\.[5-9]|1\.[0-4])/
+    );
+    await expectStatus(screen, platform, 1, 'none');
+    await expect(screen.getByTestId('issue-1154-events')).toHaveText(
+      /state idle at 1$/
+    );
+  }
+);
+
+test(
   'a setPage that interrupts another still lands on the later page',
   { ...options, platforms: ['ios'] },
   async ({ app, screen, platform }) => {
