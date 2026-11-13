@@ -49,7 +49,11 @@ export type PagerViewRef = React.ComponentRef<typeof PagerViewNativeComponent> &
   PagerViewMethods;
 
 type LazyProps = {
-  /** Mounts a page's content only when the pager gets near it. */
+  /**
+   * Mounts a page's content only when the pager gets near it. Set it once:
+   * the pager isn't tracked while `lazy` is off, so turning it on later starts
+   * from `initialPage`.
+   */
   lazy?: boolean;
   /** With `lazy`, how many pages on each side are mounted ahead of time. */
   lazyPreloadDistance?: number;
@@ -199,9 +203,9 @@ export function PagerView({
         iosPageMargin ? { marginHorizontal: -iosPageMargin / 2 } : null,
       ]}
       layoutDirection={deduceLayoutDirection(props.layoutDirection)}
-      onPageScroll={onPageScroll}
+      onPageScroll={lazy ? onPageScroll : props.onPageScroll}
       onPageScrollStateChanged={onPageScrollStateChanged}
-      onPageSelected={onPageSelected}
+      onPageSelected={lazy ? onPageSelected : props.onPageSelected}
       onMoveShouldSetResponderCapture={onMoveShouldSetResponderCapture}
       children={childrenWithOverriddenStyle(children, iosPageMargin)}
     />
