@@ -31,11 +31,10 @@ jobs:
           days-before-pr-close: 14
           stale-issue-label: stale
           stale-pr-label: stale
-          exempt-issue-labels: bug,keep open,blocked,on hold,wip,help wanted,good first issue,enhancement
+          exempt-issue-labels: keep open,blocked,on hold,wip
           exempt-pr-labels: keep open,blocked,on hold,wip
           exempt-all-issue-milestones: true
           exempt-all-pr-milestones: true
-          exempt-all-issue-assignees: true
           close-issue-reason: not_planned
           stale-issue-message: >
             This issue has had no activity for 180 days and is now marked as stale.
