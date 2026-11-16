@@ -8,8 +8,13 @@ test(
   // The stacked search bar is UISearchController; on Android the screen's own
   // measurement reports "safe-area: fail" because the inset never applies.
   { tags: ['regression', 'issue-1142'], platforms: ['ios'] },
-  async ({ app, screen }) => {
-    await openExample(app, screen, 'Issue #1142 Search Bar Inset Repro');
+  async ({ device, app, screen }) => {
+    await openExample(
+      device,
+      app,
+      screen,
+      'Issue #1142 Search Bar Inset Repro'
+    );
     await expect(screen.getByTestId('issue-1142-hub')).toBeVisible();
 
     await screen.getByTestId('issue-1142-open-pager').tap();

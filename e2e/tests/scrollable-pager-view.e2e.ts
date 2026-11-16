@@ -4,10 +4,11 @@ import { openExample } from './support/app.ts';
 freshAppBeforeEach();
 
 test('pager inside a ScrollView keeps its page across vertical scrolls', async ({
+  device,
   app,
   screen,
 }) => {
-  await openExample(app, screen, 'Scrollable PagerView Example');
+  await openExample(device, app, screen, 'Scrollable PagerView Example');
   const pager = screen.getByTestId('pager-view');
   await expect(pager).toBeVisible();
   await expect(screen.getByTestId('scroll-view')).toBeVisible();

@@ -1,5 +1,5 @@
 import { freshAppBeforeEach, expect, test } from '../support/test.ts';
-import type { App, Screen } from '../support/test.ts';
+import type { App, Device, Screen } from '../support/test.ts';
 import { openExample } from '../support/app.ts';
 
 freshAppBeforeEach();
@@ -13,8 +13,17 @@ const options = {
 };
 
 /** Opens the repro and waits for the pager to report its only page. */
-async function openRepro(app: App, screen: Screen): Promise<void> {
-  await openExample(app, screen, 'Issue #1196 Set Page After Add Repro');
+async function openRepro(
+  device: Device,
+  app: App,
+  screen: Screen
+): Promise<void> {
+  await openExample(
+    device,
+    app,
+    screen,
+    'Issue #1196 Set Page After Add Repro'
+  );
   await expect(screen.getByTestId('issue-1196-status')).toHaveText(
     'Pages: 1 | Selected: 0 | Events: 1'
   );
@@ -33,8 +42,8 @@ async function expectDSelected(screen: Screen, button: string): Promise<void> {
 test(
   'setPageWithoutAnimation selects a page added in the same commit',
   options,
-  async ({ app, screen }) => {
-    await openRepro(app, screen);
+  async ({ device, app, screen }) => {
+    await openRepro(device, app, screen);
     await expectDSelected(screen, 'issue-1196-add-select-d');
   }
 );
@@ -42,8 +51,8 @@ test(
 test(
   'setPage animates to a page added in the same commit',
   options,
-  async ({ app, screen }) => {
-    await openRepro(app, screen);
+  async ({ device, app, screen }) => {
+    await openRepro(device, app, screen);
     await expectDSelected(screen, 'issue-1196-add-animate-d');
   }
 );
@@ -51,8 +60,8 @@ test(
 test(
   'setPage from useEffect animates to a page added in the same commit',
   options,
-  async ({ app, screen }) => {
-    await openRepro(app, screen);
+  async ({ device, app, screen }) => {
+    await openRepro(device, app, screen);
     await expectDSelected(screen, 'issue-1196-add-select-d-effect');
   }
 );
@@ -60,8 +69,8 @@ test(
 test(
   'setPageWithoutAnimation selects a page added to an empty pager in the same commit',
   options,
-  async ({ app, screen }) => {
-    await openRepro(app, screen);
+  async ({ device, app, screen }) => {
+    await openRepro(device, app, screen);
     await screen.getByTestId('issue-1196-remove-pages').tap();
     await expect(screen.getByTestId('issue-1196-status')).toHaveText(
       'Pages: 0 | Selected: 0 | Events: 1'
@@ -74,8 +83,8 @@ test(
 test(
   'an index that is not there yet is ignored, not applied later',
   options,
-  async ({ app, screen }) => {
-    await openRepro(app, screen);
+  async ({ device, app, screen }) => {
+    await openRepro(device, app, screen);
     // An empty pager doesn't run its scroll command handling, so this is where
     // a command kept for later would wait for the pages.
     await screen.getByTestId('issue-1196-remove-pages').tap();
@@ -97,14 +106,14 @@ test(
 test(
   'pages that come back report the page the pager lands on once',
   options,
-  async ({ app, screen }) => {
+  async ({ device, app, screen }) => {
     const status = screen.getByTestId('issue-1196-status');
     const removeAndAddPages = async () => {
       await screen.getByTestId('issue-1196-remove-pages').tap();
       await expect(status).toHaveText(/^Pages: 0 \|/);
       await screen.getByTestId('issue-1196-add').tap();
     };
-    await openRepro(app, screen);
+    await openRepro(device, app, screen);
     await screen.getByTestId('issue-1196-add').tap();
     await screen.getByTestId('issue-1196-select-d').tap();
     await expect(status).toHaveText('Pages: 4 | Selected: 3 | Events: 2');

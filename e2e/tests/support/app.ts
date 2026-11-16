@@ -1,5 +1,5 @@
 import { expect, test } from './test.ts';
-import type { App, Screen } from './test.ts';
+import type { App, Device, Screen } from './test.ts';
 
 export type LayoutDirection = 'ltr' | 'rtl';
 
@@ -7,6 +7,12 @@ const HOME_READY_TEST_ID = 'example-basic-horizontal';
 // The first cold start of the release app on a freshly booted CI emulator
 // can keep the window off the accessibility tree for over 15 s.
 const LAUNCH_TIMEOUT = 30_000;
+const LINK_TIMEOUT = 10_000;
+// iOS asks "Open in “PagerViewExample”?" (localized, but always naming the
+// app) the first time a simulator opens the scheme, and hides the app until
+// it is answered. Matching the name keeps examples' own alerts, such as
+// OnPageSelected's on mount, for the tests to handle.
+const LINK_PROMPT_NAME = /PagerViewExample/;
 
 /** Waits until the home list of the example app has rendered. */
 export async function waitForHome(screen: Screen): Promise<void> {
@@ -15,22 +21,40 @@ export async function waitForHome(screen: Screen): Promise<void> {
   });
 }
 
+/** Expects the home list, unscrolled as an example link leaves it. */
+export async function expectHome(screen: Screen): Promise<void> {
+  await expect(screen.getByTestId(HOME_READY_TEST_ID)).toBeVisible();
+}
+
 /**
- * Opens an example from the home list by its testID. Examples without an
- * explicit testID use their display name as the testID. The layout direction
- * is forced first, LTR by default, because the toggle persists across
- * launches and every gesture in the suite assumes the direction it asked for.
+ * Opens an example by its home-list testID through the example app's
+ * `pagerview://example/<testID>` link, which pushes it over the home list as a
+ * tap on its row would, without scrolling the list to find the row. Examples
+ * without an explicit testID use their display name as the testID. The layout
+ * direction is forced first, LTR by default, because the toggle persists
+ * across launches and every gesture in the suite assumes the direction it
+ * asked for.
  */
 export async function openExample(
+  device: Device,
   app: App,
   screen: Screen,
   testId: string,
   direction: LayoutDirection = 'ltr'
 ): Promise<void> {
   await ensureLayoutDirection(app, screen, direction);
-  const entry = screen.getByTestId(testId);
-  await screen.scrollUntilVisible(entry);
-  await entry.tap();
+  await device.openLink(`pagerview://example/${encodeURIComponent(testId)}`);
+
+  const prompt = screen.getByRole('alert', LINK_PROMPT_NAME);
+  const home = screen.getByTestId(HOME_READY_TEST_ID);
+  const deadline = Date.now() + LINK_TIMEOUT;
+  while (Date.now() < deadline) {
+    if (await prompt.isVisible()) {
+      await device.alert('accept');
+      return;
+    }
+    if (await home.isHidden()) return;
+  }
 }
 
 /**

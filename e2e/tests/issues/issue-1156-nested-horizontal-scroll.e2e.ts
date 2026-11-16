@@ -20,8 +20,9 @@ async function expectStatus(
 test(
   'a horizontal ScrollView in a page scrolls instead of the pager',
   options,
-  async ({ app, screen }) => {
+  async ({ device, app, screen }) => {
     await openExample(
+      device,
       app,
       screen,
       'Issue #1156 Nested Horizontal Scroll Repro'
@@ -37,8 +38,9 @@ test(
 test(
   'the pager takes the swipe once the ScrollView is at its edge',
   options,
-  async ({ app, screen }) => {
+  async ({ device, app, screen }) => {
     await openExample(
+      device,
       app,
       screen,
       'Issue #1156 Nested Horizontal Scroll Repro'
@@ -54,8 +56,9 @@ test(
 test(
   'a swipe outside the ScrollView changes the page',
   options,
-  async ({ app, screen }) => {
+  async ({ device, app, screen }) => {
     await openExample(
+      device,
       app,
       screen,
       'Issue #1156 Nested Horizontal Scroll Repro'

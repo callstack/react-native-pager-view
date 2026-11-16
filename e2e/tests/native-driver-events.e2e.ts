@@ -1,5 +1,5 @@
 import { freshAppBeforeEach, expect, test } from './support/test.ts';
-import type { App, Screen } from './support/test.ts';
+import type { App, Device, Screen } from './support/test.ts';
 import { openExample } from './support/app.ts';
 
 freshAppBeforeEach();
@@ -10,8 +10,12 @@ const PAGES = 3;
 
 type Rest = { x: number; step: number };
 
-async function openNativeDriverEvents(app: App, screen: Screen): Promise<Rest> {
-  await openExample(app, screen, 'Native Driver Events Example');
+async function openNativeDriverEvents(
+  device: Device,
+  app: App,
+  screen: Screen
+): Promise<Rest> {
+  await openExample(device, app, screen, 'Native Driver Events Example');
   await expect(screen.getByText('Page 0')).toBeVisible();
   const track = await screen.getByTestId('native-driver-track').boundingBox();
   if (!track) throw new Error('native-driver-track has no bounds');
@@ -42,10 +46,11 @@ test.describe(
   { tags: ['native-driver-events'] },
   () => {
     test('setPage through the Animated ref drives the native value', async ({
+      device,
       app,
       screen,
     }) => {
-      const rest = await openNativeDriverEvents(app, screen);
+      const rest = await openNativeDriverEvents(device, app, screen);
 
       await screen.getByTestId('native-driver-page-2').tap();
       await expect(screen.getByText('Page 2')).toBeVisible();
@@ -56,8 +61,8 @@ test.describe(
       await expectIndicatorOnPage(screen, rest, 0);
     });
 
-    test('a swipe drives the native value', async ({ app, screen }) => {
-      const rest = await openNativeDriverEvents(app, screen);
+    test('a swipe drives the native value', async ({ device, app, screen }) => {
+      const rest = await openNativeDriverEvents(device, app, screen);
 
       await screen
         .getByTestId('native-driver-pager')

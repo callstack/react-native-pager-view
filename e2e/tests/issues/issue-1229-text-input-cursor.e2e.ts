@@ -1,5 +1,5 @@
 import { freshAppBeforeEach, expect, test } from '../support/test.ts';
-import type { App, Screen } from '../support/test.ts';
+import type { App, Device, Screen } from '../support/test.ts';
 import { openExample } from '../support/app.ts';
 
 freshAppBeforeEach();
@@ -10,8 +10,12 @@ const options = { tags: ['regression', 'issue-1229'], platforms: ['android'] };
 
 const STATUS = 'issue-1229-status';
 
-async function openRepro(app: App, screen: Screen): Promise<void> {
-  await openExample(app, screen, 'Issue #1229 TextInput Cursor Repro');
+async function openRepro(
+  device: Device,
+  app: App,
+  screen: Screen
+): Promise<void> {
+  await openExample(device, app, screen, 'Issue #1229 TextInput Cursor Repro');
   await expect(screen.getByTestId(STATUS)).toHaveText(
     'outside: -1 | single: -1 | multi: -1'
   );
@@ -61,8 +65,8 @@ for (const { name, label, scrollEnabled } of CASES) {
   test(
     `a tap that moves places the cursor in ${label}`,
     options,
-    async ({ app, screen }) => {
-      await openRepro(app, screen);
+    async ({ device, app, screen }) => {
+      await openRepro(device, app, screen);
       if (!scrollEnabled) {
         const toggle = screen.getByTestId('issue-1229-scroll-enabled');
         await toggle.tap();

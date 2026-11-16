@@ -4,10 +4,11 @@ import { openExample } from './support/app.ts';
 freshAppBeforeEach();
 
 test('nested horizontal and vertical pagers scroll independently', async ({
+  device,
   app,
   screen,
 }) => {
-  await openExample(app, screen, 'Nested PagerView Example');
+  await openExample(device, app, screen, 'Nested PagerView Example');
   const outerPager = screen.getByTestId('pager-view');
   await expect(outerPager).toBeVisible();
   await expect(screen.getByTestId('1-st-page')).toBeVisible();

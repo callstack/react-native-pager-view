@@ -9,8 +9,8 @@ test(
   // avoidance, while Android's adjustResize shrinks the window by design and
   // covers the last row on short screens.
   { tags: ['regression', 'issue-1096'], platforms: ['ios'] },
-  async ({ app, screen }) => {
-    await openExample(app, screen, 'Issue #1096 Keyboard Shrink Repro');
+  async ({ device, app, screen }) => {
+    await openExample(device, app, screen, 'Issue #1096 Keyboard Shrink Repro');
     await expect(screen.getByTestId('issue-1096-pager')).toBeVisible();
 
     // With the keyboard open, a shrunk page clips Row 5 and moves its native

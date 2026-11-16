@@ -11,8 +11,13 @@ const options = {
 test(
   'a pager scrolled to a focused field still lands on the page asked for',
   options,
-  async ({ app, screen }) => {
-    await openExample(app, screen, 'Issue #1230 Pager Between Pages Repro');
+  async ({ device, app, screen }) => {
+    await openExample(
+      device,
+      app,
+      screen,
+      'Issue #1230 Pager Between Pages Repro'
+    );
 
     // A pager left between pages reports no rest, so it never reports arriving
     // at the page asked for and the input on the page being left keeps focus.

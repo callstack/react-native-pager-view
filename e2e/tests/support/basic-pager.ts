@@ -1,5 +1,5 @@
 import { expect } from './test.ts';
-import type { App, Screen, ScrollDirection } from './test.ts';
+import type { App, Device, Screen, ScrollDirection } from './test.ts';
 import { openExample } from './app.ts';
 import type { LayoutDirection } from './app.ts';
 
@@ -7,12 +7,19 @@ export type Orientation = 'horizontal' | 'vertical';
 
 /** Opens the basic example for the orientation and waits for its first page. */
 export async function openBasicPager(
+  device: Device,
   app: App,
   screen: Screen,
   orientation: Orientation,
   direction: LayoutDirection = 'ltr'
 ): Promise<void> {
-  await openExample(app, screen, `example-basic-${orientation}`, direction);
+  await openExample(
+    device,
+    app,
+    screen,
+    `example-basic-${orientation}`,
+    direction
+  );
   await expect(screen.getByTestId(`pager-view-${orientation}`)).toBeVisible();
   await expect(screen.getByTestId('pageNumber0')).toBeVisible();
 }
