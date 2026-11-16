@@ -62,7 +62,7 @@ choose explicitly, list simulators by name or UDID in `E2E_DEVICES` and point
 first test:
 
 ```bash
-APP=$(ls -d ~/Library/Developer/Xcode/DerivedData/PagerViewExample-*/Build/Products/Release-iphonesimulator/ReactTestApp.app | head -1)
+APP=$(ls -d ~/Library/Developer/Xcode/DerivedData/PagerViewExample-*/Build/Products/Release-iphonesimulator/PagerViewExample.app | head -1)
 E2E_DEVICES="iPhone 17,iPhone 16e,iPhone 17 Pro Max,iPhone Air" E2E_IOS_APP_PATH="$APP" bun run e2e:test:ios
 ```
 
@@ -77,7 +77,7 @@ device.
 | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `E2E_DEVICE`           | Simulator or emulator name or UDID. Default: every booted device of the platform.                                                                                                                                                                                                                                                            |
 | `E2E_DEVICES`          | Comma-separated pool of names or UDIDs, for example `iPhone 17,iPhone 17 Pro`. One worker per device; the test files spread across them. Every device needs the app installed, or set `E2E_IOS_APP_PATH`.                                                                                                                                    |
-| `E2E_IOS_APP_PATH`     | `.app` bundle installed on every pooled device before its first test. Use the Xcode build product (`~/Library/Developer/Xcode/DerivedData/PagerViewExample-*/Build/Products/Release-iphonesimulator/ReactTestApp.app`), never a path inside a simulator's own container: installing replaces that container and the path disappears mid-run. |
+| `E2E_IOS_APP_PATH`     | `.app` bundle installed on every pooled device before its first test. Use the Xcode build product (`~/Library/Developer/Xcode/DerivedData/PagerViewExample-*/Build/Products/Release-iphonesimulator/PagerViewExample.app`), never a path inside a simulator's own container: installing replaces that container and the path disappears mid-run. |
 | `E2E_ANDROID_APK_PATH` | `.apk` to install before the first test instead of using the installed build.                                                                                                                                                                                                                                                                |
 
 ## Layout

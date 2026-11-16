@@ -120,7 +120,7 @@ jobs:
       - name: Locate built app
         if: ${{ inputs.slim-simulators > 1 }}
         run: |
-          apps=(~/Library/Developer/Xcode/DerivedData/*/Build/Products/Release-iphonesimulator/ReactTestApp.app)
+          apps=(~/Library/Developer/Xcode/DerivedData/PagerViewExample-*/Build/Products/Release-iphonesimulator/PagerViewExample.app)
           [ -d "${apps[0]}" ]
           echo "E2E_IOS_APP_PATH=${apps[0]}" >> "$GITHUB_ENV"
 
