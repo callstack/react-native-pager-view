@@ -55,6 +55,7 @@ export async function openExample(
     }
     if (await home.isHidden()) return;
   }
+  await expect(home).toBeHidden();
 }
 
 /**
