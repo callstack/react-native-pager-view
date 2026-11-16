@@ -99,21 +99,6 @@ jobs:
     with:
       spm: true
 
-  ios-slim:
-    name: iOS Build (${{ matrix.simulators }} slim simulators)
-    needs: changes
-    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.ios == 'true') }}
-    strategy:
-      fail-fast: false
-      matrix:
-        simulators: [1, 2]
-    permissions:
-      contents: read
-      pull-requests: write
-    uses: ./.github/workflows/ios.yml
-    with:
-      slim-simulators: ${{ matrix.simulators }}
-
   required:
     name: Required checks
     needs: [changes, lint, android, ios]

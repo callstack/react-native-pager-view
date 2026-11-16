@@ -7,10 +7,6 @@ on:
         description: Convert the example to Swift Package Manager before building
         type: boolean
         default: false
-      slim-simulators:
-        description: Run e2e on this many fresh simulators slimmed by .github/simulator/slim.sh; 0 keeps the stock default simulator
-        type: number
-        default: 0
 
 jobs:
   ios-build:
@@ -30,8 +26,7 @@ jobs:
       # Restore keys match by prefix, so neither variant's name may prefix the
       # other's (`ccache-ios-` used to restore the SwiftPM cache).
       CACHE_VARIANT: ${{ inputs.spm && 'spm' || 'pods' }}
-      SLIM_SIMULATORS: ${{ inputs.slim-simulators }}
-      E2E_REPORT_KEY: ios${{ inputs.spm && '-spm' || '' }}${{ inputs.slim-simulators > 0 && format('-slim{0}', inputs.slim-simulators) || '' }}
+      E2E_REPORT_KEY: ios${{ inputs.spm && '-spm' || '' }}
       AGENT_DEVICE_RUNNER_PATHS: |
         ~/.agent-device/apple-runner/derived/ios-simulator/*/Build/Products/*
         ~/.agent-device/apple-runner/derived/ios-simulator/*/.agent-device-runner-cache.json
@@ -86,43 +81,36 @@ jobs:
 
       # Simulator.app attaches the Mac keyboard by default, which hides the
       # software keyboard and leaves no Return key for the keyboard tests.
-      # A fresh runner's own devices have never seen a Mac keyboard, so they do
+      # The simulator created below has never seen a Mac keyboard, so it does
       # not need the per-device flags that e2e/README.md gives for local runs.
       - name: Detach hardware keyboard from simulator
         run: defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
 
-      - name: Boot slim simulators
-        if: ${{ inputs.slim-simulators > 0 }}
+      # A stock simulator's first boot keeps ~270 processes busy (indexing,
+      # posters, ML) on the runner's 3 vCPUs, slowing both the build and e2e.
+      # slim.sh trims it to ~75. Features it turns off are listed in
+      # .github/simulator/disabled-daemons.txt.
+      - name: Boot slim simulator
         run: |
           runtime=$(xcrun simctl list runtimes -j | jq -r '[.runtimes[] | select(.platform == "iOS" and .isAvailable)] | last | .identifier')
-          udids=()
-          for i in $(seq "$SLIM_SIMULATORS"); do
-            udids+=("$(xcrun simctl create "slim-$i" "iPhone 17" "$runtime")")
-          done
-          .github/simulator/slim.sh "${udids[@]}"
-          for udid in "${udids[@]}"; do
-            xcrun simctl bootstatus "$udid" -b > /dev/null
-            echo "$udid: $(.github/simulator/count-processes.sh "$udid") processes"
-          done
-          echo "SIM_UDID=${udids[0]}" >> "$GITHUB_ENV"
-          echo "E2E_DEVICES=$(IFS=,; echo "${udids[*]}")" >> "$GITHUB_ENV"
+          udid=$(xcrun simctl create slim "iPhone 17" "$runtime")
+          .github/simulator/slim.sh "$udid"
+          xcrun simctl bootstatus "$udid" -b > /dev/null
+          processes=$(.github/simulator/count-processes.sh "$udid")
+          echo "$udid: $processes processes"
+          if [ "$processes" -gt 150 ]; then
+            echo "::warning::Simulator booted with $processes processes; launchd_sim may no longer read .github/simulator/slim.sh's disable store"
+          fi
+          echo "SIM_UDID=$udid" >> "$GITHUB_ENV"
+          echo "E2E_DEVICE=$udid" >> "$GITHUB_ENV"
 
       - name: Build iOS App
         # RN's USE_CCACHE wrapper silently skips ccache on Xcode 26
         # (facebook/react-native#56612), so use Xcode's compiler launcher.
         run: |
           ccache --zero-stats
-          bun example:ios:release ${SIM_UDID:+--udid "$SIM_UDID"} --extra-params "C_COMPILER_LAUNCHER=$(command -v ccache) CLANG_ENABLE_EXPLICIT_MODULES_WITH_COMPILER_LAUNCHER=YES ONLY_ACTIVE_ARCH=YES"
+          bun example:ios:release --udid "$SIM_UDID" --extra-params "C_COMPILER_LAUNCHER=$(command -v ccache) CLANG_ENABLE_EXPLICIT_MODULES_WITH_COMPILER_LAUNCHER=YES ONLY_ACTIVE_ARCH=YES"
           ccache --show-stats -v
-
-      # run-ios installs the app on SIM_UDID only; the engine installs it on
-      # the rest of the pool from this path.
-      - name: Locate built app
-        if: ${{ inputs.slim-simulators > 1 }}
-        run: |
-          apps=(~/Library/Developer/Xcode/DerivedData/PagerViewExample-*/Build/Products/Release-iphonesimulator/PagerViewExample.app)
-          [ -d "${apps[0]}" ]
-          echo "E2E_IOS_APP_PATH=${apps[0]}" >> "$GITHUB_ENV"
 
       # The runner depends only on agent-device and Xcode, not on bun.lock.
       - name: Resolve agent-device runner cache key
