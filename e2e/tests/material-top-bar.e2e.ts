@@ -4,10 +4,11 @@ import { openExample } from './support/app.ts';
 freshAppBeforeEach();
 
 test('material top tabs survive a native-stack push and pop', async ({
+  device,
   app,
   screen,
 }) => {
-  await openExample(app, screen, 'MaterialTopBarExample');
+  await openExample(device, app, screen, 'MaterialTopBarExample');
   await expect(
     screen.getByTestId('material-top-bar-pre-auth-screen')
   ).toBeVisible();

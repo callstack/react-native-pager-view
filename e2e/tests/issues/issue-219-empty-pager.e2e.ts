@@ -1,5 +1,5 @@
 import { freshAppBeforeEach, expect, test } from '../support/test.ts';
-import type { App, Screen } from '../support/test.ts';
+import type { App, Device, Screen } from '../support/test.ts';
 import { openExample } from '../support/app.ts';
 
 freshAppBeforeEach();
@@ -12,8 +12,12 @@ const options = {
 };
 
 /** Opens the repro and waits for the empty pager. */
-async function openRepro(app: App, screen: Screen): Promise<void> {
-  await openExample(app, screen, 'Issue #219 Empty Pager Repro');
+async function openRepro(
+  device: Device,
+  app: App,
+  screen: Screen
+): Promise<void> {
+  await openExample(device, app, screen, 'Issue #219 Empty Pager Repro');
   await expect(screen.getByTestId('issue-219-status')).toHaveText(
     'Pages: 0 | Selected: - | Events: 0'
   );
@@ -30,8 +34,8 @@ async function addPages(screen: Screen): Promise<void> {
 test(
   'a pager that mounts empty shows its first page when pages arrive',
   options,
-  async ({ app, screen }) => {
-    await openRepro(app, screen);
+  async ({ device, app, screen }) => {
+    await openRepro(device, app, screen);
     await addPages(screen);
     // Before the fix the pager stayed blank until it was touched.
     await expect(screen.getByText('Page A')).toBeVisible();
@@ -41,8 +45,8 @@ test(
 test(
   'a pager that loses all its pages shows them again when they come back',
   options,
-  async ({ app, screen }) => {
-    await openRepro(app, screen);
+  async ({ device, app, screen }) => {
+    await openRepro(device, app, screen);
     await addPages(screen);
     await expect(screen.getByText('Page A')).toBeVisible();
     for (let cycle = 0; cycle < 2; cycle++) {
@@ -57,8 +61,8 @@ test(
 test(
   'setPage works as soon as pages arrive in a pager that mounted empty',
   options,
-  async ({ app, screen }) => {
-    await openRepro(app, screen);
+  async ({ device, app, screen }) => {
+    await openRepro(device, app, screen);
     await addPages(screen);
     // Before the fix setPage did nothing until the pager was touched.
     await screen.getByTestId('issue-219-select-c').tap();

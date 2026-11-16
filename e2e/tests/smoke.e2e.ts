@@ -7,8 +7,8 @@ freshAppBeforeEach();
 test(
   'horizontal pager pages with the panel buttons',
   { tags: ['smoke'] },
-  async ({ app, screen }) => {
-    await openExample(app, screen, 'example-basic-horizontal');
+  async ({ device, app, screen }) => {
+    await openExample(device, app, screen, 'example-basic-horizontal');
     await expect(screen.getByTestId('pager-view-horizontal')).toBeVisible();
     await expect(screen.getByTestId('pageNumber0')).toHaveText('page number 0');
 

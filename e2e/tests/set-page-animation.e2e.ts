@@ -1,5 +1,5 @@
 import { freshAppBeforeEach, expect, test } from './support/test.ts';
-import type { App, Screen } from './support/test.ts';
+import type { App, Device, Screen } from './support/test.ts';
 import { openExample, restoreLtrAfterEach } from './support/app.ts';
 import type { LayoutDirection } from './support/app.ts';
 
@@ -8,11 +8,18 @@ freshAppBeforeEach();
 const options = { tags: ['set-page-animation'] };
 
 async function openSetPageAnimation(
+  device: Device,
   app: App,
   screen: Screen,
   direction: LayoutDirection = 'ltr'
 ): Promise<void> {
-  await openExample(app, screen, 'example-set-page-animation', direction);
+  await openExample(
+    device,
+    app,
+    screen,
+    'example-set-page-animation',
+    direction
+  );
   // iOS 18 also reports idle once a right-to-left pager has laid out.
   await expect(screen.getByTestId('set-page-animation-events')).toContainText(
     'selected:0'
@@ -35,8 +42,8 @@ for (const direction of ['ltr', 'rtl'] as const) {
     test(
       `direct setPage selects only the target page (${direction})`,
       options,
-      async ({ app, screen, platform }) => {
-        await openSetPageAnimation(app, screen, direction);
+      async ({ device, app, screen, platform }) => {
+        await openSetPageAnimation(device, app, screen, direction);
 
         await screen.getByTestId('set-page-animation-direct-last').tap();
         await expect(
@@ -61,8 +68,8 @@ for (const direction of ['ltr', 'rtl'] as const) {
 test(
   'the page next to the target is selectable after a direct setPage',
   options,
-  async ({ app, screen, platform }) => {
-    await openSetPageAnimation(app, screen);
+  async ({ device, app, screen, platform }) => {
+    await openSetPageAnimation(device, app, screen);
 
     await screen.getByTestId('set-page-animation-direct-last').tap();
     // Page 7 is visible while it slides in, and a swipe then cuts the slide short.
@@ -83,8 +90,8 @@ test(
 test(
   'scroll setPage passes the pages in between, direct setPage does not',
   options,
-  async ({ app, screen, platform }) => {
-    await openSetPageAnimation(app, screen);
+  async ({ device, app, screen, platform }) => {
+    await openSetPageAnimation(device, app, screen);
     const passed = screen.getByTestId('set-page-animation-passed');
 
     await screen.getByTestId('set-page-animation-scroll-last').tap();

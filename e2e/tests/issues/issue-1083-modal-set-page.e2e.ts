@@ -14,8 +14,8 @@ async function advanceThroughModal(screen: Screen): Promise<void> {
 test(
   'setPage called behind a native-stack modal lands on the requested page',
   { tags: ['regression', 'issue-1083'] },
-  async ({ app, screen }) => {
-    await openExample(app, screen, 'Issue #1083 Modal SetPage Repro');
+  async ({ device, app, screen }) => {
+    await openExample(device, app, screen, 'Issue #1083 Modal SetPage Repro');
     await expect(screen.getByTestId('issue-1083-requested-page')).toHaveText(
       'Last requested page: 0'
     );

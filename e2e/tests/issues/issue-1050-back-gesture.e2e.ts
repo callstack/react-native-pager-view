@@ -1,6 +1,10 @@
 import { freshAppBeforeEach, expect, test } from '../support/test.ts';
-import type { App, Screen } from '../support/test.ts';
-import { openExample, restoreLtrAfterEach } from '../support/app.ts';
+import type { App, Device, Screen } from '../support/test.ts';
+import {
+  expectHome,
+  openExample,
+  restoreLtrAfterEach,
+} from '../support/app.ts';
 import type { LayoutDirection } from '../support/app.ts';
 
 freshAppBeforeEach();
@@ -14,12 +18,13 @@ const EXAMPLE = 'Issue #1050 Back Gesture Repro';
 const NESTED_EXAMPLE = 'Issue #1050 Nested Stack Back Gesture Repro';
 
 async function openRepro(
+  device: Device,
   app: App,
   screen: Screen,
   example: string,
   direction: LayoutDirection = 'ltr'
 ): Promise<void> {
-  await openExample(app, screen, example, direction);
+  await openExample(device, app, screen, example, direction);
   await expectPage(screen, 0);
 }
 
@@ -52,9 +57,8 @@ async function expectPage(screen: Screen, page: number): Promise<void> {
   );
 }
 
-/** The home list stays scrolled to the example's entry after the pop. */
-async function expectPopped(screen: Screen, example: string): Promise<void> {
-  await expect(screen.getByTestId(example)).toBeVisible();
+async function expectPopped(screen: Screen): Promise<void> {
+  await expectHome(screen);
   await expect(screen.getByTestId('issue-1050-pager')).toBeHidden();
 }
 
@@ -62,20 +66,20 @@ function describeBackGesture(direction: LayoutDirection): void {
   test(
     'a back swipe on the first page pops the screen',
     options,
-    async ({ app, screen }) => {
-      await openRepro(app, screen, EXAMPLE, direction);
+    async ({ device, app, screen }) => {
+      await openRepro(device, app, screen, EXAMPLE, direction);
 
       // Before the fix the pager claimed the drag and the screen stayed.
       await dragAcrossPager(screen, direction, true);
-      await expectPopped(screen, EXAMPLE);
+      await expectPopped(screen);
     }
   );
 
   test(
     'a back swipe on a later page goes to the previous page',
     options,
-    async ({ app, screen }) => {
-      await openRepro(app, screen, EXAMPLE, direction);
+    async ({ device, app, screen }) => {
+      await openRepro(device, app, screen, EXAMPLE, direction);
       await dragAcrossPager(screen, direction, false);
       await expectPage(screen, 1);
 
@@ -87,8 +91,8 @@ function describeBackGesture(direction: LayoutDirection): void {
   test(
     'a forward swipe on the first page still goes to the next page',
     options,
-    async ({ app, screen }) => {
-      await openRepro(app, screen, EXAMPLE, direction);
+    async ({ device, app, screen }) => {
+      await openRepro(device, app, screen, EXAMPLE, direction);
 
       await dragAcrossPager(screen, direction, false);
       await expectPage(screen, 1);
@@ -111,21 +115,21 @@ test.describe('back gesture over a pager in a nested stack', () => {
   test(
     'a back swipe on the first page pops the outer stack',
     options,
-    async ({ app, screen }) => {
-      await openRepro(app, screen, NESTED_EXAMPLE);
+    async ({ device, app, screen }) => {
+      await openRepro(device, app, screen, NESTED_EXAMPLE);
 
       // The inner stack has only its root screen. Before skipping stacks that
       // can't pop, the pager stopped there and kept the drag.
       await dragAcrossPager(screen, 'ltr', true);
-      await expectPopped(screen, NESTED_EXAMPLE);
+      await expectPopped(screen);
     }
   );
 
   test(
     'a forward swipe on the first page still goes to the next page',
     options,
-    async ({ app, screen }) => {
-      await openRepro(app, screen, NESTED_EXAMPLE);
+    async ({ device, app, screen }) => {
+      await openRepro(device, app, screen, NESTED_EXAMPLE);
 
       await dragAcrossPager(screen, 'ltr', false);
       await expectPage(screen, 1);

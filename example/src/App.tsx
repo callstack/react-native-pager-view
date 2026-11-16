@@ -18,6 +18,8 @@ import {
   DefaultTheme,
   NavigationContainer,
   useNavigation,
+  type LinkingOptions,
+  type ParamListBase,
   type Theme,
 } from '@react-navigation/native';
 import { BasicPagerViewExample } from './BasicPagerViewExample';
@@ -269,6 +271,27 @@ const sections: { title: string; data: Example[] }[] = [
 
 const allExamples = sections.flatMap((section) => section.data);
 
+const HOME_ROUTE = 'PagerView Example';
+
+// `pagerview://example/<testID>` opens an example the way tapping its row
+// does. Naming the home route initialRouteName makes a link that arrives while
+// the app runs push the example over the home list instead of resetting the
+// stack, and a cold start through a link still has home to go back to.
+const linking: LinkingOptions<ParamListBase> = {
+  prefixes: ['pagerview://'],
+  config: { initialRouteName: HOME_ROUTE, screens: {} },
+  getStateFromPath(path) {
+    const match = /^\/?example\/([^?#]+)/.exec(path);
+    const testID = match ? decodeURIComponent(match[1]) : undefined;
+    const example = allExamples.find(
+      (candidate) => (candidate.testID ?? candidate.name) === testID
+    );
+    return example
+      ? { routes: [{ name: HOME_ROUTE }, { name: example.name }] }
+      : undefined;
+  },
+};
+
 function App() {
   const navigation = useNavigation();
   return (
@@ -351,9 +374,9 @@ export function Navigation() {
   return (
     <SafeAreaProvider style={styles.root}>
       <StatusBar barStyle="dark-content" />
-      <NavigationContainer theme={navigationTheme}>
+      <NavigationContainer theme={navigationTheme} linking={linking}>
         <NavigationStack.Navigator
-          initialRouteName="PagerView Example"
+          initialRouteName={HOME_ROUTE}
           screenOptions={{
             headerShadowVisible: false,
             headerTintColor: colors.foreground,
@@ -362,7 +385,7 @@ export function Navigation() {
           }}
         >
           <NavigationStack.Screen
-            name="PagerView Example"
+            name={HOME_ROUTE}
             component={App}
             options={{
               title: 'PagerView',

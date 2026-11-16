@@ -6,8 +6,8 @@ freshAppBeforeEach();
 test(
   'outer pager stays responsive after its page count changes around a nested pager',
   { tags: ['regression', 'issue-1098'] },
-  async ({ app, screen }) => {
-    await openExample(app, screen, 'Issue #1098 Nested Pager Repro');
+  async ({ device, app, screen }) => {
+    await openExample(device, app, screen, 'Issue #1098 Nested Pager Repro');
     await expect(screen.getByTestId('issue-1098-outer-pager')).toBeVisible();
     const refresh = screen.getByTestId('issue-1098-refresh-outer-pages');
     await expect(refresh).toBeVisible();

@@ -4,10 +4,11 @@ import { openExample } from './support/app.ts';
 freshAppBeforeEach();
 
 test('TabView inside a ScrollView swipes tabs and scrolls the page', async ({
+  device,
   app,
   screen,
 }) => {
-  await openExample(app, screen, 'TabView inside ScrollView Example');
+  await openExample(device, app, screen, 'TabView inside ScrollView Example');
   const scrollView = screen.getByTestId('tab-view-scroll-view');
   await expect(scrollView).toBeVisible();
   await expect(screen.getByText('First')).toBeVisible();

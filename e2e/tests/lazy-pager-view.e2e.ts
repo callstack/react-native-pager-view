@@ -1,11 +1,15 @@
 import { freshAppBeforeEach, expect, test } from './support/test.ts';
-import type { App, Screen } from './support/test.ts';
+import type { App, Device, Screen } from './support/test.ts';
 import { openExample } from './support/app.ts';
 
 freshAppBeforeEach();
 
-async function openLazyExample(app: App, screen: Screen): Promise<void> {
-  await openExample(app, screen, 'Lazy PagerView Example');
+async function openLazyExample(
+  device: Device,
+  app: App,
+  screen: Screen
+): Promise<void> {
+  await openExample(device, app, screen, 'Lazy PagerView Example');
   await expectOnPage(screen, 1);
   await expectMounted(screen, 2);
 }
@@ -26,10 +30,11 @@ async function expectMounted(screen: Screen, count: number): Promise<void> {
 }
 
 test('setPage mounts the target and its neighbours only', async ({
+  device,
   app,
   screen,
 }) => {
-  await openLazyExample(app, screen);
+  await openLazyExample(device, app, screen);
 
   await screen.getByTestId('lazy-last-page-button').tap();
   await expectOnPage(screen, 20);
@@ -40,8 +45,8 @@ test('setPage mounts the target and its neighbours only', async ({
   await expectMounted(screen, 5);
 });
 
-test('swiping mounts the next neighbour', async ({ app, screen }) => {
-  await openLazyExample(app, screen);
+test('swiping mounts the next neighbour', async ({ device, app, screen }) => {
+  await openLazyExample(device, app, screen);
 
   await screen
     .getByText('Mounted page 1')
@@ -57,10 +62,11 @@ test('swiping mounts the next neighbour', async ({ app, screen }) => {
 });
 
 test('preload distance 0 mounts only the pages visited', async ({
+  device,
   app,
   screen,
 }) => {
-  await openLazyExample(app, screen);
+  await openLazyExample(device, app, screen);
   await screen.getByTestId('lazy-preload-0').tap();
 
   await screen.getByTestId('lazy-next-page-button').tap();
@@ -72,8 +78,12 @@ test('preload distance 0 mounts only the pages visited', async ({
   await expectMounted(screen, 3);
 });
 
-test('a visited page keeps its scroll position', async ({ app, screen }) => {
-  await openLazyExample(app, screen);
+test('a visited page keeps its scroll position', async ({
+  device,
+  app,
+  screen,
+}) => {
+  await openLazyExample(device, app, screen);
   await screen
     .getByTestId('lazy-page-scroll-0')
     .scrollUntilVisible(screen.getByText('Page 1 row 30'), {

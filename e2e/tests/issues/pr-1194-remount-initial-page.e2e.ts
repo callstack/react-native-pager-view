@@ -6,8 +6,13 @@ freshAppBeforeEach();
 test(
   'a pager remounted after its screen was covered starts on its own initialPage',
   { tags: ['regression', 'pr-1194'] },
-  async ({ app, screen }) => {
-    await openExample(app, screen, 'PR #1194 Remount InitialPage Repro');
+  async ({ device, app, screen }) => {
+    await openExample(
+      device,
+      app,
+      screen,
+      'PR #1194 Remount InitialPage Repro'
+    );
     await expect(screen.getByTestId('pr-1194-page-0')).toBeVisible();
 
     await screen.getByTestId('pr-1194-go-to-2').tap();

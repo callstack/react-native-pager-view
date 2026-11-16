@@ -12,10 +12,11 @@ async function acceptPageAlert(screen: Screen, page: number): Promise<void> {
 }
 
 test('onPageSelected fires an alert for every page change', async ({
+  device,
   app,
   screen,
 }) => {
-  await openExample(app, screen, 'OnPageSelected Example');
+  await openExample(device, app, screen, 'OnPageSelected Example');
   await acceptPageAlert(screen, 1);
   await expect(screen.getByTestId('pager')).toBeVisible();
   await expect(screen.getByText('Page Index: 0')).toBeVisible();

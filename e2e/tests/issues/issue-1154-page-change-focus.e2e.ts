@@ -1,5 +1,5 @@
 import { freshAppBeforeEach, expect, test } from '../support/test.ts';
-import type { App, Screen } from '../support/test.ts';
+import type { App, Device, Screen } from '../support/test.ts';
 import { openExample, restoreLtrAfterEach } from '../support/app.ts';
 
 freshAppBeforeEach();
@@ -41,12 +41,13 @@ async function expectIdleAt(screen: Screen, page: number): Promise<void> {
 
 /** Opens the repro and focuses the input on page `page`. */
 async function focusInputOnPage(
+  device: Device,
   app: App,
   screen: Screen,
   platform: string,
   page: number
 ): Promise<void> {
-  await openExample(app, screen, 'Issue #1154 Page Change Focus Repro');
+  await openExample(device, app, screen, 'Issue #1154 Page Change Focus Repro');
   if (page !== 0) {
     await screen.getByTestId(`issue-1154-go-${page}`).tap();
     await expectIdleAt(screen, page);
@@ -58,8 +59,8 @@ async function focusInputOnPage(
 test(
   'leaving a page with setPage blurs its input',
   options,
-  async ({ app, screen, platform }) => {
-    await focusInputOnPage(app, screen, platform, 1);
+  async ({ device, app, screen, platform }) => {
+    await focusInputOnPage(device, app, screen, platform, 1);
 
     // Before the fix the off-screen input kept focus.
     await screen.getByTestId('issue-1154-go-0').tap();
@@ -70,8 +71,8 @@ test(
 test(
   'setPage with an input focused lands on the target page',
   options,
-  async ({ app, screen, platform }) => {
-    await focusInputOnPage(app, screen, platform, 0);
+  async ({ device, app, screen, platform }) => {
+    await focusInputOnPage(device, app, screen, platform, 0);
 
     // Blurring during the slide used to land the pager on page 2, so the page
     // is checked once the pager reports coming to rest.
@@ -85,8 +86,8 @@ test(
 test(
   'a setPage two pages away lands on the far page',
   { ...options, platforms: ['ios'] },
-  async ({ app, screen, platform }) => {
-    await focusInputOnPage(app, screen, platform, 0);
+  async ({ device, app, screen, platform }) => {
+    await focusInputOnPage(device, app, screen, platform, 0);
 
     // Two pages at once, so the page being left can drop out of the window
     // while the slide runs and UIKit resigns the input itself.
@@ -100,8 +101,8 @@ test(
 test(
   'a setPage repeated during the slide changes nothing',
   { ...options, platforms: ['ios'] },
-  async ({ app, screen, platform }) => {
-    await focusInputOnPage(app, screen, platform, 0);
+  async ({ device, app, screen, platform }) => {
+    await focusInputOnPage(device, app, screen, platform, 0);
 
     // The second command names the page already arriving, so it moves
     // nothing and must not disturb the slide or the blur.
@@ -115,8 +116,8 @@ test(
 test(
   'leaving a page with a swipe blurs its input',
   options,
-  async ({ app, screen, platform }) => {
-    await focusInputOnPage(app, screen, platform, 0);
+  async ({ device, app, screen, platform }) => {
+    await focusInputOnPage(device, app, screen, platform, 0);
 
     // Swipe the title: a swipe starting on the input is taken by the input.
     await screen
@@ -129,8 +130,8 @@ test(
 test(
   'an input focused on the new page keeps focus',
   options,
-  async ({ app, screen, platform }) => {
-    await focusInputOnPage(app, screen, platform, 0);
+  async ({ device, app, screen, platform }) => {
+    await focusInputOnPage(device, app, screen, platform, 0);
 
     // Focused right after setPage, before the pager has settled. The status
     // reads right as the slide starts, so the second check waits out the
@@ -148,8 +149,8 @@ test(
 test(
   'an input focused on the new page keeps focus going back',
   { ...options, platforms: ['android'] },
-  async ({ app, screen, platform }) => {
-    await focusInputOnPage(app, screen, platform, 1);
+  async ({ device, app, screen, platform }) => {
+    await focusInputOnPage(device, app, screen, platform, 1);
 
     // The same case backwards, which iOS drops: a focus sent in the same tick
     // as the command does not reach the page the pager moves back to, with or
@@ -169,8 +170,8 @@ test(
 test(
   'a swipe keeps the focus the new page takes from onPageSelected',
   options,
-  async ({ app, screen, platform }) => {
-    await focusInputOnPage(app, screen, platform, 0);
+  async ({ device, app, screen, platform }) => {
+    await focusInputOnPage(device, app, screen, platform, 0);
 
     await screen.getByTestId('issue-1154-mode-onSelected').tap();
     await screen
@@ -185,8 +186,8 @@ test(
 test(
   'a setPage that interrupts another lands on the page asked for last',
   { ...options, platforms: ['ios'] },
-  async ({ app, screen, platform }) => {
-    await focusInputOnPage(app, screen, platform, 0);
+  async ({ device, app, screen, platform }) => {
+    await focusInputOnPage(device, app, screen, platform, 0);
 
     // The second command goes back a page, so an overshoot lands on page 0
     // where this can see it. An idle report names the page the pager had
@@ -201,8 +202,13 @@ test(
 test(
   'a setPage back to the page a slide is passing lands there',
   { ...options, platforms: ['ios'] },
-  async ({ app, screen, platform }) => {
-    await openExample(app, screen, 'Issue #1154 Page Change Focus Repro');
+  async ({ device, app, screen, platform }) => {
+    await openExample(
+      device,
+      app,
+      screen,
+      'Issue #1154 Page Change Focus Repro'
+    );
 
     // The second command goes out from the scroll events, as soon as the slide
     // to page 2 is more than halfway to page 1, rather than on a timer. TabView
@@ -223,8 +229,8 @@ test(
 test(
   'a setPage that interrupts another still lands on the later page',
   { ...options, platforms: ['ios'] },
-  async ({ app, screen, platform }) => {
-    await focusInputOnPage(app, screen, platform, 0);
+  async ({ device, app, screen, platform }) => {
+    await focusInputOnPage(device, app, screen, platform, 0);
 
     // The first command focuses page 1's input as it leaves page 0, and the
     // second one redirects to page 2 while that slide runs, so the focus lands
@@ -242,8 +248,8 @@ test(
 test(
   'a setPage redirected once the focus has landed blurs it',
   { ...options, platforms: ['ios'] },
-  async ({ app, screen, platform }) => {
-    await focusInputOnPage(app, screen, platform, 0);
+  async ({ device, app, screen, platform }) => {
+    await focusInputOnPage(device, app, screen, platform, 0);
 
     // The focus on page 1 lands before the redirect to page 2 arrives, so the
     // blur before that page change is the one that resigns it, in the middle
@@ -258,8 +264,8 @@ test(
 test(
   'setPage keeps the focus the new page takes from onPageSelected',
   { ...options, platforms: ['android'] },
-  async ({ app, screen, platform }) => {
-    await focusInputOnPage(app, screen, platform, 0);
+  async ({ device, app, screen, platform }) => {
+    await focusInputOnPage(device, app, screen, platform, 0);
 
     // Android reports the selection once the pager has settled, so a handler
     // can focus the new page there. iOS reports it as the slide starts, where
@@ -273,8 +279,8 @@ test(
 test(
   'two setPage calls that cancel out land on the first page',
   { ...options, platforms: ['ios'] },
-  async ({ app, screen, platform }) => {
-    await focusInputOnPage(app, screen, platform, 0);
+  async ({ device, app, screen, platform }) => {
+    await focusInputOnPage(device, app, screen, platform, 0);
 
     // Each setPage blurs before the pager moves, so the first one has already
     // taken the focus by the time the second one sends the pager back. The
@@ -292,8 +298,9 @@ test.describe('right to left', () => {
   test(
     'leaving a page with a swipe blurs its input',
     { ...options, platforms: ['ios'] },
-    async ({ app, screen, platform }) => {
+    async ({ device, app, screen, platform }) => {
       await openExample(
+        device,
         app,
         screen,
         'Issue #1154 Page Change Focus Repro',
@@ -315,8 +322,13 @@ test.describe('right to left', () => {
 test(
   'a page that grows with the keyboard still lands on the target page',
   { ...options, platforms: ['ios'] },
-  async ({ app, screen, platform }) => {
-    await openExample(app, screen, 'Issue #1154 Page Change Focus Repro');
+  async ({ device, app, screen, platform }) => {
+    await openExample(
+      device,
+      app,
+      screen,
+      'Issue #1154 Page Change Focus Repro'
+    );
     await screen.getByTestId('issue-1154-avoid').tap();
     await screen.getByTestId('issue-1154-input-0').tap();
     await expectStatus(screen, platform, 0, 'input 0');

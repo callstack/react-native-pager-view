@@ -12,8 +12,13 @@ const STATUS = 'pr-1241-status';
 test(
   'a page that comes back keeps the switch value React set while it was away',
   options,
-  async ({ app, screen }) => {
-    await openExample(app, screen, 'PR #1241 Switch State Restore Repro');
+  async ({ device, app, screen }) => {
+    await openExample(
+      device,
+      app,
+      screen,
+      'PR #1241 Switch State Restore Repro'
+    );
     await expect(screen.getByTestId(STATUS)).toHaveText(
       'value: off | changes: 0'
     );

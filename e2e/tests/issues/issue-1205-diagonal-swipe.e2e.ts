@@ -1,5 +1,5 @@
 import { freshAppBeforeEach, expect, test } from '../support/test.ts';
-import type { App, Screen } from '../support/test.ts';
+import type { App, Device, Screen } from '../support/test.ts';
 import { openExample } from '../support/app.ts';
 
 freshAppBeforeEach();
@@ -8,8 +8,12 @@ freshAppBeforeEach();
 // that were mostly vertical.
 const options = { tags: ['regression', 'issue-1205'], platforms: ['android'] };
 
-async function openRepro(app: App, screen: Screen): Promise<void> {
-  await openExample(app, screen, 'Issue #1205 Diagonal Swipe Repro');
+async function openRepro(
+  device: Device,
+  app: App,
+  screen: Screen
+): Promise<void> {
+  await openExample(device, app, screen, 'Issue #1205 Diagonal Swipe Repro');
   await expect(screen.getByTestId('issue-1205-status')).toHaveText(
     'Selected: 0 | Scroll Y: 0'
   );
@@ -31,8 +35,8 @@ async function dragUpSlanted(screen: Screen, slant: number): Promise<void> {
 test(
   'a slanted, mostly vertical drag scrolls the list',
   options,
-  async ({ app, screen }) => {
-    await openRepro(app, screen);
+  async ({ device, app, screen }) => {
+    await openRepro(device, app, screen);
     // Before the fix the pager took this drag and the list never moved.
     await dragUpSlanted(screen, 0.66);
     await expect(screen.getByTestId('issue-1205-status')).toHaveText(
@@ -47,8 +51,8 @@ test(
 test(
   'a slanted, mostly horizontal drag changes the page',
   options,
-  async ({ app, screen }) => {
-    await openRepro(app, screen);
+  async ({ device, app, screen }) => {
+    await openRepro(device, app, screen);
     await dragUpSlanted(screen, 1.6);
     await expect(screen.getByTestId('issue-1205-status')).toHaveText(
       'Selected: 1 | Scroll Y: 0'
