@@ -195,6 +195,7 @@ private extension PagerGestureObserver {
     // paging, so the override would stop scrolling that is not paging.
     if #available(iOS 16, *) {
       addRevealOverride(to: subclass, from: currentClass)
+      addScrollTargetRecorder(to: subclass, from: currentClass)
     }
 
     objc_registerClassPair(subclass)
@@ -224,5 +225,51 @@ private extension PagerGestureObserver {
       imp_implementationWithBlock(override),
       method_getTypeEncoding(method)
     )
+  }
+
+  /// Records where an animated scroll is heading, which UIKit does not expose.
+  /// `TabView` starts each slide this way, so the pager can tell a slide it
+  /// started from one it skipped.
+  private static func addScrollTargetRecorder(to subclass: AnyClass, from currentClass: AnyClass) {
+    let selector = #selector(UIScrollView.setContentOffset(_:animated:))
+
+    guard let method = class_getInstanceMethod(currentClass, selector) else {
+      return
+    }
+
+    typealias SetContentOffset = @convention(c) (AnyObject, Selector, CGPoint, Bool) -> Void
+    let superImplementation = unsafeBitCast(method_getImplementation(method), to: SetContentOffset.self)
+
+    let override: @convention(block) (AnyObject, CGPoint, Bool) -> Void = { object, offset, animated in
+      if let scrollView = object as? UIScrollView {
+        scrollView.animatedScrollTarget = animated ? offset : nil
+      }
+      superImplementation(object, selector, offset, animated)
+    }
+
+    class_addMethod(
+      subclass,
+      selector,
+      imp_implementationWithBlock(override),
+      method_getTypeEncoding(method)
+    )
+  }
+}
+
+private var animatedScrollTargetKey: UInt8 = 0
+
+extension UIScrollView {
+  /// The offset the last animated `setContentOffset` headed for. Only the
+  /// pager's runtime subclass records it, see `PagerGestureObserver`.
+  var animatedScrollTarget: CGPoint? {
+    get { (objc_getAssociatedObject(self, &animatedScrollTargetKey) as? NSValue)?.cgPointValue }
+    set {
+      objc_setAssociatedObject(
+        self,
+        &animatedScrollTargetKey,
+        newValue.map { NSValue(cgPoint: $0) },
+        .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+      )
+    }
   }
 }
