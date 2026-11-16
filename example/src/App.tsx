@@ -25,6 +25,7 @@ import {
 import { BasicPagerViewExample } from './BasicPagerViewExample';
 import { KeyboardExample } from './KeyboardExample';
 import { KeyboardDismissModeExample } from './KeyboardDismissModeExample';
+import { MemoPagesExample } from './MemoPagesExample';
 import { OnPageScrollExample } from './OnPageScrollExample';
 import { OnPageSelectedExample } from './OnPageSelectedExample';
 import { ScrollablePagerViewExample } from './ScrollablePagerViewExample';
@@ -176,6 +177,11 @@ const sections: { title: string; data: Example[] }[] = [
         name: 'Headphones Carousel Example',
       },
       { component: PaginationDotsExample, name: 'Pagination Dots Example' },
+      {
+        component: MemoPagesExample,
+        name: 'Memo Pages Example',
+        testID: 'example-memo-pages',
+      },
       {
         component: ReanimatedOnPageScrollExample,
         name: 'Reanimated onPageScroll example',
