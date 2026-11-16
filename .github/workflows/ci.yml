@@ -59,6 +59,7 @@ jobs:
             ios:
               - *shared
               - '.github/workflows/ios.yml'
+              - '.github/simulator/**'
               - 'ios/**'
               - 'example/ios/**'
               - '*.podspec'

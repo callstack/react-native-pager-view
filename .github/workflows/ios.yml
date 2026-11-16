@@ -26,6 +26,7 @@ jobs:
       # Restore keys match by prefix, so neither variant's name may prefix the
       # other's (`ccache-ios-` used to restore the SwiftPM cache).
       CACHE_VARIANT: ${{ inputs.spm && 'spm' || 'pods' }}
+      E2E_REPORT_KEY: ios${{ inputs.spm && '-spm' || '' }}
       AGENT_DEVICE_RUNNER_PATHS: |
         ~/.agent-device/apple-runner/derived/ios-simulator/*/Build/Products/*
         ~/.agent-device/apple-runner/derived/ios-simulator/*/.agent-device-runner-cache.json
@@ -80,17 +81,35 @@ jobs:
 
       # Simulator.app attaches the Mac keyboard by default, which hides the
       # software keyboard and leaves no Return key for the keyboard tests.
-      # A fresh runner's own devices have never seen a Mac keyboard, so they do
+      # The simulator created below has never seen a Mac keyboard, so it does
       # not need the per-device flags that e2e/README.md gives for local runs.
       - name: Detach hardware keyboard from simulator
         run: defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool false
+
+      # A stock simulator's first boot keeps ~270 processes busy (indexing,
+      # posters, ML) on the runner's 3 vCPUs, slowing both the build and e2e.
+      # slim.sh trims it to ~75. Features it turns off are listed in
+      # .github/simulator/disabled-daemons.txt.
+      - name: Boot slim simulator
+        run: |
+          runtime=$(xcrun simctl list runtimes -j | jq -r '[.runtimes[] | select(.platform == "iOS" and .isAvailable)] | last | .identifier')
+          udid=$(xcrun simctl create slim "iPhone 17" "$runtime")
+          .github/simulator/slim.sh "$udid"
+          xcrun simctl bootstatus "$udid" -b > /dev/null
+          processes=$(.github/simulator/count-processes.sh "$udid")
+          echo "$udid: $processes processes"
+          if [ "$processes" -gt 150 ]; then
+            echo "::warning::Simulator booted with $processes processes; launchd_sim may no longer read .github/simulator/slim.sh's disable store"
+          fi
+          echo "SIM_UDID=$udid" >> "$GITHUB_ENV"
+          echo "E2E_DEVICE=$udid" >> "$GITHUB_ENV"
 
       - name: Build iOS App
         # RN's USE_CCACHE wrapper silently skips ccache on Xcode 26
         # (facebook/react-native#56612), so use Xcode's compiler launcher.
         run: |
           ccache --zero-stats
-          bun example:ios:release --extra-params "C_COMPILER_LAUNCHER=$(command -v ccache) CLANG_ENABLE_EXPLICIT_MODULES_WITH_COMPILER_LAUNCHER=YES ONLY_ACTIVE_ARCH=YES"
+          bun example:ios:release --udid "$SIM_UDID" --extra-params "C_COMPILER_LAUNCHER=$(command -v ccache) CLANG_ENABLE_EXPLICIT_MODULES_WITH_COMPILER_LAUNCHER=YES ONLY_ACTIVE_ARCH=YES"
           ccache --show-stats -v
 
       # The runner depends only on agent-device and Xcode, not on bun.lock.
@@ -128,7 +147,7 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: e2e-report-ios${{ inputs.spm && '-spm' || '' }}
+          name: e2e-report-${{ env.E2E_REPORT_KEY }}
           path: |
             e2e/.e2e/report.json
             e2e/.e2e/results

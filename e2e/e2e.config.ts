@@ -10,5 +10,7 @@ export default {
   // restoreLtrAfterEach relaunches twice; ~30 s on an Android emulator.
   cleanupTimeout: 60_000,
   // github() only acts on GitHub Actions: job summary plus one PR comment.
-  reporters: ['list', github()],
+  // Every ios.yml variant runs as job `ios-build`, so the key keeps their
+  // comments apart.
+  reporters: ['list', github({ key: process.env.E2E_REPORT_KEY })],
 } satisfies E2EConfig;
