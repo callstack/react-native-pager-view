@@ -23,6 +23,7 @@ const PAGE_COLORS = ['#fde2e2', '#e2fde6', '#e2e8fd', '#fdf3e2'];
 export function Issue1154PageChangeFocusRepro() {
   const pagerRef = useRef<PagerViewRef>(null);
   const followUpCommand = useRef<{ at: number; go: number } | null>(null);
+  const pastMiddleCommand = useRef<number | null>(null);
   const [selectedPage, setSelectedPage] = useState(0);
   const [focusedInput, setFocusedInput] = useState<number | null>(null);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
@@ -43,6 +44,7 @@ export function Issue1154PageChangeFocusRepro() {
   const startCommand = () => {
     setEvents([]);
     followUpCommand.current = null;
+    pastMiddleCommand.current = null;
     if (lateCommand.current) {
       clearTimeout(lateCommand.current);
       lateCommand.current = null;
@@ -122,6 +124,16 @@ export function Issue1154PageChangeFocusRepro() {
           onPress={() => goToPageThen(1, 2)}
         />
         <Button
+          testID="issue-1154-go-2-back-to-1"
+          title="Go 2, back to 1"
+          onPress={() => {
+            startCommand();
+            // Already on page 2, nothing slides and the redirect never goes out.
+            pastMiddleCommand.current = selectedPage === 2 ? null : 1;
+            pagerRef.current?.setPage(2);
+          }}
+        />
+        <Button
           testID="issue-1154-go-1-and-0"
           title="Go 1 and 0"
           onPress={() => {
@@ -166,6 +178,16 @@ export function Issue1154PageChangeFocusRepro() {
         ref={pagerRef}
         style={styles.pager}
         onPageScroll={(e) => {
+          // Sent as soon as the slide is more than halfway to that page, so it
+          // is the page nearest the offset when the command lands. The log
+          // shows how far the slide had come.
+          const back = pastMiddleCommand.current;
+          const progress = e.nativeEvent.position + e.nativeEvent.offset;
+          if (back !== null && progress > back - 0.5) {
+            pastMiddleCommand.current = null;
+            log(`redirect at ${progress.toFixed(2)}`);
+            pagerRef.current?.setPage(back);
+          }
           // The pager sends the snapped page with no offset just before it
           // reports stopping, which is where it actually came to rest.
           if (e.nativeEvent.offset === 0) {

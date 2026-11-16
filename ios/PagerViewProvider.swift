@@ -176,6 +176,10 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
     if index != props.currentPage {
       props.resignFirstResponder(outsidePage: index)
     }
+    let previousPage = props.currentPage
+    if index != previousPage {
+      props.stopSlideBeforeSelectionChange()
+    }
     // Setting a published value updates the view even when it is already nil,
     // and an update outside the animation would cut a running slide short.
     let previousTransition = props.pageTransition
@@ -195,6 +199,14 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
       }
     case .direct:
       slideDirectly(to: index, after: previousTransition)
+    }
+    // Only a plain selection change can be skipped by TabView: a two-step
+    // direct slide starts its animation from `PagerView.slide`. Checked on the
+    // next pass, once the commands sent together have settled the selection.
+    if props.pageTransition == nil && props.currentPage != previousPage {
+      DispatchQueue.main.async { [props] in
+        props.scrollToSelectionSkippedMidSlide(index, animated: animation != .none)
+      }
     }
   }
 
