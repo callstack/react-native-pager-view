@@ -9,8 +9,10 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
+import android.widget.TextView
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
@@ -442,6 +444,10 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   private fun canViewScroll(view: View, direction: Int): Boolean {
+    // A clipped TextView with a movement method reports a scroll range, but only an input scrolls its text.
+    if (view is TextView && view !is EditText) {
+      return false
+    }
     // Both directions count, as a ScrollView at its top still takes a drag down, e.g. to refresh.
     if (isGestureAcross) {
       return if (orientationState.value == Orientation.Vertical) {
