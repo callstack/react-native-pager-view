@@ -74,6 +74,7 @@ import { Issue1205DiagonalSwipeRepro } from './gh-issues/Issue1205DiagonalSwipeR
 import { Issue1229TextInputCursorRepro } from './gh-issues/Issue1229TextInputCursorRepro';
 import { Issue1230PagerBetweenPagesRepro } from './gh-issues/Issue1230PagerBetweenPagesRepro';
 import { Issue1248ClippedTextScrollRepro } from './gh-issues/Issue1248ClippedTextScrollRepro';
+import { Issue1249NestedScrollForwardingRepro } from './gh-issues/Issue1249NestedScrollForwardingRepro';
 import { Issue1250PageSelectedTimingRepro } from './gh-issues/Issue1250PageSelectedTimingRepro';
 import { Issue219EmptyPagerRepro } from './gh-issues/Issue219EmptyPagerRepro';
 import { Issue424SwipeCancelsPressRepro } from './gh-issues/Issue424SwipeCancelsPressRepro';
@@ -256,6 +257,10 @@ const sections: { title: string; data: Example[] }[] = [
       {
         component: Issue1248ClippedTextScrollRepro,
         name: 'Issue #1248 Clipped Text Scroll Repro',
+      },
+      {
+        component: Issue1249NestedScrollForwardingRepro,
+        name: 'Issue #1249 Nested Scroll Forwarding Repro',
       },
       {
         component: Issue1250PageSelectedTimingRepro,

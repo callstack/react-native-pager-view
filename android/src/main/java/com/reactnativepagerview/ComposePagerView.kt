@@ -34,8 +34,10 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.platform.rememberNestedScrollInteropConnection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
@@ -789,7 +791,10 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   @Composable
   private fun PageHost(child: View?) {
     AndroidView(
-      modifier = Modifier.fillMaxSize(),
+      // A page's androidx nested scroll, as from a RefreshControl, stops in Compose without this,
+      // so it never reached a native parent of the pager, like a collapsing header (see #1249).
+      // The pager's own drag doesn't pass through it, as it runs above the page.
+      modifier = Modifier.fillMaxSize().nestedScroll(rememberNestedScrollInteropConnection()),
       factory = { context ->
         PageContainer(context).apply {
           layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT)
@@ -812,6 +817,12 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   // all can't place the cursor (see #1229). Pass that on once the pager has dispatched the touch.
   private inner class PageContainer(context: Context) : FrameLayout(context) {
     private var allowsInterceptAfterDispatch = false
+
+    // AndroidViewHolder drops a nested scroll from the page while its view has nested scrolling
+    // disabled, which a plain FrameLayout does.
+    init {
+      isNestedScrollingEnabled = true
+    }
 
     override fun requestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
       allowsInterceptAfterDispatch = !disallowIntercept && isDispatchingTouch
