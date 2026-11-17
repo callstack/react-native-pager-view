@@ -20,8 +20,6 @@ async function expectRenders(screen: Screen, page: number): Promise<void> {
   );
 }
 
-// The pager used to give every page a new style on each render, so a memoized
-// page rendered again with its parent.
 test('memoized pages do not re-render with the pager', async ({
   device,
   app,
