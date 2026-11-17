@@ -518,12 +518,14 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     UiThreadUtil.getUiThreadHandler().post(command)
   }
 
-  private fun dispatchPageSelected(position: Int) {
+  private fun dispatchPageSelected(position: Int, moveFocus: Boolean = true) {
+    if (moveFocus) {
+      clearFocusOutsidePage(position)
+    }
     if (lastEmittedPageSelected == position) {
       return
     }
     lastEmittedPageSelected = position
-    clearFocusOutsidePage(position)
     UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)?.dispatchEvent(
       PageSelectedEvent(UIManagerHelper.getSurfaceId(this), id, position)
     )
@@ -618,12 +620,13 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       }
       // As ViewPager2 did, report the page a fling or setPage is heading to when it starts, not
       // once it settles (see #1250). During a drag, targetPage only follows the halfway point.
+      // Focus stays put until the pager settles, since a caught fling can be dragged back.
       launch {
         snapshotFlow {
           if (pagerState.isScrollInProgress && !isDragged) pagerState.targetPage else null
         }
           .filterNotNull()
-          .collect { page -> dispatchPageSelected(page) }
+          .collect { page -> dispatchPageSelected(page, moveFocus = false) }
       }
       launch {
         snapshotFlow { pagerState.currentPage to pagerState.currentPageOffsetFraction }

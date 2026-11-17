@@ -1,5 +1,5 @@
 import { freshAppBeforeEach, expect, test } from '../support/test.ts';
-import type { App, Screen } from '../support/test.ts';
+import type { App, Device, Screen } from '../support/test.ts';
 import { openExample } from '../support/app.ts';
 
 freshAppBeforeEach();
@@ -9,8 +9,17 @@ freshAppBeforeEach();
 const options = { tags: ['regression', 'issue-1250'], platforms: ['android'] };
 
 /** Opens the repro and waits for its status line. */
-async function openRepro(app: App, screen: Screen): Promise<void> {
-  await openExample(app, screen, 'Issue #1250 Page Selected Timing Repro');
+async function openRepro(
+  device: Device,
+  app: App,
+  screen: Screen
+): Promise<void> {
+  await openExample(
+    device,
+    app,
+    screen,
+    'Issue #1250 Page Selected Timing Repro'
+  );
   await expect(screen.getByTestId('issue-1250-status')).toHaveText(
     'No scroll yet'
   );
@@ -19,8 +28,8 @@ async function openRepro(app: App, screen: Screen): Promise<void> {
 test(
   'setPage reports the selected page before it starts moving',
   options,
-  async ({ app, screen }) => {
-    await openRepro(app, screen);
+  async ({ device, app, screen }) => {
+    await openRepro(device, app, screen);
     await screen.getByTestId('issue-1250-next').tap();
     await expect(screen.getByTestId('issue-1250-status')).toHaveText(
       'settling > selected 2 > idle | moved after selected: yes'
@@ -31,8 +40,8 @@ test(
 test(
   'a flick reports the selected page when the finger lifts',
   options,
-  async ({ app, screen }) => {
-    await openRepro(app, screen);
+  async ({ device, app, screen }) => {
+    await openRepro(device, app, screen);
     // Released short of halfway, so only the fling takes the pager to the
     // next page. Before the fix this ended "moved after selected: no": the
     // page was reported only once it had stopped. A swipe past halfway was
