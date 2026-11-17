@@ -35,3 +35,31 @@ test(
     );
   }
 );
+
+test(
+  'a nested vertical list keeps its own drag',
+  options,
+  async ({ device, app, screen }) => {
+    await openExample(
+      device,
+      app,
+      screen,
+      'Issue #1248 Clipped Text Scroll Repro'
+    );
+    await screen.getByTestId('issue-1248-list').swipe({ direction: 'right' });
+    await expect(screen.getByTestId('issue-1248-inner-list')).toBeVisible();
+
+    const box = await screen.getByTestId('issue-1248-inner-list').boundingBox();
+    if (!box) throw new Error('issue-1248-inner-list has no bounds');
+    const from = { x: box.x + box.width / 2, y: box.y + box.height * 0.8 };
+    await screen.swipe({
+      from,
+      to: { x: from.x, y: from.y - 120 },
+      duration: 400,
+    });
+
+    await expect(screen.getByTestId('issue-1248-inner-status')).toHaveText(
+      /^Inner Y: [1-9]/
+    );
+  }
+);

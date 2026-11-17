@@ -15,11 +15,15 @@ const preview = Array.from(
 
 export function Issue1248ClippedTextScrollRepro() {
   const [scrollY, setScrollY] = useState(0);
+  const [innerScrollY, setInnerScrollY] = useState(0);
 
   return (
     <View style={styles.container}>
       <Text testID="issue-1248-status" style={styles.status}>
         {`Scroll Y: ${Math.round(scrollY)}`}
+      </Text>
+      <Text testID="issue-1248-inner-status" style={styles.status}>
+        {`Inner Y: ${Math.round(innerScrollY)}`}
       </Text>
       <PagerView style={styles.pager} initialPage={0}>
         <View key="1" style={styles.page}>
@@ -37,7 +41,22 @@ export function Issue1248ClippedTextScrollRepro() {
           </ScrollView>
         </View>
         <View key="2" style={styles.page}>
-          <Text style={styles.label}>Page 2</Text>
+          <ScrollView testID="issue-1248-outer-list">
+            <ScrollView
+              nestedScrollEnabled
+              testID="issue-1248-inner-list"
+              style={styles.inner}
+              scrollEventThrottle={16}
+              onScroll={(e) => setInnerScrollY(e.nativeEvent.contentOffset.y)}
+            >
+              <View style={styles.innerContent}>
+                <Text>Nested list</Text>
+              </View>
+            </ScrollView>
+            <View style={styles.filler}>
+              <Text>End of list</Text>
+            </View>
+          </ScrollView>
         </View>
       </PagerView>
     </View>
@@ -51,5 +70,6 @@ const styles = StyleSheet.create({
   page: { flex: 1 },
   preview: { height: 120, overflow: 'hidden', padding: 8 },
   filler: { height: 1500, padding: 16 },
-  label: { padding: 16 },
+  inner: { height: 200 },
+  innerContent: { height: 1000, padding: 16 },
 });

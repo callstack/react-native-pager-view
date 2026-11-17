@@ -9,8 +9,10 @@ import android.view.View
 import android.view.ViewConfiguration
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.HorizontalScrollView
+import android.widget.TextView
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.spring
@@ -437,14 +439,15 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       is ViewGroup -> (view.childCount - 1 downTo 0).map(view::getChildAt)
       else -> emptyList()
     }
-    val scrollable = view.takeIf { canViewScroll(it, direction) }
-    val nested = { children.firstNotNullOfOrNull { findScrollableViewAt(it, x, y, direction) } }
-    // A cross-axis drag belongs to the outermost scroller: a clipped TextView inside a ScrollView
-    // reports a scroll range too, and disallowing interception on its parent would block the list.
-    return if (isGestureAcross) scrollable ?: nested() else nested() ?: scrollable
+    return children.firstNotNullOfOrNull { findScrollableViewAt(it, x, y, direction) }
+      ?: view.takeIf { canViewScroll(it, direction) }
   }
 
   private fun canViewScroll(view: View, direction: Int): Boolean {
+    // A clipped TextView with a movement method reports a scroll range, but only an input scrolls its text.
+    if (view is TextView && view !is EditText) {
+      return false
+    }
     // Both directions count, as a ScrollView at its top still takes a drag down, e.g. to refresh.
     if (isGestureAcross) {
       return if (orientationState.value == Orientation.Vertical) {
