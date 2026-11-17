@@ -69,6 +69,7 @@ jobs:
             docs:
               - '.github/workflows/ci.yml'
               - '.github/workflows/docs.yml'
+              - '.github/workflows/deploy-docs.yml'
               - 'docs/**'
 
   lint:
