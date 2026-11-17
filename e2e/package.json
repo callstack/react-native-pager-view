@@ -4,17 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "e2e run",
-    "test:ios": "e2e run --target ios",
-    "test:android": "e2e run --target android",
-    "list": "e2e list",
+    "test": "bunx --bun e2e run",
+    "test:ios": "bunx --bun e2e run --target ios",
+    "test:android": "bunx --bun e2e run --target android",
+    "list": "bunx --bun e2e list",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@e2e-dev/github": "^0.4.4",
-    "@e2e-dev/mobile": "^0.12.6",
+    "@e2e-dev/github": "^0.4.5",
+    "@e2e-dev/mobile": "^0.12.7",
     "@types/node": "^26.6.5",
-    "e2e": "^0.23.0",
+    "e2e": "^0.23.1",
     "typescript": "^7.0.2"
   }
 }
