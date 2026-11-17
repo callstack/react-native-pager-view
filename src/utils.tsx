@@ -9,6 +9,9 @@ const pageStyle = (style: StyleProp<ViewStyle>) => {
   if (!style) {
     return StyleSheet.absoluteFill;
   }
+  if (typeof style !== 'object') {
+    return [style, StyleSheet.absoluteFill];
+  }
   let merged = pageStyles.get(style);
   if (!merged) {
     merged = [style, StyleSheet.absoluteFill];

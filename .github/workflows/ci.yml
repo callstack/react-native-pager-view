@@ -70,6 +70,10 @@ jobs:
     name: Lint
     uses: ./.github/workflows/lint.yml
 
+  test:
+    name: Test
+    uses: ./.github/workflows/test.yml
+
   android:
     name: Android Build
     needs: changes
@@ -101,7 +105,7 @@ jobs:
 
   required:
     name: Required checks
-    needs: [changes, lint, android, ios]
+    needs: [changes, lint, test, android, ios]
     # `always()`, not `!cancelled()`: a skipped required check counts as passing.
     if: always()
     runs-on: ubuntu-slim
@@ -121,5 +125,6 @@ jobs:
           echo "$NEEDS" | jq -e '
             to_entries | all(.value.result as $r | {
               changes: ["success", "failure"],
-              lint: ["success"]
+              lint: ["success"],
+              test: ["success"]
             }[.key] // ["success", "skipped"] | index($r))' > /dev/null
