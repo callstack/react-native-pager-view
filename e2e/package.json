@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "bunx --bun e2e run",
-    "test:ios": "bunx --bun e2e run --target ios",
-    "test:android": "bunx --bun e2e run --target android",
-    "list": "bunx --bun e2e list",
+    "test": "e2e run",
+    "test:ios": "e2e run --target ios",
+    "test:android": "e2e run --target android",
+    "list": "e2e list",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
