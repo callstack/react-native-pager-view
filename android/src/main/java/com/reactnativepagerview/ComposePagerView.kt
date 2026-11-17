@@ -437,8 +437,11 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       is ViewGroup -> (view.childCount - 1 downTo 0).map(view::getChildAt)
       else -> emptyList()
     }
-    return children.firstNotNullOfOrNull { findScrollableViewAt(it, x, y, direction) }
-      ?: view.takeIf { canViewScroll(it, direction) }
+    val scrollable = view.takeIf { canViewScroll(it, direction) }
+    val nested = { children.firstNotNullOfOrNull { findScrollableViewAt(it, x, y, direction) } }
+    // A cross-axis drag belongs to the outermost scroller: a clipped TextView inside a ScrollView
+    // reports a scroll range too, and disallowing interception on its parent would block the list.
+    return if (isGestureAcross) scrollable ?: nested() else nested() ?: scrollable
   }
 
   private fun canViewScroll(view: View, direction: Int): Boolean {
