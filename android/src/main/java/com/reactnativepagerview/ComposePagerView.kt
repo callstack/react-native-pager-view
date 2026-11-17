@@ -17,6 +17,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.interaction.DragInteraction
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.VerticalPager
@@ -24,6 +25,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshotFlow
@@ -52,6 +54,7 @@ import com.reactnativepagerview.event.PageScrollEvent
 import com.reactnativepagerview.event.PageScrollStateChangedEvent
 import com.reactnativepagerview.event.PageSelectedEvent
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 import kotlin.math.max
@@ -515,12 +518,14 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     UiThreadUtil.getUiThreadHandler().post(command)
   }
 
-  private fun dispatchPageSelected(position: Int) {
+  private fun dispatchPageSelected(position: Int, moveFocus: Boolean = true) {
+    if (moveFocus) {
+      clearFocusOutsidePage(position)
+    }
     if (lastEmittedPageSelected == position) {
       return
     }
     lastEmittedPageSelected = position
-    clearFocusOutsidePage(position)
     UIManagerHelper.getEventDispatcherForReactTag(reactContext, id)?.dispatchEvent(
       PageSelectedEvent(UIManagerHelper.getSurfaceId(this), id, position)
     )
@@ -603,6 +608,8 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       }
     }
 
+    val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
+
     LaunchedEffect(pagerState) {
       launch {
         snapshotFlow { pagerState.settledPage }
@@ -610,6 +617,16 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
             currentPage = page
             dispatchPageSelected(page)
           }
+      }
+      // As ViewPager2 did, report the page a fling or setPage is heading to when it starts, not
+      // once it settles (see #1250). During a drag, targetPage only follows the halfway point.
+      // Focus stays put until the pager settles, since a caught fling can be dragged back.
+      launch {
+        snapshotFlow {
+          if (pagerState.isScrollInProgress && !isDragged) pagerState.targetPage else null
+        }
+          .filterNotNull()
+          .collect { page -> dispatchPageSelected(page, moveFocus = false) }
       }
       launch {
         snapshotFlow { pagerState.currentPage to pagerState.currentPageOffsetFraction }
@@ -630,6 +647,9 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
               // frame so that gap isn't reported as the pager coming to rest.
               withFrameNanos {}
               if (!pagerState.isScrollInProgress) {
+                // A fling caught and dragged back settles on the page it started from, so
+                // settledPage doesn't change, though the fling's target was reported.
+                dispatchPageSelected(pagerState.settledPage)
                 dispatchPageScroll(pagerState.settledPage, 0f)
                 dispatchScrollState("idle")
               }

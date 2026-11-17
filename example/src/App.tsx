@@ -72,6 +72,7 @@ import { Issue1202BlankPageRepro } from './gh-issues/Issue1202BlankPageRepro';
 import { Issue1205DiagonalSwipeRepro } from './gh-issues/Issue1205DiagonalSwipeRepro';
 import { Issue1229TextInputCursorRepro } from './gh-issues/Issue1229TextInputCursorRepro';
 import { Issue1230PagerBetweenPagesRepro } from './gh-issues/Issue1230PagerBetweenPagesRepro';
+import { Issue1250PageSelectedTimingRepro } from './gh-issues/Issue1250PageSelectedTimingRepro';
 import { Issue219EmptyPagerRepro } from './gh-issues/Issue219EmptyPagerRepro';
 import { Issue424SwipeCancelsPressRepro } from './gh-issues/Issue424SwipeCancelsPressRepro';
 import { Issue965PagesBeforeCurrentRepro } from './gh-issues/Issue965PagesBeforeCurrentRepro';
@@ -244,6 +245,10 @@ const sections: { title: string; data: Example[] }[] = [
       {
         component: Issue1230PagerBetweenPagesRepro,
         name: 'Issue #1230 Pager Between Pages Repro',
+      },
+      {
+        component: Issue1250PageSelectedTimingRepro,
+        name: 'Issue #1250 Page Selected Timing Repro',
       },
       {
         component: Issue219EmptyPagerRepro,
