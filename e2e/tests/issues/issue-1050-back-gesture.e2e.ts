@@ -1,10 +1,6 @@
 import { freshAppBeforeEach, expect, test } from '../support/test.ts';
 import type { App, Device, Screen } from '../support/test.ts';
-import {
-  expectHome,
-  openExample,
-  restoreLtrAfterEach,
-} from '../support/app.ts';
+import { expectHome, openExample } from '../support/app.ts';
 import type { LayoutDirection } from '../support/app.ts';
 
 freshAppBeforeEach();
@@ -113,7 +109,6 @@ test.describe('back gesture over the pager', () => {
   });
 
   test.describe('in RTL', () => {
-    restoreLtrAfterEach();
     describeBackGesture('rtl');
   });
 });

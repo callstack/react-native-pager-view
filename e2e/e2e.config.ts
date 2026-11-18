@@ -7,8 +7,6 @@ export default {
   workers,
   timeout: 180_000,
   assertionTimeout: 10_000,
-  // restoreLtrAfterEach relaunches twice; ~30 s on an Android emulator.
-  cleanupTimeout: 60_000,
   // github() only acts on GitHub Actions: job summary plus one PR comment.
   // Every ios.yml variant runs as job `ios-build`, so the key keeps their
   // comments apart.

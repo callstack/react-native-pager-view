@@ -1,6 +1,6 @@
 import { freshAppBeforeEach, expect, test } from '../support/test.ts';
 import type { App, Device, Screen } from '../support/test.ts';
-import { openExample, restoreLtrAfterEach } from '../support/app.ts';
+import { openExample } from '../support/app.ts';
 
 freshAppBeforeEach();
 
@@ -293,8 +293,6 @@ test(
 );
 
 test.describe('right to left', () => {
-  restoreLtrAfterEach();
-
   test(
     'leaving a page with a swipe blurs its input',
     { ...options, platforms: ['ios'] },

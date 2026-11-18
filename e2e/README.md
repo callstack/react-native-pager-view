@@ -73,12 +73,12 @@ files across them. The suite (13 tests on iOS, 12 on Android) takes about
 across its devices. Remote devices fit the same shape: one pool entry per
 device.
 
-| Variable               | Effect                                                                                                                                                                                                                                                                                                                                       |
-| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `E2E_DEVICE`           | Simulator or emulator name or UDID. Default: every booted device of the platform.                                                                                                                                                                                                                                                            |
-| `E2E_DEVICES`          | Comma-separated pool of names or UDIDs, for example `iPhone 17,iPhone 17 Pro`. One worker per device; the test files spread across them. Every device needs the app installed, or set `E2E_IOS_APP_PATH`.                                                                                                                                    |
+| Variable               | Effect                                                                                                                                                                                                                                                                                                                                           |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `E2E_DEVICE`           | Simulator or emulator name or UDID. Default: every booted device of the platform.                                                                                                                                                                                                                                                                |
+| `E2E_DEVICES`          | Comma-separated pool of names or UDIDs, for example `iPhone 17,iPhone 17 Pro`. One worker per device; the test files spread across them. Every device needs the app installed, or set `E2E_IOS_APP_PATH`.                                                                                                                                        |
 | `E2E_IOS_APP_PATH`     | `.app` bundle installed on every pooled device before its first test. Use the Xcode build product (`~/Library/Developer/Xcode/DerivedData/PagerViewExample-*/Build/Products/Release-iphonesimulator/PagerViewExample.app`), never a path inside a simulator's own container: installing replaces that container and the path disappears mid-run. |
-| `E2E_ANDROID_APK_PATH` | `.apk` to install before the first test instead of using the installed build.                                                                                                                                                                                                                                                                |
+| `E2E_ANDROID_APK_PATH` | `.apk` to install before the first test instead of using the installed build.                                                                                                                                                                                                                                                                    |
 
 ## Layout
 
@@ -87,11 +87,11 @@ device.
 - `tests/*.e2e.ts` hold one scenario per example screen.
 - `tests/issues/*.e2e.ts` hold regression scenarios, tagged `regression` and
   `issue-<number>` where a GitHub issue exists.
-- `tests/support/test.ts` re-exports `test` and `expect` (import them from
-  there so the engine can change in one place) and exports
-  `freshAppBeforeEach()`, which every test file calls to relaunch the app
-  before each test (installing the `E2E_*_APP_PATH` build first when set).
-- `tests/support/app.ts` opens an example from the home list and forces the
+- `tests/support/test.ts` re-exports `test` (wrapped to track whether the
+  last test passed) and `expect` (import them from there so the engine can
+  change in one place) and exports `freshAppBeforeEach()`, which every test
+  file calls to install the `E2E_*_APP_PATH` build before each test when set.
+- `tests/support/app.ts` opens an example through its link and forces the
   layout direction.
 - `tests/support/basic-pager.ts` holds the checks shared by the LTR, vertical,
   and RTL basic pager scenarios.
@@ -102,21 +102,28 @@ device.
   moves the finger left and reveals the next page in LTR.
 - Node swipes fling. Use `screen.scrollUntilVisible` with a target that stays
   on screen after any fling (the last item) instead of a middle one.
+- `openExample` gives every test a freshly mounted example. While the app is
+  running in the requested direction and the previous test passed, it opens
+  `pagerview://example/<testID>?mount=<n>&reset`, which replaces the
+  navigation stack in place (no relaunch, no push animation) and dismisses the
+  keyboard; it then waits for the old `example-mount-<n>` marker to leave and
+  the new one to show. Otherwise, or when the new marker stays covered (an
+  alert or Android's spell-check popup left over from the last test), it
+  relaunches the app, forces the direction on the home list, and pushes the
+  example with the link. Module, native, and window state outside the
+  example's React tree survives a reset.
 - The layout direction toggle persists across launches. `openExample` forces
-  the direction it is given, and every RTL describe block calls
-  `restoreLtrAfterEach()`.
+  the direction it is given and switches only when it changes, so keep RTL
+  tests together in their describe block. A run can leave the app in RTL.
 - The engine neither installs nor launches anything on its own, so every
-  test file calls `freshAppBeforeEach()` right after its imports: it
-  relaunches the app with `device.openApp(APP_ID, { relaunch: true })`, so
-  every test starts fresh at the home list. A module-level hook in
-  `tests/support/test.ts` would attach only to the first file evaluated in a
-  realm, and `app.open()` or `app.restart()` resume a running app the
-  surface does not know about. State shared between tests must be state the
-  app persists (the layout direction toggle is).
+  test file calls `freshAppBeforeEach()` right after its imports. A
+  module-level hook in `tests/support/test.ts` would attach only to the first
+  file evaluated in a realm.
 - With `E2E_*_APP_PATH` set, the hook runs `device.installApp()` before
-  every relaunch (~2 s each on a simulator) instead of tracking which device
+  every test (~2 s each on a simulator) instead of tracking which device
   already has the build: an install replaces the binary and keeps its data,
-  so repeating it is correct across device pools and realms.
+  so repeating it is correct across device pools and realms. The install
+  stops the app, so `openExample` relaunches it.
 - A connected physical iPhone joins the default device pool and fails with
   `ENGINE_FAILURE` when it is locked or lacks the app. Pin `E2E_DEVICE` to a
   simulator when a phone is plugged in.
