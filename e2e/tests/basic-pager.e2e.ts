@@ -1,5 +1,4 @@
 import { freshAppBeforeEach, test } from './support/test.ts';
-import { restoreLtrAfterEach } from './support/app.ts';
 import {
   openBasicPager,
   verifyControls,
@@ -24,8 +23,6 @@ test.describe('basic pager', { tags: ['basic-pager'] }, () => {
   });
 
   test.describe('in RTL', () => {
-    restoreLtrAfterEach();
-
     test('pages horizontally with the reversed gesture', async ({
       device,
       app,

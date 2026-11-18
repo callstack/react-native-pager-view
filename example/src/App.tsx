@@ -12,10 +12,13 @@ import {
   View,
   I18nManager,
   DevSettings,
+  Keyboard,
   StatusBar,
 } from 'react-native';
 import {
+  CommonActions,
   DefaultTheme,
+  getActionFromState,
   NavigationContainer,
   useNavigation,
   type LinkingOptions,
@@ -293,20 +296,67 @@ const HOME_ROUTE = 'PagerView Example';
 // does. Naming the home route initialRouteName makes a link that arrives while
 // the app runs push the example over the home list instead of resetting the
 // stack, and a cold start through a link still has home to go back to.
+// `reset` instead replaces the running app's stack with home and a freshly
+// mounted example, without an animation, so automation can start each test on
+// a new example without relaunching the app. `mount=<id>` names the mount in
+// an `example-mount-<id>` testID, which tells automation the previous mount is
+// gone.
+type ExampleParams = { reset?: boolean; mount?: string } | undefined;
+
 const linking: LinkingOptions<ParamListBase> = {
   prefixes: ['pagerview://'],
   config: { initialRouteName: HOME_ROUTE, screens: {} },
   getStateFromPath(path) {
-    const match = /^\/?example\/([^?#]+)/.exec(path);
+    const match = /^\/?example\/([^?#]+)(?:\?([^#]*))?/.exec(path);
     const testID = match ? decodeURIComponent(match[1]) : undefined;
     const example = allExamples.find(
       (candidate) => (candidate.testID ?? candidate.name) === testID
     );
+    const query = (match?.[2] ?? '').split('&');
+    const mount = query
+      .find((part) => part.startsWith('mount='))
+      ?.slice('mount='.length);
+    const params: ExampleParams = {
+      reset: query.includes('reset'),
+      mount,
+    };
     return example
-      ? { routes: [{ name: HOME_ROUTE }, { name: example.name }] }
+      ? { routes: [{ name: HOME_ROUTE }, { name: example.name, params }] }
       : undefined;
   },
+  getActionFromState(state, options) {
+    const reset = state.routes.some(
+      (route) => (route.params as ExampleParams)?.reset
+    );
+    if (!reset) return getActionFromState(state, options);
+    // The keyboard outlives the input it belongs to; blurring that input
+    // while it is still mounted hides it.
+    Keyboard.dismiss();
+    return CommonActions.reset(state);
+  },
 };
+
+function ExampleLayout({
+  children,
+  route,
+}: {
+  children: React.ReactElement;
+  route: { params?: object };
+}) {
+  const mount = (route.params as ExampleParams)?.mount;
+  return (
+    <>
+      {children}
+      {mount !== undefined && (
+        <View
+          testID={`example-mount-${mount}`}
+          collapsable={false}
+          style={styles.mountMarker}
+        />
+      )}
+    </>
+  );
+}
 
 function App() {
   const navigation = useNavigation();
@@ -414,7 +464,12 @@ export function Navigation() {
               key={index}
               name={example.name}
               component={example.component}
-              options={example.options}
+              layout={ExampleLayout}
+              options={({ route }) => ({
+                ...example.options,
+                ...((route.params as ExampleParams)?.reset &&
+                  ({ animation: 'none' } as const)),
+              })}
             />
           ))}
           <NavigationStack.Screen
@@ -444,6 +499,13 @@ export function Navigation() {
 }
 
 const styles = StyleSheet.create({
+  mountMarker: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 1,
+    height: 1,
+  },
   root: {
     flex: 1,
   },

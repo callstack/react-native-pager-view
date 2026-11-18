@@ -1,5 +1,6 @@
-import { expect, test } from './test.ts';
+import { appSession, expect } from './test.ts';
 import type { App, Device, Screen } from './test.ts';
+import { APP_ID } from '../../targets.ts';
 
 export type LayoutDirection = 'ltr' | 'rtl';
 
@@ -8,6 +9,7 @@ const HOME_READY_TEST_ID = 'example-basic-horizontal';
 // can keep the window off the accessibility tree for over 15 s.
 const LAUNCH_TIMEOUT = 30_000;
 const LINK_TIMEOUT = 10_000;
+const RESET_TIMEOUT = 3_000;
 // iOS asks "Open in “PagerViewExample”?" (localized, but always naming the
 // app) the first time a simulator opens the scheme, and hides the app until
 // it is answered. Matching the name keeps examples' own alerts, such as
@@ -27,14 +29,20 @@ export async function expectHome(screen: Screen): Promise<void> {
   await expect(screen.getByTestId(HOME_READY_TEST_ID)).toBeVisible();
 }
 
+let mountCount = 0;
+
 /**
  * Opens an example by its home-list testID through the example app's
- * `pagerview://example/<testID>` link, which pushes it over the home list as a
- * tap on its row would, without scrolling the list to find the row. Examples
- * without an explicit testID use their display name as the testID. The layout
- * direction is forced first, LTR by default, because the toggle persists
- * across launches and every gesture in the suite assumes the direction it
- * asked for.
+ * `pagerview://example/<testID>` link, without scrolling the home list to find
+ * its row. Examples without an explicit testID use their display name as the
+ * testID. Every test gets a freshly mounted example in the layout direction it
+ * asked for, LTR by default, because the toggle persists across launches and
+ * every gesture in the suite assumes that direction.
+ *
+ * While the app is trusted and already in that direction, the link resets its
+ * stack in place: no relaunch and no push animation. Otherwise the app is
+ * relaunched, the direction forced on the home list, and the link pushes the
+ * example over it.
  */
 export async function openExample(
   device: Device,
@@ -43,8 +51,43 @@ export async function openExample(
   testId: string,
   direction: LayoutDirection = 'ltr'
 ): Promise<void> {
+  const mount = String(++mountCount);
+  const link = `pagerview://example/${encodeURIComponent(
+    testId
+  )}?mount=${mount}`;
+  const running = appSession.state;
+  appSession.state = undefined;
+
+  if (running?.direction === direction) {
+    await device.openLink(`${link}&reset`);
+    // The reset swaps the examples in one commit, so the old mount leaving
+    // the tree means the new one is in place.
+    await screen
+      .getByTestId(
+        running.mount === undefined
+          ? HOME_LIST_TEST_ID
+          : `example-mount-${running.mount}`
+      )
+      .waitFor({ state: 'detached', timeout: LINK_TIMEOUT });
+    // A window the last test left open survives the reset and covers the
+    // example: an alert, or Android's spell-check suggestions popup after a
+    // tap in a multiline input. Only a relaunch closes those reliably.
+    const shown = await screen
+      .getByTestId(`example-mount-${mount}`)
+      .waitFor({ timeout: RESET_TIMEOUT })
+      .then(
+        () => true,
+        () => false
+      );
+    if (shown) {
+      appSession.state = { direction, mount };
+      return;
+    }
+  }
+
+  await device.openApp(APP_ID, { relaunch: true });
   await ensureLayoutDirection(app, screen, direction);
-  await device.openLink(`pagerview://example/${encodeURIComponent(testId)}`);
+  await device.openLink(link);
 
   const prompt = screen.getByRole('alert', LINK_PROMPT_NAME);
   const home = screen.getByTestId(HOME_READY_TEST_ID);
@@ -62,6 +105,7 @@ export async function openExample(
   await screen
     .getByTestId(HOME_LIST_TEST_ID)
     .waitFor({ state: 'detached', timeout: LINK_TIMEOUT });
+  appSession.state = { direction, mount };
 }
 
 /**
@@ -91,16 +135,4 @@ export async function ensureLayoutDirection(
   await expect(screen.getByTestId(`layout-direction-${direction}`)).toBeVisible(
     { timeout: LAUNCH_TIMEOUT }
   );
-}
-
-/**
- * Registers an afterEach hook that hands the device back in LTR. Call it in
- * every describe block that switches to RTL, because the direction persists
- * across launches and the hook runs after failures too.
- */
-export function restoreLtrAfterEach(): void {
-  test.afterEach(async ({ app, screen }) => {
-    await app.restart();
-    await ensureLayoutDirection(app, screen, 'ltr');
-  });
 }

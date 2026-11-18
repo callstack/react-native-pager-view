@@ -1,6 +1,6 @@
 import { freshAppBeforeEach, expect, test } from './support/test.ts';
 import type { App, Device, Screen } from './support/test.ts';
-import { openExample, restoreLtrAfterEach } from './support/app.ts';
+import { openExample } from './support/app.ts';
 import type { LayoutDirection } from './support/app.ts';
 
 freshAppBeforeEach();
@@ -35,10 +35,6 @@ function slideEvents(platform: string, page: number): string {
 
 for (const direction of ['ltr', 'rtl'] as const) {
   test.describe(direction, () => {
-    if (direction === 'rtl') {
-      restoreLtrAfterEach();
-    }
-
     test(
       `direct setPage selects only the target page (${direction})`,
       options,
