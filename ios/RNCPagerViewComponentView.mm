@@ -12,10 +12,11 @@
 
 using namespace facebook::react;
 
-// Once Fabric implements proper NativeAnimationDriver, this should be removed.
-// This is just a workaround to allow animations based on onPageScroll event,
-// as RCTScrollViewComponentView does for onScroll,
-// see: https://github.com/facebook/react-native/blob/44f431b471c243c92284aa042d3807ba4d04af65/packages/react-native/React/Fabric/Mounting/ComponentViews/ScrollView/RCTScrollViewComponentView.mm#L59
+// Native-driven Animated.event on onPageScroll depends on this, C++ Animated and
+// its shared animation backend included: on iOS they take the event from the
+// RCTEventDispatcher observers this notifies, on the main thread. The Fabric
+// event emitter copy alone doesn't move the animated value. Mirrors
+// RCTSendScrollEventForNativeAnimations_DEPRECATED in RCTScrollViewComponentView.
 static void
 RCTSendPageScrollEventForNativeAnimations_DEPRECATED(NSInteger tag, NSInteger position, double offset)
 {
