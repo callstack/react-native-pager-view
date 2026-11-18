@@ -1,4 +1,7 @@
 #import <UIKit/UIKit.h>
+// PagerViewProvider.swift's reactViewController comes from here; Swift's
+// `import React` doesn't expose this category.
+#import <React/UIView+React.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

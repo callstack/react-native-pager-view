@@ -7,25 +7,9 @@
 #import <React/RCTConstants.h>
 #import <React/RCTFabricComponentsPlugins.h>
 
-#import "RCTOnPageScrollEvent.h"
 #import "RNCPagerViewProviding.h"
 
 using namespace facebook::react;
-
-// Once Fabric implements proper NativeAnimationDriver, this should be removed.
-// This is just a workaround to allow animations based on onPageScroll event,
-// as RCTScrollViewComponentView does for onScroll,
-// see: https://github.com/facebook/react-native/blob/44f431b471c243c92284aa042d3807ba4d04af65/packages/react-native/React/Fabric/Mounting/ComponentViews/ScrollView/RCTScrollViewComponentView.mm#L59
-static void
-RCTSendPageScrollEventForNativeAnimations_DEPRECATED(NSInteger tag, NSInteger position, double offset)
-{
-  RCTOnPageScrollEvent *event = [[RCTOnPageScrollEvent alloc] initWithReactTag:@(tag)
-                                                                      position:@(position)
-                                                                        offset:@(offset)];
-  [[NSNotificationCenter defaultCenter] postNotificationName:RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED
-                                                      object:nil
-                                                    userInfo:@{@"event": event}];
-}
 
 @interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, PagerViewProviderDelegate>
 @end
@@ -114,12 +98,9 @@ RCTSendPageScrollEventForNativeAnimations_DEPRECATED(NSInteger tag, NSInteger po
     return;
   }
 
-  eventEmitter->onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{
-    .position = static_cast<double>(position),
-    .offset = offset
-  });
-
-  RCTSendPageScrollEventForNativeAnimations_DEPRECATED(self.tag, position, offset);
+  // C++ Native Animated reads only folly::dynamic payloads, not the codegen'd
+  // typed onPageScroll, so this one dispatch feeds both JS and Animated.event.
+  eventEmitter->dispatchEvent("pageScroll", folly::dynamic::object("position", static_cast<double>(position))("offset", offset));
 }
 
 - (void)onPageSelectedWithPosition:(NSInteger)position {

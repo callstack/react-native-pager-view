@@ -65,7 +65,6 @@ let package = Package(
             dependencies: reactNativeHeaders,
             path: ".",
             sources: [
-                "RCTOnPageScrollEvent.m",
                 "RNCPagerViewComponentView.mm",
             ],
             publicHeadersPath: ".",
