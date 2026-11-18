@@ -7,26 +7,9 @@
 #import <React/RCTConstants.h>
 #import <React/RCTFabricComponentsPlugins.h>
 
-#import "RCTOnPageScrollEvent.h"
 #import "RNCPagerViewProviding.h"
 
 using namespace facebook::react;
-
-// Native-driven Animated.event on onPageScroll depends on this, C++ Animated and
-// its shared animation backend included: on iOS they take the event from the
-// RCTEventDispatcher observers this notifies, on the main thread. The Fabric
-// event emitter copy alone doesn't move the animated value. Mirrors
-// RCTSendScrollEventForNativeAnimations_DEPRECATED in RCTScrollViewComponentView.
-static void
-RCTSendPageScrollEventForNativeAnimations_DEPRECATED(NSInteger tag, NSInteger position, double offset)
-{
-  RCTOnPageScrollEvent *event = [[RCTOnPageScrollEvent alloc] initWithReactTag:@(tag)
-                                                                      position:@(position)
-                                                                        offset:@(offset)];
-  [[NSNotificationCenter defaultCenter] postNotificationName:RCTNotifyEventDispatcherObserversOfEvent_DEPRECATED
-                                                      object:nil
-                                                    userInfo:@{@"event": event}];
-}
 
 @interface RNCPagerViewComponentView () <RCTRNCViewPagerViewProtocol, PagerViewProviderDelegate>
 @end
@@ -115,12 +98,9 @@ RCTSendPageScrollEventForNativeAnimations_DEPRECATED(NSInteger tag, NSInteger po
     return;
   }
 
-  eventEmitter->onPageScroll(RNCViewPagerEventEmitter::OnPageScroll{
-    .position = static_cast<double>(position),
-    .offset = offset
-  });
-
-  RCTSendPageScrollEventForNativeAnimations_DEPRECATED(self.tag, position, offset);
+  // C++ Native Animated reads only folly::dynamic payloads, not the codegen'd
+  // typed onPageScroll, so this one dispatch feeds both JS and Animated.event.
+  eventEmitter->dispatchEvent("pageScroll", folly::dynamic::object("position", static_cast<double>(position))("offset", offset));
 }
 
 - (void)onPageSelectedWithPosition:(NSInteger)position {
