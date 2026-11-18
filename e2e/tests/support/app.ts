@@ -13,6 +13,7 @@ const LINK_TIMEOUT = 10_000;
 // it is answered. Matching the name keeps examples' own alerts, such as
 // OnPageSelected's on mount, for the tests to handle.
 const LINK_PROMPT_NAME = /PagerViewExample/;
+const HOME_LIST_TEST_ID = 'home-list';
 
 /** Waits until the home list of the example app has rendered. */
 export async function waitForHome(screen: Screen): Promise<void> {
@@ -51,11 +52,16 @@ export async function openExample(
   while (Date.now() < deadline) {
     if (await prompt.isVisible()) {
       await device.alert('accept');
-      return;
+      break;
     }
-    if (await home.isHidden()) return;
+    if (await home.isHidden()) break;
   }
-  await expect(home).toBeHidden();
+  // The home list stays in the tree until the push has finished, while the
+  // pushed content shows from the start. UIKit drops a gesture sent during the
+  // push animation, which is every time on iOS 18.
+  await screen
+    .getByTestId(HOME_LIST_TEST_ID)
+    .waitFor({ state: 'detached', timeout: LINK_TIMEOUT });
 }
 
 /**
