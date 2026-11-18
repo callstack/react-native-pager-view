@@ -37,8 +37,8 @@ bun run e2e:test:ios
 bun run e2e:test:android
 ```
 
-From this directory, `bun run test:ios -- --tag smoke` runs only the smoke
-test, and `bun run list` prints every test without running it.
+From this directory, `bun run test:ios -- --tag basic-pager` runs only the
+basic pager tests, and `bun run list` prints every test without running it.
 
 ### Software keyboard on iOS
 

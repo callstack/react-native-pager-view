@@ -32,22 +32,12 @@ async function addPages(screen: Screen): Promise<void> {
 }
 
 test(
-  'a pager that mounts empty shows its first page when pages arrive',
+  'a pager that mounts empty shows its pages when they arrive and come back',
   options,
   async ({ device, app, screen }) => {
     await openRepro(device, app, screen);
     await addPages(screen);
     // Before the fix the pager stayed blank until it was touched.
-    await expect(screen.getByText('Page A')).toBeVisible();
-  }
-);
-
-test(
-  'a pager that loses all its pages shows them again when they come back',
-  options,
-  async ({ device, app, screen }) => {
-    await openRepro(device, app, screen);
-    await addPages(screen);
     await expect(screen.getByText('Page A')).toBeVisible();
     for (let cycle = 0; cycle < 2; cycle++) {
       await screen.getByTestId('issue-219-remove-pages').tap();
