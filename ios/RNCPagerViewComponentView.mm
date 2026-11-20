@@ -85,6 +85,10 @@ RCTSendPageScrollEventForNativeAnimations_DEPRECATED(NSInteger tag, NSInteger po
     _pagerViewProvider.overdrag = newPagerProps.overdrag;
   }
 
+  if (oldPagerProps.yieldToNestedGestures != newPagerProps.yieldToNestedGestures) {
+    _pagerViewProvider.yieldToNestedGestures = newPagerProps.yieldToNestedGestures;
+  }
+
   if (oldPagerProps.keyboardDismissMode != newPagerProps.keyboardDismissMode) {
     _pagerViewProvider.keyboardDismissMode = newPagerProps.keyboardDismissMode == RNCViewPagerKeyboardDismissMode::OnDrag
         ? UIScrollViewKeyboardDismissModeOnDrag

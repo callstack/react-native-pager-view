@@ -33,6 +33,7 @@ typedef NS_CLOSED_ENUM(NSInteger, PagerLayoutDirection) {
 @protocol RNCPagerViewProviding <NSObject>
 @property (nonatomic) BOOL scrollEnabled;
 @property (nonatomic) BOOL overdrag;
+@property (nonatomic) BOOL yieldToNestedGestures;
 @property (nonatomic) NSInteger currentPage;
 @property (nonatomic) UIScrollViewKeyboardDismissMode keyboardDismissMode;
 @property (nonatomic) PagerLayoutDirection layoutDirection;

@@ -108,6 +108,10 @@ class PagerViewViewManager : ViewGroupManager<ComposePagerView>(), RNCViewPagerM
     @ReactProp(name = "overdrag")
     override fun setOverdrag(view: ComposePagerView, value: Boolean) = Unit
 
+    // iOS only.
+    @ReactProp(name = "yieldToNestedGestures")
+    override fun setYieldToNestedGestures(view: ComposePagerView, value: Boolean) = Unit
+
     // Dismissed from JS on Android, see PagerView.tsx.
     @ReactProp(name = "keyboardDismissMode")
     override fun setKeyboardDismissMode(view: ComposePagerView, value: String?) = Unit
