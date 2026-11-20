@@ -118,6 +118,18 @@ With [`lazy`](#lazy), what a page shows before its content is mounted. With the 
 
 Allows bouncing past the first and last page.
 
+### `yieldToNestedGestures`
+
+| Type | Default | Platform |
+| --- | --- | --- |
+| `boolean` | `false` | iOS |
+
+Lets a pan inside a page, such as a swipeable row, a slider or a swipe to reply, keep a drag that starts on it instead of paging. The pager leaves a drag alone while a pan gesture recognizer on the view the touch started on, or on one of that view's ancestors inside the page, is still tracking it. A drag that starts anywhere else still pages, and so does one the nested pan has already failed by the time the pager's pan would start. The pager decides once per touch, so a nested pan that fails later doesn't hand the drag back.
+
+Only native `UIPanGestureRecognizer`s count, such as react-native-gesture-handler's pan gestures and `Swipeable`. React Native's `PanResponder` doesn't use a recognizer, so the pager can't see it. A scroll view's own pan doesn't count either, so a vertical list on a page doesn't stop paging.
+
+Without it, the pager and the nested pan race for the drag and whichever starts first takes it. The pager's pan starts after a few points, so a nested pan that needs to move further always loses. The only other way to keep such a drag is [`scrollEnabled`](#scrollenabled)`={false}`, which stops paging everywhere on the page.
+
 ### `offscreenPageLimit`
 
 | Type | Default | Platform |

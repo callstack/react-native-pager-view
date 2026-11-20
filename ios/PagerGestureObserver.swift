@@ -19,11 +19,24 @@ import react_native_pager_view
 
  iOS 26's private `UIScrollViewPagingSwipeGestureRecognizer` flips pages on a
  flick without the pan and asks the same method, so it is refused too.
+
+ With `yieldToNestedGestures`, it also yields to a pan inside the page that the
+ touch started on and that is still tracking it: a swipeable row, a slider, a
+ swipe to reply. The view the touch landed on comes from the touch itself
+ (`gestureRecognizer(_:shouldReceive:)`), not a hit test, which re-enters the
+ hosting view. Once yielded, the rest of that touch sequence is too: a flick's
+ paging swipe asks as the finger lifts, by when the nested pan may have ended.
  */
 final class PagerGestureObserver: NSObject {
   var currentPage = 0
   var layoutDirection: PagerLayoutDirection = .ltr
   var orientation: UICollectionView.ScrollDirection = .horizontal
+  var yieldToNestedGestures = false
+
+  /// Where the current touch sequence landed, and whether the pager has
+  /// yielded it to a nested pan.
+  fileprivate weak var touchedView: UIView?
+  fileprivate var yieldedTouch = false
 
   /// Attaches to the scroll view that pages: the collection view on iOS 16+,
   /// the scroll views it embeds on iOS 15 (see `PagerViewIOS15Compat`).
@@ -56,6 +69,39 @@ final class PagerGestureObserver: NSObject {
     }
 
     return layoutDirection == .ltr ? dx > 0 : dx < 0
+  }
+
+  /// Asked as the pan receives a touch: a new sequence starts with the first.
+  fileprivate func touchBegan(on view: UIView?, in scrollView: UIScrollView) {
+    guard scrollView.panGestureRecognizer.numberOfTouches == 0 else { return }
+    touchedView = view
+    yieldedTouch = false
+  }
+
+  fileprivate func yieldsToNestedGesture(in scrollView: UIScrollView) -> Bool {
+    guard yieldToNestedGestures else { return false }
+    if yieldedTouch { return true }
+
+    var view = touchedView
+    while let current = view, current !== scrollView {
+      for recognizer in current.gestureRecognizers ?? []
+      where Self.isNestedPan(recognizer) && Self.isTrackingTouch(recognizer) {
+        yieldedTouch = true
+        return true
+      }
+      view = current.superview
+    }
+    return false
+  }
+
+  /// A pan of the page's content's own: not a scroll view's, whose pan
+  /// tracks every touch on a list and would stop the pager paging at all.
+  private static func isNestedPan(_ recognizer: UIGestureRecognizer) -> Bool {
+    guard recognizer is UIPanGestureRecognizer else { return false }
+    if let owner = recognizer.view as? UIScrollView, owner.panGestureRecognizer === recognizer {
+      return false
+    }
+    return true
   }
 
   fileprivate static func isPagingRecognizer(
@@ -175,7 +221,7 @@ private extension PagerGestureObserver {
         let observer = objc_getAssociatedObject(
           scrollView, &PagerGestureObserver.associationKey
         ) as? PagerGestureObserver,
-        observer.yieldsToBackGesture(in: scrollView)
+        observer.yieldsToBackGesture(in: scrollView) || observer.yieldsToNestedGesture(in: scrollView)
       {
         return false
       }
@@ -189,6 +235,7 @@ private extension PagerGestureObserver {
       imp_implementationWithBlock(override),
       method_getTypeEncoding(method)
     )
+    addTouchRecorder(to: subclass, from: currentClass)
 
     // On iOS 15 this observer also governs the collection view, which scrolls
     // vertically there, and the scroll views embedded in it that do the
@@ -200,6 +247,45 @@ private extension PagerGestureObserver {
 
     objc_registerClassPair(subclass)
     object_setClass(scrollView, subclass)
+  }
+
+  /// Records the view each touch sequence lands on, for
+  /// `yieldsToNestedGesture`: the pan's delegate is the scroll view itself, so
+  /// this is the one place the touch passes through before the pan asks to
+  /// begin. Defers to UIScrollView's own answer.
+  private static func addTouchRecorder(to subclass: AnyClass, from currentClass: AnyClass) {
+    // By name: `gestureRecognizer(_:shouldReceive:)` is also the UIPress and
+    // UIEvent variants, which #selector can't tell apart.
+    let selector = NSSelectorFromString("gestureRecognizer:shouldReceiveTouch:")
+
+    guard let method = class_getInstanceMethod(currentClass, selector) else {
+      return
+    }
+
+    typealias ShouldReceive = @convention(c) (AnyObject, Selector, UIGestureRecognizer, UITouch) -> Bool
+
+    let superImplementation = unsafeBitCast(method_getImplementation(method), to: ShouldReceive.self)
+
+    let override: @convention(block) (AnyObject, UIGestureRecognizer, UITouch) -> Bool = {
+      object, gestureRecognizer, touch in
+      if
+        let scrollView = object as? UIScrollView,
+        gestureRecognizer === scrollView.panGestureRecognizer,
+        let observer = objc_getAssociatedObject(
+          scrollView, &PagerGestureObserver.associationKey
+        ) as? PagerGestureObserver
+      {
+        observer.touchBegan(on: touch.view, in: scrollView)
+      }
+      return superImplementation(object, selector, gestureRecognizer, touch)
+    }
+
+    class_addMethod(
+      subclass,
+      selector,
+      imp_implementationWithBlock(override),
+      method_getTypeEncoding(method)
+    )
   }
 
   /// UIKit reveals a first responder by scrolling the nearest scrolling

@@ -52,6 +52,7 @@ import { LazyPagerViewExample } from './LazyPagerViewExample';
 import { NativeDriverEventsExample } from './NativeDriverEventsExample';
 import { NestedHorizontalScrollViewExample } from './NestedHorizontalScrollViewExample';
 import { SetPageAnimationExample } from './SetPageAnimationExample';
+import { YieldToNestedGesturesExample } from './YieldToNestedGesturesExample';
 import {
   Issue1050BackGestureRepro,
   Issue1050NestedStackBackGestureRepro,
@@ -190,6 +191,11 @@ const sections: { title: string; data: Example[] }[] = [
       {
         component: ReanimatedOnPageScrollExample,
         name: 'Reanimated onPageScroll example',
+      },
+      {
+        component: YieldToNestedGesturesExample,
+        name: 'Yield to Nested Gestures Example',
+        testID: 'example-yield-to-nested-gestures',
       },
     ],
   },

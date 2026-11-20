@@ -29,6 +29,12 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
     }
   }
 
+  var yieldToNestedGestures: Bool = false {
+    didSet {
+      props.yieldToNestedGestures = yieldToNestedGestures
+    }
+  }
+
   var currentPage: Int = -1 {
     didSet {
       props.currentPage = currentPage

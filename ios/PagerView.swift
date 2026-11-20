@@ -152,6 +152,7 @@ struct PagerView: View {
         gestureObserver.currentPage = props.currentPage
         gestureObserver.layoutDirection = props.layoutDirection
         gestureObserver.orientation = props.orientation
+        gestureObserver.yieldToNestedGestures = props.yieldToNestedGestures
       }
     }
     // GeometryReader is the root since the vertical layout; without this it
@@ -195,6 +196,9 @@ struct PagerView: View {
     }
     .onChange(of: props.overdrag) { newValue in
       applyOverdrag(newValue)
+    }
+    .onChange(of: props.yieldToNestedGestures) { newValue in
+      gestureObserver.yieldToNestedGestures = newValue
     }
     .onChange(of: props.keyboardDismissMode) { newValue in
       collectionView?.keyboardDismissMode = newValue

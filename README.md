@@ -106,6 +106,7 @@ For more examples, see the [example app](example/src): nested pagers, keyboard h
 | `onPageSelected: (e: PagerViewOnPageSelectedEvent) => void`                | Called when a new page becomes selected, and once on mount for `initialPage`. `e.nativeEvent.position` is the selected index.           |   both   |
 | `onPageScrollStateChanged: (e: PageScrollStateChangedNativeEvent) => void` | Called when the scroll state changes. `e.nativeEvent.pageScrollState` is `idle`, `dragging` or `settling`.                              |   both   |
 | `overdrag: boolean`                                                        | Allows bouncing past the first and last page. Defaults to `false`.                                                                      |   iOS    |
+| `yieldToNestedGestures: boolean`                                           | Lets a pan inside a page, such as a swipeable row, keep its drag. See [Nested gestures](#nested-gestures). Defaults to `false`.         |   iOS    |
 | `offscreenPageLimit: number`                                               | Number of pages kept composed on each side of the visible page. Defaults to `1`.                                                        | Android  |
 | `overScrollMode: 'auto' \| 'always' \| 'never'`                            | Overscroll effect at the edges. `never` disables the effect. Defaults to `auto`.                                                        | Android  |
 
@@ -160,6 +161,28 @@ With `lazy`, `onPageScroll` events always reach JS, since that's how the pager t
 `offscreenPageLimit` is unrelated. It only limits how many pages the Android pager composes, and React still renders every page.
 
 See the [full example](example/src/LazyPagerViewExample.tsx).
+
+## Nested gestures
+
+On iOS the pager's drag is native, so a horizontal pan inside a page, such as a swipeable row, a slider or a swipe to reply, competes with it for the drag, and whichever starts first takes it. The pager's pan starts after a few points, so a nested pan that needs to move further always loses, and one that needs about as far wins only some of the time. `scrollEnabled={false}` gives the pan the drag, but stops paging everywhere on the page.
+
+With `yieldToNestedGestures`, the pager leaves a drag alone while a pan gesture recognizer on the view the touch started on, or on one of that view's ancestors inside the page, is still tracking it. A drag that starts anywhere else still pages, and so does one the nested pan has already failed by the time the pager's pan would start. The pager decides once per touch, so a nested pan that fails later doesn't hand the drag back.
+
+```tsx
+<PagerView style={{ flex: 1 }} yieldToNestedGestures>
+  {items.map((item) => (
+    <View key={item.id}>
+      <SwipeableRow item={item} />
+    </View>
+  ))}
+</PagerView>
+```
+
+Only native `UIPanGestureRecognizer`s count, such as react-native-gesture-handler's pan gestures and `Swipeable`. React Native's `PanResponder` doesn't use a recognizer, so the pager can't see it. A scroll view's own pan doesn't count either, so a vertical list on a page doesn't stop paging.
+
+On Android the prop does nothing.
+
+See the [full example](example/src/YieldToNestedGesturesExample.tsx).
 
 ## `usePagerView` hook
 

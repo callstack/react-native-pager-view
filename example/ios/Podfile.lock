@@ -1349,7 +1349,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
-  - react-native-pager-view (9.0.8):
+  - react-native-pager-view (10.0.3):
     - hermes-engine
     - RCTRequired
     - RCTTypeSafety
@@ -1837,6 +1837,30 @@ PODS:
     - React-utils (= 0.88.0)
     - ReactNativeDependencies
   - ReactNativeDependencies (0.88.0)
+  - RNGestureHandler (3.5.0):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-bridging
+    - React-Core
+    - React-Core-prebuilt
+    - React-cxxstableapi
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - RNWorklets (>= 0.8.0)
+    - Yoga
   - RNReanimated (4.7.1):
     - hermes-engine
     - RCTRequired
@@ -2157,6 +2181,7 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios/ReactCodegen`)
   - ReactCommon/turbomodule/core (from `../../node_modules/react-native/ReactCommon`)
   - ReactNativeDependencies (from `../../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec`)
+  - RNGestureHandler (from `../../node_modules/react-native-gesture-handler`)
   - RNReanimated (from `../../node_modules/react-native-reanimated`)
   - RNScreens (from `../../node_modules/react-native-screens`)
   - RNWorklets (from `../../node_modules/react-native-worklets`)
@@ -2341,6 +2366,8 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/react-native/ReactCommon"
   ReactNativeDependencies:
     :podspec: "../../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec"
+  RNGestureHandler:
+    :path: "../../node_modules/react-native-gesture-handler"
   RNReanimated:
     :path: "../../node_modules/react-native-reanimated"
   RNScreens:
@@ -2400,7 +2427,7 @@ SPEC CHECKSUMS:
   React-Mapbuffer: a2dae4f2cb335ebb97f2240494d0c2bab84cd339
   React-microtasksnativemodule: 8b3aaa5f3b907ecf071b105589868d9f027a448d
   React-mutationobservernativemodule: 11d77d3f7360578f07847843544ada23cc473049
-  react-native-pager-view: 08847f6f2c036e12204f0b216f545e22b6567fa2
+  react-native-pager-view: 8146b5d9fd255d2c6dc32000b04b8116cdb98713
   react-native-safe-area-context: b1c9f15a36e597e9cef4c5526e209ef2645bc2e0
   React-NativeModulesApple: 52f3def085f129de1307e3eb78e26729ff70f421
   React-networking: 1e6441349ac72bfd4f7a79c300c3dd76993a7058
@@ -2439,6 +2466,7 @@ SPEC CHECKSUMS:
   ReactCodegen: 64989eeae4375125dc5f6c7b82f2952b0d55abfb
   ReactCommon: 145a14b942b19fc2fe38927f261955ada56978aa
   ReactNativeDependencies: d3b7423ba1e52525e42085c8470109abde583d2e
+  RNGestureHandler: 3eb406a87932ac20e2909d36728129821fafbcdb
   RNReanimated: 8453f9ea9e22896a9f8ad4eddac58a747cc02223
   RNScreens: b56fb5547cd6d1f058b1b1c5aa8baae2404c147b
   RNWorklets: c3a33449674e0847c3d05bb730f6443290f19e6e
