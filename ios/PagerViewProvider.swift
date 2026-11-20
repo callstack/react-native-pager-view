@@ -60,6 +60,9 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
     guard index >= 0 && index <= props.children.count else {
       return
     }
+    if index <= props.currentPage && props.currentPage < props.children.count {
+      props.currentPage += 1
+    }
     props.children.insert(IdentifiablePlatformView(child), at: index)
   }
 
@@ -68,6 +71,9 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
       return
     }
     props.children.remove(at: index)
+    if index < props.currentPage {
+      props.currentPage -= 1
+    }
   }
 
   override func didMoveToWindow() {
