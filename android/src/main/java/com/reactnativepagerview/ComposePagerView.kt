@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Rect
 import android.os.Parcelable
 import android.util.SparseArray
+import android.view.FocusFinder
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -34,6 +35,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
@@ -108,6 +110,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   private var isDestroyed = false
   private var lastEmittedScrollState: String? = null
   private var lastEmittedPageSelected: Int? = null
+  private var isInComposeLayoutPass = false
 
   init {
     id = View.generateViewId()
@@ -228,6 +231,14 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    if (isInComposeLayoutPass) {
+      setMeasuredDimension(
+        getDefaultSize(suggestedMinimumWidth, widthMeasureSpec),
+        getDefaultSize(suggestedMinimumHeight, heightMeasureSpec)
+      )
+      deferComposeLayout()
+      return
+    }
     super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     measureComposeView()
   }
@@ -238,8 +249,35 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+    if (isInComposeLayoutPass) {
+      deferComposeLayout()
+      return
+    }
     super.onLayout(changed, left, top, right, bottom)
     measureAndLayoutComposeView()
+  }
+
+  // Compose attaches a page's views while it measures the pager, and what they do then, like a
+  // TextInput's autoFocus, can resize the pager synchronously. Measuring or laying out the
+  // ComposeView from inside its own pass throws (see #1263), so do it once the pass is over.
+  private inline fun <T> inComposeLayoutPass(block: () -> T): T {
+    isInComposeLayoutPass = true
+    try {
+      return block()
+    } finally {
+      isInComposeLayoutPass = false
+    }
+  }
+
+  private val composeLayoutPassModifier = Modifier.layout { measurable, constraints ->
+    val placeable = inComposeLayoutPass { measurable.measure(constraints) }
+    layout(placeable.width, placeable.height) {
+      inComposeLayoutPass { placeable.place(0, 0) }
+    }
+  }
+
+  private fun deferComposeLayout() {
+    post { measureAndLayoutComposeView() }
   }
 
   // React Native's parent views drop layout requests, so the pager isn't laid out again when
@@ -283,6 +321,10 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   ): Boolean {
     val view = composeView
     if (view == null || view.parent !== this || width <= 0 || height <= 0) {
+      return false
+    }
+    if (isInComposeLayoutPass) {
+      deferComposeLayout()
       return false
     }
 
@@ -691,7 +733,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       if (orientationState.value == Orientation.Vertical) {
         VerticalPager(
           state = pagerState,
-          modifier = Modifier.fillMaxSize(),
+          modifier = composeLayoutPassModifier.fillMaxSize(),
           pageSpacing = pageSpacing,
           userScrollEnabled = scrollEnabledState.value,
           beyondViewportPageCount = beyondViewportPageCount,
@@ -702,7 +744,7 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
       } else {
         HorizontalPager(
           state = pagerState,
-          modifier = Modifier.fillMaxSize(),
+          modifier = composeLayoutPassModifier.fillMaxSize(),
           pageSpacing = pageSpacing,
           userScrollEnabled = scrollEnabledState.value,
           beyondViewportPageCount = beyondViewportPageCount,
@@ -836,6 +878,17 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
     override fun dispatchSaveInstanceState(container: SparseArray<Parcelable>) {}
 
     override fun dispatchRestoreInstanceState(container: SparseArray<Parcelable>) {}
+
+    // A TextInput that autofocuses as Compose attaches its page opens the keyboard, which asks
+    // for the next view to focus to pick its IME action. Compose answers by laying out the pages
+    // beyond the pager's bounds, which throws while it is still measuring the pager (see #1263),
+    // so look within the page until the pass is over.
+    override fun focusSearch(focused: View?, direction: Int): View? {
+      if (isInComposeLayoutPass) {
+        return FocusFinder.getInstance().findNextFocus(this, focused, direction)
+      }
+      return super.focusSearch(focused, direction)
+    }
   }
 
   private fun attachChild(container: FrameLayout, child: View) {

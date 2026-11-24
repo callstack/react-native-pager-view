@@ -78,6 +78,7 @@ import { Issue1229TextInputCursorRepro } from './gh-issues/Issue1229TextInputCur
 import { Issue1230PagerBetweenPagesRepro } from './gh-issues/Issue1230PagerBetweenPagesRepro';
 import { Issue1248ClippedTextScrollRepro } from './gh-issues/Issue1248ClippedTextScrollRepro';
 import { Issue1250PageSelectedTimingRepro } from './gh-issues/Issue1250PageSelectedTimingRepro';
+import { Issue1263AutoFocusResizeRepro } from './gh-issues/Issue1263AutoFocusResizeRepro';
 import { Issue219EmptyPagerRepro } from './gh-issues/Issue219EmptyPagerRepro';
 import { Issue424SwipeCancelsPressRepro } from './gh-issues/Issue424SwipeCancelsPressRepro';
 import { Issue965PagesBeforeCurrentRepro } from './gh-issues/Issue965PagesBeforeCurrentRepro';
@@ -263,6 +264,10 @@ const sections: { title: string; data: Example[] }[] = [
       {
         component: Issue1250PageSelectedTimingRepro,
         name: 'Issue #1250 Page Selected Timing Repro',
+      },
+      {
+        component: Issue1263AutoFocusResizeRepro,
+        name: 'Issue #1263 AutoFocus Resize Repro',
       },
       {
         component: Issue219EmptyPagerRepro,
