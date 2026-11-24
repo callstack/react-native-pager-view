@@ -277,7 +277,11 @@ class ComposePagerView(context: Context) : FrameLayout(context) {
   }
 
   private fun deferComposeLayout() {
-    post { measureAndLayoutComposeView() }
+    post {
+      if (composeView?.hasComposition == true) {
+        measureAndLayoutComposeView()
+      }
+    }
   }
 
   // React Native's parent views drop layout requests, so the pager isn't laid out again when
