@@ -111,6 +111,50 @@ final class PagerViewProvider: UIView, RNCPagerViewProviding {
     hostingController?.view.setNeedsLayout()
   }
 
+  // TabView exposes each page to accessibility as a single full-screen
+  // element, which hides the page's own elements from VoiceOver's rotor
+  // (headings, links, ...). Expose the shown page directly instead.
+  override var accessibilityElements: [Any]? {
+    get {
+      guard props.children.indices.contains(props.currentPage) else {
+        return super.accessibilityElements
+      }
+      return [props.children[props.currentPage].view]
+    }
+    set { super.accessibilityElements = newValue }
+  }
+
+  // Exposing the page directly bypasses TabView's own handling of the
+  // VoiceOver three-finger swipe, so change the page here.
+  override func accessibilityScroll(_ direction: UIAccessibilityScrollDirection) -> Bool {
+    guard scrollEnabled, let step = pageStep(for: direction) else {
+      return false
+    }
+    let index = props.currentPage + step
+    guard props.children.indices.contains(index) else {
+      return false
+    }
+    goTo(index: index, animation: .scroll)
+    UIAccessibility.post(notification: .pageScrolled, argument: nil)
+    UIAccessibility.post(notification: .layoutChanged, argument: props.children[index].view)
+    return true
+  }
+
+  private func pageStep(for direction: UIAccessibilityScrollDirection) -> Int? {
+    switch (orientation, direction) {
+    case (.horizontal, .left):
+      return layoutDirection == .rtl ? -1 : 1
+    case (.horizontal, .right):
+      return layoutDirection == .rtl ? 1 : -1
+    case (.vertical, .up):
+      return 1
+    case (.vertical, .down):
+      return -1
+    default:
+      return nil
+    }
+  }
+
   func goTo(index: Int, animation: PagerPageAnimation) {
     if animation != .none && hasPresentedViewController() {
       // A native-stack modal can begin its dismissal in the same JavaScript
